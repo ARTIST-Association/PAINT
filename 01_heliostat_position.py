@@ -1,15 +1,10 @@
-#"id","FieldId","HeliostatId","CameraId","CalibrationTargetId","System","Version","Axis1MotorPosition","Axis2MotorPosition","ImageOffsetX","ImageOffsetY","TargetOffsetE","TargetOffsetN","TargetOffsetU","TrackingOffsetE","TrackingOffsetU","SunPosE","SunPosN","SunPosU","LastScore","GeometryData","IsDeleted","CreatedAt","UpdatedAt"
-
-#TODO  Histogramm Sonnenposition Targetposition, Zeit , Heliostatpostion X,Y und Farbkodierung mit Datenpunkte zweite Farbkodierung für "Nicht bewertbar", 
-#TODO Azimuth Split, Monat Split, KNN SPlit, Temporärer Split
-
 import pandas as pd
 import torch as th
 import numpy as np
 from PIL import Image
 import os
 import matplotlib.pyplot as plt
-from Dataset_Paper.utils import num_to_name, calculate_az_el
+from utils import num_to_name, calculate_az_el
 
 # load heliostat position file
 path_heliostat_positions = 'data/DatenHeliOS/Heliostatpositionen_xyz.xlsx'
@@ -31,7 +26,6 @@ merged_df = pd.merge(heliostat_positions, heliostat_counts, left_index=True, rig
 merged_df.rename(columns={'HeliostatId': 'counts'}, inplace=True)
 
 
-print(merged_df)
 plt.figure(figsize=(10, 6))
 plt.scatter(merged_df['x'], merged_df['y'], c=merged_df['count'], cmap='coolwarm', alpha=0.7)
 plt.colorbar(label='Counts')
