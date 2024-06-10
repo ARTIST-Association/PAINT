@@ -26,8 +26,10 @@ df_measurements = df_measurements.set_index('id') #setzt df id zu Bild index
 heliostat_counts = df_measurements['HeliostatId'].value_counts()
 # Replace HeliostatId with heliostat names in heliostat_counts dataframe
 heliostat_counts.index = heliostat_counts.index.map(num_to_name)
-# Merge df_measurements with heliostat_counts based on HeliostatId
+
 merged_df = pd.merge(heliostat_positions, heliostat_counts, left_index=True, right_index=True)
+merged_df.rename(columns={'HeliostatId': 'counts'}, inplace=True)
+
 
 print(merged_df)
 plt.figure(figsize=(10, 6))
@@ -38,4 +40,4 @@ plt.ylabel('Y Axis')
 plt.title('Scatter Plot with Counts')
 plt.grid(True)
 plt.show()
-plt.savefig("01_Heliostat_Positions.png", dpi=300)
+plt.savefig("01_heliostat_positions.png", dpi=300)
