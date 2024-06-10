@@ -45,4 +45,18 @@ df['DataSet_Azimuth'] = df['CreatedAt'].dt.hour.apply(classify_time_of_day)
 # Group by 'HeliostatId' and 'DataSet_Azimuth' and count the occurrences
 grouped = df.groupby(['HeliostatId', 'DataSet_Azimuth']).size().unstack(fill_value=0)
 
-# Sort index for consistent plotting
+# Plot the stacked bar graph
+ax = grouped.plot(kind='bar', stacked=True, figsize=(10, 6), 
+                           color=['skyblue', 'lightgreen', 'salmon'])
+
+# Customize the plot
+plt.title('Count of Train, Test, and Validation Data for Each HeliostatID')
+plt.xlabel('HeliostatID')
+plt.ylabel('Count')
+plt.legend(title='DataSet_Azimuth')
+plt.xticks(rotation=45, ha='right')
+plt.tight_layout()
+
+# Show the plot
+plt.show()
+plt.savefig("03_Azimut_Split.png", dpi=300)
