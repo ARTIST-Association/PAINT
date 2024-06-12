@@ -3,15 +3,15 @@ import numpy as np
 from utils import calculate_az_el, plot_stacked_bar_chart, plot_scatter_az_el
 
 # Function to classify time of day
-def classify_time_of_day(month):
-    if 0 <= month < 5:
+def classify_month(month):
+    if 5 <= month <= 6 or 7 <= month <= 8:
         return 'train'
-    elif 5 <= month < 10:
+    elif 3 <= month <= 4 or 9 <= month <= 10:
         return 'test'
-    elif 10 <= month <= 12:
+    elif 1 <= month <= 2 or 11 <= month <= 12:
         return 'validation'
     else:
-        raise ValueError('Invalid hour')
+        raise ValueError('Invalid month')
 
 # Function to check for empty sets
 def check_for_empty_sets(grouped):
@@ -54,7 +54,7 @@ df = pd.read_csv(pathDF).set_index('id')  # Set df id as index
 df['CreatedAt'] = pd.to_datetime(df['CreatedAt'])
 
 # Apply the function to create the new column
-df['DataSet_month'] = df['CreatedAt'].dt.month.apply(classify_time_of_day)
+df['DataSet_month'] = df['CreatedAt'].dt.month.apply(classify_month)
 
 # Calculate Azimuth and Elevation
 df['Azimuth'], df['Elevation'] = calculate_az_el(df)
