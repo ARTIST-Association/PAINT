@@ -9,7 +9,7 @@ from PIL import Image
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from Dataset_Paper.utils import num_to_name, calculate_az_el
+from utils import num_to_name, calculate_az_el
 
 
 # load Measurement CSV
