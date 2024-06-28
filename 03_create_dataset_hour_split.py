@@ -7,7 +7,7 @@ from utils import calculate_az_el
 
 
 # Function to classify time of day
-def classify_time_split(df, split_name, head, tail):
+def classify_azimuth_split(df, split_name, head, tail):
     df = df.sort_values(
         by=["Azimuth", "CreatedAt"]
     )  # Ensure sorted by azimuth and timestamp
@@ -154,7 +154,7 @@ m_validation = 30  # number of validation samples per HeliostatId
 for i,n in enumerate(n_train):
     print(n)
     df[f"DataSet_Azimuth_{n}"] = df.groupby("HeliostatId", group_keys=False).apply(
-        lambda x: classify_time_split(x, f"DataSet_Azimuth_{n}", n, m_validation)
+        lambda x: classify_azimuth_split(x, f"DataSet_Azimuth_{n}", n, m_validation)
     )
     df = update_datasets_to_nan_if_too_small(
         df, f"DataSet_Azimuth_{n}", n, m_validation
