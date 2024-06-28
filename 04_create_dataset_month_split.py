@@ -170,8 +170,8 @@ df["Azimuth"], df["Elevation"] = calculate_az_el(
 )  # Calculate Azimuth and Elevation from Sun Vector
 
 # Apply classification function
-n_train = [10,100]  # number of train samples per HeliostatId
-m_validation = 60  # number of validation samples per HeliostatId
+n_train = [10,50,100]  # number of train samples per HeliostatId
+m_validation = 30  # number of validation samples per HeliostatId
 
 
 for i, n in enumerate(n_train):
