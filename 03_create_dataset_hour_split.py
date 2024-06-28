@@ -100,8 +100,8 @@ def plot_stacked_bar_chart_with_inset(
     ax_inset.set_title("Example Heliostat")
 
     plt.tight_layout()  # Adjust layout to prevent clipping of labels
-    plt.savefig(f"03_azimuth_split_{train_split_name}.png", dpi=300)
-    plt.savefig(f"03_azimuth_split_{train_split_name}.pdf", dpi=300)
+    plt.savefig(f"03_{train_split_name}.png", dpi=300)
+    plt.savefig(f"03_{train_split_name}.pdf", dpi=300)
 
 
 def update_datasets_to_nan_if_too_small(df, column, n_train, m_validation):
