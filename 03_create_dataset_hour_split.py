@@ -1,138 +1,173 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-from utils import calculate_az_el, plot_stacked_bar_chart, plot_scatter_az_el
+from utils import calculate_az_el
+
 
 # Function to classify time of day
-def classify_time_of_day(hour):
-    if 0 <= hour < 12:
-        return 'train'
-    elif 12 <= hour < 15:
-        return 'test'
-    elif 15 <= hour <= 23:
-        return 'validation'
-    else:
-        raise ValueError('Invalid hour')
+def classify_time_split(df, split_name, head, tail):
+    df = df.sort_values(
+        by=["Azimuth", "CreatedAt"]
+    )  # Ensure sorted by azimuth and timestamp
+    train_indices = df.head(head).index
+    validation_indices = df.tail(tail).index
+    df[split_name] = "test"  # Default to 'test'
+    df.loc[train_indices, split_name] = "train"
+    df.loc[validation_indices, split_name] = "validation"
+    return df[split_name]
 
-# Function to check for empty sets
-def check_for_empty_sets(grouped):
-    empty_sets = {}
-    for label in ['train', 'test', 'validation']:
-        empty_heliostats = grouped[grouped[label] == 0].index.tolist()
-        empty_sets[label] = empty_heliostats
-        print(f"HeliostatIDs with empty {label} sets:", len(empty_heliostats))
-    print("---------------------")
-    return empty_sets
+def plot_stacked_bar_chart_with_inset(
+    grouped_df, example_heliostat_df, train_split_name
+):
+    """
+    Compute the total measurements for each HeliostatID and plot a stacked bar chart with inset scatter plot.
 
-# Function to set DataSet_hour to NaN for specific HeliostatIDs
-def set_hour_to_nan(df, heliostats):
-    df.loc[df['HeliostatId'].isin(heliostats), 'DataSet_hour'] = np.nan
+    Parameters:
+    - grouped_df: DataFrame containing measurements grouped by HeliostatID
+    - example_heliostat_df: DataFrame containing example heliostat data
+    - train_split_name: Name of the training split
 
-# Updated function to select earliest N entries for each HeliostatId in the 'train' set
-def select_earliest_n_train_entries(df, n):
-    # Filter only 'train' entries
-    filtered_df_train = df[df['DataSet_hour'] == 'train']
-    
-    # Group by 'HeliostatId' and filter groups with at least n entries
-    valid_heliostats = filtered_df_train.groupby('HeliostatId').filter(lambda x: len(x) >= n)['HeliostatId'].unique()
-    
-    # Select earliest n entries for valid heliostats
-    earliest_n_per_heliostat = (
-        filtered_df_train[filtered_df_train['HeliostatId'].isin(valid_heliostats)]
-        .sort_values(by=['HeliostatId', 'CreatedAt'])
-        .groupby('HeliostatId')
-        .head(n)
-    )
+    Returns:
+    None
+    """
+    # Compute the total measurements for each HeliostatID
+    grouped_df["Total"] = grouped_df.sum(axis=1)
 
-    return earliest_n_per_heliostat.index
+    # Sort by total measurements for clearer plotting
+    grouped_df = grouped_df.sort_values("Total")
 
-def plot_stacked_bar_chart(grouped_df, train_split_name):
-    # Filter out heliostats without 'train' data
-    grouped_df = grouped_df[grouped_df['train'] > 0]
+    bar_width = 2  # Bar width
 
-    bar_positions = np.arange(len(grouped_df))  # Bar positions
-    bar_width = 1  # Bar width
-
-    fig, ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects
+    _ , ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects
 
     # Plot each layer of the stacked bar chart
-    ax.bar(bar_positions, grouped_df['train'], width=bar_width, label='Train', color='skyblue')
-    ax.bar(bar_positions, grouped_df['test'], width=bar_width, label='Test', color='salmon', bottom=grouped_df['train'])
-    ax.bar(bar_positions, grouped_df['validation'], width=bar_width, label='Validation', color='lightgreen', bottom=grouped_df['train'] + grouped_df['test'])
+    ax.bar(
+        grouped_df["Total"],
+        grouped_df["train"],
+        width=bar_width,
+        label="Train",
+        color="skyblue",
+    )
+    ax.bar(
+        grouped_df["Total"],
+        grouped_df["test"],
+        width=bar_width,
+        label="Test",
+        color="salmon",
+        bottom=grouped_df["train"],
+    )
+    ax.bar(
+        grouped_df["Total"],
+        grouped_df["validation"],
+        width=bar_width,
+        label="Validation",
+        color="lightgreen",
+        bottom=grouped_df["train"] + grouped_df["test"],
+    )
 
     # Customize the plot
-    ax.set_xlabel('HeliostatIDs')
-    ax.set_ylabel('Count')
-    ax.set_title('Stacked Bar Plot of Train, Test, and Validation Counts')
-    ax.legend()
+    ax.set_xlabel("# Measurements per Heliostat")
+    ax.set_ylabel("# Measurements per Heliostat")
+
+    ax.set_xlim(
+        0, 610
+    )  # Ensure x-axis starts at 0 and ends at the number of heliostats
+    ax.set_ylim(
+        0, 610
+    )  # Ensure y-axis starts at 0 and ends at the number of heliostats
+
+    ax.legend(bbox_to_anchor=(0.5, 0.95), loc="center left", ncol=3)
+    # Create an inset for the scatter plot
+    ax_inset = inset_axes(
+        ax,
+        width="95%",
+        height="95%",
+        bbox_to_anchor=(0.05, 0.45, 0.4, 0.5),
+        loc="upper left",
+        bbox_transform=ax.transAxes,
+    )
+
+    colors = {"train": "blue", "test": "red", "validation": "green"}
+    for label, color in colors.items():
+        subset = example_heliostat_df[example_heliostat_df[train_split_name] == label]
+        ax_inset.scatter(
+            subset["Azimuth"], subset["Elevation"], label=label, color=color, alpha=0.5
+        )
+    ax_inset.set_xlabel("Azimuth")
+    ax_inset.set_ylabel("Elevation")
+    ax_inset.set_title("Example Heliostat")
 
     plt.tight_layout()  # Adjust layout to prevent clipping of labels
-    plt.show()  # Show the plot
+    plt.savefig(f"03_azimuth_split_{train_split_name}.png", dpi=300)
+    plt.savefig(f"03_azimuth_split_{train_split_name}.pdf", dpi=300)
 
-    plt.savefig(f"03_hour_split_{train_split_name}.png", dpi=300)
 
-# Load CSV
-pathDF = 'data/DatenHeliOS/calib_data.csv'
-df = pd.read_csv(pathDF).set_index('id')  # Set df id as index
+def update_datasets_to_nan_if_too_small(df, column, n_train, m_validation):
+    """
+    Update the dataset split to set 'NaN' for heliostats where 'train' set is smaller than n_train
+    and 'test' set is smaller than m_validation.
 
-# Convert 'CreatedAt' column to datetime
-df['CreatedAt'] = pd.to_datetime(df['CreatedAt'])
+    Parameters:
+    df (pd.DataFrame): DataFrame with the dataset split column.
+    column (str): Column name to check for 'train' and 'test' entries.
+    n_train (int): Minimum number of 'train' entries required for each HeliostatId.
+    m_validation (int): Minimum number of 'test' entries required for each HeliostatId.
 
-# Apply the function to create the new column
-df['DataSet_hour'] = df['CreatedAt'].dt.hour.apply(classify_time_of_day)
+    Returns:
+    pd.DataFrame: Updated DataFrame with adjusted dataset split.
+    """
+    # Group by HeliostatId and count the number of 'train' and 'test' entries
+    counts = df.groupby("HeliostatId")[column].value_counts().unstack(fill_value=0)
 
-# Calculate Azimuth and Elevation
-df['Azimuth'], df['Elevation'] = calculate_az_el(df)
+    # Identify HeliostatIds with 'train' set smaller than n_train
+    insufficient_train_heliostats = counts[counts.get("train", 0) < n_train].index
 
-# Group by 'HeliostatId' and 'DataSet_hour' and count the occurrences
-grouped = df.dropna(subset=['DataSet_hour']).groupby(['HeliostatId', 'DataSet_hour']).size().unstack(fill_value=0)
-plot_stacked_bar_chart(grouped, train_split_name="unfiltered")
+    # Identify HeliostatIds with 'test' set smaller than m_validation
+    insufficient_test_heliostats = counts[counts.get("test", 0) < m_validation].index
 
-# Check for empty sets
-empty_sets = check_for_empty_sets(grouped)
+    # Combine both sets of insufficient HeliostatIds
+    insufficient_heliostats = set(insufficient_train_heliostats).union(
+        insufficient_test_heliostats
+    )
 
-# Combine all HeliostatIDs that need DataSet_hour set to NaN
-heliostats_to_nan = set().union(*empty_sets.values())
-df.loc[df['HeliostatId'].isin(heliostats_to_nan), 'DataSet_hour'] = np.nan  # Remove empty sets
+    # Update the dataset split for those HeliostatIds
+    df.loc[df["HeliostatId"].isin(insufficient_heliostats), column] = np.nan
 
-# Update grouped dataframe after removing empty sets
-grouped = df.dropna(subset=['DataSet_hour']).groupby(['HeliostatId', 'DataSet_hour']).size().unstack(fill_value=0)
-plot_stacked_bar_chart(grouped, train_split_name="no_empty_sets")
+    return df
 
-# Create separate columns for different N
-df['DataSet_hour_10'] = df['DataSet_hour']
-df['DataSet_hour_50'] = df['DataSet_hour']
-df['DataSet_hour_100'] = df['DataSet_hour']
 
-# Select indices of earliest N entries
-earliest_10_indices = select_earliest_n_train_entries(df, 10)
-earliest_50_indices = select_earliest_n_train_entries(df, 50)
-earliest_100_indices = select_earliest_n_train_entries(df, 100)
+# Load CSV and prepare columns
+pathdf = "data/DatenHeliOS/calib_data.csv"
+df = pd.read_csv(pathdf).set_index("id")  # Set df id as index
+df["CreatedAt"] = pd.to_datetime(df["CreatedAt"])
+df["Azimuth"], df["Elevation"] = calculate_az_el(
+    df
+)  # Calculate Azimuth and Elevation from Sun Vector
 
-# Set 'DataSet_hour' to NaN for 'train' entries not in the earliest N indices
-df.loc[(df['DataSet_hour_10'] == 'train') & (~df.index.isin(earliest_10_indices)), 'DataSet_hour_10'] = np.nan
-df.loc[(df['DataSet_hour_50'] == 'train') & (~df.index.isin(earliest_50_indices)), 'DataSet_hour_50'] = np.nan
-df.loc[(df['DataSet_hour_100'] == 'train') & (~df.index.isin(earliest_100_indices)), 'DataSet_hour_100'] = np.nan
+# Apply classification function
+n_train = [10, 50, 100]  # number of train samples per HeliostatId
+m_validation = 30  # number of validation samples per HeliostatId
 
-# Plot updated grouped data, ensuring 'train' set data is present
-grouped = df.dropna(subset=['DataSet_hour_10']).groupby(['HeliostatId', 'DataSet_hour_10']).size().unstack(fill_value=0)
-plot_stacked_bar_chart(grouped, train_split_name="10")
 
-grouped = df.dropna(subset=['DataSet_hour_50']).groupby(['HeliostatId', 'DataSet_hour_50']).size().unstack(fill_value=0)
-plot_stacked_bar_chart(grouped, train_split_name="50")
-
-grouped = df.dropna(subset=['DataSet_hour_100']).groupby(['HeliostatId', 'DataSet_hour_100']).size().unstack(fill_value=0)
-plot_stacked_bar_chart(grouped, train_split_name="100")
-
-# Filter for a specific HeliostatID (change 'example_heliostat_id' to your specific ID)
-filtered_df = df.dropna(subset=['DataSet_hour_50'])
-example_heliostat_id = filtered_df['HeliostatId'].iloc[1]  # Get a specific HeliostatId
-single_heliostat_df = filtered_df[filtered_df['HeliostatId'] == example_heliostat_id]
-
-# Call the plot function
-plot_scatter_az_el(single_heliostat_df, "DataSet_hour", "03_hour_split_example_heliostat.png")
-
-# Save the final dataframe
-df.to_csv('03_hour_split.csv', header=True)
-print(df.head(100))
+for i,n in enumerate(n_train):
+    print(n)
+    df[f"DataSet_Azimuth_{n}"] = df.groupby("HeliostatId", group_keys=False).apply(
+        lambda x: classify_time_split(x, f"DataSet_Azimuth_{n}", n, m_validation)
+    )
+    df = update_datasets_to_nan_if_too_small(
+        df, f"DataSet_Azimuth_{n}", n, m_validation
+    )
+    split_counts_by_heliostat = (
+        df.dropna(subset=[f"DataSet_Azimuth_{n}"])
+        .groupby(["HeliostatId", f"DataSet_Azimuth_{n}"])
+        .size()
+        .unstack(fill_value=0)
+    )
+    example_heliostat_df = df[
+        df["HeliostatId"] == 11447
+    ]  # chosen arbitrary heliostat but with good distribution
+    plot_stacked_bar_chart_with_inset(
+        split_counts_by_heliostat, example_heliostat_df, f"DataSet_Azimuth_{n}"
+    )
