@@ -18,8 +18,14 @@ def classify_azimuth_split(df, split_name, head, tail):
     df.loc[validation_indices, split_name] = "validation"
     return df[split_name]
 
+
 def plot_stacked_bar_chart_with_inset(
-    grouped_df, example_heliostat_df, train_split_name
+    grouped_df,
+    example_heliostat_df,
+    train_split_name,
+    ax=None,
+    show_legend=False,
+    show_ylabel=False,
 ):
     """
     Compute the total measurements for each HeliostatID and plot a stacked bar chart with inset scatter plot.
@@ -28,6 +34,8 @@ def plot_stacked_bar_chart_with_inset(
     - grouped_df: DataFrame containing measurements grouped by HeliostatID
     - example_heliostat_df: DataFrame containing example heliostat data
     - train_split_name: Name of the training split
+    - ax: Axes object to plot on. If None, a new figure will be created.
+    - show_legend: Whether to show the legend (default is False)
 
     Returns:
     None
@@ -40,7 +48,8 @@ def plot_stacked_bar_chart_with_inset(
 
     bar_width = 2  # Bar width
 
-    _ , ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects
+    if ax is None:
+        _, ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects
 
     # Plot each layer of the stacked bar chart
     ax.bar(
@@ -78,7 +87,13 @@ def plot_stacked_bar_chart_with_inset(
         0, 610
     )  # Ensure y-axis starts at 0 and ends at the number of heliostats
 
-    ax.legend(bbox_to_anchor=(0.5, 0.95), loc="center left", ncol=3)
+    if show_legend:
+        ax.legend(bbox_to_anchor=(0.3, 1.05), loc="center left", ncol=3)
+
+    if show_ylabel:
+        ax.set_ylabel("# Measurements per Heliostat")
+    else:
+        ax.set_ylabel(None)  # Remove y-label
     # Create an inset for the scatter plot
     ax_inset = inset_axes(
         ax,
@@ -98,10 +113,6 @@ def plot_stacked_bar_chart_with_inset(
     ax_inset.set_xlabel("Azimuth")
     ax_inset.set_ylabel("Elevation")
     ax_inset.set_title("Example Heliostat")
-
-    plt.tight_layout()  # Adjust layout to prevent clipping of labels
-    plt.savefig(f"03_{train_split_name}.png", dpi=300)
-    plt.savefig(f"03_{train_split_name}.pdf", dpi=300)
 
 
 def update_datasets_to_nan_if_too_small(df, column, n_train, m_validation):
@@ -151,11 +162,11 @@ n_train = [10, 50, 100]  # number of train samples per HeliostatId
 m_validation = 30  # number of validation samples per HeliostatId
 
 
-for i,n in enumerate(n_train):
-    print(n)
+fig, axes = plt.subplots(1, len(n_train), figsize=(32, 6), sharey=True)
+
+for i, n in enumerate(n_train):
     df[f"DataSet_Azimuth_{n}"] = df.groupby("HeliostatId", group_keys=False).apply(
-        lambda x: classify_azimuth_split(x, f"DataSet_Azimuth_{n}", n, m_validation)
-    )
+        lambda x: classify_azimuth_split(x, f"DataSet_Azimuth_{n}", n, m_validation), include_groups=False)
     df = update_datasets_to_nan_if_too_small(
         df, f"DataSet_Azimuth_{n}", n, m_validation
     )
@@ -165,9 +176,17 @@ for i,n in enumerate(n_train):
         .size()
         .unstack(fill_value=0)
     )
-    example_heliostat_df = df[
-        df["HeliostatId"] == 11447
-    ]  # chosen arbitrary heliostat but with good distribution
+    example_heliostat_df = df[df["HeliostatId"] == 11447]  # arbitrary heliostat
     plot_stacked_bar_chart_with_inset(
-        split_counts_by_heliostat, example_heliostat_df, f"DataSet_Azimuth_{n}"
+        split_counts_by_heliostat,
+        example_heliostat_df,
+        f"DataSet_Azimuth_{n}",
+        ax=axes[i],
+        show_legend=(i == 1),  # Show legend only for the first subplot
+        show_ylabel=(i == 0),
     )
+plt.tight_layout()
+
+plt.savefig("03_combined_plots.png", dpi=300)
+plt.savefig("03_combined_plots.pdf", dpi=300)
+plt.show()
