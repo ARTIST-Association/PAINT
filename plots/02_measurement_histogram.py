@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from utils import calculate_az_el
+from paint.util.utils import calculate_az_el
 import matplotlib.gridspec as gridspec
 
 def create_histogram(ax, df, column, bins=20, x_ticks=None):
@@ -71,5 +71,5 @@ plt.savefig('02_histograms.png')  # Save the combined figure
 plt.savefig('02_histograms.pdf')
 plt.close
 
-create_joint_plot(df_measurements, 'Azimuth', 'Elevation', width=10, height=10)
+# create_joint_plot(df_measurements, 'Azimuth', 'Elevation', width=10, height=10)
 create_joint_plot(df_measurements, 'TargetOffsetE', 'TargetOffsetU', width=10, height=10, xlim=(-20,3), ylim=(121, 140))
