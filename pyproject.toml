@@ -21,6 +21,8 @@ dependencies = [
     "torch",
     "matplotlib",
     "colorlog",
+    "pandas",
+    "wetterdienst",
 ]
 
 [project.optional-dependencies]
