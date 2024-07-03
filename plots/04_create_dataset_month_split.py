@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-from utils import calculate_az_el
+from paint.util.utils import calculate_az_el
 
 
 # Function to classify time of day
