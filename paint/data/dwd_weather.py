@@ -1,8 +1,8 @@
 import argparse
 import pathlib
 from typing import List, Tuple
-import h5py
 
+import h5py
 import pandas as pd
 from wetterdienst import Settings
 from wetterdienst.provider.dwd.observation import DwdObservationRequest
@@ -80,8 +80,8 @@ class DWDWeatherData:
         """
         Download the raw data using the DWD Wetterdienst pacakge.
 
-        Returns:
-        --------
+        Returns
+        -------
         pd.DataFrame
             The metadata for each weather station included in the 10min temporal resolution data request.
         pd.DataFrame
@@ -113,7 +113,9 @@ class DWDWeatherData:
             request_1h.values.all().df.to_pandas(),
         )
 
-    def download_and_process_data(self) -> None:
+    def download_and_save_data(self) -> None:
+        """Download the desired DWD weather data and save it to an HDF5 file."""
+        # Download the data.
         metadata_10min, metadata_1h, df_10min, df_1h = self._get_raw_data()
 
         assert metadata_10min.shape == metadata_1h.shape, (
@@ -122,6 +124,7 @@ class DWDWeatherData:
             "https://wetterdienst.readthedocs.io/en/latest/data/coverage/dwd/observation.html"
         )
 
+        # Create HDF5 file.
         with h5py.File(self.output_path / self.file_name, "w") as file:
             # Include metadata for each station included in the download
             for station_id in self.station_ids:
@@ -142,25 +145,25 @@ class DWDWeatherData:
                     metadata_1h.station_id == station_id
                 ].state.values[0]
 
-            # Include parameters at a 10min temporal resolution
+            # Include parameters at a 10min temporal resolution.
             grouped_10min = df_10min.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_10min:
-                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time"] = (
-                    group.date.dt.strftime("%Y-%m-%d").to_numpy()
-                )
-                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value"] = (
-                    group.value.to_numpy()
-                )
+                file[
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time"
+                ] = group.date.dt.strftime("%Y-%m-%d").to_numpy()
+                file[
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value"
+                ] = group.value.to_numpy()
 
-            # Include parameters at a 1h temporal resolution
+            # Include parameters at a 1h temporal resolution.
             grouped_1h = df_1h.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_1h:
-                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time"] = (
-                    group.date.dt.strftime("%Y-%m-%d").to_numpy()
-                )
-                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value"] = (
-                    group.value.to_numpy()
-                )
+                file[
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time"
+                ] = group.date.dt.strftime("%Y-%m-%d").to_numpy()
+                file[
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value"
+                ] = group.value.to_numpy()
 
 
 if __name__ == "__main__":
@@ -204,4 +207,4 @@ if __name__ == "__main__":
         ts_humanize=args.ts_humanize,
         ts_si_units=args.ts_si_units,
     )
-    dwd_weather.download_and_process_data()
+    dwd_weather.download_and_save_data()
