@@ -150,7 +150,9 @@ class DWDWeatherData:
             for (station_id, parameter), group in grouped_10min:
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time"
-                ] = group.date.dt.strftime("%Y-%m-%d").to_numpy()
+                ] = group.date.dt.strftime("%Y-%m-%d %H:%M:%S").to_numpy(
+                    dtype=h5py.string_dtype(encoding="utf-8")
+                )
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value"
                 ] = group.value.to_numpy()
@@ -160,7 +162,9 @@ class DWDWeatherData:
             for (station_id, parameter), group in grouped_1h:
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time"
-                ] = group.date.dt.strftime("%Y-%m-%d").to_numpy()
+                ] = group.date.dt.strftime("%Y-%m-%d %H:%M:%S").to_numpy(
+                    dtype=h5py.string_dtype(encoding="utf-8")
+                )
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value"
                 ] = group.value.to_numpy()
