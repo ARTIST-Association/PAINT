@@ -23,6 +23,7 @@ dependencies = [
     "colorlog",
     "pandas",
     "wetterdienst",
+    "h5py",
 ]
 
 [project.optional-dependencies]
