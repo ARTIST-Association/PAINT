@@ -15,7 +15,7 @@ from paint.data.dwd_mappings import dwd_parameter_mapping
 
 class DWDWeatherData:
     """
-    Download and save DWD Weather data in a HDF5 file.
+    Download and save DWD weather data in a HDF5 file.
 
     This class enables DWD weather data to be downloaded in either a 10-minute or 1-hour resolution from selected
     weather stations. The data is then saved as an HDF5 file, either grouped by resolution or by parameter.
