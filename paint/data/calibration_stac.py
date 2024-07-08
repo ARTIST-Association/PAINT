@@ -81,22 +81,31 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": f"./{mappings.CALIBRATION_COLLECTION_URL}",
+                "href": mappings.CALIBRATION_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "collection",
-                "href": f"./{mappings.CALIBRATION_COLLECTION_URL}",
+                "href": mappings.CALIBRATION_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
+        ]
+        + [
+            {
+                "rel": "item",
+                "href": mappings.CALIBRATION_ITEM_URL % image,
+                "type": mappings.MIME_GEOJSON,
+                "title": f"STAC item of image {image}",
+            }
+            for image, _ in data.iterrows()
         ],
         "item_assets": {
             "target": {
@@ -228,7 +237,9 @@ def convert(arguments: argparse.Namespace) -> None:
 
     # generate the STAC item files for each image
     for image, heliostat_data in data.iterrows():
-        with open(arguments.output / f"{image}-item-stac.json", "w") as handle:
+        with open(
+            arguments.output / (mappings.CALIBRATION_ITEM % image), "w"
+        ) as handle:
             stac_item = make_item(image, heliostat_data)
             json.dump(stac_item, handle)
 
@@ -240,8 +251,18 @@ def convert(arguments: argparse.Namespace) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-i", "--input", type=pathlib.Path, default="dataframe.csv")
-    parser.add_argument("-o", "--output", type=pathlib.Path, default="stac")
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=pathlib.Path,
+        default="/Users/mgoetz/Downloads/ExampleDataKIT/dataframe.csv",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=pathlib.Path,
+        default="/Users/mgoetz/Downloads/ExampleDataKIT/stac",
+    )
     args = parser.parse_args()
 
     convert(args)

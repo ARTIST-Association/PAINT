@@ -61,6 +61,7 @@ POWER_PLANT_GPPD_ID = "WRI1030197"
 POWER_PLANT_LAT = 50.913296351383806
 POWER_PLANT_LON = 6.387514846666862
 
+CATALOG = "Catalog"
 COLLECTION = "Collection"
 FEATURE = "Feature"
 
@@ -69,6 +70,9 @@ TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
 
+CATALOG_ID = f"{POWER_PLANT_GPPD_ID}-catalog"
+CATALOG_FILE = f"{POWER_PLANT_GPPD_ID}-catalog-stac.json"
+
 CATALOGUE_URL = (
     "https://zenodo.org/record/elcatalogo/files/catalogue-stac.json?download=1"
 )
@@ -76,3 +80,7 @@ CATALOGUE_URL = (
 CALIBRATION_COLLECTION_ID = f"{POWER_PLANT_GPPD_ID}-calibration"
 CALIBRATION_COLLECTION_FILE = f"{POWER_PLANT_GPPD_ID}-calibration-stac.json"
 CALIBRATION_COLLECTION_URL = f"https://zenodo.org/record/loscalibrationes/files/{CALIBRATION_COLLECTION_FILE}?download=1"
+CALIBRATION_ITEM = "%d-calibration-item-stac.json"
+CALIBRATION_ITEM_URL = (
+    f"https://zenodo.org/record/loscalibrationes/files/{CALIBRATION_ITEM}"
+)
