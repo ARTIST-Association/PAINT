@@ -22,7 +22,9 @@ dependencies = [
     "torch",
     "matplotlib",
     "colorlog",
-    "wetterdienst"
+    "wetterdienst",
+    "h5py",
+    "seaborn"
 ]
 
 [project.optional-dependencies]

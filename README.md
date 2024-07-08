@@ -1,8 +1,13 @@
+<p align="center">
+<img src="logo.svg" alt="logo" width="450"/>
+</p>
+
 # PAINT
 
 [![](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![](https://img.shields.io/badge/Contact-artist%40lists.kit.edu-orange?label=Contact)](artist@lists.kit.edu)
+![](./coverage.svg)
 
 ## What is ``PAINT``
 
