@@ -5,10 +5,10 @@ import json
 import pathlib
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
+import paint.util.utils as utils
 
 
 def make_collection(data: pd.DataFrame) -> dict[str, Any]:
@@ -25,8 +25,6 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
     dict[str, Any]
         The STAC collection as dictionary.
     """
-    azimuths = np.rad2deg(data["SunPosN"] * 0.5 * np.pi)
-
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA, mappings.CSP_SCHEMA],
@@ -35,16 +33,16 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
         "title": f"Calibration images of CSP {mappings.POWER_PLANT_GPPD_ID}",
         "description": f"All calibration images of the concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID} in Jülich, Germany",
         "keywords": ["csp", "calibration", "tracking"],
-        "license": mappings.CDLA,
+        "license": mappings.LICENSE,
         "providers": [mappings.DLR, mappings.KIT],
         "extent": {
             "spatial": {
                 "bbox": [
                     [
-                        6.387514846666862,
-                        50.913296351383806,
-                        6.387514846666862,
-                        50.913296351383806,
+                        mappings.POWER_PLANT_LON,
+                        mappings.POWER_PLANT_LAT,
+                        mappings.POWER_PLANT_LON,
+                        mappings.POWER_PLANT_LAT,
                     ]
                 ]
             },
@@ -69,43 +67,41 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
                 .max()
                 .strftime(mappings.TIME_FORMAT),
             },
-            "view:sun_azimuth": {"minimum": azimuths.min(), "maximum": azimuths.max()},
-            "view:sun_elevation": {
-                "minimum": np.rad2deg(data["SunPosU"]).min(),
-                "maximum": np.rad2deg(data["SunPosU"]).max(),
+            "view:sun_azimuth": {
+                "minimum": data[mappings.AZIMUTH].min(),
+                "maximum": data[mappings.AZIMUTH].max(),
             },
-            "instruments": list(data["System"].unique()),
+            "view:sun_elevation": {
+                "minimum": data[mappings.ELEVATION].min(),
+                "maximum": data[mappings.ELEVATION].max(),
+            },
+            "instruments": list(data[mappings.SYSTEM].unique()),
         },
         "links": [
-            {
-                "rel": "license",
-                "href": "https://cdla.dev/permissive-2-0/",
-                "type": "text/html",
-                "title": "Community Data License Agreement – Permissive – Version 2.0",
-            },
+            mappings.LICENSE_LINK,
             {
                 "rel": "self",
                 "href": f"./{mappings.CALIBRATION_COLLECTION_URL}",
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CALIBRATION_COLLECTION_URL}",
-                "type": "application/geo+json",
-                "title": "Reference to this STAC collection file",
+                "href": f"./{mappings.CATALOGUE_URL}",
+                "type": mappings.MIME_GEOJSON,
+                "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "collection",
                 "href": f"./{mappings.CALIBRATION_COLLECTION_URL}",
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
         ],
         "item_assets": {
             "target": {
                 "roles": ["data"],
-                "type": "image/png",
+                "type": mappings.MIME_PNG,
                 "title": "Calibration images of heliostats",
             }
         },
@@ -136,12 +132,12 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
         ],
         "id": f"{image}",
         "type": "Feature",
-        "title": f"Calibration data of heliostat {image}",
+        "title": f"Calibration of heliostat {image}",
         "description": f"Images of focused sunlight on the calibration target of heliostat {image}",
         "collection": mappings.CALIBRATION_COLLECTION_ID,
         "geometry": {
             "type": "Point",
-            "coordinates": [6.387514846666862, 50.913296351383806],
+            "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
         },
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
@@ -153,23 +149,18 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
             "updated": heliostat_data[mappings.UPDATED_AT].strftime(
                 mappings.TIME_FORMAT
             ),
-            "instruments": [heliostat_data["System"]],
+            "instruments": [heliostat_data[mappings.SYSTEM]],
         },
-        "view:sun_azimuth": np.rad2deg(heliostat_data["SunPosN"] * 0.5 * np.pi),
-        "view:sun_elevation": np.rad2deg(heliostat_data["SunPosU"]),
+        "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
+        "view:sun_elevation": heliostat_data[mappings.ELEVATION],
         "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:target": {
-            "csp:target_id": heliostat_data["CalibrationTargetId"],
-            "csp:target_offset_e": heliostat_data["TargetOffsetE"],
-            "csp:target_offset_n": heliostat_data["TargetOffsetN"],
-            "csp:target_offset_u": heliostat_data["TargetOffsetU"],
-        },
+        "csp:target_id": heliostat_data[mappings.CALIBRATION_TARGET],
         "csp:heliostats": [
             {
-                "csp:heliostat_id": image,
+                "csp:heliostat_id": heliostat_data[mappings.HELIOSTAT_ID],
                 "csp:heliostat_motors": [
-                    heliostat_data["Axis1MotorPosition"],
-                    heliostat_data["Axis2MotorPosition"],
+                    heliostat_data[mappings.AXIS1_MOTOR],
+                    heliostat_data[mappings.AXIS2_MOTOR],
                 ],
             }
         ],
@@ -182,9 +173,9 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
             },
             {
                 "rel": "root",
-                "href": f"{mappings.CALIBRATION_COLLECTION_URL}/{mappings.CALIBRATION_COLLECTION_FILE}",
-                "type": "application/geo+json",
-                "title": "Reference to the collection STAC file",
+                "href": f"./{mappings.CATALOGUE_URL}",
+                "type": mappings.MIME_GEOJSON,
+                "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "parent",
@@ -203,32 +194,11 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
             "target": {
                 "href": f"../{image}.png",
                 "roles": ["data"],
-                "type": "image/png",
+                "type": mappings.MIME_PNG,
                 "title": f"Calibration image of heliostat with id {image}",
             }
         },
     }
-
-
-def to_utc(time_series: pd.Series) -> pd.Series:
-    """
-    Parse local datetime strings and convert to UTC.
-
-    Parameters
-    ----------
-    time_series : pd.Series
-        The series containing the local datetime strings.
-
-    Returns
-    -------
-    pd.Series
-        The corresponding UTC datetime objects.
-    """
-    return (
-        pd.to_datetime(time_series)
-        .dt.tz_localize("Europe/Berlin", ambiguous="infer")
-        .dt.tz_convert("UTC")
-    )
 
 
 def convert(arguments: argparse.Namespace) -> None:
@@ -245,16 +215,21 @@ def convert(arguments: argparse.Namespace) -> None:
 
     # read in the data in CSV
     data = pd.read_csv(arguments.input)
-    data.set_index(mappings.HELIOSTAT_ID, inplace=True)
+    data.set_index(mappings.ID_INDEX, inplace=True)
 
     # convert all timestamps to UTC
-    data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
-    data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
+    data[mappings.CREATED_AT] = utils.to_utc(data[mappings.CREATED_AT])
+    data[mappings.UPDATED_AT] = utils.to_utc(data[mappings.UPDATED_AT])
+
+    # compute azimuth and elevation
+    azimuth, elevation = utils.calculate_azimuth_and_elevation(data)
+    data[mappings.AZIMUTH] = azimuth
+    data[mappings.ELEVATION] = elevation
 
     # generate the STAC item files for each image
-    for heliostat, heliostat_data in data.iterrows():
-        with open(arguments.output / f"{heliostat}-stac.json", "w") as handle:
-            stac_item = make_item(heliostat, heliostat_data)
+    for image, heliostat_data in data.iterrows():
+        with open(arguments.output / f"{image}-item-stac.json", "w") as handle:
+            stac_item = make_item(image, heliostat_data)
             json.dump(stac_item, handle)
 
     # generate the STAC collection
