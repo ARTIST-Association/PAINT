@@ -1,4 +1,6 @@
-![PAINT Logo](logo.svg)
+<p align="center">
+<img src="logo.svg" alt="logo" width="450"/>
+</p>
 
 # PAINT
 
