@@ -18,9 +18,11 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "pandas",
     "torch",
     "matplotlib",
     "colorlog",
+    "wetterdienst"
 ]
 
 [project.optional-dependencies]
