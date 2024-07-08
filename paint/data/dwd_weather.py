@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import argparse
 import pathlib
 from typing import List, Tuple
@@ -115,7 +117,7 @@ class DWDWeatherData:
 
     def download_and_save_data(self) -> None:
         """Download the desired DWD weather data and save it to an HDF5 file."""
-        # Download the data.
+        # download the data
         metadata_10min, metadata_1h, df_10min, df_1h = self._get_raw_data()
 
         assert metadata_10min.shape == metadata_1h.shape, (
@@ -124,9 +126,9 @@ class DWDWeatherData:
             "https://wetterdienst.readthedocs.io/en/latest/data/coverage/dwd/observation.html"
         )
 
-        # Create HDF5 file.
+        # create HDF5 file
         with h5py.File(self.output_path / self.file_name, "w") as file:
-            # Include metadata for each station included in the download
+            # include metadata for each station included in the download
             for station_id in self.station_ids:
                 file.create_group(station_id)
                 file[station_id].attrs["latitude"] = metadata_1h[
@@ -145,24 +147,24 @@ class DWDWeatherData:
                     metadata_1h.station_id == station_id
                 ].state.values[0]
 
-            # Include parameters at a 10min temporal resolution.
+            # include parameters at a 10min temporal resolution
             grouped_10min = df_10min.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_10min:
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time"
-                ] = group.date.dt.strftime("%Y-%m-%d %H:%M:%S").to_numpy(
+                ] = group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
                     dtype=h5py.string_dtype(encoding="utf-8")
                 )
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value"
                 ] = group.value.to_numpy()
 
-            # Include parameters at a 1h temporal resolution.
+            # include parameters at a 1h temporal resolution
             grouped_1h = df_1h.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_1h:
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time"
-                ] = group.date.dt.strftime("%Y-%m-%d %H:%M:%S").to_numpy(
+                ] = group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
                     dtype=h5py.string_dtype(encoding="utf-8")
                 )
                 file[
