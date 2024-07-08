@@ -255,13 +255,13 @@ if __name__ == "__main__":
         "-i",
         "--input",
         type=pathlib.Path,
-        default="/Users/mgoetz/Downloads/ExampleDataKIT/dataframe.csv",
+        default="dataframe.csv",
     )
     parser.add_argument(
         "-o",
         "--output",
         type=pathlib.Path,
-        default="/Users/mgoetz/Downloads/ExampleDataKIT/stac",
+        default="stac",
     )
     args = parser.parse_args()
 
