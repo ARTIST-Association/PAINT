@@ -24,7 +24,8 @@ dependencies = [
     "colorlog",
     "wetterdienst",
     "h5py",
-    "seaborn"
+    "seaborn",
+    "deepdiff"
 ]
 
 [project.optional-dependencies]
@@ -37,8 +38,7 @@ dev = [
     "sphinx-autoapi",
     "sphinx-rtd-theme",
     "sphinxcontrib-napoleon",
-    "sphinxemoji",
-    "deepdiff"
+    "sphinxemoji"
 ]
 
 [project.urls]
