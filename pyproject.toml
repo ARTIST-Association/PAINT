@@ -38,6 +38,7 @@ dev = [
     "sphinx-rtd-theme",
     "sphinxcontrib-napoleon",
     "sphinxemoji",
+    "deepdiff"
 ]
 
 [project.urls]

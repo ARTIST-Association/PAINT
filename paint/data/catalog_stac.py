@@ -3,20 +3,21 @@
 import argparse
 import json
 import pathlib
+from typing import Any
 
 import paint.util.paint_mappings as mappings
 
 
-def make_catalog(arguments: argparse.Namespace) -> None:
+def make_catalog() -> dict[str, Any]:
     """
     Generate the catalog STAC.
 
-    Parameters
-    ----------
-    arguments: argparse.Namespace
-        The arguments containing the output path.
+    Returns
+    -------
+    dict[str, Any]
+        The STAC catalog as dictionary
     """
-    catalog = {
+    return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [],
         "id": mappings.CATALOG_ID,
@@ -24,7 +25,6 @@ def make_catalog(arguments: argparse.Namespace) -> None:
         "title": f"Operational data of concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID}",
         "description": "Calibration images, deflectometry measurements, kinematics and weather data",
         "links": [
-            mappings.LICENSE_LINK,
             {
                 "rel": "self",
                 "href": mappings.CATALOGUE_URL,
@@ -46,6 +46,19 @@ def make_catalog(arguments: argparse.Namespace) -> None:
         ],
     }
 
+
+def save_catalog(arguments: argparse.Namespace, catalog: dict[str, Any]) -> None:
+    """
+    Save a catalog to disk.
+
+    Parameters
+    ----------
+    arguments: argparse.Namespace
+        The arguments containing the output path.
+    catalog: dict[str, Any]
+        The STAC catalog as dictionary.
+    """
+    arguments.output.mkdir(parents=True, exist_ok=True)
     with open(arguments.output / mappings.CATALOG_FILE, "w") as handle:
         json.dump(catalog, handle)
 
@@ -55,4 +68,4 @@ if __name__ == "__main__":
     parser.add_argument("-o", "--output", type=pathlib.Path, default="stac")
     args = parser.parse_args()
 
-    make_catalog(args)
+    save_catalog(args, make_catalog())
