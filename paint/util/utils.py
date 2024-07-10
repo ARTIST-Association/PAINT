@@ -22,24 +22,25 @@ def calculate_azimuth_and_elevation(df: pd.DataFrame) -> Tuple[np.ndarray, np.nd
     np.ndarray
         The calculated elevation in degrees.
     """
-    # Extract sun positions in each coordinate.
+    # extract sun positions in each coordinate
     sun_position_east = np.array(df[mappings.SUN_POSITION_EAST])
     sun_position_north = -np.array(df[mappings.SUN_POSITION_NORTH])
     sun_position_up = np.array(df[mappings.SUN_POSITION_UP])
 
-    # Calculate azimuth and evaluation and return.
+    # calculate azimuth and evaluation and return.
     azimuth_degree = np.degrees(np.arctan2(sun_position_east, sun_position_north))
     elevation_degree = np.degrees(
         np.arctan2(
             sun_position_up, np.sqrt(sun_position_east**2 + sun_position_north**2)
         )
     )
+
     return azimuth_degree, elevation_degree
 
 
-def heliostat_id_to_heliostat_name(heliostat_id: Union[int, str]) -> str:
+def heliostat_id_to_name(heliostat_id: Union[int, str]) -> str:
     """
-    Convert a heliostat id to a heliostat name.
+    Convert a heliostat id to its name.
 
     Parameters
     ----------
@@ -52,10 +53,9 @@ def heliostat_id_to_heliostat_name(heliostat_id: Union[int, str]) -> str:
         The heliostat name derived from the heliostat ID.
     """
     str_ = str(heliostat_id)
-    name = chr(ord("A") + int(str_[0]) - 1)
-    name += chr(ord("A") + int(str_[1:3]) - 1)
-    name += str_[3:]
-    return name
+    return "".join(
+        [chr(ord("A") + int(str_[0]) - 1), chr(ord("A") + int(str_[1:3]) - 1), str_[3:]]
+    )
 
 
 def to_utc(time_series: pd.Series) -> pd.Series:
