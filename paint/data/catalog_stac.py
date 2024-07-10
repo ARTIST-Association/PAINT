@@ -3,12 +3,12 @@
 import argparse
 import json
 import pathlib
-from typing import Any
+from typing import Any, Dict
 
 import paint.util.paint_mappings as mappings
 
 
-def make_catalog() -> dict[str, Any]:
+def make_catalog() -> Dict[str, Any]:
     """
     Generate the catalog STAC.
 
@@ -47,7 +47,7 @@ def make_catalog() -> dict[str, Any]:
     }
 
 
-def save_catalog(arguments: argparse.Namespace, catalog: dict[str, Any]) -> None:
+def save_catalog(arguments: argparse.Namespace, catalog: Dict[str, Any]) -> None:
     """
     Save a catalog to disk.
 
