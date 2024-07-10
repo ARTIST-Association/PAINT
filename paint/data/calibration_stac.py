@@ -3,7 +3,7 @@
 import argparse
 import json
 import pathlib
-from typing import Any
+from typing import Any, Dict
 
 import pandas as pd
 
@@ -11,7 +11,7 @@ import paint.util.paint_mappings as mappings
 import paint.util.utils as utils
 
 
-def make_collection(data: pd.DataFrame) -> dict[str, Any]:
+def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
     """
     Generate the STAC collection.
 
@@ -117,7 +117,7 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
     }
 
 
-def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
+def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
     """
     Generate a STAC item for an image.
 
@@ -163,7 +163,6 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
         "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
         "view:sun_elevation": heliostat_data[mappings.ELEVATION],
         "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:target_id": heliostat_data[mappings.CALIBRATION_TARGET],
         "csp:heliostats": [
             {
                 "csp:heliostat_id": heliostat_data[mappings.HELIOSTAT_ID],
@@ -188,13 +187,13 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
             },
             {
                 "rel": "parent",
-                "href": f"{mappings.CALIBRATION_COLLECTION_URL}/{mappings.CALIBRATION_COLLECTION_FILE}",
+                "href": mappings.CALIBRATION_COLLECTION_URL,
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": f"{mappings.CALIBRATION_COLLECTION_URL}/{mappings.CALIBRATION_COLLECTION_FILE}",
+                "href": mappings.CALIBRATION_COLLECTION_URL,
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },

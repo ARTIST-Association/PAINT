@@ -36,14 +36,12 @@ ITEM_ASSETS_SCHEMA = (
 )
 CSP_SCHEMA = f"https://stac-extensions.github.io/csp/v{STAC_VERSION}/schema.json"
 LICENSE = "CDLA-2.0"
-LICENSE_LINK = (
-    {
-        "rel": "license",
-        "href": "https://cdla.dev/permissive-2-0/",
-        "type": "text/html",
-        "title": "Community Data License Agreement – Permissive – Version 2.0",
-    },
-)
+LICENSE_LINK = {
+    "rel": "license",
+    "href": "https://cdla.dev/permissive-2-0/",
+    "type": "text/html",
+    "title": "Community Data License Agreement – Permissive – Version 2.0",
+}
 PAINT_URL = "https://github.com/ARTIST-Association/PAINT/"
 DLR = {
     "name": "German Aerospace Center (DLR)",
