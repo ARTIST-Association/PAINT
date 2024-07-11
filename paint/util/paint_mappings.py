@@ -60,6 +60,7 @@ KIT = {
 POWER_PLANT_GPPD_ID = "WRI1030197"
 POWER_PLANT_LAT = 50.913296351383806
 POWER_PLANT_LON = 6.387514846666862
+POWER_PLANT_ALT = 87
 
 CATALOG = "Catalog"
 COLLECTION = "Collection"
@@ -84,3 +85,17 @@ CALIBRATION_ITEM = "%d-calibration-item-stac.json"
 CALIBRATION_ITEM_URL = (
     f"https://zenodo.org/record/loscalibrationes/files/{CALIBRATION_ITEM}"
 )
+
+HELIOSTAT_PROPERTY_COLLECTION_ID = f"{POWER_PLANT_GPPD_ID}-heliostat_property"
+HELIOSTAT_PROPERTY_COLLECTION_FILE = f"{POWER_PLANT_GPPD_ID}-heliostat_property-stac.json"
+HELIOSTAT_PROPERTY_COLLECTION_URL = f"https://zenodo.org/record/losheliostat_propertiones/files/{HELIOSTAT_PROPERTY_COLLECTION_FILE}?download=1"
+HELIOSTAT_PROPERTY_ITEM = "%d-heliostat_property-item-stac.json"
+HELIOSTAT_PROPERTY_ITEM_URL = (
+    f"https://zenodo.org/record/loscalibrationes/files/{HELIOSTAT_PROPERTY_ITEM}"
+)
+
+
+# Constants for WGS84
+WGS84_A = 6378137.0  # Major axis in meters
+WGS84_B = 6356752.314245  # Minor axis in meters
+WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
