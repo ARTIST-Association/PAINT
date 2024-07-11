@@ -243,8 +243,26 @@ def prepare_heliostat_positions_for_concatenation(arguments: argparse.Namespace)
     df_heliostat_positions = pd.read_excel(arguments.input_position, header=0)
     df_heliostat_positions.set_index(
             mappings.INTERNAL_NAME_INDEX, inplace=True
-        ) 
+        )
+    df_heliostat_positions.rename_axis('HeliostatId', inplace=True)
+    # Drop the specified columns
+    df_heliostat_positions.drop(columns=['RowName', 'Number', 'ColumnName'], inplace=True)
+    
+    # Rename the columns
+    df_heliostat_positions.rename(columns={
+        'x': 'East',
+        'y': 'North',
+        'z': 'Altitude',
+        'Spalte1': 'Heliostat Size'
+    }, inplace=True)
+    
     return df_heliostat_positions
+
+def merge_and_sort_df(df_heliostat_positions: pd.DataFrame, df_axis: pd.DataFrame) -> pd.DataFrame:
+    df_concatenated = pd.concat([df_heliostat_positions, df_axis], axis=1, join='inner')
+    created_at = df_concatenated.pop('CreatedAt')
+    df_concatenated.insert(0, 'CreatedAt', created_at)
+    return df_concatenated
 def convert(arguments: argparse.Namespace) -> None:
     """
     Convert an internal CSV file to STAC.
@@ -260,9 +278,8 @@ def convert(arguments: argparse.Namespace) -> None:
     # read in the data in CSV
 
     df_heliostat_positions = prepare_heliostat_positions_for_concatenation(arguments)
-    print(df_heliostat_positions)
     df_axis = prepare_axis_file_for_concatenation(arguments)
-    df_concatenated = pd.concat([df_heliostat_positions, df_axis], axis=1, join='inner')
+    df_concatenated = merge_and_sort_df(df_heliostat_positions, df_axis)
 
     # generate the STAC collection
     with open(arguments.output / mappings.CALIBRATION_COLLECTION_FILE, "w") as handle:
@@ -292,7 +309,7 @@ def main(args):
 
 if __name__ == "__main__":
     # Simulate command-line arguments for testing or direct script execution
-    sys.argv = ["heliostat_properties_stac.py", "-i_position", "data/Heliostatpositionen_xyz.xlsx", "-i_axis", "data/axis_data.csv", "-o", "stac"]
+    sys.argv = ["heliostat_properties_stac.py", "-i_position", "data/Heliostatpositionen_xyz.xlsx", "-i_axis", "data/axis_data.csv", "-o", "stac/heliostat_property_collection"]
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
