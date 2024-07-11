@@ -28,11 +28,11 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA, mappings.CSP_SCHEMA],
-        "id": mappings.CALIBRATION_COLLECTION_ID,
+        "id": mappings.HELIOSTAT_PROPERTY_COLLECTION_ID,
         "type": mappings.COLLECTION,
-        "title": f"Calibration images of CSP {mappings.POWER_PLANT_GPPD_ID}",
-        "description": f"All calibration images of the concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID} in Jülich, Germany",
-        "keywords": ["csp", "calibration", "tracking"],
+        "title": f"Heliostat properties of CSP {mappings.POWER_PLANT_GPPD_ID}",
+        "description": f"Properties of the heliostats of the concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID} in Jülich, Germany. These properties include their meausred position and their construction details.",
+        "keywords": ["csp", "heliostat", "position", "construction",],
         "license": mappings.LICENSE,
         "providers": [mappings.DLR, mappings.KIT],
         "extent": {
@@ -81,7 +81,7 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.HELIOSTAT_PROPERTY_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -93,7 +93,7 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
             },
             {
                 "rel": "collection",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.HELIOSTAT_PROPERTY_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -101,7 +101,7 @@ def make_collection(data: pd.DataFrame) -> dict[str, Any]:
         + [
             {
                 "rel": "item",
-                "href": mappings.CALIBRATION_ITEM_URL % image,
+                "href": mappings.HELIOSTAT_PROPERTY_ITEM_URL % image,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"STAC item of image {image}",
             }
@@ -143,7 +143,7 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
         "type": "Feature",
         "title": f"Calibration of heliostat {image}",
         "description": f"Images of focused sunlight on the calibration target of heliostat {image}",
-        "collection": mappings.CALIBRATION_COLLECTION_ID,
+        "collection": mappings.HELIOSTAT_PROPERTY_COLLECTION_ID,
         "geometry": {
             "type": "Point",
             "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
@@ -163,7 +163,7 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
         "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
         "view:sun_elevation": heliostat_data[mappings.ELEVATION],
         "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:target_id": heliostat_data[mappings.CALIBRATION_TARGET],
+        "csp:target_id": heliostat_data[mappings.HELIOSTAT_PROPERTY_TARGET],
         "csp:heliostats": [
             {
                 "csp:heliostat_id": heliostat_data[mappings.HELIOSTAT_ID],
@@ -188,13 +188,13 @@ def make_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
             },
             {
                 "rel": "parent",
-                "href": f"{mappings.CALIBRATION_COLLECTION_URL}/{mappings.CALIBRATION_COLLECTION_FILE}",
+                "href": f"{mappings.HELIOSTAT_PROPERTY_COLLECTION_URL}/{mappings.HELIOSTAT_PROPERTY_COLLECTION_FILE}",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": f"{mappings.CALIBRATION_COLLECTION_URL}/{mappings.CALIBRATION_COLLECTION_FILE}",
+                "href": f"{mappings.HELIOSTAT_PROPERTY_COLLECTION_URL}/{mappings.HELIOSTAT_PROPERTY_COLLECTION_FILE}",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
@@ -282,20 +282,20 @@ def convert(arguments: argparse.Namespace) -> None:
     df_concatenated = merge_and_sort_df(df_heliostat_positions, df_axis)
 
     # generate the STAC collection
-    with open(arguments.output / mappings.CALIBRATION_COLLECTION_FILE, "w") as handle:
+    with open(arguments.output / mappings.HELIOSTAT_PROPERTY_COLLECTION_FILE, "w") as handle:
         stac_item = make_collection(df_concatenated)
         json.dump(stac_item, handle)
 
     # generate the STAC item files for each image
     for image, heliostat_data in data.iterrows():
         with open(
-            arguments.output / (mappings.CALIBRATION_ITEM % image), "w"
+            arguments.output / (mappings.HELIOSTAT_PROPERTY_ITEM % image), "w"
         ) as handle:
             stac_item = make_item(image, heliostat_data)
             json.dump(stac_item, handle)
 
     # generate the STAC collection
-    with open(arguments.output / mappings.CALIBRATION_COLLECTION_FILE, "w") as handle:
+    with open(arguments.output / mappings.HELIOSTAT_PROPERTY_COLLECTION_FILE, "w") as handle:
         stac_item = make_collection(data)
         json.dump(stac_item, handle)
 
