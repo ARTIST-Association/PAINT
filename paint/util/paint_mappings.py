@@ -1,6 +1,6 @@
 INTERNAL_NAME_INDEX = "InternalName"
 ID_INDEX = "id"
-HELIOSTAT_ID = "HeliostatID"
+HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
 CREATED_AT = "CreatedAt"

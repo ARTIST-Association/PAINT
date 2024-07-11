@@ -169,7 +169,7 @@ class HeliostatPositionPlot:
 
         # Create a list of Internal names where "DeflectometryAvailable" is True
         highlighted_heliostats = self.deflectometry_df.index[
-            self.deflectometry_df[mappings.DEFLECTOMETRY_AVAILABLE] is True
+            ~self.deflectometry_df[mappings.DEFLECTOMETRY_AVAILABLE].isna()
         ].tolist()
 
         # Add a column to identify highlighted heliostats
@@ -232,7 +232,6 @@ class HeliostatPositionPlot:
         plt.ylim(y_min, y_max)
         plt.tight_layout()
         plt.legend(title="Accuracy of available\ndeflectometry data:")
-        plt.show()
         plt.savefig(self.output_path / self.file_name, dpi=300)
 
 
@@ -242,15 +241,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--path_to_positions",
         type=str,
-        default="data/DatenHeliOS/Heliostatpositionen_xyz.xlsx",
+        default=f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
     )
     parser.add_argument(
-        "--path_to_measurements", type=str, default="data/DatenHeliOS/calib_data.csv"
+        "--path_to_measurements",
+        type=str,
+        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
     )
     parser.add_argument(
         "--path_to_deflectometry",
         type=str,
-        default="data/DatenHeliOS/deflec_availability.xlsx",
+        default=f"{PAINT_ROOT}/ExampleDataKIT/deflec_availability.xlsx",
     )
     parser.add_argument(
         "--output_path", type=str, default=f"{PAINT_ROOT}/plots/saved_plots"
