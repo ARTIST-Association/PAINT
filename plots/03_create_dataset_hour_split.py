@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
 from pathlib import Path
 from typing import List, Union
 
@@ -191,6 +192,9 @@ class DatasetHourSplit:
 
 
 if __name__ == "__main__":
+    sys.argv = ["create_dataset_hour_split.py", 
+            "--path_to_measurements", "data/calib_data.csv"
+            ]
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
