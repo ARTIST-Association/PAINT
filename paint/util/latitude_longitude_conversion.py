@@ -1,10 +1,20 @@
 import math
 import paint.util.paint_mappings as mappings
 
-def add_offset_to_lat_lon(lat, lon, north_offset_m, east_offset_m):
+def add_offset_to_lat_lon(north_offset_m, east_offset_m):
+    """
+    Adds an offset to the given latitude and longitude coordinates.
+
+    Args:
+        north_offset_m (float): The distance in meters to add to the latitude.
+        east_offset_m (float): The distance in meters to add to the longitude.
+
+    Returns:
+        tuple: A tuple containing the new latitude and longitude in degrees.
+    """
     # Convert latitude and longitude to radians
-    lat_rad = math.radians(lat)
-    lon_rad = math.radians(lon)
+    lat_rad = math.radians(mappings.POWER_PLANT_LAT)
+    lon_rad = math.radians(mappings.POWER_PLANT_LON)
 
     # Calculate meridional radius of curvature
     sin_lat = math.sin(lat_rad)
@@ -29,6 +39,22 @@ def add_offset_to_lat_lon(lat, lon, north_offset_m, east_offset_m):
 
 
 def calculate_heliostat_position_in_m_from_lat_lon(lat1, lon1, alt):
+    """
+    Calculate the position of a heliostat in meters from given latitude, longitude, and altitude.
+
+    Args:
+        lat1 (float): The latitude of the heliostat in degrees.
+        lon1 (float): The longitude of the heliostat in degrees.
+        alt (float): The altitude of the heliostat.
+
+    Returns:
+        list: A list containing the north offset in meters, east offset in meters, and the altitude difference from the power plant.
+
+    This function calculates the north and east offsets in meters of a heliostat from the power plant location.
+    It converts the latitude and longitude to radians, calculates the radius of curvature values,
+    and then computes the offsets based on the differences between the heliostat and power plant coordinates.
+    Finally, it returns a list containing these offsets along with the altitude difference.
+    """
     # Convert latitude and longitude to radians
     lat_heliostat_rad = math.radians(lat1)
     lon_heliostat_rad = math.radians(lon1)
@@ -59,17 +85,3 @@ def calculate_heliostat_position_in_m_from_lat_lon(lat1, lon1, alt):
     east_offset_m = dlon_rad * Rn1 * math.cos(lat_heliostat_rad)
 
     return [north_offset_m, east_offset_m, alt_heliostat]
-
-
-# Given coordinates
-POWER_PLANT_LAT = 50.913296351383806
-POWER_PLANT_LON = 6.387514846666862
-
-# Example offsets in meters
-north_offset_m = 25
-east_offset_m = -30
-
-# Calculate new coordinates
-new_lat, new_lon = add_offset_to_lat_lon(POWER_PLANT_LAT, POWER_PLANT_LON, north_offset_m, east_offset_m)
-print("New Latitude:", new_lat)
-print("New Longitude:", new_lon)
