@@ -237,12 +237,20 @@ class HeliostatPositionPlot:
 
 
 if __name__ == "__main__":
-    sys.argv = ["heliostat_position.py", 
-                "--path_to_positions", "data/Heliostatpositionen_xyz.xlsx", 
-                "--path_to_measurements", "data/calib_data.csv", 
-                "--path_to_deflectometry", "data/deflec_availability.xlsx", 
-                "--output_path", "plots/saved_plots", 
-                "--file_name", "01_heliostat_positions"]
+    # sys.argv for development and testing purposes
+    sys.argv = [
+        "heliostat_position.py",
+        "--path_to_positions",
+        "data/Heliostatpositionen_xyz.xlsx",
+        "--path_to_measurements",
+        "data/calib_data.csv",
+        "--path_to_deflectometry",
+        "data/deflec_availability.xlsx",
+        "--output_path",
+        f"{PAINT_ROOT}/plots/saved_plots",
+        "--file_name",
+        "01_heliostat_positions",
+    ]
 
     parser = argparse.ArgumentParser()
 
