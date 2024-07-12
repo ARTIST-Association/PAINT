@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import sys
 from pathlib import Path
 from typing import List, Optional, Tuple, Union
 
@@ -307,12 +308,21 @@ class HistogramMeasurementPlot:
 
 
 if __name__ == "__main__":
+    # sys.argv for development and testing purposes
+    sys.argv = [
+        "create_dataset_hour_split.py",
+        "--path_to_measurements",
+        "data/calib_data.csv",
+        "--output_path",
+        f"{PAINT_ROOT}/plots/saved_plots",
+    ]
+
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
         "--path_to_measurements",
         type=str,
-        default="data/DatenHeliOS/calib_data.csv",
+        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
     )
     parser.add_argument(
         "--output_path", type=str, default=f"{PAINT_ROOT}/plots/saved_plots"
