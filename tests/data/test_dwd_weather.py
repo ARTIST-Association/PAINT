@@ -197,3 +197,27 @@ def test_dwd_weather(
             assert (
                 station["weather_type_1h"]["value"][:] == [-1.0, 100.0, 110.0]
             ).all()
+
+
+def test_raw_download():
+    """Runs the raw download function to catch any errors in the request. No assertions are tested."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        output_path = temp_dir
+        file_name = "test_raw_downlaod.h5"
+
+        dwd_weather = DWDWeatherData(
+            parameters_10min=[
+                "radiation_sky_short_wave_diffuse",
+                "radiation_global",
+            ],
+            parameters_1h=[
+                "cloud_cover_total",
+                "humidity",
+            ],
+            station_ids=["15000"],
+            start_date="2021-04-01",
+            end_date="2021-05-01",
+            output_path=output_path,
+            file_name=file_name,
+        )
+        dwd_weather._get_raw_data()
