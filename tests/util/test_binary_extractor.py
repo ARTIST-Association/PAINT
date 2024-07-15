@@ -1,3 +1,4 @@
+import json
 import os
 import tempfile
 from pathlib import Path
@@ -8,7 +9,7 @@ import torch
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.util.binary_to_h5 import BinaryToH5Converter
+from paint.util.binary_extractor import BinaryExtractor
 
 
 @pytest.mark.parametrize(
@@ -17,17 +18,18 @@ from paint.util.binary_to_h5 import BinaryToH5Converter
         (f"{PAINT_ROOT}/tests/util/binary_test_data.binp", "=5f2I2f", "=i9fI", "=7f"),
     ],
 )
-def test_binary_to_h5(
+def test_binary_extractor(
     test_data_path: str,
     surface_header_name: str,
     facet_header_name: str,
     points_on_facet_struct_name: str,
 ):
     """
-    Test the binary to h5 converter.
+    Test the binary extractor.
 
-    This test converts a test binary file to h5 and saves this file in a temporary directory. Then, we test if the
-    appropriate keys are available and the shape of the data matches the expected shape.
+    This test extracts the deflectometry data to h5 and the heliostat properties to json and saves these files in a
+    temporary directory. Then, we test if the appropriate keys are available and the shape of the data matches the
+    expected shape.
 
     Parameters
     ----------
@@ -43,30 +45,42 @@ def test_binary_to_h5(
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
         file_name = "test_converter.h5"
-        converter = BinaryToH5Converter(
+        json_handle = "test_properties.json"
+        converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
-            file_name=file_name,
+            h5_file_name=file_name,
+            json_handle=json_handle,
             surface_header_name=surface_header_name,
             facet_header_name=facet_header_name,
             points_on_facet_struct_name=points_on_facet_struct_name,
         )
-        (
-            num_facets,
-            translation_vectors,
-            canting_e,
-            canting_n,
-        ) = converter.convert_to_h5_and_extract_properties()
+        converter.convert_to_h5_and_extract_properties()
 
         # check the HDF5 file
         file_path = Path(output_path, file_name)
         assert os.path.exists(file_path)
 
+        # check the HDF5 file
+        json_file_path = Path(output_path, json_handle)
+        assert os.path.exists(json_file_path)
+
         # check the extracted heliostat properties are correct
-        assert num_facets == 4
-        assert translation_vectors.shape == torch.Size([4, 3])
-        assert canting_e.shape == torch.Size([4, 3])
-        assert canting_n.shape == torch.Size([4, 3])
+        # Open the file and load the JSON data
+        with open(json_file_path, "r") as file:
+            data = json.load(file)
+        assert data[mappings.NUM_FACETS] == 4
+        num_facets = data[mappings.NUM_FACETS]
+        for i in range(num_facets):
+            assert torch.tensor(
+                data[mappings.FACETS_LIST][i][mappings.TRANSLATION_VECTOR]
+            ).shape == torch.Size([3])
+            assert torch.tensor(
+                data[mappings.FACETS_LIST][i][mappings.CANTING_E]
+            ).shape == torch.Size([3])
+            assert torch.tensor(
+                data[mappings.FACETS_LIST][i][mappings.CANTING_N]
+            ).shape == torch.Size([3])
 
         # check the extracted deflectometry shapes are correct
         with h5py.File(file_path, "r") as file:
