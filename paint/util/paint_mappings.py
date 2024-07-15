@@ -99,6 +99,11 @@ HELIOSTAT_PROPERTY_ITEM_URL = (
 FACET_KEY = "facet"
 SURFACE_NORMAL_KEY = "surface_normals"
 SURFACE_POINT_KEY = "surface_points"
+FACETS_LIST = "facets"
+NUM_FACETS = "number_of_facets"
+TRANSLATION_VECTOR = "translation_vector"
+CANTING_E = "canting_e"
+CANTING_N = "canting_n"
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters

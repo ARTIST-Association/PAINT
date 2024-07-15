@@ -1,16 +1,21 @@
+import json
 import struct
 from pathlib import Path
-from typing import Tuple, Union
+from typing import Union
 
 import h5py
 import torch
 
 import paint.util.paint_mappings as mappings
+from paint import PAINT_ROOT
 
 
-class BinaryToH5Converter:
+class BinaryExtractor:
     """
-    Implement a converter that converts binary data to HDF5 format.
+    Implement an extractor that extracts data from a binary file and saves it to h5 and json.
+
+    This extractor considers data form a binary file that contains deflectometry data and heliostat properties. The data
+    is extracted and the deflectometry data saved in a h5 format and the heliostat properties as a json.
 
     Attributes
     ----------
@@ -20,6 +25,8 @@ class BinaryToH5Converter:
         The file path to save the converted h5 file.
     file_name : str
         The file name of the converted h5 file.
+    json_handle : str
+            The file path to save the json containing the heliostat properties data.
     surface_header_name : str
         The name for the surface header in the binary file.
     facet_header_name : str
@@ -39,22 +46,25 @@ class BinaryToH5Converter:
         self,
         input_path: Union[str, Path],
         output_path: Union[str, Path],
-        file_name: str,
+        h5_file_name: str,
+        json_handle: str,
         surface_header_name: str,
         facet_header_name: str,
         points_on_facet_struct_name: str,
     ) -> None:
         """
-        Initialize the converter.
+        Initialize the extractor.
 
         Parameters
         ----------
         input_path : Union[str, Path]
             The file path to the binary data file that will be converted.
         output_path : Union[str, Path]
-            The file path to save the converted h5 file.
-        file_name : str
-            The file name of the converted h5 file.
+            The file path to save the converted h5 deflectometry file.
+        h5_file_name : str
+            The file name of the converted h5 deflectometry file.
+        json_handle : str
+            The file path to save the json containing the heliostat properties data.
         surface_header_name : str
             The name for the surface header in the binary file.
         facet_header_name : str
@@ -66,7 +76,8 @@ class BinaryToH5Converter:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = file_name
+        self.file_name = h5_file_name
+        self.json_handle = json_handle
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
@@ -92,29 +103,14 @@ class BinaryToH5Converter:
 
     def convert_to_h5_and_extract_properties(
         self,
-    ) -> Tuple[int, torch.Tensor, torch.Tensor, torch.Tensor]:
+    ) -> None:
         """
-        Convert binary data to h5 and extract heliostat properties not to be saved in the deflectometry file.
+        Extract data from a binary file and save the deflectometry measurements and heliostat properties.
 
         The binary files we consider, contain both deflectometry measurements and certain heliostat properties, such as
         the number of facets, the facet translation vectors, and the facet canting vectors. Therefore, the deflectometry
-        measurements are extracted and saved as a h5 file, whilst the heliostat properties are returned and not included
-        in the deflectometry file.
-
-        Returns
-        -------
-        int
-            The number of facets for the considered heliostat.
-        torch.Tensor
-            The facet translation vectors for the considered heliostat. This indicates what translation is applied to
-            each facet from the center of the heliostat. This is a tensor of shape [F,3], where F is the facet
-            dimension.
-        torch.Tensor
-            The canting vectors in the east direction for considered heliostat. This indicates the canting applied to
-            each facet in the east direction. This is a tensor of shape [F,3], where F is the facet dimension.
-        torch.Tensor
-            The canting vectors in the up direction for considered heliostat. This indicates the canting applied to
-            each facet in the east direction. This is a tensor of shape [F,3], where F is the facet dimension.
+        measurements are extracted and saved as a h5 file, whilst the heliostat properties are extracted and saved in a
+        json file.
         """
         # Create structures for reading binary file correctly.
         surface_header_struct = struct.Struct(self.surface_header_name)
@@ -181,6 +177,7 @@ class BinaryToH5Converter:
         # to maintain consistency, we cast the west direction to east direction
         canting_e[:, 0] = -canting_e[:, 0]
 
+        # extract deflectometry data and save
         with h5py.File(self.output_path / self.file_name, "w") as file:
             for i in range(number_of_facets):
                 facet = file.create_group(name=f"{mappings.FACET_KEY}{i+1}")
@@ -193,4 +190,32 @@ class BinaryToH5Converter:
                     data=surface_points_with_facets[i, :, :],
                 )
 
-        return number_of_facets, facet_translation_vectors, canting_e, canting_n
+        # extract heliostat properties data and save
+        with open(self.output_path / self.json_handle, "w") as handle:
+            properties = {
+                mappings.NUM_FACETS: number_of_facets,
+                mappings.FACETS_LIST: [
+                    {
+                        mappings.TRANSLATION_VECTOR: facet_translation_vectors[
+                            i, :
+                        ].tolist(),
+                        mappings.CANTING_E: canting_e[i, :].tolist(),
+                        mappings.CANTING_N: canting_n[i, :].tolist(),
+                    }
+                    for i in range(number_of_facets)
+                ],
+            }
+            json.dump(properties, handle)
+
+
+if __name__ == "__main__":
+    converter = BinaryExtractor(
+        input_path=f"{PAINT_ROOT}/tests/util/binary_test_data.binp",
+        output_path=f"{PAINT_ROOT}/testy_data",
+        h5_file_name="random_h5.h5",
+        json_handle="this_json.json",
+        surface_header_name="=5f2I2f",
+        facet_header_name="=i9fI",
+        points_on_facet_struct_name="=7f",
+    )
+    converter.convert_to_h5_and_extract_properties()
