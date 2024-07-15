@@ -5,6 +5,8 @@ from typing import Tuple, Union
 import h5py
 import torch
 
+import paint.util.paint_mappings as mappings
+
 
 class BinaryToH5Converter:
     """
@@ -12,10 +14,12 @@ class BinaryToH5Converter:
 
     Attributes
     ----------
-    input_file_path : str
+    input_path : Path
         The file path to the binary data file that will be converted.
-    output_file_path : str
+    output_path : Path
         The file path to save the converted h5 file.
+    file_name : str
+        The file name of the converted h5 file.
     surface_header_name : str
         The name for the surface header in the binary file.
     facet_header_name : str
@@ -33,8 +37,9 @@ class BinaryToH5Converter:
 
     def __init__(
         self,
-        input_file_path: Union[str, Path],
-        output_file_path: Union[str, Path],
+        input_path: Union[str, Path],
+        output_path: Union[str, Path],
+        file_name: str,
         surface_header_name: str,
         facet_header_name: str,
         points_on_facet_struct_name: str,
@@ -44,10 +49,12 @@ class BinaryToH5Converter:
 
         Parameters
         ----------
-        input_file_path : str
+        input_path : Union[str, Path]
             The file path to the binary data file that will be converted.
-        output_file_path : str
+        output_path : Union[str, Path]
             The file path to save the converted h5 file.
+        file_name : str
+            The file name of the converted h5 file.
         surface_header_name : str
             The name for the surface header in the binary file.
         facet_header_name : str
@@ -55,8 +62,11 @@ class BinaryToH5Converter:
         points_on_facet_struct_name : str
             The name of the point on facet structure in the binary file.
         """
-        self.input_file_path = Path(input_file_path)
-        self.output_file_path = Path(output_file_path)
+        self.input_path = Path(input_path)
+        self.output_path = Path(output_path)
+        if not self.output_path.is_dir():
+            self.output_path.mkdir(parents=True, exist_ok=True)
+        self.file_name = file_name
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
@@ -83,13 +93,35 @@ class BinaryToH5Converter:
     def convert_to_h5_and_extract_properties(
         self,
     ) -> Tuple[int, torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Convert binary data to h5 and extract heliostat properties not to be saved in the deflectometry file."""
+        """
+        Convert binary data to h5 and extract heliostat properties not to be saved in the deflectometry file.
+
+        The binary files we consider, contain both deflectometry measurements and certain heliostat properties, such as
+        the number of facets, the facet translation vectors, and the facet canting vectors. Therefore, the deflectometry
+        measurements are extracted and saved as a h5 file, whilst the heliostat properties are returned and not included
+        in the deflectometry file.
+
+        Returns
+        -------
+        int
+            The number of facets for the considered heliostat.
+        torch.Tensor
+            The facet translation vectors for the considered heliostat. This indicates what translation is applied to
+            each facet from the center of the heliostat. This is a tensor of shape [F,3], where F is the facet
+            dimension.
+        torch.Tensor
+            The canting vectors in the east direction for considered heliostat. This indicates the canting applied to
+            each facet in the east direction. This is a tensor of shape [F,3], where F is the facet dimension.
+        torch.Tensor
+            The canting vectors in the up direction for considered heliostat. This indicates the canting applied to
+            each facet in the east direction. This is a tensor of shape [F,3], where F is the facet dimension.
+        """
         # Create structures for reading binary file correctly.
         surface_header_struct = struct.Struct(self.surface_header_name)
         facet_header_struct = struct.Struct(self.facet_header_name)
         points_on_facet_struct = struct.Struct(self.points_on_facet_struct_name)
 
-        with open(f"{self.input_file_path}.binp", "rb") as file:
+        with open(self.input_path, "rb") as file:
             surface_header_data = surface_header_struct.unpack_from(
                 file.read(surface_header_struct.size)
             )
@@ -146,11 +178,19 @@ class BinaryToH5Converter:
                         point_data[3:6], dtype=torch.float
                     )
 
-        # to maintain consistency we cast the west direction to east direction
+        # to maintain consistency, we cast the west direction to east direction
         canting_e[:, 0] = -canting_e[:, 0]
 
-        with h5py.File(self.output_file_path, "w") as file:
-            # TODO Save h5py
-            pass
+        with h5py.File(self.output_path / self.file_name, "w") as file:
+            for i in range(number_of_facets):
+                facet = file.create_group(name=f"{mappings.FACET_KEY}{i+1}")
+                facet.create_dataset(
+                    name=f"{mappings.SURFACE_NORMAL_KEY}",
+                    data=surface_normals_with_facets[i, :, :],
+                )
+                facet.create_dataset(
+                    name=f"{mappings.SURFACE_POINT_KEY}",
+                    data=surface_points_with_facets[i, :, :],
+                )
 
         return number_of_facets, facet_translation_vectors, canting_e, canting_n

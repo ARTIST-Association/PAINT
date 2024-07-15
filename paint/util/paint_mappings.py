@@ -95,6 +95,11 @@ HELIOSTAT_PROPERTY_ITEM_URL = (
 )
 
 
+# Convert deflectometry
+FACET_KEY = "facet"
+SURFACE_NORMAL_KEY = "surface_normals"
+SURFACE_POINT_KEY = "surface_points"
+
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
