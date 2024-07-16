@@ -9,17 +9,22 @@ import torch
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.util.binary_extractor import BinaryExtractor
+from paint.data.binary_extractor import BinaryExtractor
 
 
 @pytest.mark.parametrize(
     "test_data_path, surface_header_name, facet_header_name, points_on_facet_struct_name",
     [
-        (f"{PAINT_ROOT}/tests/util/binary_test_data.binp", "=5f2I2f", "=i9fI", "=7f"),
+        (
+            Path(f"{PAINT_ROOT}/tests/data/test_data/binary_test_data.binp"),
+            "=5f2I2f",
+            "=i9fI",
+            "=7f",
+        ),
     ],
 )
 def test_binary_extractor(
-    test_data_path: str,
+    test_data_path: Path,
     surface_header_name: str,
     facet_header_name: str,
     points_on_facet_struct_name: str,
@@ -44,13 +49,11 @@ def test_binary_extractor(
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
-        file_name = "test_converter.h5"
-        json_handle = "test_properties.json"
+        file_name = test_data_path.name.split(".")[0] + mappings.DEFLECTOMETRY_SUFFIX
+        json_handle = test_data_path.name.split(".")[0] + mappings.PROPERTIES_SUFFIX
         converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
-            h5_file_name=file_name,
-            json_handle=json_handle,
             surface_header_name=surface_header_name,
             facet_header_name=facet_header_name,
             points_on_facet_struct_name=points_on_facet_struct_name,
