@@ -1,5 +1,8 @@
+#!/usr/bin/env python
+import argparse
 import json
 import struct
+import sys
 from pathlib import Path
 from typing import Union
 
@@ -46,8 +49,6 @@ class BinaryExtractor:
         self,
         input_path: Union[str, Path],
         output_path: Union[str, Path],
-        h5_file_name: str,
-        json_handle: str,
         surface_header_name: str,
         facet_header_name: str,
         points_on_facet_struct_name: str,
@@ -61,10 +62,6 @@ class BinaryExtractor:
             The file path to the binary data file that will be converted.
         output_path : Union[str, Path]
             The file path to save the converted h5 deflectometry file.
-        h5_file_name : str
-            The file name of the converted h5 deflectometry file.
-        json_handle : str
-            The file path to save the json containing the heliostat properties data.
         surface_header_name : str
             The name for the surface header in the binary file.
         facet_header_name : str
@@ -76,8 +73,12 @@ class BinaryExtractor:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = h5_file_name
-        self.json_handle = json_handle
+        self.file_name = (
+            self.input_path.name.split(".")[0] + mappings.DEFLECTOMETRY_SUFFIX
+        )
+        self.json_handle = (
+            self.input_path.name.split(".")[0] + mappings.PROPERTIES_SUFFIX
+        )
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
@@ -209,13 +210,51 @@ class BinaryExtractor:
 
 
 if __name__ == "__main__":
+    # Simulate command-line arguments for testing or direct script execution
+    sys.argv = [
+        "binary_extractor.py",
+        "--input_path",
+        f"{PAINT_ROOT}/tests/util/binary_test_data.binp",
+        "--output_path",
+        f"{PAINT_ROOT}/ConvertedData",
+        "--surface_header_name",
+        "=5f2I2f",
+        "--facet_header_name",
+        "=i9fI",
+        "--points_on_facet_struct_name",
+        "=7f",
+    ]
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--input_path", type=Path, help="Path to the binary input file."
+    )
+    parser.add_argument(
+        "--output_path",
+        type=Path,
+        help="Path to save the output files",
+    )
+    parser.add_argument(
+        "--surface_header_name",
+        type=str,
+        help="The header of the surface struct",
+    )
+    parser.add_argument(
+        "--facet_header_name",
+        type=str,
+        help="The header of the facet struct",
+    )
+    parser.add_argument(
+        "--points_on_facet_struct_name",
+        type=str,
+        help="The header of the points on the facet struct",
+    )
+    args = parser.parse_args()
     converter = BinaryExtractor(
-        input_path=f"{PAINT_ROOT}/tests/util/binary_test_data.binp",
-        output_path=f"{PAINT_ROOT}/testy_data",
-        h5_file_name="random_h5.h5",
-        json_handle="this_json.json",
-        surface_header_name="=5f2I2f",
-        facet_header_name="=i9fI",
-        points_on_facet_struct_name="=7f",
+        input_path=args.input_path,
+        output_path=args.output_path,
+        surface_header_name=args.surface_header_name,
+        facet_header_name=args.facet_header_name,
+        points_on_facet_struct_name=args.points_on_facet_struct_name,
     )
     converter.convert_to_h5_and_extract_properties()
