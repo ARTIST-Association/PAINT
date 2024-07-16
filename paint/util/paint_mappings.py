@@ -104,6 +104,17 @@ NUM_FACETS = "number_of_facets"
 TRANSLATION_VECTOR = "translation_vector"
 CANTING_E = "canting_e"
 CANTING_N = "canting_n"
+DEFLECTOMETRY_SUFFIX = "_deflectometry.h5"
+PROPERTIES_SUFFIX = "_properties.json"
+
+# Combine properties
+EAST_KEY = "East"
+NORTH_KEY = "North"
+ALTITUDE_KEY = "Altitude"
+FIELD_ID = "FieldId"
+HELIOSTAT_SIZE = "Heliostat Size"
+KINEMATIC_KEY = "kinematic"
+HEIGHT_ABOVE_GROUND = "HeightAboveGround"
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
