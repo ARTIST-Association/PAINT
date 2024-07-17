@@ -1,7 +1,10 @@
+from datetime import datetime
 from typing import Tuple, Union
 
 import numpy as np
 import pandas as pd
+import pytz
+from dateutil import parser
 
 import paint.util.paint_mappings as mappings
 
@@ -77,3 +80,41 @@ def to_utc(time_series: pd.Series) -> pd.Series:
         .dt.tz_localize("Europe/Berlin", ambiguous="infer")
         .dt.tz_convert("UTC")
     )
+
+
+def to_utc_single(datetime_str: str, local_tz: str = "Europe/Berlin") -> str:
+    """
+    Parse a local datetime string and convert to UTC.
+
+    Parameters
+    ----------
+    datetime_str : str
+        The string containing the local datetime in the format 'YYMMDDHHMMSS'.
+    local_tz : str
+        The local timezone (Default: 'Europe/Berlin').
+
+    Returns
+    -------
+    str
+        The corresponding UTC datetime string.
+    """
+    try:
+        # Try parsing with dateutil.parser for general datetime strings
+        local_time = parser.parse(datetime_str)
+    except ValueError:
+        try:
+            # Fall back to manual parsing for specific format "%y%m%d%H%M%S"
+            local_time = datetime.strptime(datetime_str, "%y%m%d%H%M%S")
+        except ValueError as e:
+            raise ValueError(f"Unable to parse datetime string: {datetime_str}") from e
+
+    # Localize the datetime object to the specified local timezone
+    local_tz_obj = pytz.timezone(local_tz)
+    if local_time.tzinfo is None:
+        local_time = local_tz_obj.localize(local_time, is_dst=None)
+
+    # Convert the localized datetime to UTC
+    utc_time = local_time.astimezone(pytz.utc)
+
+    # Return the UTC datetime as a string
+    return utc_time.strftime(mappings.TIME_FORMAT)
