@@ -49,6 +49,7 @@ class NearestNeighborSplit:
             raise RuntimeError(f"Insufficient data points given. Expected at least {self._number_of_train_samples + self._number_of_validation_samples} but got {len(data)}!")
         
         # sort data by nearest neighbor distance
+        # TODO maybe use kd-tree for distance calculation
         distances = cdist(data[[mappings.AZIMUTH, mappings.ELEVATION, mappings.ID_INDEX]], data[[mappings.AZIMUTH, mappings.ELEVATION, mappings.ID_INDEX]], metric=self._metric)
         minimum_distances = np.sort(distances, axis=1)[:,0]
         sorted_indices = np.argsort(minimum_distances, axis=0)
