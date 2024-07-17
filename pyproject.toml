@@ -25,7 +25,8 @@ dependencies = [
     "wetterdienst",
     "h5py",
     "seaborn",
-    "deepdiff"
+    "deepdiff",
+    "openpyxl",
 ]
 
 [project.optional-dependencies]
