@@ -25,6 +25,18 @@ def main():
         image=warped_image, num_k_means=num_k_means, applied_k_means=applied_k_means, mask= torch.where(mask != 0, torch.tensor(1.0), mask)
     )
 
+    # TODO retransform image coordinates to field coordinates
+    # equal to target detection
+    # approach 1 (schöner für pytorch):
+    # use marker image coordinates 2d [w,h] -> [w,h,0]
+    # get marker e,n,u coordiantes
+    # compute transformation from marker stc [w,h,0] dest [e,n,u]
+    # apply transformation to focal spot [w,h,0] -> [e,n,u] -> aim point
+
+    # approach 2 (dlr):
+    # split target into triangles
+    # use barycentric coordinates from [w,h] -> barycentric -> [e,n,u]
+
     clustered_image = torch.zeros_like(warped_image)
 
     for k in torch.argsort(focal_spot.clusters.centers)[-applied_k_means:]:

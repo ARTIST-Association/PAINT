@@ -8,9 +8,9 @@ class Marker:
     """
     @brief A marker to be used for target image referencing.
 
-    @param image_position The marker's supposed position in the image it is referencing.
-    @param template_offset The offset between the marker position and the upper left corner of the marker's template image.
-    @param enu_position The marker's position in enu field coordinates.
+    @param image_position The marker's supposed position [W,H] in the image it is referencing.
+    @param template_offset The offset between the marker position and the upper left corner of the marker's template image [W,H].
+    @param enu_position The marker's position in enu field coordinates [E,N,U].
     @param template_image The marker's template image to be detected.
     @param search_region The region within the image where the marker template is expected to be found.
     """
