@@ -28,8 +28,12 @@ class BinaryExtractor:
         The file path to save the converted h5 file.
     file_name : str
         The file name of the converted h5 file.
+    save_properties : bool
+        Whether to save the heliostat properties extracted from the binary file.
     json_handle : str
-            The file path to save the json containing the heliostat properties data.
+        The file path to save the json containing the heliostat properties data.
+    deflectometry_created_at : str
+        The time stamp for when the deflectometry data was created. Required for properties later.
     surface_header_name : str
         The name for the surface header in the binary file.
     facet_header_name : str
@@ -73,12 +77,24 @@ class BinaryExtractor:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = (
-            self.input_path.name.split(".")[0] + mappings.DEFLECTOMETRY_SUFFIX
-        )
-        self.json_handle = (
-            self.input_path.name.split(".")[0] + mappings.PROPERTIES_SUFFIX
-        )
+        name_string = self.input_path.name.split("_")
+        if len(name_string) == 6:
+            file_name = (
+                name_string[1]
+                + "_"
+                + name_string[4]
+                + "_"
+                + name_string[-1].split(".")[0]
+            )
+            self.save_properties = False
+        else:
+            file_name = name_string[1] + "_" + name_string[-1].split(".")[0]
+            self.save_properties = True
+        self.file_name = file_name + mappings.DEFLECTOMETRY_SUFFIX
+        self.json_handle = name_string[1] + mappings.PROPERTIES_SUFFIX
+        self.deflectometry_created_at = self.input_path.name.split("_")[-1].split(".")[
+            0
+        ]
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
@@ -192,21 +208,23 @@ class BinaryExtractor:
                 )
 
         # extract heliostat properties data and save
-        with open(self.output_path / self.json_handle, "w") as handle:
-            properties = {
-                mappings.NUM_FACETS: number_of_facets,
-                mappings.FACETS_LIST: [
-                    {
-                        mappings.TRANSLATION_VECTOR: facet_translation_vectors[
-                            i, :
-                        ].tolist(),
-                        mappings.CANTING_E: canting_e[i, :].tolist(),
-                        mappings.CANTING_N: canting_n[i, :].tolist(),
-                    }
-                    for i in range(number_of_facets)
-                ],
-            }
-            json.dump(properties, handle)
+        if self.save_properties:
+            with open(self.output_path / self.json_handle, "w") as handle:
+                properties = {
+                    mappings.DEFLECTOMETRY_CREATED_AT: self.deflectometry_created_at,
+                    mappings.NUM_FACETS: number_of_facets,
+                    mappings.FACETS_LIST: [
+                        {
+                            mappings.TRANSLATION_VECTOR: facet_translation_vectors[
+                                i, :
+                            ].tolist(),
+                            mappings.CANTING_E: canting_e[i, :].tolist(),
+                            mappings.CANTING_N: canting_n[i, :].tolist(),
+                        }
+                        for i in range(number_of_facets)
+                    ],
+                }
+                json.dump(properties, handle)
 
 
 if __name__ == "__main__":
@@ -214,7 +232,7 @@ if __name__ == "__main__":
     sys.argv = [
         "binary_extractor.py",
         "--input_path",
-        f"{PAINT_ROOT}/tests/util/binary_test_data.binp",
+        f"{PAINT_ROOT}/ExampleDataKIT/Helio_AY39_Rim0_STRAL-Input_230918133925.binp",
         "--output_path",
         f"{PAINT_ROOT}/ConvertedData",
         "--surface_header_name",

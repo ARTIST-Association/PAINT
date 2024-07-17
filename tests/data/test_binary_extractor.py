@@ -16,7 +16,9 @@ from paint.data.binary_extractor import BinaryExtractor
     "test_data_path, surface_header_name, facet_header_name, points_on_facet_struct_name",
     [
         (
-            Path(f"{PAINT_ROOT}/tests/data/test_data/binary_test_data.binp"),
+            Path(
+                f"{PAINT_ROOT}/tests/data/test_data/Helio_AA23_test_data_230918133925.binp"
+            ),
             "=5f2I2f",
             "=i9fI",
             "=7f",
@@ -49,8 +51,13 @@ def test_binary_extractor(
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
-        file_name = test_data_path.name.split(".")[0] + mappings.DEFLECTOMETRY_SUFFIX
-        json_handle = test_data_path.name.split(".")[0] + mappings.PROPERTIES_SUFFIX
+        file_name = (
+            test_data_path.name.split("_")[1]
+            + "_"
+            + test_data_path.name.split("_")[-1].split(".")[0]
+            + mappings.DEFLECTOMETRY_SUFFIX
+        )
+        json_handle = test_data_path.name.split("_")[1] + mappings.PROPERTIES_SUFFIX
         converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
@@ -73,6 +80,7 @@ def test_binary_extractor(
         with open(json_file_path, "r") as file:
             data = json.load(file)
         assert data[mappings.NUM_FACETS] == 4
+        assert data[mappings.DEFLECTOMETRY_CREATED_AT] == "230918133925"
         num_facets = data[mappings.NUM_FACETS]
         for i in range(num_facets):
             assert torch.tensor(

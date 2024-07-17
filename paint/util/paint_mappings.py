@@ -106,6 +106,7 @@ CANTING_E = "canting_e"
 CANTING_N = "canting_n"
 DEFLECTOMETRY_SUFFIX = "_deflectometry.h5"
 PROPERTIES_SUFFIX = "_properties.json"
+DEFLECTOMETRY_CREATED_AT = "deflectometry_created_at"
 
 # Combine properties
 EAST_KEY = "East"

@@ -5,8 +5,9 @@ import json
 import pathlib
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
+import numpy as np
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
@@ -135,7 +136,7 @@ def merge_and_sort_df(
 
 def add_facet_heliostat_properties(
     key: str, data: pd.Series, facet_root: Path
-) -> Dict[str, Any]:
+) -> Tuple[Dict[str, Any], np.ndarray]:
     """
     Add the facet heliostat properties to the data frame.
 
@@ -157,7 +158,16 @@ def add_facet_heliostat_properties(
     file_name = Path(key + mappings.PROPERTIES_SUFFIX)
     with open(facet_root / file_name, "r") as file:
         facet_data = json.load(file)
-
+    metadata = data[
+        [
+            mappings.CREATED_AT,
+            mappings.EAST_KEY,
+            mappings.NORTH_KEY,
+            mappings.ALTITUDE_KEY,
+            mappings.HEIGHT_ABOVE_GROUND,
+        ]
+    ].values
+    metadata = np.insert(metadata, 0, facet_data.pop(mappings.DEFLECTOMETRY_CREATED_AT))
     # convert kinematic data to dict and remove metadata
     dict_data = data.to_dict()
     for key_to_remove in [
@@ -165,7 +175,7 @@ def add_facet_heliostat_properties(
         mappings.EAST_KEY,
         mappings.NORTH_KEY,
         mappings.ALTITUDE_KEY,
-        mappings.HELIOSTAT_SIZE,
+        mappings.DEFLECTOMETRY_CREATED_AT,
         mappings.FIELD_ID,
         mappings.HEIGHT_ABOVE_GROUND,
     ]:
@@ -173,7 +183,7 @@ def add_facet_heliostat_properties(
 
     # merge data and return
     facet_data.update({mappings.KINEMATIC_KEY: dict_data})
-    return facet_data
+    return facet_data, metadata
 
 
 def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
@@ -192,15 +202,29 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
     df_axis = prepare_axis_file_for_concatenation(arguments)
     df_concatenated = merge_and_sort_df(df_heliostat_positions, df_axis)
 
+    metadata_df = pd.DataFrame(
+        columns=[
+            mappings.DEFLECTOMETRY_CREATED_AT,
+            mappings.CREATED_AT,
+            mappings.EAST_KEY,
+            mappings.NORTH_KEY,
+            mappings.ALTITUDE_KEY,
+            mappings.HEIGHT_ABOVE_GROUND,
+        ],
+        index=df_concatenated.index,
+    )
     # add facet data and save file
     for key, data in df_concatenated.iterrows():
         assert isinstance(key, str)
-        full_properties = add_facet_heliostat_properties(
+        full_properties, helio_metadata = add_facet_heliostat_properties(
             key=key, data=data, facet_root=arguments.input_facet_root
         )
+        metadata_df.loc[key] = helio_metadata
         file_name = Path(key + mappings.PROPERTIES_SUFFIX)
         with open(arguments.output / file_name, "w") as handle:
             json.dump(full_properties, handle)
+
+    metadata_df.to_csv(arguments.output / "heliostat_metadata.csv")
 
 
 if __name__ == "__main__":
@@ -208,13 +232,13 @@ if __name__ == "__main__":
     sys.argv = [
         "heliostat_properties_stac.py",
         "-i_position",
-        f"{PAINT_ROOT}/ExampleDataKIT/test_positions.xlsx",
+        f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
         "-i_axis",
-        f"{PAINT_ROOT}/ExampleDataKIT/test_axis_data.csv",
+        f"{PAINT_ROOT}/ExampleDataKIT/axis_data.csv",
         "-i_root",
-        f"{PAINT_ROOT}/ExampleDataKIT/Properties",
+        f"{PAINT_ROOT}/ConvertedData",
         "-o",
-        f"{PAINT_ROOT}/ExampleDataKIT/New_Properties",
+        f"{PAINT_ROOT}/ConvertedData/NewProperties",
     ]
 
     parser = argparse.ArgumentParser()
