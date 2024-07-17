@@ -16,12 +16,37 @@ def find_template_position(image: torch.Tensor, template: torch.Tensor, search_r
     @return The found upper left corner of the template image (height, width).
     """
 
+    template = template[:31,:31]
+
     # Perform template matching using convolution
-    cropped_image = crop_image(image=image, upper_left=search_region.position, lower_right=search_region.position+search_region.dimension) if isinstance(search_region, SearchRegion) else image
+    cropped_image = (crop_image(image=image, upper_left=search_region.position, lower_right=search_region.position+search_region.dimension) if isinstance(search_region, SearchRegion) else image).unsqueeze(dim=0).unsqueeze(dim=0)
+    
+    # normalize the template
+    normalized_template = (template - template.mean()) / (template.std() if template.std().item() != 0 else 1)
+
+
+    # Step 2: Compute the local mean and std for each sliding window in the image
+    # Create a kernel of ones with the same size as the template
+    Ht, Wt = template.shape
+    kernel = torch.ones(1, 1, Ht, Wt)
+
+    # Compute local mean
+    mean = F.conv2d(cropped_image, kernel, padding=(Ht//2, Wt//2)) / (Ht * Wt)
+
+    # Compute local squared mean
+    squared_mean = F.conv2d(cropped_image**2, kernel, padding=(Ht//2, Wt//2)) / (Ht * Wt)
+
+    # Compute local std
+    std = torch.sqrt(squared_mean - mean**2 + 1e-5)  # Add small value to avoid division by zero
+
+    # Normalize the image locally
+    normalized_image = (cropped_image - mean) / std
+    
+    # perform cross image correlation
     result = F.conv2d(
-        input=cropped_image.unsqueeze(dim=0).unsqueeze(dim=0), # minibatch,in_channels,iH,iW
-        weight=template.unsqueeze(dim=0).unsqueeze(dim=0), # out_channels, in_channesl / groups, kH, kW
-        padding="valid",
+        input=normalized_image, # minibatch,in_channels,iH,iW
+        weight=normalized_template.unsqueeze(dim=0).unsqueeze(dim=0), # out_channels, in_channesl / groups, kH, kW
+        padding=(Ht//2, Wt//2),
         bias=None
     ).squeeze()
 
@@ -34,5 +59,6 @@ def find_template_position(image: torch.Tensor, template: torch.Tensor, search_r
     height, width = result.shape # use result shape, because result is cropped from original image due to padding, but has same starting point
     max_val, max_idx = torch.max(result.view(-1), 0)
     max_idx = max_idx.item()
-    max_pos = (max_idx // width, max_idx % width) # get height = round(max_idx / padded_width), width = rest(max_idx / padded_width)
-    return get_parent_coordinate(cropped_coordinate=torch.tensor(max_pos), upper_left=search_region.position)
+    max_pos = (max_idx % width, max_idx % width) # get height = round(max_idx / padded_width), width = rest(max_idx / padded_width)
+    max_pos_2 = get_parent_coordinate(cropped_coordinate=torch.tensor(max_pos), upper_left=search_region.position)   
+    return max_pos_2
