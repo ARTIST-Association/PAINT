@@ -11,6 +11,7 @@ import torch
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
+from paint.util.utils import to_utc_single
 
 
 class BinaryExtractor:
@@ -84,11 +85,13 @@ class BinaryExtractor:
                 + "_"
                 + name_string[4]
                 + "_"
-                + name_string[-1].split(".")[0]
+                + str(to_utc_single(name_string[-1].split(".")[0]))
             )
             self.save_properties = False
         else:
-            file_name = name_string[1] + "_" + name_string[-1].split(".")[0]
+            file_name = (
+                name_string[1] + "_" + str(to_utc_single(name_string[-1].split(".")[0]))
+            )
             self.save_properties = True
         self.file_name = file_name + mappings.DEFLECTOMETRY_SUFFIX
         self.json_handle = name_string[1] + mappings.PROPERTIES_SUFFIX
