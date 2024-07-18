@@ -10,6 +10,7 @@ import torch
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.binary_extractor import BinaryExtractor
+from paint.util.utils import to_utc_single
 
 
 @pytest.mark.parametrize(
@@ -54,7 +55,7 @@ def test_binary_extractor(
         file_name = (
             test_data_path.name.split("_")[1]
             + "_"
-            + test_data_path.name.split("_")[-1].split(".")[0]
+            + str(to_utc_single(test_data_path.name.split("_")[-1].split(".")[0]))
             + mappings.DEFLECTOMETRY_SUFFIX
         )
         json_handle = test_data_path.name.split("_")[1] + mappings.PROPERTIES_SUFFIX
