@@ -5,7 +5,6 @@ import json
 import pathlib
 import sys
 from pathlib import Path
-from typing import Any, Dict, Tuple
 
 import numpy as np
 import pandas as pd
@@ -134,58 +133,6 @@ def merge_and_sort_df(
     return df_concatenated
 
 
-def add_facet_heliostat_properties(
-    key: str, data: pd.Series, facet_root: Path
-) -> Tuple[Dict[str, Any], np.ndarray]:
-    """
-    Add the facet heliostat properties to the data frame.
-
-    Parameters
-    ----------
-    key : str
-        The key used for saving the data. This is the heliostat ID.
-    data : pd.Series
-        The heliostat properties data for the current heliostat.
-    facet_root : Path
-        The path to the folder containing the facet properties json data.
-
-    Returns
-    -------
-    Dict[str, Any]
-        A dict containing the heliostat properties data including facet information that should be saved.
-    """
-    # load facet data
-    file_name = Path(key + mappings.PROPERTIES_SUFFIX)
-    with open(facet_root / file_name, "r") as file:
-        facet_data = json.load(file)
-    metadata = data[
-        [
-            mappings.CREATED_AT,
-            mappings.EAST_KEY,
-            mappings.NORTH_KEY,
-            mappings.ALTITUDE_KEY,
-            mappings.HEIGHT_ABOVE_GROUND,
-        ]
-    ].values
-    metadata = np.insert(metadata, 0, facet_data.pop(mappings.DEFLECTOMETRY_CREATED_AT))
-    # convert kinematic data to dict and remove metadata
-    dict_data = data.to_dict()
-    for key_to_remove in [
-        mappings.CREATED_AT,
-        mappings.EAST_KEY,
-        mappings.NORTH_KEY,
-        mappings.ALTITUDE_KEY,
-        mappings.DEFLECTOMETRY_CREATED_AT,
-        mappings.FIELD_ID,
-        mappings.HEIGHT_ABOVE_GROUND,
-    ]:
-        dict_data.pop(key_to_remove, None)
-
-    # merge data and return
-    facet_data.update({mappings.KINEMATIC_KEY: dict_data})
-    return facet_data, metadata
-
-
 def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
     """
     Combine multiple CSV files and a json file and save these as a heliostat properties json.
@@ -216,13 +163,48 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
     # add facet data and save file
     for key, data in df_concatenated.iterrows():
         assert isinstance(key, str)
-        full_properties, helio_metadata = add_facet_heliostat_properties(
-            key=key, data=data, facet_root=arguments.input_facet_root
-        )
-        metadata_df.loc[key] = helio_metadata
+        metadata = data[
+            [
+                mappings.CREATED_AT,
+                mappings.EAST_KEY,
+                mappings.NORTH_KEY,
+                mappings.ALTITUDE_KEY,
+                mappings.HEIGHT_ABOVE_GROUND,
+            ]
+        ].values
+
+        # convert kinematic data to dict and remove metadata
+        dict_data = data.to_dict()
+        for key_to_remove in [
+            mappings.CREATED_AT,
+            mappings.EAST_KEY,
+            mappings.NORTH_KEY,
+            mappings.ALTITUDE_KEY,
+            mappings.DEFLECTOMETRY_CREATED_AT,
+            mappings.FIELD_ID,
+            mappings.HEIGHT_ABOVE_GROUND,
+        ]:
+            dict_data.pop(key_to_remove, None)
+
+        full_data = {mappings.KINEMATIC_KEY: dict_data}
+        # load facet data
+        facet_file_name = Path(key + mappings.PROPERTIES_SUFFIX)
+        full_facet_path = arguments.input_facet_root / facet_file_name
+        if full_facet_path.is_file():
+            with open(full_facet_path, "r") as file:
+                facet_data = json.load(file)
+
+            metadata = np.insert(
+                metadata, 0, facet_data.pop(mappings.DEFLECTOMETRY_CREATED_AT)
+            )
+            full_data.update(facet_data)
+        else:
+            metadata = np.insert(metadata, 0, np.NAN)
+
+        metadata_df.loc[key] = metadata
         file_name = Path(key + mappings.PROPERTIES_SUFFIX)
         with open(arguments.output / file_name, "w") as handle:
-            json.dump(full_properties, handle)
+            json.dump(full_data, handle)
 
     metadata_df.to_csv(arguments.output / "heliostat_metadata.csv")
 
