@@ -199,7 +199,7 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
             )
             full_data.update(facet_data)
         else:
-            metadata = np.insert(metadata, 0, np.NAN)
+            metadata = np.insert(metadata, 0, False)
 
         metadata_df.loc[key] = metadata
         file_name = Path(key + mappings.PROPERTIES_SUFFIX)
