@@ -1,8 +1,5 @@
-#!/usr/bin/env python
-import argparse
 import json
 import struct
-import sys
 from pathlib import Path
 from typing import Union
 
@@ -10,7 +7,6 @@ import h5py
 import torch
 
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 from paint.util.utils import to_utc_single
 
 
@@ -29,8 +25,10 @@ class BinaryExtractor:
         The file path to save the converted h5 file.
     file_name : str
         The file name of the converted h5 file.
-    save_properties : bool
-        Whether to save the heliostat properties extracted from the binary file.
+    raw_data : bool
+        Whether the raw data or filled data is extracted.
+    heliostat_id : str
+        The heliostat ID of the heliostat considered in the binary file.
     json_handle : str
         The file path to save the json containing the heliostat properties data.
     deflectometry_created_at : str
@@ -76,28 +74,25 @@ class BinaryExtractor:
         """
         self.input_path = Path(input_path)
         self.output_path = Path(output_path)
-        if not self.output_path.is_dir():
-            self.output_path.mkdir(parents=True, exist_ok=True)
         name_string = self.input_path.name.split("_")
         if len(name_string) == 6:
             file_name = (
                 name_string[1]
-                + "_"
+                + "-"
                 + name_string[4]
-                + "_"
+                + "-"
                 + str(to_utc_single(name_string[-1].split(".")[0]))
             )
-            self.save_properties = False
+            self.raw_data = False
         else:
             file_name = (
-                name_string[1] + "_" + str(to_utc_single(name_string[-1].split(".")[0]))
+                name_string[1] + "-" + str(to_utc_single(name_string[-1].split(".")[0]))
             )
-            self.save_properties = True
+            self.raw_data = True
+        self.heliostat_id = name_string[1]
         self.file_name = file_name + mappings.DEFLECTOMETRY_SUFFIX
-        self.json_handle = name_string[1] + mappings.PROPERTIES_SUFFIX
-        self.deflectometry_created_at = self.input_path.name.split("_")[-1].split(".")[
-            0
-        ]
+        self.json_handle = name_string[1] + mappings.FACET_PROPERTIES_SUFFIX
+        self.deflectometry_created_at = to_utc_single(name_string[-1].split(".")[0])
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
@@ -141,8 +136,6 @@ class BinaryExtractor:
             surface_header_data = surface_header_struct.unpack_from(
                 file.read(surface_header_struct.size)
             )
-            # Load width and height.
-            width, height = surface_header_data[3:5]
 
             # Calculate the number of facets.
             n_xy = surface_header_data[5:7]
@@ -198,7 +191,14 @@ class BinaryExtractor:
         canting_e[:, 0] = -canting_e[:, 0]
 
         # extract deflectometry data and save
-        with h5py.File(self.output_path / self.file_name, "w") as file:
+        saved_deflectometry_path = (
+            Path(self.output_path)
+            / self.heliostat_id
+            / mappings.SAVE_DEFLECTOMETRY
+            / self.file_name
+        )
+        saved_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)
+        with h5py.File(saved_deflectometry_path, "w") as file:
             for i in range(number_of_facets):
                 facet = file.create_group(name=f"{mappings.FACET_KEY}{i+1}")
                 facet.create_dataset(
@@ -210,11 +210,17 @@ class BinaryExtractor:
                     data=surface_points_with_facets[i, :, :],
                 )
 
-        # extract heliostat properties data and save
-        if self.save_properties:
-            with open(self.output_path / self.json_handle, "w") as handle:
+        # extract facet properties data and save
+        saved_facet_path = (
+            Path(self.output_path)
+            / self.heliostat_id
+            / mappings.SAVE_PROPERTIES
+            / self.json_handle
+        )
+        saved_facet_path.parent.mkdir(parents=True, exist_ok=True)
+        if self.raw_data:
+            with open(saved_facet_path, "w") as handle:
                 properties = {
-                    mappings.DEFLECTOMETRY_CREATED_AT: self.deflectometry_created_at,
                     mappings.NUM_FACETS: number_of_facets,
                     mappings.FACETS_LIST: [
                         {
@@ -228,54 +234,3 @@ class BinaryExtractor:
                     ],
                 }
                 json.dump(properties, handle)
-
-
-if __name__ == "__main__":
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "binary_extractor.py",
-        "--input_path",
-        f"{PAINT_ROOT}/ExampleDataKIT/Helio_AY39_Rim0_STRAL-Input_230918133925.binp",
-        "--output_path",
-        f"{PAINT_ROOT}/ConvertedData",
-        "--surface_header_name",
-        "=5f2I2f",
-        "--facet_header_name",
-        "=i9fI",
-        "--points_on_facet_struct_name",
-        "=7f",
-    ]
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input_path", type=Path, help="Path to the binary input file."
-    )
-    parser.add_argument(
-        "--output_path",
-        type=Path,
-        help="Path to save the output files",
-    )
-    parser.add_argument(
-        "--surface_header_name",
-        type=str,
-        help="The header of the surface struct",
-    )
-    parser.add_argument(
-        "--facet_header_name",
-        type=str,
-        help="The header of the facet struct",
-    )
-    parser.add_argument(
-        "--points_on_facet_struct_name",
-        type=str,
-        help="The header of the points on the facet struct",
-    )
-    args = parser.parse_args()
-    converter = BinaryExtractor(
-        input_path=args.input_path,
-        output_path=args.output_path,
-        surface_header_name=args.surface_header_name,
-        facet_header_name=args.facet_header_name,
-        points_on_facet_struct_name=args.points_on_facet_struct_name,
-    )
-    converter.convert_to_h5_and_extract_properties()

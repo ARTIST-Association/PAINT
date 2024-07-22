@@ -14,7 +14,7 @@ from paint import PAINT_ROOT
 from paint.util.utils import heliostat_id_to_name
 
 
-def prepare_axis_file_for_concatenation(arguments: argparse.Namespace) -> pd.DataFrame:
+def load_and_format_heliostat_axis_data(arguments: argparse.Namespace) -> pd.DataFrame:
     """
     Prepare the axis csv for concatenation by changing certain column names and rearranging the order.
 
@@ -71,7 +71,7 @@ def prepare_axis_file_for_concatenation(arguments: argparse.Namespace) -> pd.Dat
     return pivoted_df
 
 
-def prepare_heliostat_positions_for_concatenation(
+def load_and_format_heliostat_positions(
     arguments: argparse.Namespace,
 ) -> pd.DataFrame:
     """
@@ -145,8 +145,8 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
     # ensure that the output paths exist
     arguments.output.mkdir(parents=True, exist_ok=True)
 
-    df_heliostat_positions = prepare_heliostat_positions_for_concatenation(arguments)
-    df_axis = prepare_axis_file_for_concatenation(arguments)
+    df_heliostat_positions = load_and_format_heliostat_positions(arguments)
+    df_axis = load_and_format_heliostat_axis_data(arguments)
     df_concatenated = merge_and_sort_df(df_heliostat_positions, df_axis)
 
     metadata_df = pd.DataFrame(
@@ -188,7 +188,7 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
 
         full_data = {mappings.KINEMATIC_KEY: dict_data}
         # load facet data
-        facet_file_name = Path(key + mappings.PROPERTIES_SUFFIX)
+        facet_file_name = Path(key + mappings.FACET_PROPERTIES_SUFFIX)
         full_facet_path = arguments.input_facet_root / facet_file_name
         if full_facet_path.is_file():
             with open(full_facet_path, "r") as file:
@@ -202,7 +202,7 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
             metadata = np.insert(metadata, 0, False)
 
         metadata_df.loc[key] = metadata
-        file_name = Path(key + mappings.PROPERTIES_SUFFIX)
+        file_name = Path(key + mappings.FACET_PROPERTIES_SUFFIX)
         with open(arguments.output / file_name, "w") as handle:
             json.dump(full_data, handle)
 
@@ -212,7 +212,7 @@ def create_heliostat_properties_json(arguments: argparse.Namespace) -> None:
 if __name__ == "__main__":
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
-        "heliostat_properties_stac.py",
+        "facet_stac.py",
         "-i_position",
         f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
         "-i_axis",

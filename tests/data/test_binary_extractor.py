@@ -54,11 +54,13 @@ def test_binary_extractor(
         output_path = temp_dir
         file_name = (
             test_data_path.name.split("_")[1]
-            + "_"
+            + "-"
             + str(to_utc_single(test_data_path.name.split("_")[-1].split(".")[0]))
             + mappings.DEFLECTOMETRY_SUFFIX
         )
-        json_handle = test_data_path.name.split("_")[1] + mappings.PROPERTIES_SUFFIX
+        json_handle = (
+            test_data_path.name.split("_")[1] + mappings.FACET_PROPERTIES_SUFFIX
+        )
         converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
@@ -69,11 +71,21 @@ def test_binary_extractor(
         converter.convert_to_h5_and_extract_properties()
 
         # check the HDF5 file
-        file_path = Path(output_path, file_name)
+        file_path = (
+            Path(output_path)
+            / converter.heliostat_id
+            / mappings.SAVE_DEFLECTOMETRY
+            / file_name
+        )
         assert os.path.exists(file_path)
 
         # check the HDF5 file
-        json_file_path = Path(output_path, json_handle)
+        json_file_path = (
+            Path(output_path)
+            / converter.heliostat_id
+            / mappings.SAVE_PROPERTIES
+            / json_handle
+        )
         assert os.path.exists(json_file_path)
 
         # check the extracted heliostat properties are correct
@@ -81,7 +93,6 @@ def test_binary_extractor(
         with open(json_file_path, "r") as file:
             data = json.load(file)
         assert data[mappings.NUM_FACETS] == 4
-        assert data[mappings.DEFLECTOMETRY_CREATED_AT] == "230918133925"
         num_facets = data[mappings.NUM_FACETS]
         for i in range(num_facets):
             assert torch.tensor(
