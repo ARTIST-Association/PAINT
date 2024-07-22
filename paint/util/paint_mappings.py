@@ -34,7 +34,6 @@ STAC_VERSION = "1.0.0"
 ITEM_ASSETS_SCHEMA = (
     f"https://stac-extensions.github.io/item-assets/v{STAC_VERSION}/schema.json"
 )
-CSP_SCHEMA = f"https://stac-extensions.github.io/csp/v{STAC_VERSION}/schema.json"
 LICENSE = "CDLA-2.0"
 LICENSE_LINK = {
     "rel": "license",
@@ -68,32 +67,62 @@ TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
 
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
+MIME_HDF5 = "application/x-hdf5"
+MIME_PDF = "application/pdf"
 
 CATALOG_ID = f"{POWER_PLANT_GPPD_ID}-catalog"
 CATALOG_FILE = f"{POWER_PLANT_GPPD_ID}-catalog-stac.json"
 
-CATALOGUE_URL = (
-    "https://zenodo.org/record/elcatalogo/files/catalogue-stac.json?download=1"
+CATALOGUE_URL = "Insert/URL/Here"
+
+CALIBRATION_COLLECTION_ID = "%s-calibration"
+CALIBRATION_COLLECTION_FILE = "%s-calibration-stac.json"
+CALIBRATION_COLLECTION_URL = (
+    f"INSERT/SOMETHING/HERE/{CALIBRATION_COLLECTION_FILE}?download=1"
+)
+CALIBRATION_ITEM = "%d-%s-calibration-item-stac.json"
+CALIBRATION_ITEM_URL = f"INSERT/SOMETHING/HERE/{CALIBRATION_ITEM}"
+
+DEFLECTOMETRY_COLLECTION_ID = "%s-deflectometry"
+DEFLECTOMETRY_COLLECTION_FILE = "%s-deflectometry-stac.json"
+DEFLECTOMETRY_COLLECTION_URL = (
+    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_COLLECTION_FILE}?download=1"
+)
+DEFLECTOMETRY_RAW_ITEM = "%s-%s-deflectometry-item-stac.json"
+DEFLECTOMETRY_FILLED_ITEM = "%s-filled-%s-deflectometry-item-stac.json"
+DEFLECTOMETRY_RAW_ITEM_URL = (
+    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_RAW_ITEM}?download=1"
+)
+DEFLECTOMETRY_FILLED_ITEM_URL = (
+    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_FILLED_ITEM}?download=1"
+)
+DEFLECTOMETRY_RESULT_ITEM = "%s-%s-deflectometry-result-item-stac.json"
+DEFLECTOMETRY_RESULT_ITEM_URL = (
+    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_RESULT_ITEM}?download=1"
+)
+DEFLECTOMETRY_PDF_NAME = "%s-%s-deflectometry-result.pdf"
+DEFLECTOMETRY_INSTRUMENTS = "QDec_2014-101"
+
+HELIOSTAT_PROPERTIES_COLLECTION_ID = "%s-heliostat_properties"
+HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat_properties-stac.json"
+HELIOSTAT_PROPERTIES_COLLECTION_URL = (
+    f"INSERT/SOMETHING/HERE/{HELIOSTAT_PROPERTIES_COLLECTION_FILE}?download=1"
+)
+FACET_PROPERTIES_ITEM = "%s-facet_properties-item-stac.json"
+FACET_PROPERTIES_ITEM_ITEM_URL = (
+    f"INSERT/SOMETHING/HERE/{FACET_PROPERTIES_ITEM}?download=1"
 )
 
-CALIBRATION_COLLECTION_ID = f"{POWER_PLANT_GPPD_ID}-calibration"
-CALIBRATION_COLLECTION_FILE = f"{POWER_PLANT_GPPD_ID}-calibration-stac.json"
-CALIBRATION_COLLECTION_URL = f"https://zenodo.org/record/loscalibrationes/files/{CALIBRATION_COLLECTION_FILE}?download=1"
-CALIBRATION_ITEM = "%d-calibration-item-stac.json"
-CALIBRATION_ITEM_URL = (
-    f"https://zenodo.org/record/loscalibrationes/files/{CALIBRATION_ITEM}"
-)
+URL_KEY = "url"
+TITLE_KEY = "title"
+LATITUDE_KEY = "latitude"
+LONGITUDE_KEY = "longitude"
 
-HELIOSTAT_PROPERTY_COLLECTION_ID = f"{POWER_PLANT_GPPD_ID}-heliostat_property"
-HELIOSTAT_PROPERTY_COLLECTION_FILE = (
-    f"{POWER_PLANT_GPPD_ID}-heliostat_property-stac.json"
-)
-HELIOSTAT_PROPERTY_COLLECTION_URL = f"https://zenodo.org/record/losheliostat_propertiones/files/{HELIOSTAT_PROPERTY_COLLECTION_FILE}?download=1"
-HELIOSTAT_PROPERTY_ITEM = "%d-heliostat_property-item-stac.json"
-HELIOSTAT_PROPERTY_ITEM_URL = (
-    f"https://zenodo.org/record/loscalibrationes/files/{HELIOSTAT_PROPERTY_ITEM}"
-)
-
+SAVE_DEFLECTOMETRY = "Deflectometry"
+SAVE_PROPERTIES = "Properties"
+SAVE_CALIBRATION = "Calibration"
+BBOX_LAT_LON_DEVIATION = 2e-05
+BBOX_ALTITUDE_DEVIATION = 2
 
 # Convert deflectometry
 FACET_KEY = "facet"
@@ -104,8 +133,8 @@ NUM_FACETS = "number_of_facets"
 TRANSLATION_VECTOR = "translation_vector"
 CANTING_E = "canting_e"
 CANTING_N = "canting_n"
-DEFLECTOMETRY_SUFFIX = "_deflectometry.h5"
-PROPERTIES_SUFFIX = "_properties.json"
+DEFLECTOMETRY_SUFFIX = "-deflectometry.h5"
+FACET_PROPERTIES_SUFFIX = "-facet_properties.json"
 DEFLECTOMETRY_CREATED_AT = "deflectometry_created_at"
 
 # Combine properties
