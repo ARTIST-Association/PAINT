@@ -99,7 +99,7 @@ def make_deflectometry_item(
     heliostat_key: str, heliostat_data: pd.Series, raw_data: bool = True
 ) -> Tuple[Tuple[float, float], Dict[str, Any]]:
     """
-    Generate a STAC item for a raw deflectometry measurement.
+    Generate a STAC item for a deflectometry measurement.
 
     Parameters
     ----------
@@ -112,6 +112,8 @@ def make_deflectometry_item(
 
     Returns
     -------
+    Tuple[float, float]
+        The latitude and longitude coordinates of the heliostat that being measured.
     dict[str, Any]
         The STAC item data as dictionary.
     """
@@ -128,11 +130,11 @@ def make_deflectometry_item(
             + "-deflectometry"
         )
         name = "Filled"
-    lat_long = add_offset_to_lat_lon(
+    lat_lon = add_offset_to_lat_lon(
         east_offset_m=heliostat_data[mappings.EAST_KEY],
         north_offset_m=heliostat_data[mappings.NORTH_KEY],
     )
-    return lat_long, {
+    return lat_lon, {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [],
         "id": f"{resource}",
@@ -144,17 +146,17 @@ def make_deflectometry_item(
         "geometry": {
             "type": "Point",
             "coordinates": [
-                lat_long[0],
-                lat_long[1],
+                lat_lon[0],
+                lat_lon[1],
                 heliostat_data[mappings.ALTITUDE_KEY],
             ],
         },
         "bbox": [
-            lat_long[0] - mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] - mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[0] - mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[1] - mappings.BBOX_LAT_LON_DEVIATION,
             heliostat_data[mappings.ALTITUDE_KEY] - mappings.BBOX_ALTITUDE_DEVIATION,
-            lat_long[0] + mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] + mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[0] + mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[1] + mappings.BBOX_LAT_LON_DEVIATION,
             heliostat_data[mappings.ALTITUDE_KEY] + mappings.BBOX_ALTITUDE_DEVIATION,
         ],
         "properties": {

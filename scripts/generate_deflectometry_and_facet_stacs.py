@@ -12,22 +12,20 @@ import pandas as pd
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.binary_extractor import BinaryExtractor
-from paint.data.combine_properties import (
-    load_and_format_heliostat_positions,
-)
 from paint.data.deflectometry_stac import (
     make_deflectometry_item,
     make_deflectometry_results_item,
 )
 from paint.data.facet_stac import make_facet_item
+from paint.util.utils import load_and_format_heliostat_positions
 
 
 def extract_data_and_generate_stacs(
-    args: argparse.Namespace,
+    arguments: argparse.Namespace,
     input_path: Path,
     df_heliostat_positions: pd.DataFrame,
     deflectometry_items: pd.DataFrame,
-    facet_items: pd.DataFrame,
+    properties_items: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Extract the binary data and generate STACS.
@@ -39,7 +37,7 @@ def extract_data_and_generate_stacs(
 
     Parameters
     ----------
-    args : argparse.Namespace
+    arguments : argparse.Namespace
         Arguments passed from the command line.
     input_path : pathlib.Path
         Path to the ``.binp`` file.
@@ -47,7 +45,7 @@ def extract_data_and_generate_stacs(
         A dataframe containing information on the heliostat positions.
     deflectometry_items : pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
-    facet_items : pd.DataFrame
+    properties_items : pd.DataFrame
         A dataframe containing the metadata for all items in the heliostat properties collection.
 
     Returns
@@ -60,10 +58,10 @@ def extract_data_and_generate_stacs(
     # Extract binary data
     converter = BinaryExtractor(
         input_path=input_path,
-        output_path=args.output_path,
-        surface_header_name=args.surface_header_name,
-        facet_header_name=args.facet_header_name,
-        points_on_facet_struct_name=args.points_on_facet_struct_name,
+        output_path=arguments.output_path,
+        surface_header_name=arguments.surface_header_name,
+        facet_header_name=arguments.facet_header_name,
+        points_on_facet_struct_name=arguments.points_on_facet_struct_name,
     )
     converter.convert_to_h5_and_extract_properties()
     metadata = df_heliostat_positions.loc[converter.heliostat_id][
@@ -99,9 +97,9 @@ def extract_data_and_generate_stacs(
             metadata[mappings.ALTITUDE_KEY],
         ]
 
-        # save the raw deflectometry measurement
+        # save the raw deflectometry measurement stac
         save_deflectometry_path = (
-            Path(args.output_path)
+            Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
@@ -120,7 +118,7 @@ def extract_data_and_generate_stacs(
 
         # save the facet properties metadata for collection creation later
         facet_url = mappings.FACET_PROPERTIES_ITEM_ITEM_URL % converter.heliostat_id
-        facet_items.loc[len(facet_items)] = [
+        properties_items.loc[len(properties_items)] = [
             converter.heliostat_id,
             f"facet properties for {converter.heliostat_id}",
             facet_url,
@@ -132,7 +130,7 @@ def extract_data_and_generate_stacs(
 
         # save facet properties STAC
         save_facet_path = (
-            Path(args.output_path)
+            Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_PROPERTIES
             / (mappings.FACET_PROPERTIES_ITEM % converter.heliostat_id)
@@ -151,7 +149,7 @@ def extract_data_and_generate_stacs(
             + ".pdf"
         )
         new_pdf_name = (
-            Path(args.output_path)
+            Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
@@ -183,7 +181,7 @@ def extract_data_and_generate_stacs(
 
         # save the deflectometry result STAC
         save_deflectometry_results_path = (
-            Path(args.output_path)
+            Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
@@ -220,7 +218,7 @@ def extract_data_and_generate_stacs(
 
         # save the filled deflectometry measurement
         save_deflectometry_path = (
-            Path(args.output_path)
+            Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
@@ -232,7 +230,7 @@ def extract_data_and_generate_stacs(
         with open(save_deflectometry_path, mode="w") as handle:
             json.dump(stac_item, handle)
 
-    return deflectometry_items, facet_items
+    return deflectometry_items, properties_items
 
 
 def main(arguments: argparse.Namespace):
@@ -251,7 +249,7 @@ def main(arguments: argparse.Namespace):
     """
     # check if saved metadata exists and load if required
     deflectometry_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/deflectometry_items.csv")
-    facet_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/facet_items.csv")
+    properties_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/properties_items.csv")
     if deflectometry_items_path.exists():
         deflectometry_items = pd.read_csv(deflectometry_items_path)
     else:
@@ -267,11 +265,11 @@ def main(arguments: argparse.Namespace):
                 mappings.ELEVATION,
             ]
         )
-    if facet_items_path.exists():
-        facet_items = pd.read_csv(facet_items_path)
+    if properties_items_path.exists():
+        properties_items = pd.read_csv(properties_items_path)
     else:
-        facet_items_path.parent.mkdir(parents=True, exist_ok=True)
-        facet_items = pd.DataFrame(
+        properties_items_path.parent.mkdir(parents=True, exist_ok=True)
+        properties_items = pd.DataFrame(
             columns=[
                 mappings.HELIOSTAT_ID,
                 mappings.TITLE_KEY,
@@ -290,17 +288,17 @@ def main(arguments: argparse.Namespace):
     binp_files = directory.rglob("*.binp")
 
     for input_path in binp_files:
-        deflectometry_items, facet_items = extract_data_and_generate_stacs(
-            args=arguments,
+        deflectometry_items, properties_items = extract_data_and_generate_stacs(
+            arguments=arguments,
             input_path=input_path,
             df_heliostat_positions=df_heliostat_positions,
             deflectometry_items=deflectometry_items,
-            facet_items=facet_items,
+            properties_items=properties_items,
         )
 
     # save deflectometry and facet items for creating collections
     deflectometry_items.to_csv(deflectometry_items_path, index=False)
-    facet_items.to_csv(facet_items_path, index=False)
+    properties_items.to_csv(properties_items_path, index=False)
 
 
 if __name__ == "__main__":

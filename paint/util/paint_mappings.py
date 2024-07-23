@@ -75,16 +75,16 @@ CATALOG_FILE = f"{POWER_PLANT_GPPD_ID}-catalog-stac.json"
 
 CATALOGUE_URL = "Insert/URL/Here"
 
-CALIBRATION_COLLECTION_ID = "%s-calibration"
-CALIBRATION_COLLECTION_FILE = "%s-calibration-stac.json"
+CALIBRATION_COLLECTION_ID = "%s-calibration-collection"
+CALIBRATION_COLLECTION_FILE = "%s-calibration-collection-stac.json"
 CALIBRATION_COLLECTION_URL = (
     f"INSERT/SOMETHING/HERE/{CALIBRATION_COLLECTION_FILE}?download=1"
 )
 CALIBRATION_ITEM = "%d-%s-calibration-item-stac.json"
 CALIBRATION_ITEM_URL = f"INSERT/SOMETHING/HERE/{CALIBRATION_ITEM}"
 
-DEFLECTOMETRY_COLLECTION_ID = "%s-deflectometry"
-DEFLECTOMETRY_COLLECTION_FILE = "%s-deflectometry-stac.json"
+DEFLECTOMETRY_COLLECTION_ID = "%s-deflectometry-collection"
+DEFLECTOMETRY_COLLECTION_FILE = "%s-deflectometry-collection-stac.json"
 DEFLECTOMETRY_COLLECTION_URL = (
     f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_COLLECTION_FILE}?download=1"
 )
@@ -103,14 +103,18 @@ DEFLECTOMETRY_RESULT_ITEM_URL = (
 DEFLECTOMETRY_PDF_NAME = "%s-%s-deflectometry-result.pdf"
 DEFLECTOMETRY_INSTRUMENTS = "QDec_2014-101"
 
-HELIOSTAT_PROPERTIES_COLLECTION_ID = "%s-heliostat_properties"
-HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat_properties-stac.json"
+HELIOSTAT_PROPERTIES_COLLECTION_ID = "%s-heliostat_properties-collection"
+HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat_properties-collection-stac.json"
 HELIOSTAT_PROPERTIES_COLLECTION_URL = (
     f"INSERT/SOMETHING/HERE/{HELIOSTAT_PROPERTIES_COLLECTION_FILE}?download=1"
 )
 FACET_PROPERTIES_ITEM = "%s-facet_properties-item-stac.json"
 FACET_PROPERTIES_ITEM_ITEM_URL = (
     f"INSERT/SOMETHING/HERE/{FACET_PROPERTIES_ITEM}?download=1"
+)
+KINEMATIC_PROPERTIES_ITEM = "%s-kinematic_properties-item-stac.json"
+KINEMATIC_PROPERTIES_ITEM_URL = (
+    f"INSERT/SOMETHING/HERE/{KINEMATIC_PROPERTIES_ITEM}?download=1"
 )
 
 URL_KEY = "url"
@@ -136,6 +140,7 @@ CANTING_N = "canting_n"
 DEFLECTOMETRY_SUFFIX = "-deflectometry.h5"
 FACET_PROPERTIES_SUFFIX = "-facet_properties.json"
 DEFLECTOMETRY_CREATED_AT = "deflectometry_created_at"
+KINEMATIC_PROPERTIES_SUFFIX = "-kinematic_properties.json"
 
 # Combine properties
 EAST_KEY = "East"

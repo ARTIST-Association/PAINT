@@ -25,8 +25,8 @@ def make_facet_item(
     dict[str, Any]
         The STAC item data as dictionary.
     """
-    resource = heliostat_key + "_facet_properties"
-    lat_long = add_offset_to_lat_lon(
+    resource = heliostat_key + "-facet_properties"
+    lat_lon = add_offset_to_lat_lon(
         east_offset_m=heliostat_data[mappings.EAST_KEY],
         north_offset_m=heliostat_data[mappings.NORTH_KEY],
     )
@@ -41,17 +41,17 @@ def make_facet_item(
         "geometry": {
             "type": "Point",
             "coordinates": [
-                lat_long[0],
-                lat_long[1],
+                lat_lon[0],
+                lat_lon[1],
                 heliostat_data[mappings.ALTITUDE_KEY],
             ],
         },
         "bbox": [
-            lat_long[0] - mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] - mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[0] - mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[1] - mappings.BBOX_LAT_LON_DEVIATION,
             heliostat_data[mappings.ALTITUDE_KEY] - mappings.BBOX_ALTITUDE_DEVIATION,
-            lat_long[0] + mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] + mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[0] + mappings.BBOX_LAT_LON_DEVIATION,
+            lat_lon[1] + mappings.BBOX_LAT_LON_DEVIATION,
             heliostat_data[mappings.ALTITUDE_KEY] + mappings.BBOX_ALTITUDE_DEVIATION,
         ],
         "properties": {
