@@ -56,6 +56,11 @@ def make_deflectometry_collection(
             },
         },
         "summaries": {
+            "csp:gppd_id": {
+                "type": "string",
+                "const": mappings.POWER_PLANT_GPPD_ID,
+                "count": data.shape[0],
+            },
             "datetime": {
                 "minimum": data[mappings.CREATED_AT].min(),
                 "maximum": data[mappings.CREATED_AT].max(),
@@ -164,6 +169,12 @@ def make_deflectometry_item(
             "created": heliostat_data[mappings.CREATED_AT],
             "instruments": f"{mappings.DEFLECTOMETRY_INSTRUMENTS}",
         },
+        "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
+        "csp:heliostats": [
+            {
+                "csp:heliostat_id": heliostat_key,
+            }
+        ],
         "links": [
             {
                 "rel": "self",
