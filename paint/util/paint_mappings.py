@@ -75,6 +75,10 @@ MIME_PDF = "application/pdf"
 CATALOG_ID = f"{POWER_PLANT_GPPD_ID}-catalog"
 CATALOG_FILE = f"{POWER_PLANT_GPPD_ID}-catalog-stac.json"
 
+HELIOSTAT_CATALOG_ID = "%s-heliostat-catalog"
+HELIOSTAT_CATALOG_FILE = "%s-heliostat-catalog-stac.json"
+HELIOSTAT_CATALOG_URL = f"INSERT/SOMETHING/HERE/{HELIOSTAT_CATALOG_FILE}?download=1"
+
 CATALOGUE_URL = "Insert/URL/Here"
 
 CALIBRATION_COLLECTION_ID = "%s-calibration-collection"
