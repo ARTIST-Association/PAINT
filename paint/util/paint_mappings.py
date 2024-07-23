@@ -119,6 +119,11 @@ KINEMATIC_PROPERTIES_ITEM_URL = (
     f"INSERT/SOMETHING/HERE/{KINEMATIC_PROPERTIES_ITEM}?download=1"
 )
 
+WEATHER_COLLECTION_ID = "weather-collection"
+WEATHER_COLLECTION_FILE = "weather-collection-stac.json"
+WEATHER_COLLECTION_URL = f"INSERT/SOMETHING/HERE/{WEATHER_COLLECTION_FILE}?download=1"
+
+
 URL_KEY = "url"
 TITLE_KEY = "title"
 LATITUDE_KEY = "latitude"
@@ -152,6 +157,14 @@ FIELD_ID = "FieldId"
 HELIOSTAT_SIZE = "Heliostat Size"
 KINEMATIC_KEY = "kinematic"
 HEIGHT_ABOVE_GROUND = "HeightAboveGround"
+
+# DWD KEYS
+DWD_STATION_ID = "StationID"
+DWD_STATION_NAME = "StationName"
+DWD_START = "start"
+DWD_END = "end"
+DWD_STAC_NAME = "dwd-weather-item-stac"
+DWD_STAT_URL = f"INSERT/SOMETHING/HERE/{DWD_STAC_NAME}?download=1"
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
