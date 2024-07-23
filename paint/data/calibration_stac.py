@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 
-import argparse
-import json
-import pathlib
 from typing import Any, Dict
 
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-import paint.util.utils as utils
 
 
-def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
+def make_calibration_collection(
+    heliostat_id: str, data: pd.DataFrame
+) -> Dict[str, Any]:
     """
     Generate the STAC collection.
 
     Parameters
     ----------
+    heliostat_id: str
+        The heliostat id of the heliostat being considered.
     data: pd.DataFrame
         The dataframe containing all image data.
 
@@ -28,22 +28,20 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA, mappings.CSP_SCHEMA],
-        "id": mappings.CALIBRATION_COLLECTION_ID,
+        "id": mappings.CALIBRATION_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
-        "title": f"Calibration images of CSP {mappings.POWER_PLANT_GPPD_ID}",
-        "description": f"All calibration images of the concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID} in Jülich, Germany",
+        "title": f"Calibration images from heliostat {heliostat_id}",
+        "description": f"All calibration images from the heliostat {heliostat_id}",
         "keywords": ["csp", "calibration", "tracking"],
         "license": mappings.LICENSE,
         "providers": [mappings.DLR, mappings.KIT],
         "extent": {
             "spatial": {
                 "bbox": [
-                    [
-                        mappings.POWER_PLANT_LON,
-                        mappings.POWER_PLANT_LAT,
-                        mappings.POWER_PLANT_LON,
-                        mappings.POWER_PLANT_LAT,
-                    ]
+                    mappings.POWER_PLANT_LAT,
+                    mappings.POWER_PLANT_LON,
+                    mappings.POWER_PLANT_LAT,
+                    mappings.POWER_PLANT_LON,
                 ]
             },
             "temporal": {
@@ -72,8 +70,8 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
                 "maximum": data[mappings.AZIMUTH].max(),
             },
             "view:sun_elevation": {
-                "minimum": data[mappings.ELEVATION].min(),
-                "maximum": data[mappings.ELEVATION].max(),
+                "minimum": data[mappings.SUN_ELEVATION].min(),
+                "maximum": data[mappings.SUN_ELEVATION].max(),
             },
             "instruments": list(data[mappings.SYSTEM].unique()),
         },
@@ -81,7 +79,7 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -93,7 +91,7 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
             },
             {
                 "rel": "collection",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -101,11 +99,11 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
         + [
             {
                 "rel": "item",
-                "href": mappings.CALIBRATION_ITEM_URL % image,
+                "href": data_row[mappings.URL_KEY],
                 "type": mappings.MIME_GEOJSON,
-                "title": f"STAC item of image {image}",
+                "title": f"STAC item of {data_row[mappings.TITLE_KEY]}",
             }
-            for image, _ in data.iterrows()
+            for _, data_row in data.iterrows()
         ],
         "item_assets": {
             "target": {
@@ -117,7 +115,7 @@ def make_collection(data: pd.DataFrame) -> Dict[str, Any]:
     }
 
 
-def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
+def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
     """
     Generate a STAC item for an image.
 
@@ -134,16 +132,18 @@ def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
         The STAC item data as dictionary.
     """
     return {
-        "stac_version": "1.0.0",
+        "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [
             "view",
-            "https://raw.githubusercontent.com/ARTIST-Association/csp/main/json-schema/schema.json",
+            f"{mappings.CSP_SCHEMA}",
         ],
         "id": f"{image}",
         "type": "Feature",
-        "title": f"Calibration of heliostat {image}",
-        "description": f"Images of focused sunlight on the calibration target of heliostat {image}",
-        "collection": mappings.CALIBRATION_COLLECTION_ID,
+        "title": f"Calibration image from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
+        "description": f"Images of focused sunlight on the calibration target from heliostat "
+        f"{heliostat_data[mappings.HELIOSTAT_ID]} for image{image}",
+        "collection": mappings.CALIBRATION_COLLECTION_ID
+        % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
             "type": "Point",
             "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
@@ -161,7 +161,7 @@ def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
             "instruments": [heliostat_data[mappings.SYSTEM]],
         },
         "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
-        "view:sun_elevation": heliostat_data[mappings.ELEVATION],
+        "view:sun_elevation": heliostat_data[mappings.SUN_ELEVATION],
         "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
         "csp:heliostats": [
             {
@@ -172,6 +172,7 @@ def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
                 ],
             }
         ],
+        "csp:target_id": heliostat_data[mappings.CALIBRATION_TARGET],
         "links": [
             {
                 "rel": "self",
@@ -187,81 +188,25 @@ def make_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
             },
             {
                 "rel": "parent",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % heliostat_data[mappings.HELIOSTAT_ID],
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": mappings.CALIBRATION_COLLECTION_URL,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % heliostat_data[mappings.HELIOSTAT_ID],
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "target": {
-                "href": f"../{image}.png",
+                "href": f"./{image}.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Calibration image of heliostat with id {image}",
             }
         },
     }
-
-
-def convert(arguments: argparse.Namespace) -> None:
-    """
-    Convert an internal CSV file to STAC.
-
-    Parameters
-    ----------
-    arguments: argparse.Namespace
-        The arguments containing input and output path.
-    """
-    # ensure that the output paths exist
-    arguments.output.mkdir(parents=True, exist_ok=True)
-
-    # read in the data in CSV
-    data = pd.read_csv(arguments.input)
-    data.set_index(mappings.ID_INDEX, inplace=True)
-
-    # convert all timestamps to UTC
-    data[mappings.CREATED_AT] = utils.to_utc(data[mappings.CREATED_AT])
-    data[mappings.UPDATED_AT] = utils.to_utc(data[mappings.UPDATED_AT])
-
-    # compute azimuth and elevation
-    azimuth, elevation = utils.calculate_azimuth_and_elevation(data)
-    data[mappings.AZIMUTH] = azimuth
-    data[mappings.ELEVATION] = elevation
-
-    # generate the STAC item files for each image
-    for image, heliostat_data in data.iterrows():
-        with open(
-            arguments.output / (mappings.CALIBRATION_ITEM % image), "w"
-        ) as handle:
-            stac_item = make_item(image, heliostat_data)
-            json.dump(stac_item, handle)
-
-    # generate the STAC collection
-    with open(arguments.output / mappings.CALIBRATION_COLLECTION_FILE, "w") as handle:
-        stac_item = make_collection(data)
-        json.dump(stac_item, handle)
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-i",
-        "--input",
-        type=pathlib.Path,
-        default="dataframe.csv",
-    )
-    parser.add_argument(
-        "-o",
-        "--output",
-        type=pathlib.Path,
-        default="stac",
-    )
-    args = parser.parse_args()
-
-    convert(args)

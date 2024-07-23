@@ -11,6 +11,7 @@ MONTH = "Month"
 HOUR = "Hour"
 AZIMUTH = "Azimuth"
 ELEVATION = "Elevation"
+SUN_ELEVATION = "Sun_elevation"
 SYSTEM = "System"
 CALIBRATION_TARGET = "CalibrationTargetId"
 AXIS1_MOTOR = "Axis1MotorPosition"
@@ -34,6 +35,7 @@ STAC_VERSION = "1.0.0"
 ITEM_ASSETS_SCHEMA = (
     f"https://stac-extensions.github.io/item-assets/v{STAC_VERSION}/schema.json"
 )
+CSP_SCHEMA = f"https://stac-extensions.github.io/csp/v{STAC_VERSION}/schema.json"
 LICENSE = "CDLA-2.0"
 LICENSE_LINK = {
     "rel": "license",
@@ -80,7 +82,7 @@ CALIBRATION_COLLECTION_FILE = "%s-calibration-collection-stac.json"
 CALIBRATION_COLLECTION_URL = (
     f"INSERT/SOMETHING/HERE/{CALIBRATION_COLLECTION_FILE}?download=1"
 )
-CALIBRATION_ITEM = "%d-%s-calibration-item-stac.json"
+CALIBRATION_ITEM = "%s-%d-calibration-item-stac.json"
 CALIBRATION_ITEM_URL = f"INSERT/SOMETHING/HERE/{CALIBRATION_ITEM}"
 
 DEFLECTOMETRY_COLLECTION_ID = "%s-deflectometry-collection"
