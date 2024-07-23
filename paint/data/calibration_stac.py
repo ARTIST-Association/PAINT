@@ -148,6 +148,12 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
             "type": "Point",
             "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
         },
+        "bbox": [
+            mappings.POWER_PLANT_LON,
+            mappings.POWER_PLANT_LAT,
+            mappings.POWER_PLANT_LON,
+            mappings.POWER_PLANT_LAT,
+        ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
                 mappings.TIME_FORMAT
