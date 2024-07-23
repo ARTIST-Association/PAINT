@@ -47,7 +47,9 @@ def test_make_collection(heliostat_data: pd.DataFrame) -> None:
     heliostat_data: pd.DataFrame
         The test fixture.
     """
-    collection = paint.data.calibration_stac.make_collection(heliostat_data)
+    collection = paint.data.calibration_stac.make_calibration_collection(
+        heliostat_id="0", data=heliostat_data
+    )
     print(collection)
     expected = {
         "stac_version": "1.0.0",
@@ -160,7 +162,7 @@ def test_make_item(heliostat_data: pd.DataFrame) -> None:
     image = 116262
     single_heliostat = heliostat_data.loc[image]
 
-    item = paint.data.calibration_stac.make_item(image, single_heliostat)
+    item = paint.data.calibration_stac.make_calibration_item(image, single_heliostat)
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [
@@ -230,4 +232,4 @@ def test_make_item(heliostat_data: pd.DataFrame) -> None:
 def test_make_collection_fail() -> None:
     """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
-        paint.data.calibration_stac.make_collection(pd.DataFrame())
+        paint.data.calibration_stac.make_calibration_collection("hi", pd.DataFrame())
