@@ -98,13 +98,6 @@ def make_calibration_collection(
             }
             for _, data_row in data.iterrows()
         ],
-        "item_assets": {
-            "target": {
-                "roles": ["data"],
-                "type": mappings.MIME_PNG,
-                "title": "Calibration images of heliostats",
-            }
-        },
     }
 
 
