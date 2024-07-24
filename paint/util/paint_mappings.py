@@ -35,7 +35,6 @@ STAC_VERSION = "1.0.0"
 ITEM_ASSETS_SCHEMA = (
     f"https://stac-extensions.github.io/item-assets/v{STAC_VERSION}/schema.json"
 )
-CSP_SCHEMA = f"https://stac-extensions.github.io/csp/v{STAC_VERSION}/schema.json"
 LICENSE = "CDLA-2.0"
 LICENSE_LINK = {
     "rel": "license",
@@ -94,18 +93,9 @@ DEFLECTOMETRY_COLLECTION_FILE = "%s-deflectometry-collection-stac.json"
 DEFLECTOMETRY_COLLECTION_URL = (
     f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_COLLECTION_FILE}?download=1"
 )
-DEFLECTOMETRY_RAW_ITEM = "%s-%s-deflectometry-item-stac.json"
-DEFLECTOMETRY_FILLED_ITEM = "%s-filled-%s-deflectometry-item-stac.json"
-DEFLECTOMETRY_RAW_ITEM_URL = (
-    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_RAW_ITEM}?download=1"
-)
-DEFLECTOMETRY_FILLED_ITEM_URL = (
-    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_FILLED_ITEM}?download=1"
-)
-DEFLECTOMETRY_RESULT_ITEM = "%s-%s-deflectometry-result-item-stac.json"
-DEFLECTOMETRY_RESULT_ITEM_URL = (
-    f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_RESULT_ITEM}?download=1"
-)
+DEFLECTOMETRY_ITEM = "%s-%s-deflectometry-item-stac.json"
+DEFLECTOMETRY_ITEM_URL = f"INSERT/SOMETHING/HERE/{DEFLECTOMETRY_ITEM}?download=1"
+
 DEFLECTOMETRY_PDF_NAME = "%s-%s-deflectometry-result.pdf"
 DEFLECTOMETRY_INSTRUMENTS = "QDec_2014-101"
 
@@ -132,6 +122,15 @@ URL_KEY = "url"
 TITLE_KEY = "title"
 LATITUDE_KEY = "latitude"
 LONGITUDE_KEY = "longitude"
+DEFLECTOMETRY_RAW_KEY = "raw_measurement"
+DEFLECTOMETRY_FILLED_KEY = "filled_measurement"
+DEFLECTOMETRY_RESULTS_KEY = "results_summary"
+CALIBRATION_TARGET_KEY = "target"
+CALIBRATION_MOTOR_POS_KEY = "motor_positions"
+FACET_PROPERTIES_KEY = "facet_properties"
+KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
+MOTOR_POS_NAME = "%s-%d-motor-position"
+WEATHER_DATA_KEY = "weather_data"
 
 SAVE_DEFLECTOMETRY = "Deflectometry"
 SAVE_PROPERTIES = "Properties"

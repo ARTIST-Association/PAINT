@@ -58,12 +58,6 @@ def make_facet_item(
             "datetime": heliostat_data[mappings.CREATED_AT],
             "created": heliostat_data[mappings.CREATED_AT],
         },
-        "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:heliostats": [
-            {
-                "csp:heliostat_id": heliostat_key,
-            }
-        ],
         "links": [
             {
                 "rel": "self",
@@ -91,7 +85,7 @@ def make_facet_item(
             },
         ],
         "assets": {
-            "target": {
+            mappings.FACET_PROPERTIES_KEY: {
                 "href": f"./{resource}.json",
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,

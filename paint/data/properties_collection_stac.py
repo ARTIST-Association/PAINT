@@ -53,11 +53,6 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
             },
         },
         "summaries": {
-            "csp:gppd_id": {
-                "type": "string",
-                "const": mappings.POWER_PLANT_GPPD_ID,
-                "count": data.shape[0],
-            },
             "datetime": {
                 "minimum": data[mappings.CREATED_AT].min(),
                 "maximum": data[mappings.CREATED_AT].max(),

@@ -78,7 +78,7 @@ def make_dwd_item(
             },
         ],
         "assets": {
-            "target": {
+            mappings.WEATHER_DATA_KEY: {
                 "href": "./dwd-weather.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,

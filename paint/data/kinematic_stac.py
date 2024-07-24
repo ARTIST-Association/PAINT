@@ -61,12 +61,6 @@ def make_kinematic_item(
             "datetime": to_utc_single(heliostat_data[mappings.CREATED_AT]),
             "created": to_utc_single(heliostat_data[mappings.CREATED_AT]),
         },
-        "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:heliostats": [
-            {
-                "csp:heliostat_id": heliostat_key,
-            }
-        ],
         "links": [
             {
                 "rel": "self",
@@ -94,7 +88,7 @@ def make_kinematic_item(
             },
         ],
         "assets": {
-            "target": {
+            mappings.KINEMATIC_PROPERTIES_KEY: {
                 "href": f"./{resource}.json",
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
