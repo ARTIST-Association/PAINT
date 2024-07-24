@@ -1,58 +1,89 @@
-import argparse
-import pathlib
-import tempfile
-
 import deepdiff
+import pandas as pd
+import pytest
 
 import paint.data.catalog_stac
 import paint.util.paint_mappings
 
 
-def test_make_catalog() -> None:
+@pytest.fixture
+def catalog_data():
+    """
+    Make a fixture with data for generating the catalog.
+
+    Returns
+    -------
+    pd.DataFrame
+       The test fixture.
+    """
+    data = {
+        "HeliostatId": ["AA23", "AA24", "AA25", "AA26"],
+        "CreatedAt": [
+            "2021-07-20 07:09:29",
+            "2021-07-20 07:09:33",
+            "2021-07-20 07:09:37",
+            "2021-07-20 07:09:41",
+        ],
+    }
+    df = pd.DataFrame(data)
+    df = df.set_index("HeliostatId")
+    return df
+
+
+def test_make_catalog(catalog_data: pd.DataFrame) -> None:
     """Test STAC catalog generation."""
-    catalog = paint.data.catalog_stac.make_catalog()
+    catalog = paint.data.catalog_stac.make_catalog(data=catalog_data)
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
         "id": "WRI1030197-catalog",
         "type": "Catalog",
         "title": "Operational data of concentrating solar power plant WRI1030197",
-        "description": "Calibration images, deflectometry measurements, kinematics and weather data",
+        "description": "Calibration images, deflectometry measurements, heliostat properties, and weather data",
         "links": [
             {
                 "rel": "self",
-                "href": "https://zenodo.org/record/elcatalogo/files/catalogue-stac.json?download=1",
+                "href": "Insert/URL/Here",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC collection file",
             },
             {
                 "rel": "root",
-                "href": "https://zenodo.org/record/elcatalogo/files/catalogue-stac.json?download=1",
+                "href": "Insert/URL/Here",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC collection file",
             },
             {
                 "rel": "child",
-                "href": "https://zenodo.org/record/loscalibrationes/files/WRI1030197-calibration-stac.json?download=1",
+                "href": "INSERT/SOMETHING/HERE/weather-collection-stac.json?download=1",
                 "type": "application/geo+json",
-                "title": "Reference to the STAC collection containing the calibration data",
+                "title": "Reference to the STAC collection containing the weather data",
+            },
+            {
+                "rel": "child",
+                "href": "INSERT/SOMETHING/HERE/AA23-heliostat-catalog-stac.json?download=1",
+                "type": "application/geo+json",
+                "title": "Reference to the STAC catalog containing data for heliostat AA23",
+            },
+            {
+                "rel": "child",
+                "href": "INSERT/SOMETHING/HERE/AA24-heliostat-catalog-stac.json?download=1",
+                "type": "application/geo+json",
+                "title": "Reference to the STAC catalog containing data for heliostat AA24",
+            },
+            {
+                "rel": "child",
+                "href": "INSERT/SOMETHING/HERE/AA25-heliostat-catalog-stac.json?download=1",
+                "type": "application/geo+json",
+                "title": "Reference to the STAC catalog containing data for heliostat AA25",
+            },
+            {
+                "rel": "child",
+                "href": "INSERT/SOMETHING/HERE/AA26-heliostat-catalog-stac.json?download=1",
+                "type": "application/geo+json",
+                "title": "Reference to the STAC catalog containing data for heliostat AA26",
             },
         ],
     }
 
     assert not deepdiff.DeepDiff(catalog, expected)
-
-
-def test_save_catalog() -> None:
-    """Test catalog is saved on disk."""
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        output_dir = pathlib.Path(tmp_dir)
-        catalog_file = output_dir / paint.util.paint_mappings.CATALOG_FILE
-
-        arguments = argparse.Namespace(output=output_dir)
-        catalog = paint.data.catalog_stac.make_catalog()
-
-        assert not catalog_file.exists()
-        paint.data.catalog_stac.save_catalog(arguments, catalog)
-        assert catalog_file.exists()
-        assert catalog_file.stat().st_size > 0
