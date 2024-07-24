@@ -56,11 +56,6 @@ def make_deflectometry_collection(
             },
         },
         "summaries": {
-            "csp:gppd_id": {
-                "type": "string",
-                "const": mappings.POWER_PLANT_GPPD_ID,
-                "count": data.shape[0],
-            },
             "datetime": {
                 "minimum": data[mappings.CREATED_AT].min(),
                 "maximum": data[mappings.CREATED_AT].max(),
@@ -101,7 +96,8 @@ def make_deflectometry_collection(
 
 
 def make_deflectometry_item(
-    heliostat_key: str, heliostat_data: pd.Series, raw_data: bool = True
+    heliostat_key: str,
+    heliostat_data: pd.Series,
 ) -> Tuple[Tuple[float, float], Dict[str, Any]]:
     """
     Generate a STAC item for a deflectometry measurement.
@@ -112,8 +108,6 @@ def make_deflectometry_item(
         The ID of the heliostat which was measured.
     heliostat_data: pd.Series.
         The metadata for the heliostat.
-    raw_data: bool
-        Indicates if raw data or filled data is considered.
 
     Returns
     -------
@@ -122,19 +116,9 @@ def make_deflectometry_item(
     dict[str, Any]
         The STAC item data as dictionary.
     """
-    if raw_data:
-        resource = (
-            heliostat_key + "-" + heliostat_data[mappings.CREATED_AT] + "-deflectometry"
-        )
-        name = "Raw"
-    else:
-        resource = (
-            heliostat_key
-            + "-filled-"
-            + heliostat_data[mappings.CREATED_AT]
-            + "-deflectometry"
-        )
-        name = "Filled"
+    resource = (
+        heliostat_key + "-" + heliostat_data[mappings.CREATED_AT] + "-deflectometry"
+    )
     lat_lon = add_offset_to_lat_lon(
         east_offset_m=heliostat_data[mappings.EAST_KEY],
         north_offset_m=heliostat_data[mappings.NORTH_KEY],
@@ -144,9 +128,9 @@ def make_deflectometry_item(
         "stac_extensions": [],
         "id": f"{resource}",
         "type": "Feature",
-        "title": f"{name} deflectometry measurement of {heliostat_key}",
-        "description": f"Measured {name.lower()} deflectometry data containing point clouds and surface normals for "
-        f"heliosat {heliostat_key}",
+        "title": f"Deflectometry measurement of {heliostat_key}",
+        "description": f"Measured raw and filled deflectometry data containing point clouds and surface normals for "
+        f"heliosat {heliostat_key} and the deflectometry measurement results summary",
         "collection": mappings.DEFLECTOMETRY_COLLECTION_ID % heliostat_key,
         "geometry": {
             "type": "Point",
@@ -169,12 +153,6 @@ def make_deflectometry_item(
             "created": heliostat_data[mappings.CREATED_AT],
             "instruments": f"{mappings.DEFLECTOMETRY_INSTRUMENTS}",
         },
-        "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:heliostats": [
-            {
-                "csp:heliostat_id": heliostat_key,
-            }
-        ],
         "links": [
             {
                 "rel": "self",
@@ -202,106 +180,26 @@ def make_deflectometry_item(
             },
         ],
         "assets": {
-            "target": {
-                "href": f"./{resource}.h5",
+            mappings.DEFLECTOMETRY_RAW_KEY: {
+                "href": f"./{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
-                "title": f"{name} deflectometry measurement of {heliostat_key}",
-            }
-        },
-    }
-
-
-def make_deflectometry_results_item(
-    heliostat_key: str,
-    heliostat_data: pd.Series,
-) -> Dict[str, Any]:
-    """
-    Generate a STAC item for the deflectometry results PDF.
-
-    Parameters
-    ----------
-    heliostat_key: str
-        The ID of the heliostat which was measured.
-    heliostat_data: pd.Series.
-        The metadata for the heliostat.
-
-    Returns
-    -------
-    dict[str, Any]
-        The STAC item data as dictionary.
-    """
-    resource = (
-        heliostat_key
-        + "-"
-        + heliostat_data[mappings.CREATED_AT]
-        + "deflectometry-result"
-    )
-    lat_long = add_offset_to_lat_lon(
-        east_offset_m=heliostat_data[mappings.EAST_KEY],
-        north_offset_m=heliostat_data[mappings.NORTH_KEY],
-    )
-    return {
-        "stac_version": mappings.STAC_VERSION,
-        "stac_extensions": [],
-        "id": f"{resource}",
-        "type": "Feature",
-        "title": f"Deflectometry results of {heliostat_key}",
-        "description": f"Deflectometry results summary for heliosat {heliostat_key}",
-        "collection": mappings.DEFLECTOMETRY_COLLECTION_ID % heliostat_key,
-        "geometry": {
-            "type": "Point",
-            "coordinates": [
-                lat_long[0],
-                lat_long[1],
-                heliostat_data[mappings.ALTITUDE_KEY],
-            ],
-        },
-        "bbox": [
-            lat_long[0] - mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] - mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] - mappings.BBOX_ALTITUDE_DEVIATION,
-            lat_long[0] + mappings.BBOX_LAT_LON_DEVIATION,
-            lat_long[1] + mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] + mappings.BBOX_ALTITUDE_DEVIATION,
-        ],
-        "properties": {
-            "datetime": heliostat_data[mappings.CREATED_AT],
-            "created": heliostat_data[mappings.CREATED_AT],
-            "instruments": f"{mappings.DEFLECTOMETRY_INSTRUMENTS}",
-        },
-        "links": [
-            {
-                "rel": "self",
-                "href": f"./{resource}-stac.json",
-                "type": "application/geo+json",
-                "title": "Reference to this STAC file",
+                "title": f"Raw deflectometry measurement of {heliostat_key} at "
+                f"{heliostat_data[mappings.CREATED_AT]}",
             },
-            {
-                "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
-                "type": mappings.MIME_GEOJSON,
-                "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
-            },
-            {
-                "rel": "parent",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_key,
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the collection STAC file",
-            },
-            {
-                "rel": "collection",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_key,
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the collection STAC file",
-            },
-        ],
-        "assets": {
-            "target": {
-                "href": f"./{resource}.pdf",
+            mappings.DEFLECTOMETRY_FILLED_KEY: {
+                "href": f"./{heliostat_key}-filled-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
+                "type": mappings.MIME_HDF5,
+                "title": f"Filled deflectometry measurement of {heliostat_key} at "
+                f"{heliostat_data[mappings.CREATED_AT]}",
+            },
+            mappings.DEFLECTOMETRY_RESULTS_KEY: {
+                "href": f"./{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
+                "roles": ["metadata"],
                 "type": mappings.MIME_PDF,
-                "title": f"Deflectometry results summary for heliosat {heliostat_key}",
-            }
+                "title": f"Summary of deflectometry measurement of {heliostat_key} at "
+                f"{heliostat_data[mappings.CREATED_AT]}",
+            },
         },
     }
