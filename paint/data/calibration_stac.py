@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from typing import Any, Dict
 
 import pandas as pd
@@ -27,7 +25,7 @@ def make_calibration_collection(
     """
     return {
         "stac_version": mappings.STAC_VERSION,
-        "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA, mappings.CSP_SCHEMA],
+        "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA],
         "id": mappings.CALIBRATION_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
         "title": f"Calibration images from heliostat {heliostat_id}",
@@ -52,11 +50,6 @@ def make_calibration_collection(
             },
         },
         "summaries": {
-            "csp:gppd_id": {
-                "type": "string",
-                "const": mappings.POWER_PLANT_GPPD_ID,
-                "count": data.shape[0],
-            },
             "datetime": {
                 "minimum": data[mappings.CREATED_AT]
                 .min()
@@ -135,13 +128,12 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [
             "view",
-            f"{mappings.CSP_SCHEMA}",
         ],
         "id": f"{image}",
         "type": "Feature",
-        "title": f"Calibration image from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
-        "description": f"Images of focused sunlight on the calibration target from heliostat "
-        f"{heliostat_data[mappings.HELIOSTAT_ID]} for image{image}",
+        "title": f"Calibration data from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
+        "description": f"Image of focused sunlight on the calibration target from heliostat "
+        f"{heliostat_data[mappings.HELIOSTAT_ID]} for image {image} with associated motor positions",
         "collection": mappings.CALIBRATION_COLLECTION_ID
         % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
@@ -168,17 +160,6 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         },
         "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
         "view:sun_elevation": heliostat_data[mappings.SUN_ELEVATION],
-        "csp:gppd_id": mappings.POWER_PLANT_GPPD_ID,
-        "csp:heliostats": [
-            {
-                "csp:heliostat_id": heliostat_data[mappings.HELIOSTAT_ID],
-                "csp:heliostat_motors": [
-                    heliostat_data[mappings.AXIS1_MOTOR],
-                    heliostat_data[mappings.AXIS2_MOTOR],
-                ],
-            }
-        ],
-        "csp:target_id": heliostat_data[mappings.CALIBRATION_TARGET],
         "links": [
             {
                 "rel": "self",
@@ -208,11 +189,17 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
             },
         ],
         "assets": {
-            "target": {
+            mappings.CALIBRATION_TARGET_KEY: {
                 "href": f"./{image}.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
-                "title": f"Calibration image of heliostat with id {image}",
-            }
+                "title": f"Calibration image with id {image}",
+            },
+            mappings.CALIBRATION_MOTOR_POS_KEY: {
+                "href": f"./{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
+                "roles": ["metadata"],
+                "type": mappings.MIME_PNG,
+                "title": f"Motor positions for the calibration image id {image}",
+            },
         },
     }
