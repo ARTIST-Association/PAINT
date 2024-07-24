@@ -150,7 +150,7 @@ def main(arguments: argparse.Namespace):
 if __name__ == "__main__":
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
-        "generate_deflectometry_and_facet_stacs.py",
+        "generate_deflectometry_stacs_and_facet_items.py",
         "--input_position",
         f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
         "--input_axis",

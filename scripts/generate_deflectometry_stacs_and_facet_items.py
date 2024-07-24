@@ -13,8 +13,8 @@ import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.binary_extractor import BinaryExtractor
 from paint.data.deflectometry_stac import (
+    make_deflectometry_collection,
     make_deflectometry_item,
-    make_deflectometry_results_item,
 )
 from paint.data.facet_stac import make_facet_item
 from paint.util.utils import load_and_format_heliostat_positions
@@ -74,22 +74,41 @@ def extract_data_and_generate_stacs(
     ]
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
 
-    # for the raw deflectometry measurements
+    # STAC contains all deflectometry items, therefore, only create the stac once after the raw conversion
     if converter.raw_data:
+        # find the associated PDF deflectometry results summary and copy it to the correct location with
+        # the correct name
+        split_name = input_path.name.split("_")
+        pdf_name = (
+            "_".join(split_name[0:3])
+            + "_Result_"
+            + split_name[-1].split(".")[0]
+            + ".pdf"
+        )
+        new_pdf_name = (
+            Path(arguments.output_path)
+            / converter.heliostat_id
+            / mappings.SAVE_DEFLECTOMETRY
+            / (
+                mappings.DEFLECTOMETRY_PDF_NAME
+                % (converter.heliostat_id, converter.deflectometry_created_at)
+            )
+        )
+        shutil.copy2(input_path.parent / pdf_name, new_pdf_name)
+
         # create stac and extract latitude and longitude
         lat_lon, stac_item = make_deflectometry_item(
             heliostat_key=converter.heliostat_id,
             heliostat_data=metadata,
-            raw_data=True,
         )
         # save item metadata for collection creation later
-        url = mappings.DEFLECTOMETRY_RAW_ITEM_URL % (
+        url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
             converter.deflectometry_created_at,
         )
         deflectometry_items.loc[len(deflectometry_items)] = [
             converter.heliostat_id,
-            f"raw deflectometry measurements for {converter.heliostat_id} at {converter.deflectometry_created_at}",
+            f"Deflectometry measurements for {converter.heliostat_id} at {converter.deflectometry_created_at}",
             url,
             converter.deflectometry_created_at,
             lat_lon[0],
@@ -97,13 +116,13 @@ def extract_data_and_generate_stacs(
             metadata[mappings.ALTITUDE_KEY],
         ]
 
-        # save the raw deflectometry measurement stac
+        # save the deflectometry measurement stac
         save_deflectometry_path = (
             Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
-                mappings.DEFLECTOMETRY_RAW_ITEM
+                mappings.DEFLECTOMETRY_ITEM
                 % (converter.heliostat_id, converter.deflectometry_created_at)
             )
         )
@@ -139,108 +158,17 @@ def extract_data_and_generate_stacs(
         with open(save_facet_path, mode="w") as handle:
             json.dump(facet_stac, handle)
 
-        # find the associated PDF deflectometry results summary and copy it to the correct location with
-        # the correct name
-        split_name = input_path.name.split("_")
-        pdf_name = (
-            "_".join(split_name[0:3])
-            + "_Result_"
-            + split_name[-1].split(".")[0]
-            + ".pdf"
-        )
-        new_pdf_name = (
-            Path(arguments.output_path)
-            / converter.heliostat_id
-            / mappings.SAVE_DEFLECTOMETRY
-            / (
-                mappings.DEFLECTOMETRY_PDF_NAME
-                % (converter.heliostat_id, converter.deflectometry_created_at)
-            )
-        )
-        shutil.copy2(input_path.parent / pdf_name, new_pdf_name)
-
-        # create a STAC for the result PDF
-        deflectometry_results_stac_item = make_deflectometry_results_item(
-            heliostat_key=converter.heliostat_id, heliostat_data=metadata
-        )
-
-        # save the metadata for the result PDF for collection creation later
-        result_url = mappings.DEFLECTOMETRY_RESULT_ITEM_URL % (
-            converter.heliostat_id,
-            converter.deflectometry_created_at,
-        )
-        deflectometry_items.loc[len(deflectometry_items)] = [
-            converter.heliostat_id,
-            f"deflectometry results for {converter.heliostat_id} at {converter.deflectometry_created_at}",
-            result_url,
-            converter.deflectometry_created_at,
-            lat_lon[0],
-            lat_lon[1],
-            metadata[mappings.ALTITUDE_KEY],
-        ]
-
-        # save the deflectometry result STAC
-        save_deflectometry_results_path = (
-            Path(arguments.output_path)
-            / converter.heliostat_id
-            / mappings.SAVE_DEFLECTOMETRY
-            / (
-                mappings.DEFLECTOMETRY_RESULT_ITEM
-                % (converter.heliostat_id, converter.deflectometry_created_at)
-            )
-        )
-        save_deflectometry_results_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(save_deflectometry_results_path, mode="w") as handle:
-            json.dump(deflectometry_results_stac_item, handle)
-
-    else:  # For filled data
-        # create stac and extract latitude and longitude
-        lat_lon, stac_item = make_deflectometry_item(
-            heliostat_key=converter.heliostat_id,
-            heliostat_data=metadata,
-            raw_data=False,
-        )
-
-        # save item metadata for collection creation later
-        url = mappings.DEFLECTOMETRY_FILLED_ITEM_URL % (
-            converter.heliostat_id,
-            converter.deflectometry_created_at,
-        )
-        deflectometry_items.loc[len(deflectometry_items)] = [
-            converter.heliostat_id,
-            f"filled deflectometry measurements for {converter.heliostat_id} at {converter.deflectometry_created_at}",
-            url,
-            converter.deflectometry_created_at,
-            lat_lon[0],
-            lat_lon[1],
-            metadata[mappings.ALTITUDE_KEY],
-        ]
-
-        # save the filled deflectometry measurement
-        save_deflectometry_path = (
-            Path(arguments.output_path)
-            / converter.heliostat_id
-            / mappings.SAVE_DEFLECTOMETRY
-            / (
-                mappings.DEFLECTOMETRY_FILLED_ITEM
-                % (converter.heliostat_id, converter.deflectometry_created_at)
-            )
-        )
-        save_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(save_deflectometry_path, mode="w") as handle:
-            json.dump(stac_item, handle)
-
     return deflectometry_items, properties_items
 
 
 def main(arguments: argparse.Namespace):
     """
-    Generate deflectometry and facet item STACS.
+    Generate deflectometry STACS and facet item STACS.
 
     This function converts binary data to HDF5 for deflectometry measurements and JSON for facet properties.
     Additionally, the deflectometry results summary PDF is moved to the correct location and renamed. Also, the STAC
-    items for deflectometry measurements and facet properties are created. Finally, the metadata for all STAC items is
-    saved for collection creation later.
+    items and collections for deflectometry measurements are created and the STAC items for the facet properties.
+    Finally, the metadata for the facet properties STAC items is saved for later collection creation.
 
     Parameters
     ----------
@@ -296,15 +224,27 @@ def main(arguments: argparse.Namespace):
             properties_items=properties_items,
         )
 
-    # save deflectometry and facet items for creating collections
-    deflectometry_items.to_csv(deflectometry_items_path, index=False)
+    for heliostat, data in deflectometry_items.groupby(mappings.HELIOSTAT_ID):
+        assert isinstance(heliostat, str)
+        collection = make_deflectometry_collection(heliostat_id=heliostat, data=data)
+        save_path = (
+            Path(arguments.output_path)
+            / heliostat
+            / mappings.SAVE_DEFLECTOMETRY
+            / (mappings.DEFLECTOMETRY_COLLECTION_FILE % heliostat)
+        )
+        save_path.parent.mkdir(exist_ok=True, parents=True)
+        with open(save_path, "w") as out:
+            json.dump(collection, out)
+
+    # save facet items for creating collections
     properties_items.to_csv(properties_items_path, index=False)
 
 
 if __name__ == "__main__":
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
-        "generate_deflectometry_and_facet_stacs.py",
+        "generate_deflectometry_stacs_and_facet_items.py",
         "--input_folder",
         f"{PAINT_ROOT}/ExampleDataKIT",
         "-i_position",
