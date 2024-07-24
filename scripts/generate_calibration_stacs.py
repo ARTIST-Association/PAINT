@@ -70,7 +70,8 @@ def main(arguments: argparse.Namespace) -> None:
         )
         calibration_items.loc[len(calibration_items)] = [
             heliostat_data[mappings.HELIOSTAT_ID],
-            f"calibration image {image} for heliostat {heliostat_data[mappings.HELIOSTAT_ID]}",
+            f"calibration image {image} and associated motor positions for heliostat "
+            f"{heliostat_data[mappings.HELIOSTAT_ID]}",
             url,
             heliostat_data[mappings.CREATED_AT],
             heliostat_data[mappings.AZIMUTH],
@@ -89,6 +90,24 @@ def main(arguments: argparse.Namespace) -> None:
         calibration_item_stac_path.parent.mkdir(parents=True, exist_ok=True)
         with open(calibration_item_stac_path, "w") as handle:
             json.dump(stac_item, handle)
+
+        # save associated motorpositions
+        motor_pos_data = {
+            mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
+            mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+        }
+        save_motor_pos_path = (
+            Path(arguments.output)
+            / heliostat_data[mappings.HELIOSTAT_ID]
+            / mappings.SAVE_CALIBRATION
+            / (
+                mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)
+                + ".json"
+            )
+        )
+        save_motor_pos_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(save_motor_pos_path, "w") as handle:
+            json.dump(motor_pos_data, handle)
 
     # create the STAC collections
     for heliostat, data in calibration_items.groupby(mappings.HELIOSTAT_ID):
