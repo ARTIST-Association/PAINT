@@ -8,7 +8,7 @@ from pathlib import Path
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.heliostat_catalog_stac import make_heliostat_catalog
-from paint.util.utils import (
+from paint.util.preprocessing import (
     load_and_format_heliostat_axis_data,
     load_and_format_heliostat_positions,
     merge_and_sort_df,

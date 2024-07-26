@@ -17,7 +17,7 @@ from paint.data.deflectometry_stac import (
     make_deflectometry_item,
 )
 from paint.data.facet_stac import make_facet_item
-from paint.util.utils import load_and_format_heliostat_positions
+from paint.util.preprocessing import load_and_format_heliostat_positions
 
 
 def extract_data_and_generate_stacs(
