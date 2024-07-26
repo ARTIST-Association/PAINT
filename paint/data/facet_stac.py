@@ -3,7 +3,7 @@ from typing import Any, Dict
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util.latitude_longitude_conversion import add_offset_to_lat_lon
+from paint.util.utils import add_offset_to_lat_lon
 
 
 def make_facet_item(

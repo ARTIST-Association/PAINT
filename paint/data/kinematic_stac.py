@@ -3,8 +3,7 @@ from typing import Any, Dict, Tuple
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util.latitude_longitude_conversion import add_offset_to_lat_lon
-from paint.util.utils import to_utc_single
+from paint.util.utils import add_offset_to_lat_lon, to_utc_single
 
 
 def make_kinematic_item(
