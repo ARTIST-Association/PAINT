@@ -36,12 +36,12 @@ def deflectometry_item_data() -> Tuple[str, pd.Series]:
 @pytest.fixture
 def deflectometry_collection_data():
     """
-    Make a fixture with data for generating the calibration collection.
+    Make a fixture with data for generating the deflectometry collection.
 
     Returns
     -------
     pd.DataFrame
-        The test fixture.
+        The data for the deflectometry collection as a test fixture.
     """
     import pandas as pd
 

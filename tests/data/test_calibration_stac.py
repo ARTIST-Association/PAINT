@@ -68,7 +68,7 @@ def calibration_collection_data():
     Returns
     -------
     pd.DataFrame
-        The test fixture.
+        The data for the calibration collection as a test fixture.
     """
     data = {
         mappings.HELIOSTAT_ID: ["BC52", "BC52", "BC52", "BC52"],
