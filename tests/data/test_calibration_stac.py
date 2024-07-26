@@ -4,7 +4,6 @@ import deepdiff
 import pandas as pd
 import pytest
 
-import paint.data.calibration_stac
 import paint.util.paint_mappings as mappings
 from paint.data.calibration_stac import (
     make_calibration_collection,
@@ -21,8 +20,8 @@ def calibration_item_data() -> Tuple[int, pd.Series]:
     -------
     int
         The image ID.
-    pd.DataFrame
-        The test fixture.
+    pd.Series
+        The data for the calibration STAC item.
     """
     data = {
         "FieldId": 1,
@@ -109,7 +108,7 @@ def calibration_collection_data():
     return pd.DataFrame(data)
 
 
-def test_make_collection(calibration_collection_data: pd.DataFrame) -> None:
+def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) -> None:
     """
     Test the creation of the calibration STAC collection.
 
@@ -232,7 +231,7 @@ def test_make_collection(calibration_collection_data: pd.DataFrame) -> None:
         )
 
 
-def test_make_item(calibration_item_data: Tuple[str, pd.Series]) -> None:
+def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> None:
     """
     Test the creation of a STAC item.
 
@@ -315,7 +314,7 @@ def test_make_item(calibration_item_data: Tuple[str, pd.Series]) -> None:
     assert not deepdiff.DeepDiff(item, expected, ignore_numeric_type_changes=True)
 
 
-def test_make_collection_fail() -> None:
+def test_make_calibration_collection_fail() -> None:
     """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
-        paint.data.calibration_stac.make_calibration_collection("AB123", pd.DataFrame())
+        make_calibration_collection("AB123", pd.DataFrame())
