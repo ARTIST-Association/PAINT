@@ -217,4 +217,4 @@ def calculate_heliostat_position_in_m_from_lat_lon(
     # Calculate north and east offsets in meters
     north_offset_m = dlat_rad * rm1
     east_offset_m = dlon_rad * rn1 * math.cos(lat_heliostat_rad)
-    return [north_offset_m, east_offset_m, alt_heliostat]
+    return [-north_offset_m, -east_offset_m, alt_heliostat]

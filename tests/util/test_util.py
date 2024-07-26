@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -67,3 +69,108 @@ def test_to_utc() -> None:
     )
 
     assert (utc_timestamps == expected).all()
+
+
+@pytest.mark.parametrize(
+    "original_time, expected_utc_time",
+    [
+        ("03:23:45 01-11-2023", "2023-01-11Z02:23:45Z"),
+        ("20220405074517", "2022-04-05Z05:45:17Z"),
+    ],
+)
+def test_single_time_conversion(original_time: str, expected_utc_time: str) -> None:
+    """
+    Test conversion of single string local times to UTC times.
+
+    Parameters
+    ----------
+    original_time : str
+        The original time string in the local time zone.
+    expected_utc_time : str
+        The expected time string in UTC time zone.
+    """
+    assert paint.util.utils.to_utc_single(original_time) == expected_utc_time
+
+
+@pytest.mark.parametrize(
+    "north_offset_m, east_offset_m, expected_lat, expected_lon",
+    [
+        (0.0, 0.0, mappings.POWER_PLANT_LAT, mappings.POWER_PLANT_LON),
+        (10.0, 30.0, 50.91338624175841, 6.38794141670515),
+        (200.7, 37803.9, 50.91510045120202, 6.925048549014668),
+    ],
+)
+def test_add_offset_lat_lon(
+    north_offset_m: float,
+    east_offset_m: float,
+    expected_lat: float,
+    expected_lon: float,
+) -> None:
+    """
+    Test function that adds offset to latitude and longitude coordinates.
+
+    Parameters
+    ----------
+    north_offset_m : float
+        The offset in the north direction in meters.
+    east_offset_m : float
+        The offset in the east direction in meters.
+    expected_lat : float
+        The expected latitude in degrees.
+    expected_lon : float
+         The expected longitude in degrees.
+    """
+    lat, lon = paint.util.utils.add_offset_to_lat_lon(
+        north_offset_m=north_offset_m, east_offset_m=east_offset_m
+    )
+    assert lat == expected_lat
+    assert lon == expected_lon
+
+
+@pytest.mark.parametrize(
+    "heliostat_lat, heliostat_lon, heliostat_alt, expected_position",
+    [
+        (
+            mappings.POWER_PLANT_LAT,
+            mappings.POWER_PLANT_LON,
+            mappings.POWER_PLANT_ALT,
+            [0.0, 0.0, 0.0],
+        ),
+        (
+            50.91338624175841,
+            6.38794141670515,
+            27.0,
+            [10.000000155562523, 29.99994221199063, -60.0],
+        ),
+        (
+            50.91510045120202,
+            6.925048549014668,
+            450,
+            [200.7000623622324, 37802.43847705173, 363],
+        ),
+    ],
+)
+def test_calculate_heliostat_position(
+    heliostat_lat: float,
+    heliostat_lon: float,
+    heliostat_alt: float,
+    expected_position: List[float],
+) -> None:
+    """
+    Test function that calculates the heliostat position in meters given the latitude, longitude and altitude.
+
+    Parameters
+    ----------
+    heliostat_lat: float
+        The latitude of the heliostat in degrees.
+    heliostat_lon: float
+        The longitude of the heliostat in degrees.
+    heliostat_alt: float
+        The altitude of the heliostat in meters.
+    expected_position: List[float]
+        The expected heliostat position in meters.
+    """
+    position = paint.util.utils.calculate_heliostat_position_in_m_from_lat_lon(
+        lat1=heliostat_lat, lon1=heliostat_lon, alt=heliostat_alt
+    )
+    assert position == expected_position
