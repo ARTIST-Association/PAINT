@@ -24,7 +24,8 @@ dependencies = [
     "pandas",
     "wetterdienst",
     "h5py",
-    "seaborn"
+    "seaborn",
+    "jinja2"
 ]
 
 [project.optional-dependencies]
