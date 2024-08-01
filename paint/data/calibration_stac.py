@@ -157,7 +157,7 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
             {
                 "rel": "self",
                 "href": f"./{image}-stac.json",
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
@@ -170,14 +170,14 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
                 "rel": "parent",
                 "href": mappings.CALIBRATION_COLLECTION_URL
                 % heliostat_data[mappings.HELIOSTAT_ID],
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
                 "href": mappings.CALIBRATION_COLLECTION_URL
                 % heliostat_data[mappings.HELIOSTAT_ID],
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
         ],
