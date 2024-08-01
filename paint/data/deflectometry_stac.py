@@ -157,7 +157,7 @@ def make_deflectometry_item(
             {
                 "rel": "self",
                 "href": f"./{resource}-stac.json",
-                "type": "application/geo+json",
+                "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
