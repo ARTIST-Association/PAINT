@@ -1,0 +1,19 @@
+@font-face {
+    font-family: "Halvar Mittel";
+    src: url("../font/HalvarMittel-Rg.otf"); /*URL to font*/
+}
+
+:root {
+    --bs-primary: #005AA0;
+    --bs-primary-rgb: 0, 90, 160;
+    --bs-font-sans-serif: "Halvar Mittel"
+}
+
+.nav-link.active {
+    background-color: var(--bs-gray-300);
+    border-left: 4px solid var(--bs-primary);
+}
+
+.nav-link:hover {
+    background-color: var(--bs-gray-300);
+}
