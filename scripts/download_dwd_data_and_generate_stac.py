@@ -53,8 +53,6 @@ def main(arguments: argparse.Namespace) -> None:
         output_path=arguments.output_path,
         file_name=arguments.file_name,
         ts_shape=arguments.ts_shape,
-        ts_humanize=arguments.ts_humanize,
-        ts_si_units=arguments.ts_si_units,
     )
     metadata = dwd_weather.download_and_save_data()
     metadata = metadata.rename(
@@ -116,7 +114,5 @@ if __name__ == "__main__":
     )
     parser.add_argument("--file_name", type=str, default="dwd-weather.h5")
     parser.add_argument("--ts_shape", type=str, default="long")
-    parser.add_argument("--ts_humanize", action="store_true", default=True)
-    parser.add_argument("--ts_si_units", action="store_false", default=False)
     args = parser.parse_args()
     main(arguments=args)
