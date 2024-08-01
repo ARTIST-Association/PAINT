@@ -305,7 +305,7 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
             "motor_positions": {
                 "href": "./BC52-115399-motor-position.json",
                 "roles": ["metadata"],
-                "type": "image/png",
+                "type": "application/geo+json",
                 "title": "Motor positions for the calibration image id 115399",
             },
         },
