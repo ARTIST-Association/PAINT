@@ -191,7 +191,7 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
             mappings.CALIBRATION_MOTOR_POS_KEY: {
                 "href": f"./{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
                 "roles": ["metadata"],
-                "type": mappings.MIME_PNG,
+                "type": mappings.MIME_GEOJSON,
                 "title": f"Motor positions for the calibration image id {image}",
             },
         },
