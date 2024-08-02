@@ -1,7 +1,11 @@
-from typing import Tuple, Union
+import math
+from datetime import datetime
+from typing import List, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import pytz
+from dateutil import parser
 
 import paint.util.paint_mappings as mappings
 
@@ -22,24 +26,25 @@ def calculate_azimuth_and_elevation(df: pd.DataFrame) -> Tuple[np.ndarray, np.nd
     np.ndarray
         The calculated elevation in degrees.
     """
-    # Extract sun positions in each coordinate.
+    # extract sun positions in each coordinate
     sun_position_east = np.array(df[mappings.SUN_POSITION_EAST])
     sun_position_north = -np.array(df[mappings.SUN_POSITION_NORTH])
     sun_position_up = np.array(df[mappings.SUN_POSITION_UP])
 
-    # Calculate azimuth and evaluation and return.
+    # calculate azimuth and evaluation and return.
     azimuth_degree = np.degrees(np.arctan2(sun_position_east, sun_position_north))
     elevation_degree = np.degrees(
         np.arctan2(
             sun_position_up, np.sqrt(sun_position_east**2 + sun_position_north**2)
         )
     )
+
     return azimuth_degree, elevation_degree
 
 
-def heliostat_id_to_heliostat_name(heliostat_id: Union[int, str]) -> str:
+def heliostat_id_to_name(heliostat_id: Union[int, str]) -> str:
     """
-    Convert a heliostat id to a heliostat name.
+    Convert a heliostat id to its name.
 
     Parameters
     ----------
@@ -52,10 +57,9 @@ def heliostat_id_to_heliostat_name(heliostat_id: Union[int, str]) -> str:
         The heliostat name derived from the heliostat ID.
     """
     str_ = str(heliostat_id)
-    name = chr(ord("A") + int(str_[0]) - 1)
-    name += chr(ord("A") + int(str_[1:3]) - 1)
-    name += str_[3:]
-    return name
+    return "".join(
+        [chr(ord("A") + int(str_[0]) - 1), chr(ord("A") + int(str_[1:3]) - 1), str_[3:]]
+    )
 
 
 def to_utc(time_series: pd.Series) -> pd.Series:
@@ -77,3 +81,140 @@ def to_utc(time_series: pd.Series) -> pd.Series:
         .dt.tz_localize("Europe/Berlin", ambiguous="infer")
         .dt.tz_convert("UTC")
     )
+
+
+def to_utc_single(datetime_str: str, local_tz: str = "Europe/Berlin") -> str:
+    """
+    Parse a single local datetime string and convert to UTC.
+
+    Parameters
+    ----------
+    datetime_str : str
+        The string containing the local datetime.
+    local_tz : str
+        The local timezone (Default: 'Europe/Berlin').
+
+    Returns
+    -------
+    str
+        The corresponding UTC datetime string.
+    """
+    try:
+        # Try parsing with dateutil.parser for general datetime strings
+        local_time = parser.parse(datetime_str)
+    except ValueError:
+        try:
+            # Fall back to manual parsing for specific format "%y%m%d%H%M%S"
+            local_time = datetime.strptime(datetime_str, "%y%m%d%H%M%S")
+        except ValueError as e:
+            raise ValueError(f"Unable to parse datetime string: {datetime_str}") from e
+
+    # Localize the datetime object to the specified local timezone
+    local_tz_obj = pytz.timezone(local_tz)
+    if local_time.tzinfo is None:
+        local_time = local_tz_obj.localize(local_time, is_dst=None)
+
+    # Convert the localized datetime to UTC
+    utc_time = local_time.astimezone(pytz.utc)
+
+    # Return the UTC datetime as a string
+    return utc_time.strftime(mappings.TIME_FORMAT)
+
+
+def add_offset_to_lat_lon(
+    north_offset_m: float, east_offset_m: float
+) -> Tuple[float, float]:
+    """
+    Add an offset to the given latitude and longitude coordinates.
+
+    Parameters
+    ----------
+    north_offset_m : float
+        The distance in meters to add to the latitude.
+    east_offset_m : float
+        The distance in meters to add to the longitude.
+
+    Returns
+    -------
+    float
+        The new latitude in degrees.
+    float
+        The new longitude in degrees.
+    """
+    # Convert latitude and longitude to radians
+    lat_rad = math.radians(mappings.POWER_PLANT_LAT)
+    lon_rad = math.radians(mappings.POWER_PLANT_LON)
+
+    # Calculate meridional radius of curvature
+    sin_lat = math.sin(lat_rad)
+    rn = mappings.WGS84_A / math.sqrt(1 - mappings.WGS84_E2 * sin_lat**2)
+
+    # Calculate transverse radius of curvature
+    rm = (mappings.WGS84_A * (1 - mappings.WGS84_E2)) / (
+        (1 - mappings.WGS84_E2 * sin_lat**2) ** 1.5
+    )
+
+    # Calculate new latitude
+    dlat = north_offset_m / rm
+    new_lat_rad = lat_rad + dlat
+
+    # Calculate new longitude using the original meridional radius of curvature
+    dlon = east_offset_m / (rn * math.cos(lat_rad))
+    new_lon_rad = lon_rad + dlon
+
+    # Convert back to degrees
+    new_lat = math.degrees(new_lat_rad)
+    new_lon = math.degrees(new_lon_rad)
+
+    return new_lat, new_lon
+
+
+def calculate_heliostat_position_in_m_from_lat_lon(
+    lat1: float, lon1: float, alt: float
+) -> List[float]:
+    """
+    Calculate the position of a heliostat in meters from given latitude, longitude, and altitude.
+
+    This function calculates the north and east offsets in meters of a heliostat from the power plant location.
+    It converts the latitude and longitude to radians, calculates the radius of curvature values,
+    and then computes the offsets based on the differences between the heliostat and power plant coordinates.
+    Finally, it returns a list containing these offsets along with the altitude difference.
+
+    Parameters
+    ----------
+    lat1 : float
+        The latitude of the heliostat in degrees.
+    lon1 : float
+        The longitude of the heliostat in degrees.
+    alt : float
+        The altitude of the heliostat.
+
+    Returns
+    -------
+    List[float, float, float]
+        The north offset in meters, east offset in meters, and the altitude difference from the power plant.
+    """
+    # Convert latitude and longitude to radians
+    lat_heliostat_rad = math.radians(lat1)
+    lon_heliostat_rad = math.radians(lon1)
+    alt_heliostat = alt - mappings.POWER_PLANT_ALT
+    lat_tower_rad = math.radians(mappings.POWER_PLANT_LAT)
+    lon_tower_rad = math.radians(mappings.POWER_PLANT_LON)
+
+    # Calculate meridional radius of curvature for the first latitude
+    sin_lat1 = math.sin(lat_heliostat_rad)
+    rn1 = mappings.WGS84_A / math.sqrt(1 - mappings.WGS84_E2 * sin_lat1**2)
+
+    # Calculate transverse radius of curvature for the first latitude
+    rm1 = (mappings.WGS84_A * (1 - mappings.WGS84_E2)) / (
+        (1 - mappings.WGS84_E2 * sin_lat1**2) ** 1.5
+    )
+
+    # Calculate delta latitude and delta longitude in radians
+    dlat_rad = lat_tower_rad - lat_heliostat_rad
+    dlon_rad = lon_tower_rad - lon_heliostat_rad
+
+    # Calculate north and east offsets in meters
+    north_offset_m = dlat_rad * rm1
+    east_offset_m = dlon_rad * rn1 * math.cos(lat_heliostat_rad)
+    return [-north_offset_m, -east_offset_m, alt_heliostat]
