@@ -33,7 +33,7 @@ ul {
     list-style-type:square;
 }
 
-ul li::before {
+ul li::marker {
     color: var(--bs-primary);
 }
 
