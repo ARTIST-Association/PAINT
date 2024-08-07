@@ -4,7 +4,7 @@
 
 # PAINT
 
-[![](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![](https://img.shields.io/badge/Contact-artist%40lists.kit.edu-orange?label=Contact)](artist@lists.kit.edu)
 ![](./coverage.svg)
@@ -14,7 +14,7 @@
 PAINT is a FAIR database for Concentrating Solar Power plants (CSP).
 
 ## Installation
-We heavily recommend installing the `PAINT` package in a dedicated `Python3.8+` virtual environment. You can
+We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can
 install ``PAINT`` directly from the GitHub repository via:
 ```bash
 pip install git+https://github.com/ARTIST-Association/PAINT

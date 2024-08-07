@@ -11,7 +11,7 @@ from matplotlib.patches import Rectangle
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.util.utils import heliostat_id_to_heliostat_name
+from paint.util.utils import heliostat_id_to_name
 
 
 class HeliostatPositionPlot:
@@ -124,9 +124,7 @@ class HeliostatPositionPlot:
         # Get all existing heliostat IDs and their entry counts
         heliostat_counts = df_measurements[mappings.HELIOSTAT_ID].value_counts()
         # Replace HeliostatId with heliostat names in heliostat_counts dataframe
-        heliostat_counts.index = heliostat_counts.index.map(
-            heliostat_id_to_heliostat_name
-        )
+        heliostat_counts.index = heliostat_counts.index.map(heliostat_id_to_name)
 
         # Load deflectometry availability from file
         df_deflectometry = pd.read_excel(path_to_deflectometry)

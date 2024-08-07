@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import argparse
 import pathlib
 from typing import List, Tuple
 
@@ -9,7 +8,6 @@ import pandas as pd
 from wetterdienst import Settings
 from wetterdienst.provider.dwd.observation import DwdObservationRequest
 
-from paint import PAINT_ROOT
 from paint.data.dwd_mappings import dwd_parameter_mapping
 
 
@@ -29,7 +27,7 @@ class DWDWeatherData:
         start_date: str,
         end_date: str,
         output_path: str,
-        file_name: str = "dwd_weather.h5",
+        file_name: str = "dwd-weather.h5",
         ts_shape: str = "long",
         ts_humanize: bool = True,
         ts_si_units: bool = False,
@@ -115,11 +113,20 @@ class DWDWeatherData:
             request_1h.values.all().df.to_pandas(),
         )
 
-    def download_and_save_data(self) -> None:
-        """Download the desired DWD weather data and save it to an HDF5 file."""
+    def download_and_save_data(self) -> pd.DataFrame:
+        """
+        Download the desired DWD weather data and save it to an HDF5 file.
+
+        Returns
+        -------
+        pd.Dataframe
+            The metadata used for creating the STAC item.
+        """
         # download the data
         metadata_10min, metadata_1h, df_10min, df_1h = self._get_raw_data()
-
+        metadata_to_save = metadata_1h[
+            ["station_id", "latitude", "longitude", "height", "name"]
+        ]
         assert metadata_10min.shape == metadata_1h.shape, (
             "Data is not available for all stations at the given temporal resolutions. Please check the coverage of "
             "different parameters and temporal resolutions here: "
@@ -170,47 +177,4 @@ class DWDWeatherData:
                 file[
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value"
                 ] = group.value.to_numpy()
-
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--parameters_10min",
-        default=[
-            "radiation_sky_short_wave_diffuse",
-            "radiation_global",
-            "sunshine_duration",
-            "radiation_sky_long_wave",
-        ],
-    )
-    parser.add_argument(
-        "--parameters_1h",
-        default=[
-            "cloud_cover_total",
-            "humidity",
-            "pressure_vapor",
-            "visibility_range",
-            "weather",
-        ],
-    )
-    parser.add_argument("--station_ids", default=["15000"])
-    parser.add_argument("--start_date", type=str, default="2021-04-01")
-    parser.add_argument("--end_date", type=str, default="2024-03-01")
-    parser.add_argument("--output_path", type=str, default=f"{PAINT_ROOT}/DWD_data/")
-    parser.add_argument("--file_name", type=str, default="dwd_weather.h5")
-    parser.add_argument("--ts_shape", type=str, default="long")
-    parser.add_argument("--ts_humanize", action="store_true", default=True)
-    parser.add_argument("--ts_si_units", action="store_false", default=False)
-    args = parser.parse_args()
-    dwd_weather = DWDWeatherData(
-        parameters_10min=args.parameters_10min,
-        parameters_1h=args.parameters_1h,
-        station_ids=args.station_ids,
-        start_date=args.start_date,
-        end_date=args.end_date,
-        output_path=args.output_path,
-        ts_shape=args.ts_shape,
-        ts_humanize=args.ts_humanize,
-        ts_si_units=args.ts_si_units,
-    )
-    dwd_weather.download_and_save_data()
+        return metadata_to_save
