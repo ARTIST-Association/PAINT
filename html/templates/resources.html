@@ -2,5 +2,28 @@
 {% set active = "resources" %}
 
 {% block content %}
-Resourcen
+<div class="position-relative text-white">
+    <img class="img-fluid w-100" src="static/img/tower.png">
+    <div class="position-absolute top-50 start-5 translate-middle-y">
+        <h1 class="px-4 py-2 fs-large border-start border-2 border-white">Resources</h1>
+        <p class="my-3 fs-3">Additional relevant material to work with PAINT</p>
+    </div>
+</div>
+
+<h4 class="my-4 py-2 text-primary">Coding and Reading</h4>
+
+<ul>
+    <li><i class="bi-github"></i> GitHub source code repository: <a href="https://github.com/ARTIST-Association/PAINT/">https://github.com/ARTIST-Association/PAINT</a></li>
+    <li><i class="bi-file-earmark-text"></i> STAC specification <a href="https://stacspec.org/en">https://stacspec.org/en</a></li>
+    <li><i class="bi-code-slash"></i> Writing a STAC client in Python: <a href="https://pystac-client.readthedocs.io/en/stable/tutorials.html">https://pystac-client.readthedocs.io/en/stable/tutorials.html</a></li>
+    <li><i class="bi-code-slash"></i> Writing a STAC client in JavaScript: <a href="https://github.com/radiantearth/stac-browser">https://github.com/radiantearth/stac-browser</a></li>
+    <li><i class="bi-book"></i> Robert Pitz-Paal, "Concentrating Solar Power", doi: <a href="https://doi.org/10.1016/B978-0-08-102886-5.00019-0">10.1016/B978-0-08-102886-5.00019-0</a></li>
+</ul>
+
+<h4 class="my-4 py-2 text-primary">Acknowledgement</h4>
+
+<p>This work is supported by the Helmholtz Association Initiative and Networking Fund through the Helmholtz AI platform, the HAICORE@KIT and the ARTIST project (ZT-I-PF-5-159) grant.</p>
+
+<p>This work was performed with the help of the Large Scale Data Facility at the Karlsruhe Institute of Technology funded by the Ministry of Science, Research and the Arts Baden-Württemberg and by the Federal Ministry of Education and Research.</p>
+
 {% endblock %}

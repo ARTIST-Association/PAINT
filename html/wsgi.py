@@ -26,9 +26,35 @@ def data() -> str:
     Returns
     -------
     str
-        The rendered template of the main landing page
+        The rendered template of the data page
     """
     return render_template("data.html")
+
+
+@app.route("/data-privacy")
+def data_privacy() -> str:
+    """
+    Register the controller for the data page.
+
+    Returns
+    -------
+    str
+        The rendered template of the data-privacy statement
+    """
+    return render_template("data-privacy.html")
+
+
+@app.route("/legal-information")
+def legal_information() -> str:
+    """
+    Register the controller for the legal information page.
+
+    Returns
+    -------
+    str
+        The rendered template of the legal information
+    """
+    return render_template("legal-information.html")
 
 
 @app.route("/papers")
@@ -39,7 +65,7 @@ def papers() -> str:
     Returns
     -------
     str
-        The rendered template of the main landing page
+        The rendered template of the papers page
     """
     return render_template("papers.html")
 
@@ -52,7 +78,7 @@ def partners() -> str:
     Returns
     -------
     str
-        The rendered template of the main landing page
+        The rendered template of the partners page
     """
     return render_template("partners.html")
 
@@ -65,7 +91,7 @@ def resources() -> str:
     Returns
     -------
     str
-        The rendered template of the main landing page
+        The rendered template of the resources page
     """
     return render_template("resources.html")
 

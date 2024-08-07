@@ -14,20 +14,42 @@
 
 @font-face {
     font-family: "Hermann Bold";
-    src: url("../font/Hermann-Bold.otf");
+    src: url("../font/Hermann-Bold.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
 }
 
 :root {
-    --bs-primary: #005AA0;
-    --bs-primary-rgb: 0, 90, 160;
+    --bs-primary: #002864;
+    --bs-primary-rgb: 0, 40, 100;
     --bs-font-sans-serif: "Halvar Mittel"
 }
 
-.nav-link.active {
-    background-color: var(--bs-gray-300);
-    border-left: 4px solid var(--bs-primary);
+.fs-large {
+    font-size: 72px;
+}
+
+ul {
+    list-style-type:square;
+}
+
+ul li::before {
+    color: var(--bs-primary);
 }
 
 .nav-link:hover {
     background-color: var(--bs-gray-300);
+}
+
+.nav-link.active {
+    background-color: var(--bs-gray-300);
+    border-left: 2px solid var(--bs-primary);
+}
+
+.start-5 {
+    left: 5%;
+}
+
+.text-herman {
+    font-family: "Hermann Bold", sans-serif !important;
 }

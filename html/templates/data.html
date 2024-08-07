@@ -2,5 +2,36 @@
 {% set active = "data" %}
 
 {% block content %}
-Le data
+<div class="position-relative text-white">
+    <img class="img-fluid w-100" src="static/img/quartz.png">
+    <div class="position-absolute top-50 start-5 translate-middle-y">
+        <h1 class="px-4 py-2 fs-large border-start border-2 border-white">Data</h1>
+        <p class="my-3 fs-3">Calibration images, deflectometry measurements, kinematic information</p>
+    </div>
+</div>
+
+<h4 class="my-4 py-2 text-primary">Data Types</h4>
+
+<dl class="row">
+    <dt class="col-sm-2 text-primary">Calibration</dt>
+    <dd class="col-sm-8">RGB photos of the focused sunlight spots of heliostats on dedicated calibration receivers.</dd>
+    <dd class="col-sm-2">Format: <a href="https://www.w3.org/TR/2003/REC-PNG-20031110/">PNG</a></dd>
+
+    <dt class="col-sm-2 text-primary">Deflectometry</dt>
+    <dd class="col-sm-8">This measurement method allows the assessment of properties of reflective surfaces. PAINT contains strip-pattern deflectometries of the power plant's heliostats identifying surface deformations.</dd>
+    <dd class="col-sm-2">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
+
+    <dt class="col-sm-2 text-primary">Kinematic</dt>
+    <dd class="col-sm-8">Mechanical arrangement and angles of the heliostat motors.</dd>
+    <dd class="col-sm-2">Format: <a href="https://www.json.org/json-en.html">JSON</a></dd>
+
+    <dt class="col-sm-2 text-primary">Weather</dt>
+    <dd class="col-sm-8">The PAINT database contains weather information from two sources: medium-quality from plant-local sensors as well as high-quality data from the DWD weather station in Aachen-Orsbach. Measured quantities include short- and long-wave radiation, global surface irradiance, sunshite duration, cloud cover, humidity, vapor pressure and visibility range.</dd>
+    <dd class="col-sm-2">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
+</dl>
+
+<h4 class="my-4 py-2 text-primary">License</h4>
+
+All data is licensed under the liberal <a href="https://cdla.dev/permissive-2-0/">Community Data License Agreement – Permissive – Version 2.0 (CDLA 2.0)</a> license and the corresponding <a href="https://github.com/ARTIST-Association/PAINT/">source code</a> is available under the <a href="https://opensource.org/license/mit">MIT license</a>.
+
 {% endblock %}
