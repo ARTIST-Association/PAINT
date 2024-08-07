@@ -18,13 +18,15 @@ classifiers = [
 ]
 dependencies = [
     "numpy",
+    "pandas",
     "torch",
     "matplotlib",
     "colorlog",
-    "pandas",
     "wetterdienst",
     "h5py",
     "seaborn",
+    "deepdiff",
+    "openpyxl",
     "Flask"
 ]
 
@@ -38,7 +40,7 @@ dev = [
     "sphinx-autoapi",
     "sphinx-rtd-theme",
     "sphinxcontrib-napoleon",
-    "sphinxemoji",
+    "sphinxemoji"
 ]
 
 [project.urls]
