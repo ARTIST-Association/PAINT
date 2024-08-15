@@ -27,6 +27,7 @@ dependencies = [
     "seaborn",
     "deepdiff",
     "openpyxl",
+    "Flask"
 ]
 
 [project.optional-dependencies]
