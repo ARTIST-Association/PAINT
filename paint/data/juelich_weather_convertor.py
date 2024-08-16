@@ -5,7 +5,6 @@ import h5py
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 
 
 class JuelichWeatherConvertor:
@@ -152,13 +151,3 @@ class JuelichWeatherConvertor:
                 )
 
         return metadata
-
-
-if __name__ == "__main__":
-    weather_convertor = JuelichWeatherConvertor(
-        input_root_dir=f"{PAINT_ROOT}/ExampleDataKIT/Weather",
-        output_path=f"{PAINT_ROOT}/ConvertedData/Weather",
-        file_name="juelich-weather.h5",
-    )
-    meta = weather_convertor.merge_and_save_to_hdf5()
-    print("HI BOB")
