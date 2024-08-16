@@ -169,6 +169,12 @@ DWD_END = "end"
 DWD_STAC_NAME = "dwd-weather-item-stac"
 DWD_STAT_URL = f"INSERT/SOMETHING/HERE/{DWD_STAC_NAME}?download=1"
 
+# JUELICH WEATHER KEYS
+JUELICH_START = "start"
+JUELICH_END = "end"
+JUELICH_STAC_NAME = "juelich-weather-item-stac"
+JUELICH_STAT_URL = f"INSERT/SOMETHING/HERE/{JUELICH_STAC_NAME}?download=1"
+
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
