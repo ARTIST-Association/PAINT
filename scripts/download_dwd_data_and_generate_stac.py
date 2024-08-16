@@ -72,7 +72,7 @@ def main(arguments: argparse.Namespace) -> None:
         save_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_path, "w") as handle:
             json.dump(dwd_stac, handle)
-        dwd_url = mappings.DWD_STAT_URL
+        dwd_url = mappings.DWD_STAC_URL
         weather_items.loc[len(weather_items)] = [
             "DWD weather data",
             dwd_url,
