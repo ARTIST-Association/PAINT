@@ -16,7 +16,7 @@ def main(arguments: argparse.Namespace) -> None:
     """
     Merge the Juelich weather data and save it as an HDF5 file and generate the associate STAC item.
 
-    This script merges all Juelich weather data files and saves the result as as an HDF5 file before generating the
+    This script merges all Juelich weather data files and saves the result as an HDF5 file before generating the
     appropriate STAC item. Additionally, the metadata for this item is saved for collection creation later.
 
     Parameters
@@ -61,9 +61,9 @@ def main(arguments: argparse.Namespace) -> None:
         mappings.JUELICH_STAC_URL,
         metadata[mappings.JUELICH_START],
         metadata[mappings.JUELICH_END],
-        mappings.POWER_PLANT_LAT,
-        mappings.POWER_PLANT_LON,
-        0,  # TODO: Correct Elevation
+        mappings.JUELICH_WEATHER_LAT,
+        mappings.JEULICH_WEATHER_LON,
+        mappings.JEULICH_WEATHER_ALTITUDE,
     ]
     weather_items.to_csv(weather_items_path, index=False)
 
