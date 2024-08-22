@@ -14,7 +14,7 @@ def make_juelich_weather_item(
     Parameters
     ----------
     data : pd.Series
-        The metadata for the juelich weather data file.
+        The metadata for the Juelich weather data file.
 
     Returns
     -------
@@ -32,18 +32,18 @@ def make_juelich_weather_item(
         "geometry": {
             "type": "Point",
             "coordinates": [
-                mappings.POWER_PLANT_LAT,
-                mappings.POWER_PLANT_LON,
-                0,  # TODO: Correct Elevation
+                mappings.JUELICH_WEATHER_LAT,
+                mappings.JEULICH_WEATHER_LON,
+                mappings.JEULICH_WEATHER_ALTITUDE,
             ],
         },
         "bbox": [
-            mappings.POWER_PLANT_LAT,
-            mappings.POWER_PLANT_LON,
-            0,  # TODO: Correct Elevation
-            mappings.POWER_PLANT_LAT,
-            mappings.POWER_PLANT_LON,
-            0,  # TODO: Correct Elevation
+            mappings.JUELICH_WEATHER_LAT,
+            mappings.JEULICH_WEATHER_LON,
+            mappings.JEULICH_WEATHER_ALTITUDE,
+            mappings.JUELICH_WEATHER_LAT,
+            mappings.JEULICH_WEATHER_LON,
+            mappings.JEULICH_WEATHER_ALTITUDE,
         ],
         "properties": {
             "datetime": "null",
