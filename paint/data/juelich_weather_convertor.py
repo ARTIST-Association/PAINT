@@ -4,6 +4,7 @@ from typing import List
 import h5py
 import pandas as pd
 
+import paint.data.juelich_weather_mappings as juelich_mappings
 import paint.util.paint_mappings as mappings
 
 
@@ -135,6 +136,12 @@ class JuelichWeatherConvertor:
                 mappings.JUELICH_END: full_weather_df.index.max(),
             }
         )
+
+        # Drop columns not containing weather data
+        full_weather_df = full_weather_df.drop(columns=juelich_mappings.drop_columns)
+
+        # Rename columns
+
         # create HDF5 file
         with h5py.File(self.output_path / self.file_name, "w") as file:
             # Save the time data
@@ -144,10 +151,19 @@ class JuelichWeatherConvertor:
 
             # Save each column with compression
             for column in full_weather_df.columns:
+                parameter_name = juelich_mappings.juelich_weather_parameter_mapping[
+                    column
+                ]
                 file.create_dataset(
-                    column,
+                    parameter_name,
                     data=full_weather_df[column].to_numpy(),
                     **self.compression_opts,
                 )
+                file[parameter_name].attrs[
+                    juelich_mappings.DESCRIPTION
+                ] = juelich_mappings.juelich_metadata_description[parameter_name]
+                file[parameter_name].attrs[
+                    juelich_mappings.UNITS
+                ] = juelich_mappings.juelich_metadata_units[parameter_name]
 
         return metadata
