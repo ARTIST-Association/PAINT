@@ -5,6 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.heliostat_catalog_stac import make_heliostat_catalog
@@ -28,9 +30,19 @@ def main(arguments: argparse.Namespace) -> None:
     df_axis = load_and_format_heliostat_axis_data(arguments)
     df_position = load_and_format_heliostat_positions(arguments)
     df = merge_and_sort_df(df_heliostat_positions=df_position, df_axis=df_axis)
+    heliostats_with_deflectometry = pd.read_excel(
+        arguments.input_deflectometry_available
+    ).dropna()[mappings.INTERNAL_NAME_INDEX]
     for heliostat, _ in df.iterrows():
         assert isinstance(heliostat, str)
-        helio_catalog = make_heliostat_catalog(heliostat_id=heliostat)
+        if heliostat in heliostats_with_deflectometry.values:
+            helio_catalog = make_heliostat_catalog(
+                heliostat_id=heliostat, include_deflectometry=True
+            )
+        else:
+            helio_catalog = make_heliostat_catalog(
+                heliostat_id=heliostat, include_deflectometry=False
+            )
         save_helio_path = (
             Path(arguments.output_path)
             / heliostat
@@ -49,6 +61,8 @@ if __name__ == "__main__":
         f"{PAINT_ROOT}/ExampleDataKIT/axis_data.csv",
         "--input_position",
         f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
+        "--input_deflectometry_available",
+        f"{PAINT_ROOT}/ExampleDataKIT/deflec_availability.xlsx",
         "--output_path",
         f"{PAINT_ROOT}/ConvertedData",
     ]
@@ -60,6 +74,11 @@ if __name__ == "__main__":
         "--input_position",
         type=Path,
         default=f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
+    )
+    parser.add_argument(
+        "--input_deflectometry_available",
+        type=Path,
+        default=f"{PAINT_ROOT}/ExampleDataKIT/deflec_availability.xlsx",
     )
     parser.add_argument(
         "--output_path", type=Path, default=f"{PAINT_ROOT}/ConvertedData"
