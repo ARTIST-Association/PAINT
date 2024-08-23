@@ -38,8 +38,10 @@ def make_calibration_collection(
                 "bbox": [
                     mappings.POWER_PLANT_LAT,
                     mappings.POWER_PLANT_LON,
+                    data[mappings.ELEVATION].min(),
                     mappings.POWER_PLANT_LAT,
                     mappings.POWER_PLANT_LON,
+                    data[mappings.ELEVATION].max(),
                 ]
             },
             "temporal": {
@@ -131,13 +133,25 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
             "type": "Point",
-            "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
+            "coordinates": [
+                mappings.POWER_PLANT_LON,
+                mappings.POWER_PLANT_LAT,
+                mappings.CALIBRATION_TARGET_TO_HEIGHT[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ],
+            ],
         },
         "bbox": [
             mappings.POWER_PLANT_LON,
             mappings.POWER_PLANT_LAT,
+            mappings.CALIBRATION_TARGET_TO_HEIGHT[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ],
             mappings.POWER_PLANT_LON,
             mappings.POWER_PLANT_LAT,
+            mappings.CALIBRATION_TARGET_TO_HEIGHT[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ],
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
