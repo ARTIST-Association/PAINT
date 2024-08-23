@@ -3,8 +3,9 @@ from typing import Any, Dict
 import paint.util.paint_mappings as mappings
 
 
-# TODO: Fix, so that only the links are saved that are actually there!
-def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
+def make_heliostat_catalog(
+    heliostat_id: str, include_deflectometry: bool
+) -> Dict[str, Any]:
     """
     Generate a catalog for each heliostat STAC.
 
@@ -12,6 +13,8 @@ def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
     ----------
     heliostat_id : str
         The heliostat ID for the considered heliostat.
+    include_deflectometry : bool
+        Indicating whether the deflectometry collection is included for this heliostat or not.
 
     Returns
     -------
@@ -38,12 +41,18 @@ def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the parent catalog",
             },
-            {
-                "rel": "child",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC collection containing the deflectometry data",
-            },
+            *(
+                [
+                    {
+                        "rel": "child",
+                        "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
+                        "type": mappings.MIME_GEOJSON,
+                        "title": "Reference to the STAC collection containing the deflectometry data",
+                    }
+                ]
+                if include_deflectometry
+                else []
+            ),
             {
                 "rel": "child",
                 "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
