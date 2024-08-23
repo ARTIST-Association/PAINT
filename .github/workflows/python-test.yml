@@ -1,6 +1,12 @@
 name: Python test
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -36,6 +42,12 @@ jobs:
         if: matrix.python-version == '3.12'
         run: |
           pytest --cov=paint
+          coverage report -m --format markdown > cov_report.txt
+      - name: Post coverage report to PR
+        if: matrix.python-version == '3.12'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: cov_report.txt
 
       - name: Verify Changed files
         uses: tj-actions/verify-changed-files@v19
