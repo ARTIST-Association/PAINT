@@ -103,6 +103,7 @@ def calibration_collection_data():
             59.47986694914367,
         ],
         mappings.SYSTEM: ["HeliOS.FDM"] * 4,
+        mappings.ELEVATION: [100, 200, 300, 400],
     }
 
     return pd.DataFrame(data)
@@ -151,8 +152,10 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     "bbox": [
                         50.913296351383806,
                         6.387514846666862,
+                        100,
                         50.913296351383806,
                         6.387514846666862,
+                        400,
                     ]
                 },
                 "temporal": {
@@ -253,13 +256,15 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         "collection": "BC52-calibration-collection",
         "geometry": {
             "type": "Point",
-            "coordinates": [6.387514846666862, 50.913296351383806],
+            "coordinates": [6.387514846666862, 50.913296351383806, 122.8815],
         },
         "bbox": [
             6.387514846666862,
             50.913296351383806,
+            122.8815,
             6.387514846666862,
             50.913296351383806,
+            122.8815,
         ],
         "properties": {
             "datetime": "2022-06-01Z11:08:45Z",
