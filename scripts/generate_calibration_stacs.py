@@ -43,6 +43,8 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.AZIMUTH,
                 mappings.SUN_ELEVATION,
                 mappings.SYSTEM,
+                mappings.LATITUDE_KEY,
+                mappings.LONGITUDE_KEY,
                 mappings.ELEVATION,
             ]
         )
@@ -78,9 +80,15 @@ def main(arguments: argparse.Namespace) -> None:
             heliostat_data[mappings.AZIMUTH],
             heliostat_data[mappings.SUN_ELEVATION],
             heliostat_data[mappings.SYSTEM],
-            mappings.CALIBRATION_TARGET_TO_HEIGHT[
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
                 heliostat_data[mappings.CALIBRATION_TARGET]
-            ],
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
         ]
         calibration_item_stac_path = (
             Path(arguments.output)
