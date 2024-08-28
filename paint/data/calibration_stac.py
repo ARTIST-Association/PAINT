@@ -36,11 +36,11 @@ def make_calibration_collection(
         "extent": {
             "spatial": {
                 "bbox": [
-                    mappings.POWER_PLANT_LAT,
-                    mappings.POWER_PLANT_LON,
+                    data[mappings.LATITUDE_KEY].min(),
+                    data[mappings.LONGITUDE_KEY].min(),
                     data[mappings.ELEVATION].min(),
-                    mappings.POWER_PLANT_LAT,
-                    mappings.POWER_PLANT_LON,
+                    data[mappings.LATITUDE_KEY].max(),
+                    data[mappings.LONGITUDE_KEY].max(),
                     data[mappings.ELEVATION].max(),
                 ]
             },
@@ -134,24 +134,36 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         "geometry": {
             "type": "Point",
             "coordinates": [
-                mappings.POWER_PLANT_LON,
-                mappings.POWER_PLANT_LAT,
-                mappings.CALIBRATION_TARGET_TO_HEIGHT[
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
                     heliostat_data[mappings.CALIBRATION_TARGET]
-                ],
+                ][0],
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ][1],
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ][2],
             ],
         },
         "bbox": [
-            mappings.POWER_PLANT_LON,
-            mappings.POWER_PLANT_LAT,
-            mappings.CALIBRATION_TARGET_TO_HEIGHT[
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
                 heliostat_data[mappings.CALIBRATION_TARGET]
-            ],
-            mappings.POWER_PLANT_LON,
-            mappings.POWER_PLANT_LAT,
-            mappings.CALIBRATION_TARGET_TO_HEIGHT[
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
                 heliostat_data[mappings.CALIBRATION_TARGET]
-            ],
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
