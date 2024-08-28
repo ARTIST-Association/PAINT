@@ -1,0 +1,102 @@
+from typing import Dict
+
+import deepdiff
+import numpy as np
+import pytest
+
+from paint.data.tower_stac import make_tower_item
+
+
+@pytest.fixture
+def tower_item_data() -> Dict[str, np.ndarray]:
+    """
+    Make a fixture with data for generating a tower STAC item.
+
+    Returns
+    -------
+    Dict[str, np.ndarray]
+        The data for the Juelich stac item.
+    """
+    return {
+        "longitude": np.array([6.38750587, 6.38785603]),
+        "latitude": np.array([50.91338895, 50.91342485]),
+        "Elevation": np.array([119.268, 144.82]),
+    }
+
+
+def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
+    """
+    Test the creation of a STAC item.
+
+    Parameters
+    ----------
+    tower_item_data : pd.Series
+        The test fixture.
+    """
+    item = make_tower_item(tower_item_data)
+    expected = {
+        "stac_version": "1.0.0",
+        "stac_extensions": [],
+        "id": "juelich-tower-measurements",
+        "type": "Feature",
+        "title": "The coordinates of different targets from the the Juelich solar tower.",
+        "description": "The latitude, longitude, and elevation coordinates for the center and corners of all calibration targets and the receiver for the Juelich solar tower.",
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [
+                50.913388948892035,
+                50.913388948892035,
+                119.268,
+                50.913424848806365,
+                50.913424848806365,
+                144.82,
+            ],
+        },
+        "bbox": [
+            50.913388948892035,
+            50.913388948892035,
+            119.268,
+            50.913424848806365,
+            50.913424848806365,
+            144.82,
+        ],
+        "properties": {
+            "datetime": None,
+            "start_datetime": "2013-02-25",
+            "end_datetime": "2020-10-07",
+            "created": "2013-02-25",
+            "updated": "2020-10-07",
+        },
+        "links": [
+            {
+                "rel": "self",
+                "href": "./juelich-tower-measurements-item-stac.json",
+                "type": "application/geo+json",
+                "title": "Reference to this STAC file",
+            },
+            {
+                "rel": "root",
+                "href": "./Insert/URL/Here",
+                "type": "application/geo+json",
+                "title": "Reference to the entire catalogue for WRI1030197",
+            },
+            {
+                "rel": "parent",
+                "href": "./Insert/URL/Here",
+                "type": "application/geo+json",
+                "title": "Reference to the catalogue for WRI1030197",
+            },
+        ],
+        "assets": {
+            "measurements": {
+                "href": "./juelich-tower-measurements.json",
+                "roles": ["data"],
+                "type": "application/geo+json",
+                "title": "Tower measurement properties",
+            }
+        },
+    }
+
+    assert not deepdiff.DeepDiff(
+        item, expected, ignore_numeric_type_changes=True, significant_digits=5
+    )
