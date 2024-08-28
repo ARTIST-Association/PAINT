@@ -1,3 +1,4 @@
+import math
 from typing import Tuple
 
 import pytest
@@ -28,4 +29,5 @@ def test_gauss_kruger_convertor(
         The expected converted latitude and longitude coordinate.
     """
     actual = convert_gk_to_lat_long(right, height)
-    assert actual == expected
+    assert math.isclose(actual[0], expected[0])
+    assert math.isclose(actual[1], expected[1])
