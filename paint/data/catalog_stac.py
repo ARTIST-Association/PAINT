@@ -45,6 +45,12 @@ def make_catalog(data: pd.DataFrame) -> Dict[str, Any]:
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the STAC collection containing the weather data",
             },
+            {
+                "rel": "child",
+                "href": mappings.TOWER_STAC_URL,
+                "type": mappings.MIME_GEOJSON,
+                "title": "Reference to the STAC item containing the tower measurement data",
+            },
         ]
         + [
             {
