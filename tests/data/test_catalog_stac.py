@@ -61,6 +61,12 @@ def test_make_catalog(catalog_data: pd.DataFrame) -> None:
             },
             {
                 "rel": "child",
+                "href": "INSERT/SOMETHING/HERE/juelich-tower-measurements-item-stac?download=1",
+                "type": "application/geo+json",
+                "title": "Reference to the STAC item containing the tower measurement data",
+            },
+            {
+                "rel": "child",
                 "href": "INSERT/SOMETHING/HERE/AA23-heliostat-catalog-stac.json?download=1",
                 "type": "application/geo+json",
                 "title": "Reference to the STAC catalog containing data for heliostat AA23",
