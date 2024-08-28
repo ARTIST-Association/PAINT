@@ -30,7 +30,7 @@ def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
 
     Parameters
     ----------
-    tower_item_data : pd.Series
+    tower_item_data : Dict[str, np.ndarray]
         The test fixture.
     """
     item = make_tower_item(tower_item_data)
