@@ -44,22 +44,15 @@ def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
         "geometry": {
             "type": "Polygon",
             "coordinates": [
-                50.913388948892035,
-                50.913388948892035,
+                50.91338895,
+                50.91338895,
                 119.268,
-                50.913424848806365,
-                50.913424848806365,
+                50.91342485,
+                50.91342485,
                 144.82,
             ],
         },
-        "bbox": [
-            50.913388948892035,
-            50.913388948892035,
-            119.268,
-            50.913424848806365,
-            50.913424848806365,
-            144.82,
-        ],
+        "bbox": [50.91338895, 50.91338895, 119.268, 50.91342485, 50.91342485, 144.82],
         "properties": {
             "datetime": None,
             "start_datetime": "2013-02-25",
@@ -76,13 +69,13 @@ def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "./Insert/URL/Here",
+                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the catalogue for WRI1030197",
             },

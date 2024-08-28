@@ -55,7 +55,7 @@ def make_catalog(data: pd.DataFrame) -> Dict[str, Any]:
         + [
             {
                 "rel": "child",
-                "href": mappings.HELIOSTAT_CATALOG_URL % helio_id,
+                "href": mappings.HELIOSTAT_CATALOG_URL % (helio_id, helio_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the STAC catalog containing data for heliostat "
                 f"{helio_id}",
