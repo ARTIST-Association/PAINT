@@ -103,6 +103,8 @@ def calibration_collection_data():
             59.47986694914367,
         ],
         mappings.SYSTEM: ["HeliOS.FDM"] * 4,
+        mappings.LATITUDE_KEY: [50.4, 60.7, 70.1, 68.3],
+        mappings.LONGITUDE_KEY: [5.0, 6.3, 7.2, 8.1],
         mappings.ELEVATION: [100, 200, 300, 400],
     }
 
@@ -150,11 +152,11 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
             "extent": {
                 "spatial": {
                     "bbox": [
-                        50.913296351383806,
-                        6.387514846666862,
+                        50.4,
+                        5.0,
                         100,
-                        50.913296351383806,
-                        6.387514846666862,
+                        70.1,
+                        8.1,
                         400,
                     ]
                 },
@@ -256,14 +258,14 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         "collection": "BC52-calibration-collection",
         "geometry": {
             "type": "Point",
-            "coordinates": [6.387514846666862, 50.913296351383806, 122.8815],
+            "coordinates": [50.91338911716799, 6.387794544159513, 122.8815],
         },
         "bbox": [
-            6.387514846666862,
-            50.913296351383806,
+            50.91338911716799,
+            6.387794544159513,
             122.8815,
-            6.387514846666862,
-            50.913296351383806,
+            50.91338911716799,
+            6.387794544159513,
             122.8815,
         ],
         "properties": {
