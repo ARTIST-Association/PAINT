@@ -69,6 +69,7 @@ def main(arguments: argparse.Namespace) -> None:
         stac_item = make_calibration_item(image=image, heliostat_data=heliostat_data)
         url = mappings.CALIBRATION_ITEM_URL % (
             heliostat_data[mappings.HELIOSTAT_ID],
+            heliostat_data[mappings.HELIOSTAT_ID],
             image,
         )
         calibration_items.loc[len(calibration_items)] = [

@@ -22,31 +22,31 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
                 "links": [
                     {
                         "rel": "self",
-                        "href": "INSERT/SOMETHING/HERE/AA23-heliostat-catalog-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA23/AA23-heliostat-catalog-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to this STAC catalog file",
                     },
                     {
                         "rel": "root",
-                        "href": "Insert/URL/Here",
+                        "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the parent catalog",
                     },
                     {
                         "rel": "child",
-                        "href": "INSERT/SOMETHING/HERE/AA23-deflectometry-collection-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA23/Deflectometry/AA23-deflectometry-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the deflectometry data",
                     },
                     {
                         "rel": "child",
-                        "href": "INSERT/SOMETHING/HERE/AA23-calibration-collection-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA23/Calibration/AA23-calibration-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the calibration data",
                     },
                     {
                         "rel": "child",
-                        "href": "INSERT/SOMETHING/HERE/AA23-heliostat_properties-collection-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },
@@ -66,25 +66,25 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
                 "links": [
                     {
                         "rel": "self",
-                        "href": "INSERT/SOMETHING/HERE/AA41-heliostat-catalog-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA41/AA41-heliostat-catalog-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to this STAC catalog file",
                     },
                     {
                         "rel": "root",
-                        "href": "Insert/URL/Here",
+                        "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the parent catalog",
                     },
                     {
                         "rel": "child",
-                        "href": "INSERT/SOMETHING/HERE/AA41-calibration-collection-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA41/Calibration/AA41-calibration-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the calibration data",
                     },
                     {
                         "rel": "child",
-                        "href": "INSERT/SOMETHING/HERE/AA41-heliostat_properties-collection-stac.json?download=1",
+                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat_properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },

@@ -53,7 +53,7 @@ def extract_kinematic_data_and_generate_stacs(
     )
 
     # save item metadata for collection creation later
-    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % heliostat_id
+    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % (heliostat_id, heliostat_id)
     properties_items.loc[len(properties_items)] = [
         heliostat_id,
         f"kinematic properties for {heliostat_id}",

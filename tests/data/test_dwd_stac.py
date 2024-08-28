@@ -59,13 +59,13 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "INSERT/SOMETHING/HERE/weather-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/Weather/weather-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },

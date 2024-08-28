@@ -66,7 +66,8 @@ def make_deflectometry_collection(
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
+                "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -78,7 +79,8 @@ def make_deflectometry_collection(
             },
             {
                 "rel": "collection",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
+                "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -168,13 +170,15 @@ def make_deflectometry_item(
             },
             {
                 "rel": "parent",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_key,
+                "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_key,
+                "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },

@@ -74,7 +74,8 @@ def make_calibration_collection(
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -86,7 +87,8 @@ def make_calibration_collection(
             },
             {
                 "rel": "collection",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -195,14 +197,20 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
             {
                 "rel": "parent",
                 "href": mappings.CALIBRATION_COLLECTION_URL
-                % heliostat_data[mappings.HELIOSTAT_ID],
+                % (
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                ),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
                 "href": mappings.CALIBRATION_COLLECTION_URL
-                % heliostat_data[mappings.HELIOSTAT_ID],
+                % (
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                ),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },

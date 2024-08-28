@@ -104,6 +104,7 @@ def extract_data_and_generate_stacs(
         # save item metadata for collection creation later
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
+            converter.heliostat_id,
             converter.deflectometry_created_at,
         )
         deflectometry_items.loc[len(deflectometry_items)] = [
@@ -136,7 +137,10 @@ def extract_data_and_generate_stacs(
         )
 
         # save the facet properties metadata for collection creation later
-        facet_url = mappings.FACET_PROPERTIES_ITEM_ITEM_URL % converter.heliostat_id
+        facet_url = mappings.FACET_PROPERTIES_ITEM_ITEM_URL % (
+            converter.heliostat_id,
+            converter.heliostat_id,
+        )
         properties_items.loc[len(properties_items)] = [
             converter.heliostat_id,
             f"facet properties for {converter.heliostat_id}",

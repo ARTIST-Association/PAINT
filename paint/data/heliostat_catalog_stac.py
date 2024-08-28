@@ -31,7 +31,7 @@ def make_heliostat_catalog(
         "links": [
             {
                 "rel": "self",
-                "href": mappings.HELIOSTAT_CATALOG_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_CATALOG_URL % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC catalog file",
             },
@@ -45,7 +45,8 @@ def make_heliostat_catalog(
                 [
                     {
                         "rel": "child",
-                        "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
+                        "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                        % (heliostat_id, heliostat_id),
                         "type": mappings.MIME_GEOJSON,
                         "title": "Reference to the STAC collection containing the deflectometry data",
                     }
@@ -55,13 +56,15 @@ def make_heliostat_catalog(
             ),
             {
                 "rel": "child",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the STAC collection containing the calibration data",
             },
             {
                 "rel": "child",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the STAC collection containing the heliostat properties",
             },

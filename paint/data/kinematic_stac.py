@@ -75,13 +75,15 @@ def make_kinematic_item(
             },
             {
                 "rel": "parent",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_key,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_key,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
