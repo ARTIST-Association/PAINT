@@ -63,7 +63,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.github_token }}
-          branch: ${{ github.ref }}
+          branch: ${{ github.head_ref }}
 
       - name: Post coverage report to PR
         if: matrix.python-version == '3.11'
