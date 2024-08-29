@@ -93,6 +93,7 @@ class JuelichWeatherConvertor:
         df_list = []
         for file in self.files_list:
             # Read CSV
+            print(f"Attempting to read and clean {file}")
             df = pd.read_csv(
                 file,
                 sep="\t",
@@ -108,7 +109,9 @@ class JuelichWeatherConvertor:
                     df.index + " " + df["Date"], format="%d.%m.%Y %H:%M:%S"
                 )
                 df["DateTime"] = (
-                    df["DateTime"].dt.tz_localize("Europe/Berlin").dt.tz_convert("UTC")
+                    df["DateTime"]
+                    .dt.tz_localize("Europe/Berlin", ambiguous="infer")
+                    .dt.tz_convert("UTC")
                 )
             else:
                 # Convert Date and Time
@@ -116,7 +119,12 @@ class JuelichWeatherConvertor:
                     df.index + " " + df["Time"], format="%d.%m.%Y %H:%M:%S"
                 )
                 df["DateTime"] = (
-                    df["DateTime"].dt.tz_localize("Europe/Berlin").dt.tz_convert("UTC")
+                    df["DateTime"]
+                    .dt.tz_localize(
+                        "Europe/Berlin",
+                        ambiguous="infer",
+                    )
+                    .dt.tz_convert("UTC")
                 )
 
             # Clean Data frame
@@ -157,6 +165,7 @@ class JuelichWeatherConvertor:
             df_list.append(df)
         # Append all data frames
         full_df = pd.concat(df_list)
+        print("All files concatenated")
         return full_df.sort_index()
 
     def merge_and_save_to_hdf5(self) -> pd.Series:
