@@ -1,21 +1,3 @@
-drop_columns = [
-    "TriggerBarometer",
-    "Fuse1",
-    "Fuse2",
-    "Fuse3",
-    "Fuse4",
-    "Fuse5",
-    "Fuse6",
-    "Fuse7",
-    "Fuse9",
-    "UPS",
-    "OvervoltageProtection",
-    "Lnet",
-    "Tb",
-    "Ld",
-]
-"""Columns to drop from the initial Juelich weather data frame."""
-
 # Names for renamed columns
 DIRECT_IRRADIATION = "direct_irradiation"
 GLOBAL_IRRADIATION = "global_irradiation"
