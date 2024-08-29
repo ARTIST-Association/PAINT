@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -69,13 +70,16 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    input_folder = Path(lsdf_root) / "paint" / "MeteoDaten"
+    output_folder = (
+        Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID / mappings.SAVE_WEATHER
+    )
+
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input_root_dir", type=str, default=f"{PAINT_ROOT}/ExampleDataKIT/Weather"
-    )
-    parser.add_argument(
-        "--output_path", type=str, default=f"{PAINT_ROOT}/ConvertedData/Weather"
-    )
+    parser.add_argument("--input_root_dir", type=str, default=str(input_folder))
+    parser.add_argument("--output_path", type=str, default=str(output_folder))
     parser.add_argument("--file_name", type=str, default="juelich-weather.h5")
     args = parser.parse_args()
     main(arguments=args)

@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -138,18 +139,22 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
         "--input",
         type=Path,
-        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
+        default=str(input_calibration),
     )
     parser.add_argument(
         "-o",
         "--output",
         type=Path,
-        default=f"{PAINT_ROOT}/ConvertedData/",
+        default=str(output_folder),
     )
     args = parser.parse_args()
 
