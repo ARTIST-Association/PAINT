@@ -158,13 +158,13 @@ def make_deflectometry_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"./{resource}-stac.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{resource}-stac.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
@@ -185,21 +185,21 @@ def make_deflectometry_item(
         ],
         "assets": {
             mappings.DEFLECTOMETRY_RAW_KEY: {
-                "href": f"./{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Raw deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
             },
             mappings.DEFLECTOMETRY_FILLED_KEY: {
-                "href": f"./{heliostat_key}-filled-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-filled-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Filled deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
             },
             mappings.DEFLECTOMETRY_RESULTS_KEY: {
-                "href": f"./{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
                 "roles": ["metadata"],
                 "type": mappings.MIME_PDF,
                 "title": f"Summary of deflectometry measurement of {heliostat_key} at "

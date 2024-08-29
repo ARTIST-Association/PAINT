@@ -48,13 +48,13 @@ def test_make_juelich_item(juelich_item_data: pd.Series) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "./juelich-weather-item-stac",
+                "href": "https://paint-database.org/WRI1030197/Weather/juelich-weather-item-stac",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
@@ -66,14 +66,14 @@ def test_make_juelich_item(juelich_item_data: pd.Series) -> None:
             },
             {
                 "rel": "collection",
-                "href": "weather-collection-stac.json",
+                "href": "https://paint-database.org/WRI1030197/Weather/weather-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "weather_data": {
-                "href": "./juelich-weather.h5",
+                "href": "https://paint-database.org/WRI1030197/Weather/juelich-weather.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Weather data from the Juelich weather station",

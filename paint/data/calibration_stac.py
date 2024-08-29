@@ -184,13 +184,13 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         "links": [
             {
                 "rel": "self",
-                "href": f"./{image}-stac.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}-stac.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
@@ -217,13 +217,13 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         ],
         "assets": {
             mappings.CALIBRATION_TARGET_KEY: {
-                "href": f"./{image}.png",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Calibration image with id {image}",
             },
             mappings.CALIBRATION_MOTOR_POS_KEY: {
-                "href": f"./{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
                 "roles": ["metadata"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Motor positions for the calibration image id {image}",
