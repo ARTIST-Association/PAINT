@@ -226,13 +226,13 @@ def test_make_deflectometry_item(
         "links": [
             {
                 "rel": "self",
-                "href": "./AY39-2023-09-18Z11:39:25Z-deflectometry-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
@@ -251,19 +251,19 @@ def test_make_deflectometry_item(
         ],
         "assets": {
             "raw_measurement": {
-                "href": "./AY39-2023-09-18Z11:39:25Z-deflectometry.h5",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Raw deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
             "filled_measurement": {
-                "href": "./AY39-filled-2023-09-18Z11:39:25Z-deflectometry.h5",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-filled-2023-09-18Z11:39:25Z-deflectometry.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Filled deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
             "results_summary": {
-                "href": "./AY39-2023-09-18Z11:39:25Z-deflectometry-result.pdf",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry-result.pdf",
                 "roles": ["metadata"],
                 "type": "application/pdf",
                 "title": "Summary of deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",

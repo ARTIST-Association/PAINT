@@ -53,13 +53,13 @@ def make_juelich_weather_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"./{mappings.JUELICH_STAC_NAME}",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_STAC_NAME}",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
@@ -71,14 +71,14 @@ def make_juelich_weather_item(
             },
             {
                 "rel": "collection",
-                "href": mappings.WEATHER_COLLECTION_FILE,
+                "href": mappings.WEATHER_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             mappings.WEATHER_DATA_KEY: {
-                "href": "./juelich-weather.h5",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/juelich-weather.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
                 "title": "Weather data from the Juelich weather station",

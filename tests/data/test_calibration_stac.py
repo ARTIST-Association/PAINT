@@ -270,13 +270,13 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         "links": [
             {
                 "rel": "self",
-                "href": "./115399-stac.json",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
@@ -295,13 +295,13 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         ],
         "assets": {
             "target": {
-                "href": "./115399.png",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399.png",
                 "roles": ["data"],
                 "type": "image/png",
                 "title": "Calibration image with id 115399",
             },
             "motor_positions": {
-                "href": "./BC52-115399-motor-position.json",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-115399-motor-position.json",
                 "roles": ["metadata"],
                 "type": "application/geo+json",
                 "title": "Motor positions for the calibration image id 115399",

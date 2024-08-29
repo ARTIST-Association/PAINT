@@ -58,26 +58,26 @@ def make_tower_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"./{mappings.TOWER_STAC_NAME}.json",
+                "href": f"{mappings.URL_BASE}/{mappings.TOWER_STAC_NAME}.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "parent",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
         ],
         "assets": {
             mappings.TOWER_KEY: {
-                "href": f"./{mappings.TOWER_FILE_NAME}.json",
+                "href": f"{mappings.URL_BASE}/{mappings.TOWER_FILE_NAME}.json",
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": "Tower measurement properties",

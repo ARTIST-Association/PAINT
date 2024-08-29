@@ -63,26 +63,26 @@ def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "./juelich-tower-measurements-item-stac.json",
+                "href": "https://paint-database.org/WRI1030197/juelich-tower-measurements-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "./https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the catalogue for WRI1030197",
             },
         ],
         "assets": {
             "measurements": {
-                "href": "./juelich-tower-measurements.json",
+                "href": "https://paint-database.org/WRI1030197/juelich-tower-measurements.json",
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Tower measurement properties",
