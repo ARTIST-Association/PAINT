@@ -102,16 +102,56 @@ class JuelichWeatherConvertor:
             )
             # Remove NaN
             df = df[~df.index.isna()]
-            # Convert Date and Time
-            df["DateTime"] = pd.to_datetime(
-                df.index + " " + df["Date"], format="%d.%m.%Y %H:%M:%S"
-            )
-            df["DateTime"] = (
-                df["DateTime"].dt.tz_localize("Europe/Berlin").dt.tz_convert("UTC")
-            )
+            if df.index.name != "Date":
+                # Convert Date and Time
+                df["DateTime"] = pd.to_datetime(
+                    df.index + " " + df["Date"], format="%d.%m.%Y %H:%M:%S"
+                )
+                df["DateTime"] = (
+                    df["DateTime"].dt.tz_localize("Europe/Berlin").dt.tz_convert("UTC")
+                )
+            else:
+                # Convert Date and Time
+                df["DateTime"] = pd.to_datetime(
+                    df.index + " " + df["Time"], format="%d.%m.%Y %H:%M:%S"
+                )
+                df["DateTime"] = (
+                    df["DateTime"].dt.tz_localize("Europe/Berlin").dt.tz_convert("UTC")
+                )
 
             # Clean Data frame
-            df = df.drop(columns=["Date", "Time"])
+            df = df.drop(
+                columns=[
+                    "Date",
+                    "Time",
+                    "TriggerBarometer",
+                    "Fuse1",
+                    "Fuse2",
+                    "Fuse3",
+                    "Fuse4",
+                    "Fuse5",
+                    "Fuse6",
+                    "Fuse7",
+                    "Fuse9",
+                    "UPS",
+                    "OvervoltageProtection",
+                    "Lnet",
+                    "Tb",
+                    "Ld",
+                    "Direktunnormiert",
+                    "Globalunnormiert",
+                    "Diffusunnormiert",
+                    "Direkttempfaktor",
+                    "Globaltempfaktor",
+                    "Diffustempfaktor",
+                    "Gloabalwinkelfaktor",
+                    "Diffuswinkelfaktor",
+                    "Azimuth",
+                    "Elevation",
+                    "DNI Korr Norm",
+                ],
+                errors="ignore",
+            )
             df.index = df["DateTime"].dt.strftime(mappings.TIME_FORMAT)
             df = df.drop(columns="DateTime")
             df_list.append(df)
@@ -136,11 +176,6 @@ class JuelichWeatherConvertor:
                 mappings.JUELICH_END: full_weather_df.index.max(),
             }
         )
-
-        # Drop columns not containing weather data
-        full_weather_df = full_weather_df.drop(columns=juelich_mappings.drop_columns)
-
-        # Rename columns
 
         # create HDF5 file
         with h5py.File(self.output_path / self.file_name, "w") as file:
