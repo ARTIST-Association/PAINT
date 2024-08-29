@@ -3,6 +3,11 @@ import numpy as np
 from typing import Tuple
 from scipy.spatial.distance import cdist
 import paint.util.paint_mappings as mappings
+from paint import PAINT_ROOT
+from general_plotting_functions import (
+    plot_stacked_bar_chart_with_inset,
+)
+from paint.util.utils import calculate_azimuth_and_elevation
 
 class NearestNeighborSplit:
     """
@@ -72,3 +77,8 @@ if __name__ == "__main__":
 
     split = NearestNeighborSplit(number_of_train_samples=2, number_of_validation_samples=3)
     training_data, validation_data = split.sort(data=pd.DataFrame(data))
+    plot_stacked_bar_chart_with_inset(
+                split_counts_by_heliostat,
+                example_heliostat_df,
+                f"{mappings.DATA_SET_AZIMUTH}_{n}",
+            )

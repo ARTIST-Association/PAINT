@@ -1,0 +1,15 @@
+{
+  "type": "Catalog",
+  "id": "solar_tower_catalog",
+  "stac_version": "1.0.0",
+  "description": "Catalog for Solar Tower Heliostats",
+  "links": [
+    {
+      "rel": "root",
+      "href": "./catalog.json",
+      "type": "application/json",
+      "title": "Solar Tower Catalog"
+    }
+  ],
+  "title": "Solar Tower Catalog"
+}
