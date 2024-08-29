@@ -112,7 +112,7 @@ if __name__ == "__main__":
     assert isinstance(lsdf_root, str)
     input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_calibration = Path(input_folder) / "paint" / "PAINT" / "calib_data.csv"
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
         "copy_images_to_correct_location.py",
