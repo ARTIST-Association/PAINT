@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -86,6 +87,11 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    output_path = (
+        Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID / mappings.SAVE_WEATHER
+    )
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--parameters_10min",
@@ -109,9 +115,7 @@ if __name__ == "__main__":
     parser.add_argument("--station_ids", default=["15000"])
     parser.add_argument("--start_date", type=str, default="2021-04-01")
     parser.add_argument("--end_date", type=str, default="2024-03-01")
-    parser.add_argument(
-        "--output_path", type=str, default=f"{PAINT_ROOT}/ConvertedData/Weather"
-    )
+    parser.add_argument("--output_path", type=str, default=str(output_path))
     parser.add_argument("--file_name", type=str, default="dwd-weather.h5")
     parser.add_argument("--ts_shape", type=str, default="long")
     args = parser.parse_args()

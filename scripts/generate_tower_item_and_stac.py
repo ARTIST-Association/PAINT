@@ -2,10 +2,10 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 from paint.data.tower_measurements import get_tower_measurements
 from paint.data.tower_stac import make_tower_item
 
@@ -45,12 +45,15 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-o",
         "--output",
         type=Path,
-        default=f"{PAINT_ROOT}/ConvertedData/",
+        default=str(output_folder),
     )
     args = parser.parse_args()
 

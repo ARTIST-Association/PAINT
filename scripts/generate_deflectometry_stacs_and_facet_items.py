@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -246,15 +247,23 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    input_folder = Path(lsdf_root) / "paint" / "DeflecDaten"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_position = (
+        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    )
+
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
         "generate_deflectometry_stacs_and_facet_items.py",
         "--input_folder",
-        f"{PAINT_ROOT}/ExampleDataKIT",
-        "-i_position",
-        f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
+        str(input_folder),
+        "--input_position",
+        str(input_position),
         "--output_path",
-        f"{PAINT_ROOT}/ConvertedData",
+        str(output_folder),
         "--surface_header_name",
         "=5f2I2f",
         "--facet_header_name",
@@ -268,7 +277,6 @@ if __name__ == "__main__":
         "--input_folder", type=Path, help="Parent folder to search for binary folders."
     )
     parser.add_argument(
-        "-i_position",
         "--input_position",
         type=Path,
         help="Path to the heliostat position input file",
