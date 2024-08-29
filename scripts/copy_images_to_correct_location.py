@@ -49,12 +49,8 @@ def find_and_copy_file(
                 # Copy the file to the destination directory
                 shutil.copy(file_path, destination_path_and_name)
 
-                print(
-                    f"File '{file_name}' found and copied to '{destination_path_and_name}'."
-                )
                 return
 
-    print(f"The ID '{id_str}' was not found in '{source_directory}'.")
     MISSED_FILES.append(id_str)
 
 
@@ -98,8 +94,11 @@ def main(arguments: argparse.Namespace) -> None:
                 id_str=id_string,
                 destination_path_and_name=destination_path,
             )
+        print(f"Heliostat {heliostat} was successfully copied.")
+    print("All Heliostats have been successfully copied!")
     saved_missed_ids_path = Path(f"{PAINT_ROOT}/MISSED_IDS/missed_ids.csv")
     saved_missed_ids_path.parent.mkdir(parents=True, exist_ok=True)
+    print("Copy Script Finished!")
 
     with open(saved_missed_ids_path, mode="w", newline="") as file:
         writer = csv.writer(file)
