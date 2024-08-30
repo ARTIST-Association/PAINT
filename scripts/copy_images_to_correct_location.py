@@ -1,24 +1,19 @@
 #!/usr/bin/env python
 
 import argparse
-import csv
 import os
 import shutil
 import sys
 from pathlib import Path
-from typing import List
 
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
     to_utc,
 )
-
-MISSED_FILES: List = []
 
 
 def find_and_copy_file(
@@ -51,8 +46,6 @@ def find_and_copy_file(
 
                 return
 
-    MISSED_FILES.append(id_str)
-
 
 def main(arguments: argparse.Namespace) -> None:
     """
@@ -78,32 +71,31 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
     source = Path(arguments.input_folder)
-
+    root = Path(arguments.output_path)
+    already_copied_groups = []
+    if root.exists() and root.is_dir():
+        already_copied_groups = [item.name for item in root.iterdir() if item.is_dir()]
+        already_copied_groups = already_copied_groups[:-1]
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
-        for index in heliostat_data.index:
-            assert isinstance(heliostat, str)
-            id_string = str(index)
-            destination_path = (
-                Path(arguments.output_path)
-                / heliostat
-                / mappings.SAVE_CALIBRATION
-                / (id_string + ".png")
-            )
-            find_and_copy_file(
-                source_directory=source,
-                id_str=id_string,
-                destination_path_and_name=destination_path,
-            )
-        print(f"Heliostat {heliostat} was successfully copied.")
+        if heliostat in already_copied_groups:
+            print(f"Skipping {heliostat}")
+        else:
+            for index in heliostat_data.index:
+                assert isinstance(heliostat, str)
+                id_string = str(index)
+                destination_path = (
+                    Path(arguments.output_path)
+                    / heliostat
+                    / mappings.SAVE_CALIBRATION
+                    / (id_string + ".png")
+                )
+                find_and_copy_file(
+                    source_directory=source,
+                    id_str=id_string,
+                    destination_path_and_name=destination_path,
+                )
+            print(f"Heliostat {heliostat} was successfully copied.")
     print("All Heliostats have been successfully copied!")
-    saved_missed_ids_path = Path(f"{PAINT_ROOT}/MISSED_IDS/missed_ids.csv")
-    saved_missed_ids_path.parent.mkdir(parents=True, exist_ok=True)
-    print("Copy Script Finished!")
-
-    with open(saved_missed_ids_path, mode="w", newline="") as file:
-        writer = csv.writer(file)
-        for item in MISSED_FILES:
-            writer.writerow([item])
 
 
 if __name__ == "__main__":
