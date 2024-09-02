@@ -1,10 +1,21 @@
 import torch
 import torch.nn.functional as F
+import cv2
 
+def compute_transform_cv(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
+    """
+    @brief Computes a perspective transformation (matrix) from given source and destination control points using OpenCV.
+
+    @param src Source control points to be mapped onto the destination points.
+    @param dst Destination control points (must have same shape as src).
+
+    @return perspective transformation tensor of shape (2 x 3)
+    """
+    return torch.tensor(cv2.getPerspectiveTransform(src[:, [1,0]].detach().numpy().astype("float32"), dst[:,[1,0]].detach().numpy().astype("float32")))
 
 def compute_transform(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
     """
-    @brief Computes a perspective transformation (matrix) from given source and destination control points.
+    @brief Computes a perspective transformation (matrix) from given source and destination control points. Not fully tested!
 
     @param src Source control points to be mapped onto the destination points.
     @param dst Destination control points (must have same shape as src).
@@ -34,10 +45,23 @@ def compute_transform(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
 
     return M
 
+def apply_transform_cv(image: torch.Tensor, transform: torch.Tensor, output_shape: torch.Size) -> torch.Tensor:
+    """
+    @brief Applies a perspective transformation to an image using OpenCV.
+
+    @param image Image to be transformed. Must have shape (height x width).
+    @param transform The transformation to be applied. Must have shape (2 x 3).
+    @param output_shape The desired output shape of the transformed image (height x width).
+
+    @return transformed image with output_shape.
+    """
+    warped_image = cv2.warpPerspective(image.detach().numpy().astype("float32"), transform.detach().numpy().astype("float32"), output_shape)
+    return torch.tensor(warped_image, dtype=image.dtype)
+
 
 def apply_transform(image: torch.Tensor, transform: torch.Tensor, output_shape: torch.Size) -> torch.Tensor:
     """
-    @brief Applies a perspective transformation to an image.
+    @brief Applies a perspective transformation to an image. Not fully tested!
 
     @param image Image to be transformed. Must have shape (height x width).
     @param transform The transformation to be applied. Must have shape (2 x 3).
@@ -51,5 +75,5 @@ def apply_transform(image: torch.Tensor, transform: torch.Tensor, output_shape: 
     )
 
     # Apply the grid to the image
-    warped_image = F.grid_sample(image.unsqueeze(0).unsqueeze(0), grid, align_corners=False).squeeze()
+    warped_image = F.grid_sample(image.unsqueeze(0).unsqueeze(0), grid.to(image.dtype), align_corners=False).squeeze()
     return warped_image

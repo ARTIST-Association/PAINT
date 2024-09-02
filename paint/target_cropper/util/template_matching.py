@@ -3,11 +3,35 @@ import torch.nn.functional as F
 from ..dataclasses import SearchRegion
 from .image_cropping import crop_image, get_parent_coordinate
 from typing import Optional
+import cv2
+
+def find_template_position_cv(image: torch.Tensor, template: torch.Tensor, search_region: Optional[SearchRegion] = None):
+    """
+    @brief Finds a template within an image by computing the image likeliness matrix via convolution using OpenCV.
+
+    @param image The image where the template is to be found in. Must have shape (height x width).
+    @param template The template to be found. Must have shape (height x width).
+    @param search_region The region within the given image where the template is expected to be found.
+
+    @return T
+    """
+
+    template = template[:31,:31]
+    method = cv2.TM_SQDIFF
+    res = cv2.matchTemplate(image=image.detach().numpy().astype("float32"), templ=template.detach().numpy().astype("float32"), method=method)
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+    # If the method is TM_SQDIFF or TM_SQDIFF_NORMED, take minimum
+    if method in [cv2.TM_SQDIFF, cv2.TM_SQDIFF_NORMED]:
+        top_left = min_loc
+    else:
+        top_left = max_loc
+    return torch.tensor([top_left[1], top_left[0]], dtype=image.dtype)
 
 # TODO this function does not yet work. MUST BE FIXED!
 def find_template_position(image: torch.Tensor, template: torch.Tensor, search_region: Optional[SearchRegion] = None) -> torch.Tensor:
     """
-    @brief Finds a template within an image by computing the image likeliness matrix via convolution.
+    @brief Finds a template within an image by computing the image likeliness matrix via convolution. Not fully tested!
 
     @param image The image where the template is to be found in. Must have shape (height x width).
     @param template The template to be found. Must have shape (height x width).

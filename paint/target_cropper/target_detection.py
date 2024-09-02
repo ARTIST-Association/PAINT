@@ -1,6 +1,6 @@
 import torch
 from .dataclasses import Target, Marker
-from .util import find_template_position, compute_transform, apply_transform, to_image
+from .util import find_template_position_cv, compute_transform_cv, apply_transform_cv
 import matplotlib.pyplot as plt
 
 def find_marker_position(image: torch.Tensor, marker: Marker) -> torch.Tensor:
@@ -12,10 +12,10 @@ def find_marker_position(image: torch.Tensor, marker: Marker) -> torch.Tensor:
 
     @return marker position as (height, width).
     """
-    template_position = find_template_position(
+    template_position = find_template_position_cv(
         image=image, template=marker.template_image
     )
-    marker_position = template_position
+    marker_position = template_position + torch.stack([torch.round(marker.template_offset[0] * marker.template_image.shape[0]), torch.round(marker.template_offset[1] * marker.template_image.shape[1])])
     return marker_position
 
 
@@ -44,6 +44,6 @@ def detect_target(image: torch.Tensor, target: Target) -> torch.Tensor:
             target.marker_4.image_position,
         ]
     )
-    transform = compute_transform(src=src, dst=dst)
-    warped_image = apply_transform(image=image, transform=transform, output_shape=target.output_shape)
+    transform = compute_transform_cv(src=src, dst=dst)
+    warped_image = apply_transform_cv(image=image, transform=transform, output_shape=target.output_shape)
     return warped_image

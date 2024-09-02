@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import torch
 from .search_region import SearchRegion
+import typing
 
 
 @dataclass
@@ -18,4 +19,4 @@ class Marker:
     template_offset: torch.Tensor
     enu_position: torch.Tensor
     template_image: torch.Tensor
-    search_region: SearchRegion
+    search_region: typing.Optional[SearchRegion] = None
