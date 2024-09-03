@@ -54,7 +54,7 @@ def main(arguments: argparse.Namespace) -> None:
         elif file.name.split("_")[0] in expected_ids:
             expected_ids.remove(file.name.split("_")[0])
             print_information_count = print_information_count + 1
-        if print_information_count % 1000 == 0:
+        if print_information_count % 10000 == 0:
             save_name = (
                 missing_ids_path / f"Missing_IDs_after_{print_information_count}.csv"
             )
@@ -66,7 +66,7 @@ def main(arguments: argparse.Namespace) -> None:
 if __name__ == "__main__":
     lsdf_root = os.environ.get("LSDFPROJECTS")
     assert isinstance(lsdf_root, str)
-    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
+    input_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
 
     # Simulate command-line arguments for testing or direct script execution
