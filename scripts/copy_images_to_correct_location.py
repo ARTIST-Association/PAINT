@@ -6,9 +6,11 @@ import shutil
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
+from paint import PAINT_ROOT
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
@@ -18,7 +20,7 @@ from paint.util.utils import (
 
 def find_and_copy_file(
     source_directory: Path, id_str: str, destination_path_and_name: Path
-) -> None:
+) -> bool:
     """
     Find a given file within a directory or sub directory and copy it to a desired destination.
 
@@ -30,6 +32,11 @@ def find_and_copy_file(
         The ID string being searched for.
     destination_path_and_name
         The full destination path and file name used for copying the file.
+
+    Returns
+    -------
+    bool
+        Indicating whether an image was copied or not.
     """
     # Walk through all subdirectories of the source directory
     for root, dirs, files in os.walk(source_directory):
@@ -44,7 +51,9 @@ def find_and_copy_file(
                 # Copy the file to the destination directory
                 shutil.copy(file_path, destination_path_and_name)
 
-                return
+                return True
+
+    return False
 
 
 def main(arguments: argparse.Namespace) -> None:
@@ -71,31 +80,46 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
     source = Path(arguments.input_folder)
-    root = Path(arguments.output_path)
-    already_copied_groups = []
-    if root.exists() and root.is_dir():
-        already_copied_groups = [item.name for item in root.iterdir() if item.is_dir()]
-        already_copied_groups = already_copied_groups[:-1]
+    failed_copies_name = Path(PAINT_ROOT) / "FAILED_COPIES" / "Failed_IDs.csv"
+    failed_copies_name.parent.mkdir(parents=True, exist_ok=True)
+    missing_id_path = Path(PAINT_ROOT) / "MISSING_IDS"
+    missing_ids = pd.read_csv(
+        missing_id_path / "Final_Missing_IDs.csv", index_col=0
+    ).index.to_list()
+    data = data.loc[missing_ids]
+    failed_copies_list = []
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
-        if heliostat in already_copied_groups:
-            print(f"Skipping {heliostat}")
-        else:
-            for index in heliostat_data.index:
-                assert isinstance(heliostat, str)
-                id_string = str(index)
-                destination_path = (
-                    Path(arguments.output_path)
-                    / heliostat
-                    / mappings.SAVE_CALIBRATION
-                    / (id_string + ".png")
+        for index in heliostat_data.index:
+            assert isinstance(heliostat, str)
+            id_string = str(index)
+            destination_path = (
+                Path(arguments.output_path)
+                / heliostat
+                / mappings.SAVE_CALIBRATION
+                / (id_string + ".png")
+            )
+            copy_success = find_and_copy_file(
+                source_directory=source,
+                id_str=id_string,
+                destination_path_and_name=destination_path,
+            )
+            if copy_success:
+                missing_ids.remove(index)
+                np.savetxt(
+                    missing_id_path / "Updated_Missing_IDs.csv",
+                    np.array(missing_ids),
+                    fmt="%s",
                 )
-                find_and_copy_file(
-                    source_directory=source,
-                    id_str=id_string,
-                    destination_path_and_name=destination_path,
-                )
-            print(f"Heliostat {heliostat} was successfully copied.")
-    print("All Heliostats have been successfully copied!")
+            else:
+                print(f"Image ID {id_string} could not be found.")
+                failed_copies_list.append(index)
+                np.savetxt(failed_copies_name, np.array(failed_copies_list), fmt="%s")
+
+        print(
+            f"Group of Heliostat {heliostat} processed -- see above for missed copies!"
+        )
+
+    print("All Heliostats have been processed!")
 
 
 if __name__ == "__main__":
