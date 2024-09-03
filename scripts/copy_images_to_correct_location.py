@@ -80,14 +80,20 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
     source = Path(arguments.input_folder)
+    failed_copies_list = []
     failed_copies_name = Path(PAINT_ROOT) / "FAILED_COPIES" / "Failed_IDs.csv"
+    if failed_copies_name.exists():
+        failed_copies_list = pd.read_csv(
+            failed_copies_name, index_col=0
+        ).index.to_list()
     failed_copies_name.parent.mkdir(parents=True, exist_ok=True)
     missing_id_path = Path(PAINT_ROOT) / "MISSING_IDS"
     missing_ids = pd.read_csv(
         missing_id_path / "Final_Missing_IDs.csv", index_col=0
     ).index.to_list()
     data = data.loc[missing_ids]
-    failed_copies_list = []
+    if failed_copies_list:
+        data = data.drop(failed_copies_list)
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
         for index in heliostat_data.index:
             assert isinstance(heliostat, str)
@@ -123,11 +129,14 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
-    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
-    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
+    # lsdf_root = os.environ.get("LSDFPROJECTS")
+    # assert isinstance(lsdf_root, str)
+    # input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
+    # output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    # input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
+    input_folder = Path(PAINT_ROOT) / "ExampleDataKIT"
+    output_folder = Path(PAINT_ROOT) / "ConvertTest"
+    input_calibration = Path(input_folder) / "calib_data.csv"
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
         "copy_images_to_correct_location.py",
