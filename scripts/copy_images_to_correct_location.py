@@ -89,7 +89,7 @@ def main(arguments: argparse.Namespace) -> None:
     failed_copies_name.parent.mkdir(parents=True, exist_ok=True)
     missing_id_path = Path(PAINT_ROOT) / "MISSING_IDS"
     missing_ids = pd.read_csv(
-        missing_id_path / "Final_Missing_IDs.csv", index_col=0
+        missing_id_path / "Updated_Missing_IDs.csv", index_col=0
     ).index.to_list()
     data = data.loc[missing_ids]
     if failed_copies_list:
@@ -129,14 +129,11 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    # lsdf_root = os.environ.get("LSDFPROJECTS")
-    # assert isinstance(lsdf_root, str)
-    # input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
-    # output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    # input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
-    input_folder = Path(PAINT_ROOT) / "ExampleDataKIT"
-    output_folder = Path(PAINT_ROOT) / "ConvertTest"
-    input_calibration = Path(input_folder) / "calib_data.csv"
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
         "copy_images_to_correct_location.py",
