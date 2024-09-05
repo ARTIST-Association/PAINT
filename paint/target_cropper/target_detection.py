@@ -1,4 +1,5 @@
 import torch
+from matplotlib import pyplot as plt
 
 from paint.target_cropper.dataclasses import Marker, Target
 from paint.target_cropper.util import (
@@ -68,6 +69,10 @@ def detect_target(image: torch.Tensor, target: Target) -> torch.Tensor:
             target.marker_4.image_position,
         ]
     )
+    plt.imshow(src.detach().cpu().numpy(), cmap="gray")
+    plt.show()
+    plt.imshow(dst.detach().cpu().numpy(), cmap="gray")
+    plt.show()
     transform = compute_transform(source=src, destination=dst)
     return apply_transform(
         image=image, transform=transform, output_shape=target.output_shape

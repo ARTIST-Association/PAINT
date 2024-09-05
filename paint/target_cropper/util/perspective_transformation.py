@@ -41,7 +41,7 @@ def apply_transform(
     image : torch.Tensor
         Image to be transformed. Must have shape (height, width).
     transform : torch.Tensor
-        Transformation to be applied. Must have shape (2, 3).
+        Transformation to be applied. Must have shape (3, 3).
     output_shape : torch.Tensor
         The desired output shape of the transformed image (height, width).
 
@@ -50,8 +50,8 @@ def apply_transform(
     torch.Tensor
         Transformed image with the desired output shape.
     """
-    if transform.shape != torch.Size([2, 3]):
-        raise ValueError("The transform must have shape (2,3).")
+    if transform.shape != torch.Size([3, 3]):
+        raise ValueError("The transform must have shape (3,3).")
     warped_image = cv2.warpPerspective(
         image.detach().numpy().astype("float32"),
         transform.detach().numpy().astype("float32"),

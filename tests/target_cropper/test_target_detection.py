@@ -1,50 +1,46 @@
-import os
-import sys
+import pathlib
 
 import torch
 
-from paint import target_cropper
+from paint import PAINT_ROOT, target_cropper
 
-lib_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
-sys.path.append(lib_dir)
+TEST_DATA_PATH = pathlib.Path(PAINT_ROOT) / "tests" / "target_cropper" / "test_data"
 
 
 def test_target_detection():
     """Test the target detection."""
-    image = target_cropper.util.load_image(
-        os.path.join(__file__, os.pardir, "uncropped_image.png")
-    )
+    image = target_cropper.util.load_image(TEST_DATA_PATH / "uncropped_image.png")
     target = target_cropper.dataclasses.Target(
         marker_1=target_cropper.dataclasses.Marker(
-            image_position=torch.tensor([0, 200]),
+            image_position=torch.tensor([400, 0]),
             template_offset=torch.tensor([0, 0.5]),
             enu_position=torch.tensor([0, 0, 1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "templates", "upper_center.png")
+                TEST_DATA_PATH / "markerLB.png"
             ),
         ),
         marker_2=target_cropper.dataclasses.Marker(
-            image_position=torch.tensor([200, 400]),
+            image_position=torch.tensor([200, 0]),
             template_offset=torch.tensor([0.5, 1.0]),
             enu_position=torch.tensor([1, 0, 0]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "templates", "center_right.png")
+                TEST_DATA_PATH / "markerLM.png"
             ),
         ),
         marker_3=target_cropper.dataclasses.Marker(
-            image_position=torch.tensor([400, 200]),
+            image_position=torch.tensor([400, 400]),
             template_offset=torch.tensor([1.0, 0.5]),
             enu_position=torch.tensor([0, 0, -1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "templates", "lower_center.png")
+                TEST_DATA_PATH / "markerRB.png"
             ),
         ),
         marker_4=target_cropper.dataclasses.Marker(
-            image_position=torch.tensor([200, 0]),
+            image_position=torch.tensor([200, 400]),
             template_offset=torch.tensor([0.5, 0]),
             enu_position=torch.tensor([-1, 0, 0]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "templates", "center_left.png")
+                TEST_DATA_PATH / "markerRM.png"
             ),
         ),
         output_shape=torch.Size([400, 400]),

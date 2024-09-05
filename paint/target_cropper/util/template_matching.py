@@ -21,9 +21,9 @@ def find_template_position(
     torch.Tensor
         Identified template position.
     """
-    if image.shape != torch.Size([2]):
+    if len(image.shape) != 2:
         raise ValueError("Image must have the shape (height, width).")
-    if template.shape != torch.Size([2]):
+    if len(template.shape) != 2:
         raise ValueError("Template must have the shape (height, width).")
     template = template[:31, :31]
     method = cv2.TM_SQDIFF
