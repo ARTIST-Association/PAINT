@@ -1,11 +1,12 @@
 import json
 import os
+import pathlib
 import sys
 
 import matplotlib.pyplot as plt
 import torch
 
-from paint import target_cropper
+from paint import PAINT_ROOT, target_cropper
 
 lib_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 sys.path.append(lib_dir)
@@ -17,14 +18,24 @@ def test_focal_spot_detection_from_dict():
     applied_k_means = 5
 
     image = target_cropper.util.load_image(
-        os.path.join(__file__, os.pardir, "stj_data", "stj_target.png")
+        pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "target_cropper"
+        / "test_data"
+        / "stj_target.png"
     )
-    mask = target_cropper.util.load_image(os.path.join(__file__, os.pardir, "mask.png"))
+    mask = target_cropper.util.load_image(
+        pathlib.Path(PAINT_ROOT) / "tests" / "target_cropper" / "test_data" / "mask.png"
+    )
     # mask = torch.where(mask != 0, torch.tensor(1.0), mask)
     mask = None
 
     with open(
-        os.path.join(__file__, os.pardir, "stj_data", "stj-tower-measurements.json"),
+        pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "target_cropper"
+        / "test_data"
+        / "stj-tower-measurements.json",
         "r",
     ) as file:
         data_dict = json.load(file)
@@ -37,7 +48,11 @@ def test_focal_spot_detection_from_dict():
                 data_dict["solar_tower_juelich_lower"]["upper_left"]
             ),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_center_left.png")
+                pathlib.Path(PAINT_ROOT)
+                / "tests"
+                / "target_cropper"
+                / "test_data"
+                / "stj_center_left.png"
             ),
         ),
         marker_2=target_cropper.dataclasses.Marker(
@@ -47,7 +62,7 @@ def test_focal_spot_detection_from_dict():
                 data_dict["solar_tower_juelich_lower"]["upper_right"]
             ),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_center_right.png")
+                os.path.join(__file__, os.pardir, "test_data", "stj_center_right.png")
             ),
         ),
         marker_3=target_cropper.dataclasses.Marker(
@@ -57,7 +72,7 @@ def test_focal_spot_detection_from_dict():
                 data_dict["solar_tower_juelich_lower"]["lower_left"]
             ),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_lower_left.png")
+                os.path.join(__file__, os.pardir, "test_data", "stj_lower_left.png")
             ),
         ),
         marker_4=target_cropper.dataclasses.Marker(
@@ -67,7 +82,7 @@ def test_focal_spot_detection_from_dict():
                 data_dict["solar_tower_juelich_lower"]["lower_right"]
             ),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_lower_right.png")
+                os.path.join(__file__, os.pardir, "test_data", "stj_lower_right.png")
             ),
         ),
         output_shape=torch.Size([400, 400]),

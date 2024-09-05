@@ -1,9 +1,10 @@
 import os
+import pathlib
 import sys
 
 import torch
 
-from paint import target_cropper
+from paint import PAINT_ROOT, target_cropper
 
 lib_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 sys.path.append(lib_dir)
@@ -15,9 +16,16 @@ def test_focal_spot_detection() -> None:
     applied_k_means = 5
 
     warped_image = target_cropper.util.load_image(
-        os.path.join(__file__, os.pardir, "focal_spot_image.png")
+        pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "target_cropper"
+        / "test_data"
+        / "focal_spot_image.png"
     )
-    mask = target_cropper.util.load_image(os.path.join(__file__, os.pardir, "mask.png"))
+
+    mask = target_cropper.util.load_image(
+        pathlib.Path(PAINT_ROOT) / "tests" / "target_cropper" / "test_data" / "mask.png"
+    )
     mask = torch.where(mask != 0, torch.tensor(1.0), mask)
 
     target = target_cropper.dataclasses.Target(
@@ -26,7 +34,11 @@ def test_focal_spot_detection() -> None:
             template_offset=torch.tensor([0, 0.5]),
             enu_position=torch.tensor([-1, 0, 1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_center_left.png")
+                pathlib.Path(PAINT_ROOT)
+                / "tests"
+                / "target_cropper"
+                / "test_data"
+                / "stj_center_left.png"
             ),
         ),
         marker_2=target_cropper.dataclasses.Marker(
@@ -34,7 +46,11 @@ def test_focal_spot_detection() -> None:
             template_offset=torch.tensor([0.5, 1.0]),
             enu_position=torch.tensor([1, 0, 1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_center_right.png")
+                pathlib.Path(PAINT_ROOT)
+                / "tests"
+                / "target_cropper"
+                / "test_data"
+                / "stj_center_right.png"
             ),
         ),
         marker_3=target_cropper.dataclasses.Marker(
@@ -42,7 +58,11 @@ def test_focal_spot_detection() -> None:
             template_offset=torch.tensor([1.0, 0.5]),
             enu_position=torch.tensor([-1, 0, -1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_lower_left.png")
+                pathlib.Path(PAINT_ROOT)
+                / "tests"
+                / "target_cropper"
+                / "test_data"
+                / "stj_lower_left.png"
             ),
         ),
         marker_4=target_cropper.dataclasses.Marker(
@@ -50,7 +70,11 @@ def test_focal_spot_detection() -> None:
             template_offset=torch.tensor([0.5, 0]),
             enu_position=torch.tensor([1, 0, -1]),
             template_image=target_cropper.util.load_image(
-                os.path.join(__file__, os.pardir, "stj_data", "stj_lower_right.png")
+                pathlib.Path(PAINT_ROOT)
+                / "tests"
+                / "target_cropper"
+                / "test_data"
+                / "stj_lower_right.png"
             ),
         ),
         output_shape=torch.Size([400, 400]),
@@ -60,7 +84,6 @@ def test_focal_spot_detection() -> None:
     focal_spot = target_cropper.detect_focal_spot(
         image=warped_image,
         num_k_means=num_k_means,
-        applied_k_means=applied_k_means,
         target=target,
     )
 
