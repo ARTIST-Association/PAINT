@@ -1,79 +1,60 @@
-import torch
-import torch.nn.functional as F
 import cv2
+import torch
 
-def compute_transform_cv(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
+
+def compute_transform(source: torch.Tensor, destination: torch.Tensor) -> torch.Tensor:
     """
-    @brief Computes a perspective transformation (matrix) from given source and destination control points using OpenCV.
+    Compute a perspective transformation (matrix) from given source and destination control points using OpenCV.
 
-    @param src Source control points to be mapped onto the destination points.
-    @param dst Destination control points (must have same shape as src).
+    Parameters
+    ----------
+    source : torch.Tensor
+        Source control points to be mapped onto the destination points.
+    destination : torch.Tensor
+        Destination control points, with the same shape as the source.
 
-    @return perspective transformation tensor of shape (2 x 3)
+    Returns
+    -------
+    torch.Tensor
+        Perspective transformation with the shape (2, 3).
     """
-    return torch.tensor(cv2.getPerspectiveTransform(src[:, [1,0]].detach().numpy().astype("float32"), dst[:,[1,0]].detach().numpy().astype("float32")))
-
-def compute_transform(src: torch.Tensor, dst: torch.Tensor) -> torch.Tensor:
-    """
-    @brief Computes a perspective transformation (matrix) from given source and destination control points. Not fully tested!
-
-    @param src Source control points to be mapped onto the destination points.
-    @param dst Destination control points (must have same shape as src).
-
-    @return perspective transformation tensor of shape (2 x 3)
-    """
-
-    # Construct the matrix A
-    A = torch.zeros((8, 6), dtype=torch.float32)
-    for i in range(4):
-        x, y = src[i]
-        u, v = dst[i]
-        A[2 * i] = torch.tensor([x, y, 1, 0, 0, 0], dtype=torch.float32)
-        A[2 * i + 1] = torch.tensor([0, 0, 0, x, y, 1], dtype=torch.float32)
-
-    # Construct the vector B
-    B = torch.tensor(dst, dtype=torch.float32).view(-1)
-
-    # Solve the equation A * M = B using SVD
-    U, S, V = torch.linalg.svd(A)
-    S_inv = torch.diag_embed(1.0 / S[:6])  # Take the pseudo-inverse
-    M = torch.matmul(torch.matmul(V[:, :6], S_inv), torch.transpose(U[:, :6], 0, 1))
-    M = torch.matmul(M, B)
-
-    # Reshape M to be a 2x3 matrix
-    M = torch.reshape(M, (2, 3))
-
-    return M
-
-def apply_transform_cv(image: torch.Tensor, transform: torch.Tensor, output_shape: torch.Size) -> torch.Tensor:
-    """
-    @brief Applies a perspective transformation to an image using OpenCV.
-
-    @param image Image to be transformed. Must have shape (height x width).
-    @param transform The transformation to be applied. Must have shape (2 x 3).
-    @param output_shape The desired output shape of the transformed image (height x width).
-
-    @return transformed image with output_shape.
-    """
-    warped_image = cv2.warpPerspective(image.detach().numpy().astype("float32"), transform.detach().numpy().astype("float32"), output_shape)
-    return torch.tensor(warped_image, dtype=image.dtype)
-
-
-def apply_transform(image: torch.Tensor, transform: torch.Tensor, output_shape: torch.Size) -> torch.Tensor:
-    """
-    @brief Applies a perspective transformation to an image. Not fully tested!
-
-    @param image Image to be transformed. Must have shape (height x width).
-    @param transform The transformation to be applied. Must have shape (2 x 3).
-    @param output_shape The desired output shape of the transformed image (height x width).
-
-    @return transformed image with output_shape.
-    """
-    # Generate the perspective grid
-    grid = F.affine_grid(
-        transform.unsqueeze(0), torch.Size((1, 1, output_shape[0], output_shape[1])), align_corners=False
+    if source.shape != destination.shape:
+        raise ValueError(
+            "The source and destination control-points must have the same shape!"
+        )
+    return torch.tensor(
+        cv2.getPerspectiveTransform(
+            source[:, [1, 0]].detach().numpy().astype("float32"),
+            destination[:, [1, 0]].detach().numpy().astype("float32"),
+        )
     )
 
-    # Apply the grid to the image
-    warped_image = F.grid_sample(image.unsqueeze(0).unsqueeze(0), grid.to(image.dtype), align_corners=False).squeeze()
-    return warped_image
+
+def apply_transform(
+    image: torch.Tensor, transform: torch.Tensor, output_shape: torch.Size
+) -> torch.Tensor:
+    """
+    Apply a perspective transformation to an image using OpenCV.
+
+    Parameters
+    ----------
+    image : torch.Tensor
+        Image to be transformed. Must have shape (height, width).
+    transform : torch.Tensor
+        Transformation to be applied. Must have shape (2, 3).
+    output_shape : torch.Tensor
+        The desired output shape of the transformed image (height, width).
+
+    Returns
+    -------
+    torch.Tensor
+        Transformed image with the desired output shape.
+    """
+    if transform.shape != torch.Size([2, 3]):
+        raise ValueError("The transform must have shape (2,3).")
+    warped_image = cv2.warpPerspective(
+        image.detach().numpy().astype("float32"),
+        transform.detach().numpy().astype("float32"),
+        output_shape,
+    )
+    return torch.tensor(warped_image, dtype=image.dtype)

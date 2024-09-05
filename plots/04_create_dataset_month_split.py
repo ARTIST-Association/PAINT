@@ -1,6 +1,6 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 from paint.util.utils import calculate_az_el
@@ -12,33 +12,36 @@ def classify_date_split(df, split_name, train_n, validation_n):
     def nearest_solstice_distance(timestamp, month, day):
         year = timestamp.year
         current_year_solstice = pd.Timestamp(year=year, month=month, day=day, hour=12)
-        next_year_solstice = pd.Timestamp(year=year+1, month=month, day=day, hour=12)
-        prev_year_solstice = pd.Timestamp(year=year-1, month=month, day=day, hour=12)
-        
+        next_year_solstice = pd.Timestamp(year=year + 1, month=month, day=day, hour=12)
+        prev_year_solstice = pd.Timestamp(year=year - 1, month=month, day=day, hour=12)
+
         return min(
             abs((timestamp - current_year_solstice).total_seconds()),
             abs((timestamp - next_year_solstice).total_seconds()),
-            abs((timestamp - prev_year_solstice).total_seconds())
+            abs((timestamp - prev_year_solstice).total_seconds()),
         )
-    
+
     # Calculate distances
-    df['Dec_Distance'] = df['CreatedAt'].apply(lambda x: nearest_solstice_distance(x, 12, 21))
-    df['Jun_Distance'] = df['CreatedAt'].apply(lambda x: nearest_solstice_distance(x, 6, 21))
-    
+    df["Dec_Distance"] = df["CreatedAt"].apply(
+        lambda x: nearest_solstice_distance(x, 12, 21)
+    )
+    df["Jun_Distance"] = df["CreatedAt"].apply(
+        lambda x: nearest_solstice_distance(x, 6, 21)
+    )
+
     # Sort by distance
-    df = df.sort_values(by=['Dec_Distance', 'CreatedAt'])
+    df = df.sort_values(by=["Dec_Distance", "CreatedAt"])
     train_indices = df.head(train_n).index
 
-    df = df.sort_values(by=['Jun_Distance', 'CreatedAt'])
+    df = df.sort_values(by=["Jun_Distance", "CreatedAt"])
     validation_indices = df.head(validation_n).index
 
     # Assign split labels
-    df[split_name] = 'test'
-    df.loc[train_indices, split_name] = 'train'
-    df.loc[validation_indices, split_name] = 'validation'
-    
-    return df[split_name]
+    df[split_name] = "test"
+    df.loc[train_indices, split_name] = "train"
+    df.loc[validation_indices, split_name] = "validation"
 
+    return df[split_name]
 
 
 def plot_stacked_bar_chart_with_inset(
@@ -47,12 +50,14 @@ def plot_stacked_bar_chart_with_inset(
     """
     Compute the total measurements for each HeliostatID and plot a stacked bar chart with inset scatter plot.
 
-    Parameters:
+    Parameters
+    ----------
     - grouped_df: DataFrame containing measurements grouped by HeliostatID
     - example_heliostat_df: DataFrame containing example heliostat data
     - train_split_name: Name of the training split
 
-    Returns:
+    Returns
+    -------
     None
     """
     # Compute the total measurements for each HeliostatID
@@ -132,13 +137,15 @@ def update_datasets_to_nan_if_too_small(df, column, n_train, m_validation):
     Update the dataset split to set 'NaN' for heliostats where 'train' set is smaller than n_train
     and 'test' set is smaller than m_validation.
 
-    Parameters:
+    Parameters
+    ----------
     df (pd.DataFrame): DataFrame with the dataset split column.
     column (str): Column name to check for 'train' and 'test' entries.
     n_train (int): Minimum number of 'train' entries required for each HeliostatId.
     m_validation (int): Minimum number of 'test' entries required for each HeliostatId.
 
-    Returns:
+    Returns
+    -------
     pd.DataFrame: Updated DataFrame with adjusted dataset split.
     """
     # Group by HeliostatId and count the number of 'train' and 'test' entries
@@ -170,7 +177,7 @@ df["Azimuth"], df["Elevation"] = calculate_az_el(
 )  # Calculate Azimuth and Elevation from Sun Vector
 
 # Apply classification function
-n_train = [10,50,100]  # number of train samples per HeliostatId
+n_train = [10, 50, 100]  # number of train samples per HeliostatId
 m_validation = 30  # number of validation samples per HeliostatId
 
 

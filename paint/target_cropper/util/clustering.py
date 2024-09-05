@@ -1,16 +1,23 @@
 import torch
-import torch.nn.functional as F
-from ..dataclasses import KMeansCluster
+
+from paint.target_cropper.dataclasses import KMeansCluster
 
 
-def generate_pixel_positions(width : int, height : int) -> torch.Tensor:
+def generate_pixel_positions(width: int, height: int) -> torch.Tensor:
     """
-    @brief generate a list of pixel positions from given width and height.
-    
-    @param width The image width.
-    @param height The image height.
+    Generate a list of pixel positions from a given height and width.
 
-    @return tensor of pixel positions for an image
+    Parameters
+    ----------
+    width : int
+        Image width.
+    height : int
+        Image height.
+
+    Returns
+    -------
+    torch.Tensor
+        The pixel positions for an image.
     """
     positions = []
     for y in range(height):
@@ -23,15 +30,22 @@ def kmeans(
     image: torch.Tensor, num_clusters: int, num_iters: int = 100
 ) -> KMeansCluster:
     """
-    @brief computes k-means intensity clustering on a given grey scale image.
+    Compute K-means intensity clustering on a given greyscale image.
 
-    @param image The given image (must be grayscale).
-    @param num_clusters The number of k-means clusters to be generated.
-    @param num_iters Allowed number of iterations to create the clusters.
+    Parameters
+    ----------
+    image : torch.Tensor
+        Image on which clustering is applied (must be grayscale).
+    num_clusters : int
+        Number of K-means clusters to be generated.
+    num_iters : int
+        Allowed number of iterations to create the clusters. Default is ``100``.
 
-    @return clustered image data
+    Returns
+    -------
+    KMeansCluster
+        Clustered image data.
     """
-
     # Generate random cluster centers
     pixel_values = image.flatten()
     centers = torch.linspace(0, 1, steps=num_clusters)
@@ -39,7 +53,8 @@ def kmeans(
     for i in range(num_iters):
         # Assign each point to the closest cluster center
         labels = torch.argmin(
-            torch.abs(pixel_values.unsqueeze(dim=1).repeat(1, num_clusters) - centers), dim=1
+            torch.abs(pixel_values.unsqueeze(dim=1).repeat(1, num_clusters) - centers),
+            dim=1,
         )
 
         # Compute new cluster centers as the mean of points in each cluster

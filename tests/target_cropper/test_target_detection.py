@@ -1,15 +1,16 @@
+import os
+import sys
+
 import torch
 
-import sys
-import os
+from paint import target_cropper
 
 lib_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 sys.path.append(lib_dir)
-from paint import target_cropper
 
 
-# TODO make real test
-def main():
+def test_target_detection():
+    """Test the target detection."""
     image = target_cropper.util.load_image(
         os.path.join(__file__, os.pardir, "uncropped_image.png")
     )
@@ -46,8 +47,8 @@ def main():
                 os.path.join(__file__, os.pardir, "templates", "center_left.png")
             ),
         ),
-        output_shape=torch.Size([400,400]),
-        mask = None
+        output_shape=torch.Size([400, 400]),
+        mask=None,
     )
 
     # warp image
@@ -56,7 +57,3 @@ def main():
     # Convert the tensor to a PIL image and display it
     warped_image_pil = target_cropper.util.to_image(warped_image)
     warped_image_pil.show()
-
-
-if __name__ == "__main__":
-    main()

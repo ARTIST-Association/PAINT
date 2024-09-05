@@ -1,17 +1,25 @@
 from dataclasses import dataclass
-from .k_means_cluster import KMeansCluster
+
 import torch
+
+from paint.target_cropper.dataclasses.k_means_cluster import KMeansCluster
 
 
 @dataclass
 class FocalSpot:
     """
-    @brief data class for storing focal spot information.
+    Data class for storing focal spot information.
 
-    @param clusters Intensity clusters of the detected focal spot.
-    @param aim_point_image The detected center of intensity in image coordinates (height, width)
-    @param aim_point The detected center of intensity in global coordiantes (e, n, u)
+    Attributes
+    ----------
+    clusters : KmeansCluster
+        Intensity clusters of the detected focal spot.
+    aim_point_image : torch.Tensor
+        The detected center of intensity in image coordinates (height, width).
+    aim_point : torch.Tensor
+        The detected center of intensity in global coordinates (E, N, U).
     """
+
     clusters: KMeansCluster
     aim_point_image: torch.Tensor
     aim_point: torch.Tensor

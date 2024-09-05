@@ -1,6 +1,6 @@
-import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 from paint.util.utils import calculate_az_el
@@ -30,14 +30,16 @@ def plot_stacked_bar_chart_with_inset(
     """
     Compute the total measurements for each HeliostatID and plot a stacked bar chart with inset scatter plot.
 
-    Parameters:
+    Parameters
+    ----------
     - grouped_df: DataFrame containing measurements grouped by HeliostatID
     - example_heliostat_df: DataFrame containing example heliostat data
     - train_split_name: Name of the training split
     - ax: Axes object to plot on. If None, a new figure will be created.
     - show_legend: Whether to show the legend (default is False)
 
-    Returns:
+    Returns
+    -------
     None
     """
     # Compute the total measurements for each HeliostatID
@@ -120,13 +122,15 @@ def update_datasets_to_nan_if_too_small(df, column, n_train, m_validation):
     Update the dataset split to set 'NaN' for heliostats where 'train' set is smaller than n_train
     and 'test' set is smaller than m_validation.
 
-    Parameters:
+    Parameters
+    ----------
     df (pd.DataFrame): DataFrame with the dataset split column.
     column (str): Column name to check for 'train' and 'test' entries.
     n_train (int): Minimum number of 'train' entries required for each HeliostatId.
     m_validation (int): Minimum number of 'test' entries required for each HeliostatId.
 
-    Returns:
+    Returns
+    -------
     pd.DataFrame: Updated DataFrame with adjusted dataset split.
     """
     # Group by HeliostatId and count the number of 'train' and 'test' entries
@@ -166,7 +170,9 @@ fig, axes = plt.subplots(1, len(n_train), figsize=(32, 6), sharey=True)
 
 for i, n in enumerate(n_train):
     df[f"DataSet_Azimuth_{n}"] = df.groupby("HeliostatId", group_keys=False).apply(
-        lambda x: classify_azimuth_split(x, f"DataSet_Azimuth_{n}", n, m_validation), include_groups=False)
+        lambda x: classify_azimuth_split(x, f"DataSet_Azimuth_{n}", n, m_validation),
+        include_groups=False,
+    )
     df = update_datasets_to_nan_if_too_small(
         df, f"DataSet_Azimuth_{n}", n, m_validation
     )

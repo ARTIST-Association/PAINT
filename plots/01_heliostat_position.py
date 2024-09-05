@@ -1,7 +1,8 @@
-import pandas as pd
 import matplotlib.pyplot as plt
-from paint.util.utils import num_to_name
+import pandas as pd
 from matplotlib.patches import Rectangle
+
+from paint.util.utils import num_to_name
 
 # Load heliostat position file
 path_heliostat_positions = "data/DatenHeliOS/Heliostatpositionen_xyz.xlsx"

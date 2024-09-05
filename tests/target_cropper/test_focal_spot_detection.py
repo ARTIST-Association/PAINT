@@ -1,25 +1,23 @@
-# from ...paint import target_cropper
+import os
+import sys
+
 import torch
 
-import sys
-import os
+from paint import target_cropper
 
 lib_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir))
 sys.path.append(lib_dir)
-from paint import target_cropper
 
 
-# TODO make real test
-def main():
+def test_focal_spot_detection() -> None:
+    """Test the focal spot detection."""
     num_k_means = 16
     applied_k_means = 5
 
     warped_image = target_cropper.util.load_image(
         os.path.join(__file__, os.pardir, "focal_spot_image.png")
     )
-    mask = target_cropper.util.load_image(
-        os.path.join(__file__, os.pardir, "mask.png")
-    )
+    mask = target_cropper.util.load_image(os.path.join(__file__, os.pardir, "mask.png"))
     mask = torch.where(mask != 0, torch.tensor(1.0), mask)
 
     target = target_cropper.dataclasses.Target(
@@ -55,12 +53,15 @@ def main():
                 os.path.join(__file__, os.pardir, "stj_data", "stj_lower_right.png")
             ),
         ),
-        output_shape=torch.Size([400,400]),
-        mask = mask
+        output_shape=torch.Size([400, 400]),
+        mask=mask,
     )
 
     focal_spot = target_cropper.detect_focal_spot(
-        image=warped_image, num_k_means=num_k_means, applied_k_means=applied_k_means, target=target
+        image=warped_image,
+        num_k_means=num_k_means,
+        applied_k_means=applied_k_means,
+        target=target,
     )
 
     # TODO retransform image coordinates to field coordinates
@@ -85,7 +86,3 @@ def main():
     # Convert the tensor to a PIL image and display it
     clustered_image_pil = target_cropper.util.to_image(clustered_image)
     clustered_image_pil.show()
-
-
-if __name__ == "__main__":
-    main()

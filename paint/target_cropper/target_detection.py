@@ -1,32 +1,56 @@
 import torch
-from .dataclasses import Target, Marker
-from .util import find_template_position_cv, compute_transform_cv, apply_transform_cv
-import matplotlib.pyplot as plt
+
+from paint.target_cropper.dataclasses import Marker, Target
+from paint.target_cropper.util import (
+    apply_transform,
+    compute_transform,
+    find_template_position,
+)
+
 
 def find_marker_position(image: torch.Tensor, marker: Marker) -> torch.Tensor:
     """
-    @brief Finds marker positions within an image.
+    Find marker positions within an image.
 
-    @param image The image to find the marker in.
-    @param marker The marker to be found.
+    Parameters
+    ----------
+    image : torch.Tensor
+        Image in which the marker should be found.
+    marker : Marker
+        Marker to be found.
 
-    @return marker position as (height, width).
+    Returns
+    -------
+    torch.Tensor
+        Marker position as (height, width).
     """
-    template_position = find_template_position_cv(
+    template_position = find_template_position(
         image=image, template=marker.template_image
     )
-    marker_position = template_position + torch.stack([torch.round(marker.template_offset[0] * marker.template_image.shape[0]), torch.round(marker.template_offset[1] * marker.template_image.shape[1])])
+    marker_position = template_position + torch.stack(
+        [
+            torch.round(marker.template_offset[0] * marker.template_image.shape[0]),
+            torch.round(marker.template_offset[1] * marker.template_image.shape[1]),
+        ]
+    )
     return marker_position
 
 
 def detect_target(image: torch.Tensor, target: Target) -> torch.Tensor:
     """
-    @brief References a target image to the desired cropped image.
+    Detect a target image.
 
-    @param image The image to be referenced. Must have shape (height x width).
-    @param target Information about the target's marker's (control points) and the desired output image shape.
+    Parameters
+    ----------
+    image : torch.Tensor
+        Image to be referenced, with the shape (height, width).
+    target : Target
+        Information about the target's marker's (control points) and the desired output image shape.
 
-    @return The referenced image of shape target.output_shape.
+    Returns
+    -------
+    torch.Tensor
+        Detected target image.
     """
     marker_1_position = find_marker_position(image=image, marker=target.marker_1)
     marker_2_position = find_marker_position(image=image, marker=target.marker_2)
@@ -44,6 +68,7 @@ def detect_target(image: torch.Tensor, target: Target) -> torch.Tensor:
             target.marker_4.image_position,
         ]
     )
-    transform = compute_transform_cv(src=src, dst=dst)
-    warped_image = apply_transform_cv(image=image, transform=transform, output_shape=target.output_shape)
-    return warped_image
+    transform = compute_transform(source=src, destination=dst)
+    return apply_transform(
+        image=image, transform=transform, output_shape=target.output_shape
+    )
