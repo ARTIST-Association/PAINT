@@ -1,9 +1,11 @@
 # Ignore the data folder and all its contents
 /data/
-# Ignore all png files
+/stac/
+# Ignore file types
 *.png
 *.pdf
 *.csv
+*.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

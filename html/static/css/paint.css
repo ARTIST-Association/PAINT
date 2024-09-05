@@ -1,0 +1,55 @@
+@font-face {
+    font-family: "Halvar Mittel";
+    src: url("../font/HalvarMittel-Rg.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: "Halvar Mittel";
+    src: url("../font/HalvarEngschrift-ExtraThin.otf") format("opentype");
+    font-style: normal;
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: "Hermann Bold";
+    src: url("../font/Hermann-Bold.otf") format("opentype");
+    font-style: normal;
+    font-weight: 400;
+}
+
+:root {
+    --bs-primary: #002864;
+    --bs-primary-rgb: 0, 40, 100;
+    --bs-font-sans-serif: "Halvar Mittel"
+}
+
+.fs-large {
+    font-size: 72px;
+}
+
+ul {
+    list-style-type:square;
+}
+
+ul li::marker {
+    color: var(--bs-primary);
+}
+
+.nav-link:hover {
+    background-color: var(--bs-gray-300);
+}
+
+.nav-link.active {
+    background-color: var(--bs-gray-300);
+    border-left: 2px solid var(--bs-primary);
+}
+
+.start-5 {
+    left: 5%;
+}
+
+.text-herman {
+    font-family: "Hermann Bold", sans-serif !important;
+}
