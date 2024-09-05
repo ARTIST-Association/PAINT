@@ -62,7 +62,8 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -74,7 +75,8 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
             },
             {
                 "rel": "collection",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },

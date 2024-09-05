@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -53,7 +54,7 @@ def extract_kinematic_data_and_generate_stacs(
     )
 
     # save item metadata for collection creation later
-    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % heliostat_id
+    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % (heliostat_id, heliostat_id)
     properties_items.loc[len(properties_items)] = [
         heliostat_id,
         f"kinematic properties for {heliostat_id}",
@@ -150,15 +151,23 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_position = (
+        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    )
+
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
-        "generate_deflectometry_stacs_and_facet_items.py",
+        "generate_kinematic_stacs.py",
         "--input_position",
-        f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
+        str(input_position),
         "--input_axis",
-        f"{PAINT_ROOT}/ExampleDataKIT/axis_data.csv",
+        str(input_axis),
         "--output_path",
-        f"{PAINT_ROOT}/ConvertedData",
+        str(output_folder),
     ]
 
     parser = argparse.ArgumentParser()

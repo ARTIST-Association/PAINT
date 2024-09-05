@@ -2,11 +2,13 @@
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
+import pandas as pd
+
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 from paint.data.heliostat_catalog_stac import make_heliostat_catalog
 from paint.util.preprocessing import (
     load_and_format_heliostat_axis_data,
@@ -28,9 +30,19 @@ def main(arguments: argparse.Namespace) -> None:
     df_axis = load_and_format_heliostat_axis_data(arguments)
     df_position = load_and_format_heliostat_positions(arguments)
     df = merge_and_sort_df(df_heliostat_positions=df_position, df_axis=df_axis)
+    heliostats_with_deflectometry = pd.read_excel(
+        arguments.input_deflectometry_available
+    ).dropna()[mappings.INTERNAL_NAME_INDEX]
     for heliostat, _ in df.iterrows():
         assert isinstance(heliostat, str)
-        helio_catalog = make_heliostat_catalog(heliostat_id=heliostat)
+        if heliostat in heliostats_with_deflectometry.values:
+            helio_catalog = make_heliostat_catalog(
+                heliostat_id=heliostat, include_deflectometry=True
+            )
+        else:
+            helio_catalog = make_heliostat_catalog(
+                heliostat_id=heliostat, include_deflectometry=False
+            )
         save_helio_path = (
             Path(arguments.output_path)
             / heliostat
@@ -42,27 +54,45 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = os.environ.get("LSDFPROJECTS")
+    assert isinstance(lsdf_root, str)
+    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_position = (
+        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    )
+    input_deflectometry_available = (
+        Path(lsdf_root) / "paint" / "PAINT" / "deflec_availability.xlsx"
+    )
+
     # Simulate command-line arguments for testing or direct script execution
     sys.argv = [
         "generate_heliostat_catalog.py",
         "--input_axis",
-        f"{PAINT_ROOT}/ExampleDataKIT/axis_data.csv",
+        str(input_axis),
         "--input_position",
-        f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
+        str(input_position),
+        "--input_deflectometry_available",
+        str(input_deflectometry_available),
         "--output_path",
-        f"{PAINT_ROOT}/ConvertedData",
+        str(output_folder),
     ]
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_axis", type=Path, default=f"f{PAINT_ROOT}/ExampleDataKIT/axis_data.csv"
+        "--input_axis",
+        type=Path,
     )
     parser.add_argument(
         "--input_position",
         type=Path,
-        default=f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
     )
     parser.add_argument(
-        "--output_path", type=Path, default=f"{PAINT_ROOT}/ConvertedData"
+        "--input_deflectometry_available",
+        type=Path,
+    )
+    parser.add_argument(
+        "--output_path",
+        type=Path,
     )
     args = parser.parse_args()
     main(args)

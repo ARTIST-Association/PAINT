@@ -1,0 +1,11 @@
+python copy_images_to_correct_location.py
+python download_dwd_data_and_generate_stac.py
+python generate_deflectometry_stacs_and_facet_items.py
+python generate_calibration_stacs.py
+python generate_kinematic_stacs.py
+python generate_properties_collection.py
+python generate_heliostat_catalogs.py
+python merge_juelich_weather_and_generate_stac.py
+python generate_weather_collection.py
+python generate_tower_item_and_stac.py
+python generate_catalog.py

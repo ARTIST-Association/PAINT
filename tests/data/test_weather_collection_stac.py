@@ -29,7 +29,7 @@ def weather_collection_data():
     return pd.DataFrame(data)
 
 
-def test_make_deflectometry_collection(
+def test_make_weather_collection(
     weather_collection_data: pd.DataFrame,
 ) -> None:
     """
@@ -84,13 +84,13 @@ def test_make_deflectometry_collection(
             },
             {
                 "rel": "self",
-                "href": "INSERT/SOMETHING/HERE/weather-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/Weather/weather-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC collection file",
             },
             {
                 "rel": "root",
-                "href": "Insert/URL/Here",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
