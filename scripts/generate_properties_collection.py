@@ -3,7 +3,6 @@
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 
 import pandas as pd
@@ -41,28 +40,21 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-
-    sys.argv = [
-        "generate_properties_collection.py",
-        "--input_path",
-        f"{PAINT_ROOT}/TEMPDATA/properties_items.csv",
-        "--output_path",
-        str(output_folder),
-    ]
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_path",
         type=Path,
         help="Input file containing the heliostat properties items metadata.",
+        default=f"{PAINT_ROOT}/TEMPDATA/properties_items.csv",
     )
     parser.add_argument(
         "--output_path",
         type=Path,
         help="Path to save the output files",
+        default=str(output_folder),
     )
     args = parser.parse_args()
     main(arguments=args)

@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 
 import h5py
 import pandas as pd
@@ -8,21 +7,21 @@ import paint.data.juelich_weather_mappings as juelich_mappings
 import paint.util.paint_mappings as mappings
 
 
-class JuelichWeatherConvertor:
+class JuelichWeatherConverter:
     """
-    Merge the Juelich weather data and save it as a HDF5 file.
+    Merge the Juelich weather data and save it as an HDF5 file.
 
     Attributes
     ----------
-    input_root_dir : str
+    input_root_dir : Path
         The root directory to being the search for weather files.
-    output_path
+    output_path : Path
         The output path to save the HDF5 file.
-    file_name
+    file_name : str
         The file name used to save the HDF5 file.
-    files_list: List[str]
+    files_list: list[str]
         The list of files to be concatenated.
-    compression_opts : Dict[str, Any]
+    compression_opts : dict[str, Any]
         The compression options for compressing the HDF5 file.
 
     Methods
@@ -32,7 +31,7 @@ class JuelichWeatherConvertor:
     concatenate_weather()
         Concatenates the weather files.
     merge_and_save_to_hdf5()
-        Merges the weather files and saves the merged data to HDF5.
+        Merges the weather files and save the merged data to HDF5.
     """
 
     def __init__(
@@ -44,15 +43,15 @@ class JuelichWeatherConvertor:
         compression_level: int = 5,
     ) -> None:
         """
-        Initialize the weather convertor.
+        Initialize the weather converter.
 
         Parameters
         ----------
         input_root_dir : str
-            The root directory to being the search for weather files.
-        output_path
+            The root directory to search for weather files.
+        output_path : str
             The output path to save the HDF5 file.
-        file_name
+        file_name : str
             The file name used to save the HDF5 file.
         compression_method : str
             The method used to compress the HDF5 file.
@@ -70,13 +69,13 @@ class JuelichWeatherConvertor:
             "compression_opts": compression_level,
         }
 
-    def find_weather_files(self) -> List[str]:
+    def find_weather_files(self) -> list[str]:
         """
         Recursively find all weather.txt files in the directory.
 
         Returns
         -------
-        List[str]
+        list[str]
             The list of weather.txt files to be concatenated.
         """
         return [str(file) for file in self.input_root_dir.rglob("*.txt")]
@@ -92,8 +91,8 @@ class JuelichWeatherConvertor:
         """
         df_list = []
         for file in self.files_list:
-            # Read CSV
-            print(f"Attempting to read and clean {file}")
+            # Read CSV.
+            print(f"Attempting to read and clean {file}.")
             df = pd.read_csv(
                 file,
                 sep="\t",
@@ -101,10 +100,10 @@ class JuelichWeatherConvertor:
                 index_col=0,
                 decimal=",",
             )
-            # Remove NaN
+            # Remove NaNs.
             df = df[~df.index.isna()]
             if df.index.name != "Date":
-                # Convert Date and Time
+                # Convert date and time.
                 df["DateTime"] = pd.to_datetime(
                     df.index + " " + df["Date"], format="%d.%m.%Y %H:%M:%S"
                 )
@@ -114,7 +113,7 @@ class JuelichWeatherConvertor:
                     .dt.tz_convert("UTC")
                 )
             else:
-                # Convert Date and Time
+                # Convert date and time.
                 df["DateTime"] = pd.to_datetime(
                     df.index + " " + df["Time"], format="%d.%m.%Y %H:%M:%S"
                 )
@@ -127,7 +126,7 @@ class JuelichWeatherConvertor:
                     .dt.tz_convert("UTC")
                 )
 
-            # Clean Data frame
+            # Clean data frame.
             df = df.drop(
                 columns=[
                     "Date",
@@ -163,9 +162,9 @@ class JuelichWeatherConvertor:
             df.index = df["DateTime"].dt.strftime(mappings.TIME_FORMAT)
             df = df.drop(columns="DateTime")
             df_list.append(df)
-        # Append all data frames
+        # Append all data frames.
         full_df = pd.concat(df_list)
-        print("All files concatenated")
+        print("All files concatenated!")
         return full_df.sort_index()
 
     def merge_and_save_to_hdf5(self) -> pd.Series:
@@ -186,14 +185,14 @@ class JuelichWeatherConvertor:
             }
         )
 
-        # create HDF5 file
+        # Ccreate HDF5 file.
         with h5py.File(self.output_path / self.file_name, "w") as file:
-            # Save the time data
+            # Save the time data.
             file.create_dataset(
                 "time", data=full_weather_df.index.to_numpy(), **self.compression_opts
             )
 
-            # Save each column with compression
+            # Save each column with compression.
             for column in full_weather_df.columns:
                 parameter_name = juelich_mappings.juelich_weather_parameter_mapping[
                     column

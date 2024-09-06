@@ -4,7 +4,6 @@ import argparse
 import json
 import os
 import shutil
-import sys
 from pathlib import Path
 from typing import Tuple
 
@@ -102,7 +101,7 @@ def extract_data_and_generate_stacs(
             heliostat_key=converter.heliostat_id,
             heliostat_data=metadata,
         )
-        # save item metadata for collection creation later
+        # Save item metadata for collection creation later.
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
             converter.heliostat_id,
@@ -137,7 +136,7 @@ def extract_data_and_generate_stacs(
             heliostat_key=converter.heliostat_id, heliostat_data=metadata
         )
 
-        # save the facet properties metadata for collection creation later
+        # Save the facet properties metadata for collection creation later.
         facet_url = mappings.FACET_PROPERTIES_ITEM_ITEM_URL % (
             converter.heliostat_id,
             converter.heliostat_id,
@@ -247,59 +246,49 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / "DeflecDaten"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_position = (
         Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
     )
 
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "generate_deflectometry_stacs_and_facet_items.py",
-        "--input_folder",
-        str(input_folder),
-        "--input_position",
-        str(input_position),
-        "--output_path",
-        str(output_folder),
-        "--surface_header_name",
-        "=5f2I2f",
-        "--facet_header_name",
-        "=i9fI",
-        "--points_on_facet_struct_name",
-        "=7f",
-    ]
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_folder", type=Path, help="Parent folder to search for binary folders."
+        "--input_folder",
+        type=Path,
+        help="Parent folder to search for binary folders.",
+        default=str(input_folder),
     )
     parser.add_argument(
         "--input_position",
         type=Path,
         help="Path to the heliostat position input file",
+        default=str(input_position),
     )
     parser.add_argument(
         "--output_path",
         type=Path,
         help="Path to save the output files",
+        default=str(output_folder),
     )
     parser.add_argument(
         "--surface_header_name",
         type=str,
         help="The header of the surface struct",
+        default="=5f2I2f",
     )
     parser.add_argument(
         "--facet_header_name",
         type=str,
         help="The header of the facet struct",
+        default="=i9fI",
     )
     parser.add_argument(
         "--points_on_facet_struct_name",
         type=str,
         help="The header of the points on the facet struct",
+        default="=7f",
     )
     args = parser.parse_args()
     main(arguments=args)

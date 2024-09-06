@@ -1,11 +1,11 @@
-from typing import Any, Dict
+from typing import Any
 
 import paint.util.paint_mappings as mappings
 
 
 def make_heliostat_catalog(
     heliostat_id: str, include_deflectometry: bool
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate a catalog for each heliostat STAC.
 
@@ -14,7 +14,7 @@ def make_heliostat_catalog(
     heliostat_id : str
         The heliostat ID for the considered heliostat.
     include_deflectometry : bool
-        Indicating whether the deflectometry collection is included for this heliostat or not.
+        Whether the deflectometry collection is included for this heliostat or not.
 
     Returns
     -------

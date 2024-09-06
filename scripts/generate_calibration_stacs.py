@@ -139,8 +139,7 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
     parser = argparse.ArgumentParser()

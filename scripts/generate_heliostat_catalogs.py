@@ -3,7 +3,6 @@
 import argparse
 import json
 import os
-import sys
 from pathlib import Path
 
 import pandas as pd
@@ -54,8 +53,7 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_position = (
@@ -65,34 +63,26 @@ if __name__ == "__main__":
         Path(lsdf_root) / "paint" / "PAINT" / "deflec_availability.xlsx"
     )
 
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "generate_heliostat_catalog.py",
-        "--input_axis",
-        str(input_axis),
-        "--input_position",
-        str(input_position),
-        "--input_deflectometry_available",
-        str(input_deflectometry_available),
-        "--output_path",
-        str(output_folder),
-    ]
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_axis",
         type=Path,
+        default=str(input_axis),
     )
     parser.add_argument(
         "--input_position",
         type=Path,
+        default=str(input_position),
     )
     parser.add_argument(
         "--input_deflectometry_available",
         type=Path,
+        default=str(input_deflectometry_available),
     )
     parser.add_argument(
         "--output_path",
         type=Path,
+        default=str(output_folder),
     )
     args = parser.parse_args()
     main(args)

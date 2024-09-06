@@ -5,12 +5,11 @@ This code is adapted from ``https://github.com/okin/GKConverter/tree/master``, w
 """
 
 from math import atan, cos, pi, sin, sqrt, tan, trunc
-from typing import Tuple
 
 
 def convert_gk_to_lat_long(
     right: float, height: float, use_wgs84: bool = False
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Convert a Gauss-Kruger coordinate to a latitude / longitude coordinate.
 
@@ -21,19 +20,21 @@ def convert_gk_to_lat_long(
     height : float
         The height of the Gauss-Krueger coordinate system.
     use_wgs84 : bool
-        Indicates whether the wgs84 conversion should be applied (Default: ``False``).
+        Whether the wgs84 conversion should be applied (Default: ``False``).
 
     Returns
     -------
-    Tuple[float, float]
-        The converted latitude and longitude
+    float
+        The converted latitude.
+    float
+        The converted longitude.
     """
     x, y = gauss_krueger_transformation(right, height)
 
     return helmert_transformation(x, y, use_wgs84)
 
 
-def gauss_krueger_transformation(right: float, height: float) -> Tuple[float, float]:
+def gauss_krueger_transformation(right: float, height: float) -> tuple[float, float]:
     """
     Perform the Gauss-Kruger transformation.
 
@@ -46,12 +47,14 @@ def gauss_krueger_transformation(right: float, height: float) -> Tuple[float, fl
 
     Returns
     -------
-    Tuple[float, float]
-        The transformed x and y coordinates.
+    float
+        The transformed x coordinate.
+    float
+        The transformed y coordinate.
     """
-    # Check for invalid Parameters
+    # Check for invalid parameters.
     if not ((right > 1000000) and (height > 1000000)):
-        raise ValueError("Gauss-Kruger Conversion not possible for these parameters.")
+        raise ValueError("Gauss-Kruger conversion not possible for these parameters.")
 
     # Variables to prepare the geovalues
     gk_right = right
@@ -102,7 +105,7 @@ def gauss_krueger_transformation(right: float, height: float) -> Tuple[float, fl
 
 def helmert_transformation(
     x: float, y: float, use_wgs84: bool = False, tolerance: float = 0.000000000000001
-) -> Tuple[float, float]:
+) -> tuple[float, float]:
     """
     Convert an (x,y) coordinate to latitude and longitude.
 
@@ -113,17 +116,19 @@ def helmert_transformation(
     y : float
         The original y coordinate.
     use_wgs84 : bool
-        Indicating whether the wgs84 conversion should be applied (Default: ``False``).
+        Whether the wgs84 conversion should be applied (Default: ``False``).
     tolerance : bool
         The tolerance to consider during the conversion (Default: ``0.000000000001``).
 
     Returns
     -------
-    Tuple[float, float]
-        The converted latitude and longitude coordinates.
+    float
+        The converted latitude coordinate.
+    float
+        The converted longitude coordinate.
     """
-    # Define constants required for the transformation
-    earth_radius = 6378137  # Earth is a sphere with this radius
+    # Define constants required for the transformation.
+    earth_radius = 6378137  # Earth is a sphere with this radius in meter.
     a_bessel = 6377397.155
     ee_bessel = 0.0066743722296294277832
     scale_factor = 0.00000982

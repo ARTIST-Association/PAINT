@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -7,7 +7,7 @@ import paint.util.paint_mappings as mappings
 
 def make_calibration_collection(
     heliostat_id: str, data: pd.DataFrame
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate the STAC collection.
 
@@ -105,7 +105,7 @@ def make_calibration_collection(
     }
 
 
-def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
+def make_calibration_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
     """
     Generate a STAC item for an image.
 

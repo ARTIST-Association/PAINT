@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import deepdiff
 import pytest
@@ -94,7 +94,7 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
     ],
 )
 def test_make_heliostat_catalog(
-    heliostat_id: str, include_deflectometry: bool, expected: Dict[str, Any]
+    heliostat_id: str, include_deflectometry: bool, expected: dict[str, Any]
 ) -> None:
     """Test STAC heliostat catalog generation."""
     catalog = make_heliostat_catalog(

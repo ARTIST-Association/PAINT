@@ -29,9 +29,9 @@ juelich_weather_parameter_mapping = {
 """Dictionary to map parameter names for the Juelich weather data."""
 
 juelich_metadata_description = {
-    DIRECT_IRRADIATION: "The direct irradiance, i.e. part of the solar irradiance directly reaching the surface.",
-    GLOBAL_IRRADIATION: "The global irradiance, i.e. the sum of the direct and diffuse irradiation.",
-    DIFFUSE_IRRADIATION: "The diffuse irradiance, i.e. the part of the irradiance scattered by the atmosphere.",
+    DIRECT_IRRADIATION: "The direct irradiance, i.e., part of the solar irradiance directly reaching the surface.",
+    GLOBAL_IRRADIATION: "The global irradiance, i.e., the sum of the direct and diffuse irradiation.",
+    DIFFUSE_IRRADIATION: "The diffuse irradiance, i.e., the part of the irradiance scattered by the atmosphere.",
     WIND_SPEED: "The intensity of the wind.",
     WIND_DIRECTION: "The direction of the wind.",
     TEMPERATURE: "The ambient temperature.",

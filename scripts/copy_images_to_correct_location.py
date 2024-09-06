@@ -3,7 +3,6 @@
 import argparse
 import os
 import shutil
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -28,9 +27,9 @@ def find_and_copy_file(
     ----------
     source_directory : Path
         The source directory to begin the search for the file.
-    id_str
+    id_str : str
         The ID string being searched for.
-    destination_path_and_name
+    destination_path_and_name : Path
         The full destination path and file name used for copying the file.
 
     Returns
@@ -38,17 +37,17 @@ def find_and_copy_file(
     bool
         Indicating whether an image was copied or not.
     """
-    # Walk through all subdirectories of the source directory
+    # Walk through all subdirectories of the source directory.
     for root, dirs, files in os.walk(source_directory):
         for file_name in files:
             if file_name == f"{id_str}.png" or file_name.startswith(f"{id_str}_"):
-                # Get the full path of the file
+                # Get the full path of the file.
                 file_path = os.path.join(root, file_name)
 
-                # Ensure the destination directory exists
+                # Ensure the destination directory exists.
                 destination_path_and_name.parent.mkdir(parents=True, exist_ok=True)
 
-                # Copy the file to the destination directory
+                # Copy the file to the destination directory.
                 shutil.copy(file_path, destination_path_and_name)
 
                 return True
@@ -62,18 +61,18 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The arguments containing input, output path, and directory to search for images.
     """
-    # read in the data in CSV
+    # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
-    # convert all timestamps to UTC
+    # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
 
-    # compute azimuth and elevation
+    # Compute azimuth and elevation.
     azimuth, elevation = calculate_azimuth_and_elevation(data)
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation
@@ -129,34 +128,28 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "copy_images_to_correct_location.py",
-        "--input_folder",
-        str(input_folder),
-        "--output_path",
-        str(output_folder),
-        "--input_calibration",
-        str(input_calibration),
-    ]
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_folder", type=Path, help="Parent folder to search for images"
+        "--input_folder",
+        type=Path,
+        help="Parent folder to search for images",
+        default=str(input_folder),
     )
     parser.add_argument(
         "--output_path",
         type=Path,
         help="Path to save the output files",
+        default=str(output_folder),
     )
     parser.add_argument(
         "--input_calibration",
         type=Path,
+        default=str(input_calibration),
     )
     args = parser.parse_args()
     main(arguments=args)

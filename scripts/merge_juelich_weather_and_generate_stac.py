@@ -9,7 +9,7 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.juelich_weather_convertor import JuelichWeatherConvertor
+from paint.data.juelich_weather_converter import JuelichWeatherConverter
 from paint.data.juelich_weather_stac_item import make_juelich_weather_item
 
 
@@ -22,11 +22,11 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
-        The command line arguments.
+    arguments : argparse.Namespace
+        The command-line arguments.
 
     """
-    # check if saved metadata exists and load if required
+    # Check if saved metadata exists and load if required.
     weather_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/weather_items.csv")
     if weather_items_path.exists():
         weather_items = pd.read_csv(weather_items_path)
@@ -44,12 +44,12 @@ def main(arguments: argparse.Namespace) -> None:
             ]
         )
 
-    weather_convertor = JuelichWeatherConvertor(
+    weather_converter = JuelichWeatherConverter(
         input_root_dir=arguments.input_root_dir,
         output_path=arguments.output_path,
         file_name=arguments.file_name,
     )
-    metadata = weather_convertor.merge_and_save_to_hdf5()
+    metadata = weather_converter.merge_and_save_to_hdf5()
 
     juelich_stac = make_juelich_weather_item(data=metadata)
     save_path = Path(arguments.output_path) / (mappings.JUELICH_STAC_NAME + ".json")
@@ -70,8 +70,7 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / "MeteoDaten"
     output_folder = (
         Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID / mappings.SAVE_WEATHER

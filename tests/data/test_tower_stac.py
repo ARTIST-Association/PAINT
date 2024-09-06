@@ -1,5 +1,3 @@
-from typing import Dict
-
 import deepdiff
 import numpy as np
 import pytest
@@ -8,13 +6,13 @@ from paint.data.tower_stac import make_tower_item
 
 
 @pytest.fixture
-def tower_item_data() -> Dict[str, np.ndarray]:
+def tower_item_data() -> dict[str, np.ndarray]:
     """
     Make a fixture with data for generating a tower STAC item.
 
     Returns
     -------
-    Dict[str, np.ndarray]
+    dict[str, np.ndarray]
         The data for the Juelich stac item.
     """
     return {
@@ -24,7 +22,7 @@ def tower_item_data() -> Dict[str, np.ndarray]:
     }
 
 
-def test_make_tower_item(tower_item_data: Dict[str, np.ndarray]) -> None:
+def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
     """
     Test the creation of a STAC item.
 
