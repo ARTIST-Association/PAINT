@@ -1,6 +1,7 @@
 import json
 import struct
 from pathlib import Path
+from typing import Union
 
 import h5py
 import torch
@@ -49,8 +50,8 @@ class BinaryExtractor:
 
     def __init__(
         self,
-        input_path: str | Path,
-        output_path: str | Path,
+        input_path: Union[str, Path],
+        output_path: Union[str, Path],
         surface_header_name: str,
         facet_header_name: str,
         points_on_facet_struct_name: str,
@@ -60,9 +61,9 @@ class BinaryExtractor:
 
         Parameters
         ----------
-        input_path : str | Path
+        input_path : Union[str, Path]
             The file path to the binary data file that will be converted.
-        output_path : str | Path
+        output_path : Union[str, Path]
             The file path to save the converted h5 deflectometry file.
         surface_header_name : str
             The name for the surface header in the binary file.
