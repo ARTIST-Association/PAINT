@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import deepdiff
 import numpy as np
@@ -96,16 +96,16 @@ from paint.data.tower_measurements import get_tower_measurements
     ],
 )
 def test_tower_measurements(
-    expected_extremes: Dict[str, np.ndarray], expected_measurements: Dict[Any, Any]
+    expected_extremes: dict[str, np.ndarray], expected_measurements: dict[Any, Any]
 ):
     """
     Test that the tower measurements are returned as expected.
 
     Parameters
     ----------
-    expected_extremes : Dict[str, np.ndarray]
+    expected_extremes : dict[str, np.ndarray]
         The expected max and min values from each coordinate.
-    expected_measurements : Dict[Any, Any]
+    expected_measurements : dict[Any, Any]
         The expected tower measurements dictionary.
     """
     extremes, measurements = get_tower_measurements()

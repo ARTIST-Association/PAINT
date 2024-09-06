@@ -31,7 +31,14 @@ def catalog_data():
 
 
 def test_make_catalog(catalog_data: pd.DataFrame) -> None:
-    """Test STAC catalog generation."""
+    """
+    Test STAC catalog generation.
+
+    Parameters
+    ----------
+    catalog_data : pd.DataFrame
+        The test fixture.
+    """
     catalog = paint.data.catalog_stac.make_catalog(data=catalog_data)
     expected = {
         "stac_version": "1.0.0",

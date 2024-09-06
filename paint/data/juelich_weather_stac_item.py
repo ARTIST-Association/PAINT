@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -7,7 +7,7 @@ import paint.util.paint_mappings as mappings
 
 def make_juelich_weather_item(
     data: pd.Series,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate a STAC item for the Juelich weather data.
 

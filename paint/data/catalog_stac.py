@@ -1,11 +1,11 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
 
 
-def make_catalog(data: pd.DataFrame) -> Dict[str, Any]:
+def make_catalog(data: pd.DataFrame) -> dict[str, Any]:
     """
     Generate the catalog STAC.
 

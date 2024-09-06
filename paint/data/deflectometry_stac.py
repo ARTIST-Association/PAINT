@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pandas as pd
 
@@ -8,7 +8,7 @@ from paint.util.utils import add_offset_to_lat_lon
 
 def make_deflectometry_collection(
     heliostat_id: str, data: pd.DataFrame
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate a deflectometry STAC collection.
 
@@ -100,7 +100,7 @@ def make_deflectometry_collection(
 def make_deflectometry_item(
     heliostat_key: str,
     heliostat_data: pd.Series,
-) -> Tuple[Tuple[float, float], Dict[str, Any]]:
+) -> tuple[tuple[float, float], dict[str, Any]]:
     """
     Generate a STAC item for a deflectometry measurement.
 
@@ -113,7 +113,7 @@ def make_deflectometry_item(
 
     Returns
     -------
-    Tuple[float, float]
+    tuple[float, float]
         The latitude and longitude coordinates of the heliostat that being measured.
     dict[str, Any]
         The STAC item data as dictionary.

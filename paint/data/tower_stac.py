@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import numpy as np
 
@@ -6,15 +6,15 @@ import paint.util.paint_mappings as mappings
 
 
 def make_tower_item(
-    extreme_coordinates: Dict[str, np.ndarray],
-) -> Dict[str, Any]:
+    extreme_coordinates: dict[str, np.ndarray],
+) -> dict[str, Any]:
     """
     Generate a STAC item for the tower metadata JSON.
 
     Parameters
     ----------
-    extreme_coordinates : Dict[str, np.ndarray]
-        Contains the max and min for each of the latitude, longitude, and elevation coordinates from the tower.
+    extreme_coordinates : dict[str, np.ndarray]
+        The max and min for each of the latitude, longitude, and elevation coordinates from the tower.
 
     Returns
     -------
@@ -26,26 +26,26 @@ def make_tower_item(
         "stac_extensions": [],
         "id": f"{mappings.TOWER_FILE_NAME}",
         "type": "Feature",
-        "title": "The coordinates of different targets from the the Juelich solar tower.",
+        "title": "The coordinates of different targets from the Juelich solar tower",
         "description": "The latitude, longitude, and elevation coordinates for the center and corners of all "
-        "calibration targets and the receiver for the Juelich solar tower.",
+        "calibration targets and the receiver for the Juelich solar tower",
         "geometry": {
             "type": "Polygon",
             "coordinates": [
                 extreme_coordinates[mappings.LATITUDE_KEY].min(),
-                extreme_coordinates[mappings.LATITUDE_KEY].min(),
+                extreme_coordinates[mappings.LONGITUDE_KEY].min(),
                 extreme_coordinates[mappings.ELEVATION].min(),
                 extreme_coordinates[mappings.LATITUDE_KEY].max(),
-                extreme_coordinates[mappings.LATITUDE_KEY].max(),
+                extreme_coordinates[mappings.LONGITUDE_KEY].max(),
                 extreme_coordinates[mappings.ELEVATION].max(),
             ],
         },
         "bbox": [
             extreme_coordinates[mappings.LATITUDE_KEY].min(),
-            extreme_coordinates[mappings.LATITUDE_KEY].min(),
+            extreme_coordinates[mappings.LONGITUDE_KEY].min(),
             extreme_coordinates[mappings.ELEVATION].min(),
             extreme_coordinates[mappings.LATITUDE_KEY].max(),
-            extreme_coordinates[mappings.LATITUDE_KEY].max(),
+            extreme_coordinates[mappings.LONGITUDE_KEY].max(),
             extreme_coordinates[mappings.ELEVATION].max(),
         ],
         "properties": {

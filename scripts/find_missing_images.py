@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -59,32 +58,27 @@ def main(arguments: argparse.Namespace) -> None:
                 missing_ids_path / f"Missing_IDs_after_{print_information_count}.csv"
             )
             np.savetxt(save_name, np.array(expected_ids), fmt="%s")
-    final_save_name = missing_ids_path / "Final_Missing_IDs.csv"
-    np.savetxt(final_save_name, np.array(expected_ids), fmt="%s")
+    np.savetxt(
+        missing_ids_path / "Final_Missing_IDs.csv", np.array(expected_ids), fmt="%s"
+    )
 
 
 if __name__ == "__main__":
-    lsdf_root = os.environ.get("LSDFPROJECTS")
-    assert isinstance(lsdf_root, str)
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
 
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "find_missing_images.py",
-        "--input_folder",
-        str(input_folder),
-        "--input_calibration",
-        str(input_calibration),
-    ]
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input_folder", type=Path, help="Parent folder to search for images"
+        "--input_folder",
+        type=Path,
+        help="Parent folder to search for images",
+        default=str(input_folder),
     )
     parser.add_argument(
         "--input_calibration",
         type=Path,
+        default=str(input_calibration),
     )
     args = parser.parse_args()
     main(arguments=args)

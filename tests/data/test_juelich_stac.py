@@ -13,7 +13,7 @@ def juelich_item_data() -> pd.Series:
     Returns
     -------
     pd.Series
-        The data for the Juelich stac item.
+        The data for the Juelich STAC item.
     """
     data = {
         "start": "2020-12-01Z01:32:00Z",

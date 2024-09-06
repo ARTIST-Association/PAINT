@@ -1,9 +1,8 @@
 import math
-from typing import Tuple
 
 import pytest
 
-from paint.util.gauss_kruger_convertor import convert_gk_to_lat_long
+from paint.util.gauss_kruger_converter import convert_gk_to_lat_long
 
 
 @pytest.mark.parametrize(
@@ -14,7 +13,7 @@ from paint.util.gauss_kruger_convertor import convert_gk_to_lat_long
     ],
 )
 def test_gauss_kruger_convertor(
-    right: float, height: float, expected: Tuple[float, float]
+    right: float, height: float, expected: tuple[float, float]
 ) -> None:
     """
     Test the Gauss-Kruger convertor.
@@ -25,7 +24,7 @@ def test_gauss_kruger_convertor(
         The original right coordinate.
     height : float
         The original height coordinate.
-    expected : Tuple[float, float
+    expected : tuple[float, float
         The expected converted latitude and longitude coordinate.
     """
     actual = convert_gk_to_lat_long(right, height)
