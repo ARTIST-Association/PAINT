@@ -21,9 +21,9 @@ By participating, you can help improve the project and make it even better :rais
    pip install -e ."[dev]"
    ```
 
-4. **Install Pre-Commit Hooks:** This will put a number of [pre-commit](https://pre-commit.com/) hooks for code linting 
-   and formatting with [Ruff](https://github.com/astral-sh/ruff) as well as type checking with [MyPy](https://www.mypy-lang.org/) into place, ensuring 
-   PEP-8 conformity and overall good code quality consistently. Run the following command in the root of the project to 
+4. **Install Pre-Commit Hooks:** This will put a number of [pre-commit](https://pre-commit.com/) hooks for code linting
+   and formatting with [Ruff](https://github.com/astral-sh/ruff) as well as type checking with [MyPy](https://www.mypy-lang.org/) into place, ensuring
+   PEP-8 conformity and overall good code quality consistently. Run the following command in the root of the project to
    set up the git hook scripts:
    ```bash
    pre-commit install
