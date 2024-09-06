@@ -12,9 +12,11 @@ def test_target_detection():
     image = target_cropper.util.load_image(TEST_DATA_PATH / "uncropped_image.png")
     target = target_cropper.dataclasses.Target(
         marker_1=target_cropper.dataclasses.Marker(
-            image_position=torch.tensor([400, 0]),
-            template_offset=torch.tensor([0, 0.5]),
-            enu_position=torch.tensor([0, 0, 1]),
+            image_position=torch.tensor([400, 0]),  # Start position from the marker
+            template_offset=torch.tensor([0, 0.5]),  # ?
+            enu_position=torch.tensor(
+                [0, 0, 1]
+            ),  # Possibly required to convert pixel back to global coordinates
             template_image=target_cropper.util.load_image(
                 TEST_DATA_PATH / "markerLB.png"
             ),
