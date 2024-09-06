@@ -43,7 +43,7 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "id": "dwd-weather",
         "type": "Feature",
         "title": "Weather data from the DWD",
-        "description": "Weather data from the DWD station ID 15000, i.e. Aachen-Orsbach.",
+        "description": "Weather data from the DWD station ID 15000, i.e. Aachen-Orsbach",
         "collection": "weather-collection",
         "geometry": {"type": "Point", "coordinates": [50.7983, 6.0244, 231.0]},
         "bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0],
