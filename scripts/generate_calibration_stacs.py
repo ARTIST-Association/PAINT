@@ -63,13 +63,12 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
-
+    data = data[data["HeliostatId"] == "AA39"]
     # generate the STAC item files for each image
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
         stac_item = make_calibration_item(image=image, heliostat_data=heliostat_data)
         url = mappings.CALIBRATION_ITEM_URL % (
-            heliostat_data[mappings.HELIOSTAT_ID],
             heliostat_data[mappings.HELIOSTAT_ID],
             image,
         )
@@ -96,10 +95,7 @@ def main(arguments: argparse.Namespace) -> None:
             Path(arguments.output)
             / heliostat_data[mappings.HELIOSTAT_ID]
             / mappings.SAVE_CALIBRATION
-            / (
-                mappings.CALIBRATION_ITEM
-                % (heliostat_data[mappings.HELIOSTAT_ID], image)
-            )
+            / (mappings.CALIBRATION_ITEM % image)
         )
         calibration_item_stac_path.parent.mkdir(parents=True, exist_ok=True)
         with open(calibration_item_stac_path, "w") as handle:
@@ -114,10 +110,7 @@ def main(arguments: argparse.Namespace) -> None:
             Path(arguments.output)
             / heliostat_data[mappings.HELIOSTAT_ID]
             / mappings.SAVE_CALIBRATION
-            / (
-                mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)
-                + ".json"
-            )
+            / (mappings.MOTOR_POS_NAME % image + ".json")
         )
         save_motor_pos_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_motor_pos_path, "w") as handle:

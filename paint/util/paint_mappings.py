@@ -98,7 +98,7 @@ CALIBRATION_COLLECTION_FILE = "%s-calibration-collection-stac.json"
 CALIBRATION_COLLECTION_URL = (
     f"{URL_BASE}/%s/{SAVE_CALIBRATION}/{CALIBRATION_COLLECTION_FILE}"
 )
-CALIBRATION_ITEM = "%s-%d-calibration-item-stac.json"
+CALIBRATION_ITEM = "%d-calibration-item-stac.json"
 CALIBRATION_ITEM_URL = f"{URL_BASE}/%s/{SAVE_CALIBRATION}/{CALIBRATION_ITEM}"
 CALIBRATION_TARGET_TO_COORDINATES = {
     1: STJ_LOWER_COORDINATES,
@@ -149,7 +149,7 @@ CALIBRATION_TARGET_KEY = "target"
 CALIBRATION_MOTOR_POS_KEY = "motor_positions"
 FACET_PROPERTIES_KEY = "facet_properties"
 KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
-MOTOR_POS_NAME = "%s-%d-motor-position"
+MOTOR_POS_NAME = "%d-motor-position"
 WEATHER_DATA_KEY = "weather_data"
 
 BBOX_LAT_LON_DEVIATION = 2e-05
@@ -222,6 +222,22 @@ TOWER_FILE_NAME = "juelich-tower-measurements"
 TOWER_STAC_NAME = "juelich-tower-measurements-item-stac"
 TOWER_STAC_URL = f"{URL_BASE}/{TOWER_STAC_NAME}"
 
+CALIBRATION_TARGET_TO_NAME = {
+    1: STJ_LOWER,
+    3: MFT,
+    4: STJ_UPPER,
+    5: STJ_UPPER,
+    6: STJ_UPPER,
+    7: STJ_LOWER,
+}
+
+
+# Cropper mappings
+DESTINATION_SIZE = (3072, 1728)
+INITIAL_HEIGHT = 250
+HEIGHT_OFFSET = 1250
+INITIAL_WIDTH = 450
+WIDTH_OFFSET = 2222
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
