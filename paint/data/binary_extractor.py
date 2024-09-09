@@ -145,8 +145,9 @@ class BinaryExtractor:
             facet_translation_vectors = torch.empty(number_of_facets, 3)
             canting_e = torch.empty(number_of_facets, 3)
             canting_n = torch.empty(number_of_facets, 3)
-            surface_points_with_facets = torch.empty(0)
-            surface_normals_with_facets = torch.empty(0)
+            surface_points_with_facets = []
+            surface_normals_with_facets = []
+            min_points = 999999
             for f in range(number_of_facets):
                 facet_header_data = facet_header_struct.unpack_from(
                     file.read(facet_header_struct.size)
@@ -168,24 +169,23 @@ class BinaryExtractor:
                     )
                 )
                 number_of_points = facet_header_data[10]
-                if f == 0:
-                    surface_points_with_facets = torch.empty(
-                        number_of_facets, number_of_points, 3
-                    )
-                    surface_normals_with_facets = torch.empty(
-                        number_of_facets, number_of_points, 3
-                    )
+                if number_of_points < min_points:
+                    min_points = number_of_points
+                single_facet_surface_points = torch.empty(number_of_points, 3)
+                single_facet_surface_normals = torch.empty(number_of_points, 3)
 
                 points_data = points_on_facet_struct.iter_unpack(
                     file.read(points_on_facet_struct.size * number_of_points)
                 )
                 for i, point_data in enumerate(points_data):
-                    surface_points_with_facets[f, i, :] = torch.tensor(
+                    single_facet_surface_points[i, :] = torch.tensor(
                         point_data[:3], dtype=torch.float
                     )
-                    surface_normals_with_facets[f, i, :] = torch.tensor(
+                    single_facet_surface_normals[i, :] = torch.tensor(
                         point_data[3:6], dtype=torch.float
                     )
+                surface_points_with_facets.append(single_facet_surface_points)
+                surface_normals_with_facets.append(single_facet_surface_normals)
 
         # to maintain consistency, we cast the west direction to east direction
         canting_e[:, 0] = -canting_e[:, 0]
@@ -203,11 +203,11 @@ class BinaryExtractor:
                 facet = file.create_group(name=f"{mappings.FACET_KEY}{i+1}")
                 facet.create_dataset(
                     name=f"{mappings.SURFACE_NORMAL_KEY}",
-                    data=surface_normals_with_facets[i, :, :],
+                    data=surface_normals_with_facets[i],
                 )
                 facet.create_dataset(
                     name=f"{mappings.SURFACE_POINT_KEY}",
-                    data=surface_points_with_facets[i, :, :],
+                    data=surface_points_with_facets[i],
                 )
 
         # extract facet properties data and save
