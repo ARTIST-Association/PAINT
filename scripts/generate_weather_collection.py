@@ -2,7 +2,7 @@
 
 import argparse
 import json
-import sys
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -33,24 +33,23 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    sys.argv = [
-        "generate_weather_collection.py",
-        "--input_path",
-        f"{PAINT_ROOT}/TEMPDATA/weather_items.csv",
-        "--output_path",
-        f"{PAINT_ROOT}/ConvertedData/Weather",
-    ]
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    output_folder = (
+        Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID / mappings.SAVE_WEATHER
+    )
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_path",
         type=Path,
         help="Input file containing the weather items metadata.",
+        default=f"{PAINT_ROOT}/TEMPDATA/weather_items.csv",
     )
     parser.add_argument(
         "--output_path",
         type=Path,
         help="Path to save the output files",
+        default=str(output_folder),
     )
     args = parser.parse_args()
     main(arguments=args)

@@ -2,7 +2,7 @@
 
 import argparse
 import json
-import sys
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -52,8 +52,8 @@ def extract_kinematic_data_and_generate_stacs(
         heliostat_key=heliostat_id, heliostat_data=kinematic_data
     )
 
-    # save item metadata for collection creation later
-    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % heliostat_id
+    # Save item metadata for collection creation later.
+    url = mappings.KINEMATIC_PROPERTIES_ITEM_URL % (heliostat_id, heliostat_id)
     properties_items.loc[len(properties_items)] = [
         heliostat_id,
         f"kinematic properties for {heliostat_id}",
@@ -150,32 +150,31 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    # Simulate command-line arguments for testing or direct script execution
-    sys.argv = [
-        "generate_deflectometry_stacs_and_facet_items.py",
-        "--input_position",
-        f"{PAINT_ROOT}/ExampleDataKIT/Heliostatpositionen_xyz.xlsx",
-        "--input_axis",
-        f"{PAINT_ROOT}/ExampleDataKIT/axis_data.csv",
-        "--output_path",
-        f"{PAINT_ROOT}/ConvertedData",
-    ]
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_position = (
+        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    )
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_position",
         type=Path,
         help="Path to the heliostat position input file",
+        default=str(input_position),
     )
     parser.add_argument(
         "--input_axis",
         type=Path,
         help="Path to the axis data input file",
+        default=str(input_axis),
     )
     parser.add_argument(
         "--output_path",
         type=Path,
         help="Path to save the output files",
+        default=str(output_folder),
     )
     args = parser.parse_args()
     main(arguments=args)

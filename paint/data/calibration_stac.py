@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 import pandas as pd
 
@@ -7,7 +7,7 @@ import paint.util.paint_mappings as mappings
 
 def make_calibration_collection(
     heliostat_id: str, data: pd.DataFrame
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate the STAC collection.
 
@@ -36,10 +36,12 @@ def make_calibration_collection(
         "extent": {
             "spatial": {
                 "bbox": [
-                    mappings.POWER_PLANT_LAT,
-                    mappings.POWER_PLANT_LON,
-                    mappings.POWER_PLANT_LAT,
-                    mappings.POWER_PLANT_LON,
+                    data[mappings.LATITUDE_KEY].min(),
+                    data[mappings.LONGITUDE_KEY].min(),
+                    data[mappings.ELEVATION].min(),
+                    data[mappings.LATITUDE_KEY].max(),
+                    data[mappings.LONGITUDE_KEY].max(),
+                    data[mappings.ELEVATION].max(),
                 ]
             },
             "temporal": {
@@ -72,7 +74,8 @@ def make_calibration_collection(
             mappings.LICENSE_LINK,
             {
                 "rel": "self",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -84,7 +87,8 @@ def make_calibration_collection(
             },
             {
                 "rel": "collection",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC collection file",
             },
@@ -101,7 +105,7 @@ def make_calibration_collection(
     }
 
 
-def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, Any]:
+def make_calibration_item(image: int, heliostat_data: pd.Series) -> dict[str, Any]:
     """
     Generate a STAC item for an image.
 
@@ -131,13 +135,37 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
             "type": "Point",
-            "coordinates": [mappings.POWER_PLANT_LON, mappings.POWER_PLANT_LAT],
+            "coordinates": [
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ][0],
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ][1],
+                mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ][2],
+            ],
         },
         "bbox": [
-            mappings.POWER_PLANT_LON,
-            mappings.POWER_PLANT_LAT,
-            mappings.POWER_PLANT_LON,
-            mappings.POWER_PLANT_LAT,
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
@@ -156,40 +184,46 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> Dict[str, An
         "links": [
             {
                 "rel": "self",
-                "href": f"./{image}-stac.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}-stac.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "parent",
                 "href": mappings.CALIBRATION_COLLECTION_URL
-                % heliostat_data[mappings.HELIOSTAT_ID],
+                % (
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                ),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
                 "href": mappings.CALIBRATION_COLLECTION_URL
-                % heliostat_data[mappings.HELIOSTAT_ID],
+                % (
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                    heliostat_data[mappings.HELIOSTAT_ID],
+                ),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             mappings.CALIBRATION_TARGET_KEY: {
-                "href": f"./{image}.png",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Calibration image with id {image}",
             },
             mappings.CALIBRATION_MOTOR_POS_KEY: {
-                "href": f"./{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{mappings.MOTOR_POS_NAME % (heliostat_data[mappings.HELIOSTAT_ID], image)}.json",
                 "roles": ["metadata"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Motor positions for the calibration image id {image}",

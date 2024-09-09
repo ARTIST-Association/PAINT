@@ -1,10 +1,11 @@
-from typing import Any, Dict
+from typing import Any
 
 import paint.util.paint_mappings as mappings
 
 
-# TODO: Fix, so that only the links are saved that are actually there!
-def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
+def make_heliostat_catalog(
+    heliostat_id: str, include_deflectometry: bool
+) -> dict[str, Any]:
     """
     Generate a catalog for each heliostat STAC.
 
@@ -12,6 +13,8 @@ def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
     ----------
     heliostat_id : str
         The heliostat ID for the considered heliostat.
+    include_deflectometry : bool
+        Whether the deflectometry collection is included for this heliostat or not.
 
     Returns
     -------
@@ -28,7 +31,7 @@ def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
         "links": [
             {
                 "rel": "self",
-                "href": mappings.HELIOSTAT_CATALOG_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_CATALOG_URL % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC catalog file",
             },
@@ -38,21 +41,30 @@ def make_heliostat_catalog(heliostat_id: str) -> Dict[str, Any]:
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the parent catalog",
             },
+            *(
+                [
+                    {
+                        "rel": "child",
+                        "href": mappings.DEFLECTOMETRY_COLLECTION_URL
+                        % (heliostat_id, heliostat_id),
+                        "type": mappings.MIME_GEOJSON,
+                        "title": "Reference to the STAC collection containing the deflectometry data",
+                    }
+                ]
+                if include_deflectometry
+                else []
+            ),
             {
                 "rel": "child",
-                "href": mappings.DEFLECTOMETRY_COLLECTION_URL % heliostat_id,
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC collection containing the deflectometry data",
-            },
-            {
-                "rel": "child",
-                "href": mappings.CALIBRATION_COLLECTION_URL % heliostat_id,
+                "href": mappings.CALIBRATION_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the STAC collection containing the calibration data",
             },
             {
                 "rel": "child",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_id,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_id, heliostat_id),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the STAC collection containing the heliostat properties",
             },

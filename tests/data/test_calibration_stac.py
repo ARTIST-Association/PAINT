@@ -103,6 +103,9 @@ def calibration_collection_data():
             59.47986694914367,
         ],
         mappings.SYSTEM: ["HeliOS.FDM"] * 4,
+        mappings.LATITUDE_KEY: [50.4, 60.7, 70.1, 68.3],
+        mappings.LONGITUDE_KEY: [5.0, 6.3, 7.2, 8.1],
+        mappings.ELEVATION: [100, 200, 300, 400],
     }
 
     return pd.DataFrame(data)
@@ -147,14 +150,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 },
             ],
             "extent": {
-                "spatial": {
-                    "bbox": [
-                        50.913296351383806,
-                        6.387514846666862,
-                        50.913296351383806,
-                        6.387514846666862,
-                    ]
-                },
+                "spatial": {"bbox": [50.4, 5.0, 100, 70.1, 8.1, 400]},
                 "temporal": {
                     "interval": ["2022-06-01Z11:08:45Z", "2022-06-02Z10:26:01Z"]
                 },
@@ -183,19 +179,19 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 },
                 {
                     "rel": "self",
-                    "href": "INSERT/SOMETHING/HERE/BC52-calibration-collection-stac.json?download=1",
+                    "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
                 {
                     "rel": "root",
-                    "href": "Insert/URL/Here",
+                    "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to the entire catalogue for WRI1030197",
                 },
                 {
                     "rel": "collection",
-                    "href": "INSERT/SOMETHING/HERE/BC52-calibration-collection-stac.json?download=1",
+                    "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
@@ -253,13 +249,15 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         "collection": "BC52-calibration-collection",
         "geometry": {
             "type": "Point",
-            "coordinates": [6.387514846666862, 50.913296351383806],
+            "coordinates": [50.91338911716799, 6.387794544159513, 122.8815],
         },
         "bbox": [
-            6.387514846666862,
-            50.913296351383806,
-            6.387514846666862,
-            50.913296351383806,
+            50.91338911716799,
+            6.387794544159513,
+            122.8815,
+            50.91338911716799,
+            6.387794544159513,
+            122.8815,
         ],
         "properties": {
             "datetime": "2022-06-01Z11:08:45Z",
@@ -272,38 +270,38 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
         "links": [
             {
                 "rel": "self",
-                "href": "./115399-stac.json",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "INSERT/SOMETHING/HERE/BC52-calibration-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": "INSERT/SOMETHING/HERE/BC52-calibration-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "target": {
-                "href": "./115399.png",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399.png",
                 "roles": ["data"],
                 "type": "image/png",
                 "title": "Calibration image with id 115399",
             },
             "motor_positions": {
-                "href": "./BC52-115399-motor-position.json",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-115399-motor-position.json",
                 "roles": ["metadata"],
                 "type": "application/geo+json",
                 "title": "Motor positions for the calibration image id 115399",

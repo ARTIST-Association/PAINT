@@ -68,32 +68,32 @@ def test_make_facet_item(facet_item_data: Tuple[str, pd.Series]) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "./AY39-facet_properties-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-facet_properties-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "INSERT/SOMETHING/HERE/AY39-heliostat_properties-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": "INSERT/SOMETHING/HERE/AY39-heliostat_properties-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "facet_properties": {
-                "href": "./AY39-facet_properties.json",
+                "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-facet_properties.json",
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Facet properties of AY39",

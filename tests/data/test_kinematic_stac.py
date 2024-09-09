@@ -97,32 +97,32 @@ def test_make_kinematic_item(kinematic_item_data: Tuple[str, pd.Series]) -> None
         "links": [
             {
                 "rel": "self",
-                "href": "./AA23-kinematic_properties-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-kinematic_properties-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "INSERT/SOMETHING/HERE/AA23-heliostat_properties-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": "INSERT/SOMETHING/HERE/AA23-heliostat_properties-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "kinematic_properties": {
-                "href": "./AA23-kinematic_properties.json",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-kinematic_properties.json",
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Kinematic properties of AA23",

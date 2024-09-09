@@ -63,32 +63,34 @@ def make_kinematic_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"./{resource}-stac.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_PROPERTIES}/{resource}-stac.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": f"./{mappings.CATALOGUE_URL}",
+                "href": mappings.CATALOGUE_URL,
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Reference to the entire catalogue for {mappings.POWER_PLANT_GPPD_ID}",
             },
             {
                 "rel": "parent",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_key,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL % heliostat_key,
+                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                % (heliostat_key, heliostat_key),
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             mappings.KINEMATIC_PROPERTIES_KEY: {
-                "href": f"./{resource}.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_PROPERTIES}/{resource}.json",
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Kinematic properties of {heliostat_key}",

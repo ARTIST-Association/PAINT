@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-
 import pathlib
-from typing import List, Tuple
 
 import h5py
 import pandas as pd
@@ -17,13 +14,39 @@ class DWDWeatherData:
 
     This class enables DWD weather data to be downloaded in either a 10-minute or 1-hour resolution from selected
     weather stations. The data is then saved as an HDF5 file, either grouped by resolution or by parameter.
+
+    Attributes
+    ----------
+    parameters_10min : list[str]
+        The parameters to be downloaded in a 10min temporal resolution.
+    parameters_1h : list[str]
+        The parameters to be downloaded in a 1h temporal resolution.
+    station_ids : list[str]
+        The station IDs to be considered when downloading data.
+    start_date : str
+        The start date of the downloaded data.
+    end_date : str
+        The end date of the downloaded data.
+    output_path : str
+        The path to save the downloaded data.
+    file_name : str
+        The name of the downloaded data (Default: "dwd_weather").
+    settings : Settings
+        The settings required for downloading data.
+    compression_opts : dict[str, Any]
+        The compression options for compressing the HDF5 file.
+
+    Methods
+    -------
+    download_and_save_data()
+        Download and save DWD weather data.
     """
 
     def __init__(
         self,
-        parameters_10min: List[str],
-        parameters_1h: List[str],
-        station_ids: List[str],
+        parameters_10min: list[str],
+        parameters_1h: list[str],
+        station_ids: list[str],
         start_date: str,
         end_date: str,
         output_path: str,
@@ -31,17 +54,19 @@ class DWDWeatherData:
         ts_shape: str = "long",
         ts_humanize: bool = True,
         ts_si_units: bool = False,
+        compression_method: str = "gzip",
+        compression_level: int = 5,
     ) -> None:
         """
         Initialize the DWD weather data object.
 
         Parameters
         ----------
-        parameters_10min : list of str
+        parameters_10min : list[str]
             The parameters to be downloaded in a 10min temporal resolution.
-        parameters_1h : list of str
+        parameters_1h : list[str]
             The parameters to be downloaded in a 1h temporal resolution.
-        station_ids : list of str
+        station_ids : list[str]
             The station IDs to be considered when downloading data.
         start_date : str
             The start date of the downloaded data.
@@ -60,6 +85,10 @@ class DWDWeatherData:
         ts_si_units : bool
             A boolean indicating whether the time series units should be converted to SI units within the
              ``wetterdienst`` package (Default:``False``).
+        compression_method : str
+            The method used to compress the HDF5 file.
+        compression_level : int
+            The compression level.
         """
         self.parameters_10min = parameters_10min
         self.parameters_1h = parameters_1h
@@ -73,10 +102,14 @@ class DWDWeatherData:
         self.settings = Settings(
             ts_shape=ts_shape, ts_humanize=ts_humanize, ts_si_units=ts_si_units
         )
+        self.compression_opts = {
+            "compression": compression_method,
+            "compression_opts": compression_level,
+        }
 
     def _get_raw_data(
         self,
-    ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
         Download the raw data using the DWD Wetterdienst pacakge.
 
@@ -133,9 +166,9 @@ class DWDWeatherData:
             "https://wetterdienst.readthedocs.io/en/latest/data/coverage/dwd/observation.html"
         )
 
-        # create HDF5 file
+        # Create the HDF5 file.
         with h5py.File(self.output_path / self.file_name, "w") as file:
-            # include metadata for each station included in the download
+            # Include metadata for each station included in the download.
             for station_id in self.station_ids:
                 file.create_group(station_id)
                 file[station_id].attrs["latitude"] = metadata_1h[
@@ -154,27 +187,41 @@ class DWDWeatherData:
                     metadata_1h.station_id == station_id
                 ].state.values[0]
 
-            # include parameters at a 10min temporal resolution
+            # Include parameters at a 10min temporal resolution.
             grouped_10min = df_10min.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_10min:
-                file[
-                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time"
-                ] = group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
-                    dtype=h5py.string_dtype(encoding="utf-8")
+                # Create dataset for time with compression.
+                file.create_dataset(
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time",
+                    data=group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
+                        dtype=h5py.string_dtype(encoding="utf-8")
+                    ),
+                    **self.compression_opts,
                 )
-                file[
-                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value"
-                ] = group.value.to_numpy()
 
-            # include parameters at a 1h temporal resolution
+                # Create dataset for value with compression.
+                file.create_dataset(
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/value",
+                    data=group.value.to_numpy(),
+                    **self.compression_opts,
+                )
+
+            # Include parameters at a 1h temporal resolution.
             grouped_1h = df_1h.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_1h:
-                file[
-                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time"
-                ] = group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
-                    dtype=h5py.string_dtype(encoding="utf-8")
+                # Create dataset for time with compression.
+                file.create_dataset(
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time",
+                    data=group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
+                        dtype=h5py.string_dtype(encoding="utf-8")
+                    ),
+                    **self.compression_opts,
                 )
-                file[
-                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value"
-                ] = group.value.to_numpy()
+
+                # Create dataset for value with compression.
+                file.create_dataset(
+                    f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/value",
+                    data=group.value.to_numpy(),
+                    **self.compression_opts,
+                )
         return metadata_to_save

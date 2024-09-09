@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 import pandas as pd
@@ -43,6 +44,9 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.AZIMUTH,
                 mappings.SUN_ELEVATION,
                 mappings.SYSTEM,
+                mappings.LATITUDE_KEY,
+                mappings.LONGITUDE_KEY,
+                mappings.ELEVATION,
             ]
         )
 
@@ -66,6 +70,7 @@ def main(arguments: argparse.Namespace) -> None:
         stac_item = make_calibration_item(image=image, heliostat_data=heliostat_data)
         url = mappings.CALIBRATION_ITEM_URL % (
             heliostat_data[mappings.HELIOSTAT_ID],
+            heliostat_data[mappings.HELIOSTAT_ID],
             image,
         )
         calibration_items.loc[len(calibration_items)] = [
@@ -77,6 +82,15 @@ def main(arguments: argparse.Namespace) -> None:
             heliostat_data[mappings.AZIMUTH],
             heliostat_data[mappings.SUN_ELEVATION],
             heliostat_data[mappings.SYSTEM],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][0],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][1],
+            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][2],
         ]
         calibration_item_stac_path = (
             Path(arguments.output)
@@ -125,18 +139,21 @@ def main(arguments: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
         "--input",
         type=Path,
-        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
+        default=str(input_calibration),
     )
     parser.add_argument(
         "-o",
         "--output",
         type=Path,
-        default=f"{PAINT_ROOT}/ConvertedData/",
+        default=str(output_folder),
     )
     args = parser.parse_args()
 

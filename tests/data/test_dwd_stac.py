@@ -43,7 +43,7 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "id": "dwd-weather",
         "type": "Feature",
         "title": "Weather data from the DWD",
-        "description": "Weather data from the DWD station ID 15000, i.e. Aachen-Orsbach.",
+        "description": "Weather data from the DWD station ID 15000, i.e. Aachen-Orsbach",
         "collection": "weather-collection",
         "geometry": {"type": "Point", "coordinates": [50.7983, 6.0244, 231.0]},
         "bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0],
@@ -53,32 +53,32 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "./dwd-weather-item-stac",
+                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather-item-stac",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
             {
                 "rel": "root",
-                "href": "./Insert/URL/Here",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the entire catalogue for WRI1030197",
             },
             {
                 "rel": "parent",
-                "href": "INSERT/SOMETHING/HERE/weather-collection-stac.json?download=1",
+                "href": "https://paint-database.org/WRI1030197/Weather/weather-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": "weather-collection-stac.json",
+                "href": "https://paint-database.org/WRI1030197/Weather/weather-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
             "weather_data": {
-                "href": "./dwd-weather.h5",
+                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Weather data from the DWD",

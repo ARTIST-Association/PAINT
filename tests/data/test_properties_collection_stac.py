@@ -33,7 +33,7 @@ def properties_collection_data() -> pd.DataFrame:
     return pd.DataFrame(data)
 
 
-def test_make_deflectometry_collection(
+def test_make_properties_collection(
     properties_collection_data: pd.DataFrame,
 ) -> None:
     """
@@ -103,19 +103,19 @@ def test_make_deflectometry_collection(
                 },
                 {
                     "rel": "self",
-                    "href": "INSERT/SOMETHING/HERE/AY39-heliostat_properties-collection-stac.json?download=1",
+                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
                 {
                     "rel": "root",
-                    "href": "Insert/URL/Here",
+                    "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to the entire catalogue for WRI1030197",
                 },
                 {
                     "rel": "collection",
-                    "href": "INSERT/SOMETHING/HERE/AY39-heliostat_properties-collection-stac.json?download=1",
+                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
@@ -139,7 +139,7 @@ def test_make_deflectometry_collection(
         )
 
 
-def test_make_weather_collection_fail() -> None:
+def test_make_properties_collection_fail() -> None:
     """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
         make_properties_collection("AB123", pd.DataFrame())
