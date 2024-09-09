@@ -301,7 +301,7 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
                 "title": "Calibration image with id 115399",
             },
             "motor_positions": {
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-115399-motor-position.json",
+                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-motor-position.json",
                 "roles": ["metadata"],
                 "type": "application/geo+json",
                 "title": "Motor positions for the calibration image id 115399",
