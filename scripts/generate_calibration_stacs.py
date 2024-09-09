@@ -63,7 +63,7 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
-    data = data[data["HeliostatId"] == "AA39"]
+
     # generate the STAC item files for each image
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
