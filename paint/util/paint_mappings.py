@@ -231,13 +231,14 @@ CALIBRATION_TARGET_TO_NAME = {
     7: STJ_LOWER,
 }
 
-
 # Cropper mappings
 DESTINATION_SIZE = (3072, 1728)
 INITIAL_HEIGHT = 250
 HEIGHT_OFFSET = 1250
 INITIAL_WIDTH = 450
 WIDTH_OFFSET = 2222
+MARKERS_FOLDER = "markers"
+
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
