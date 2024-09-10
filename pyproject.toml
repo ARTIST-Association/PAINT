@@ -29,6 +29,7 @@ dependencies = [
     "openpyxl",
     "Flask",
     "pystac",
+    "cv2"
 ]
 
 [project.optional-dependencies]
