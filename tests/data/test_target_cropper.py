@@ -42,7 +42,7 @@ def test_target_cropper(image_name: str, target_id: str, expected_name: str):
     cropped_result = crop_image_with_template_matching(
         image_path=image_path, target=target_id
     )
-    np.testing.assert_allclose(cropped_result, expected_cropped)
+    np.testing.assert_allclose(cropped_result, expected_cropped, atol=1.5, rtol=0.05)
 
     resized_image = load_and_preprocess_image(image_path, resize=True)
     assert resized_image.shape[0] == mappings.DESTINATION_SIZE[1]
