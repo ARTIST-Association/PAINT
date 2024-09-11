@@ -9,7 +9,7 @@ import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 
 
-def load_and_preprocess_image(image_path: Path, resize: bool):
+def load_and_preprocess_image(image_path: Path, resize: bool) -> np.ndarray:
     """
     Load and preprocess the image.
 
