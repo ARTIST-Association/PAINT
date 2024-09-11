@@ -137,7 +137,7 @@ def get_marker_positions(
     target : Union[int, str]
         Target type for marker selection.
     search_radius : int
-        Radius around detected markers to refine the position. Default is ``10``.
+        Radius around detected markers to refine the position. Default is 10.
     resize : bool
         Whether to resize the image for marker detection. Default is ``False``.
 
