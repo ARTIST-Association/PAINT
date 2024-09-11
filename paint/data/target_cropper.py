@@ -104,7 +104,7 @@ def apply_template_matching(
     _, max_val, _, loc = cv2.minMaxLoc(res)
     x, y = loc
 
-    # Extract the region around the detected location for sub-pixel accuracy
+    # Extract the region around the detected location for sub-pixel accuracy.
     interp_region = res[
         y - search_radius : y + search_radius + 1,
         x - search_radius : x + search_radius + 1,
