@@ -168,7 +168,7 @@ def get_marker_positions(
 
 def crop_image_with_template_matching(
     image_path: Path, target: Union[int, str], n_grid: int = 512
-):
+) -> np.ndarray:
     """
     Use template matching to crop the images to the targets.
 
