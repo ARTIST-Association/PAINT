@@ -13,6 +13,7 @@ from paint.data.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
+from paint.util import add_offset_to_lat_lon
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
@@ -26,10 +27,10 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The arguments containing input and output path.
     """
-    # check if saved metadata exists and load if required
+    # Check if saved metadata exists and load if required.
     calibration_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/calibration_items.csv")
     if calibration_items_path.exists():
         calibration_items = pd.read_csv(calibration_items_path)
@@ -50,21 +51,21 @@ def main(arguments: argparse.Namespace) -> None:
             ]
         )
 
-    # read in the data in CSV
+    # Read in the data in CSV.
     data = pd.read_csv(arguments.input)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
-    # convert all timestamps to UTC
+    # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
 
-    # compute azimuth and elevation
+    # Compute azimuth and elevation.
     azimuth, elevation = calculate_azimuth_and_elevation(data)
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
-    # generate the STAC item files for each image
+    # Generate the STAC item files for each image.
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
         stac_item = make_calibration_item(image=image, heliostat_data=heliostat_data)
@@ -74,7 +75,7 @@ def main(arguments: argparse.Namespace) -> None:
         )
         calibration_items.loc[len(calibration_items)] = [
             heliostat_data[mappings.HELIOSTAT_ID],
-            f"calibration image {image} and associated motor positions for heliostat "
+            f"calibration image {image} and associated calibration properties for heliostat "
             f"{heliostat_data[mappings.HELIOSTAT_ID]}",
             url,
             heliostat_data[mappings.CREATED_AT],
@@ -101,22 +102,39 @@ def main(arguments: argparse.Namespace) -> None:
         with open(calibration_item_stac_path, "w") as handle:
             json.dump(stac_item, handle)
 
-        # save associated motorpositions
-        motor_pos_data = {
-            mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
-            mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+        # Save associated calibration properties.
+        focal_spot_lat, focal_spot_lon = add_offset_to_lat_lon(
+            north_offset_m=heliostat_data[mappings.TARGET_OFFSET_N],
+            east_offset_m=heliostat_data[mappings.TARGET_OFFSET_E],
+        )
+        calibration_properties_data = {
+            mappings.MOTOR_POS_KEY: {
+                mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
+                mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+            },
+            mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ],
+            mappings.FOCAL_SPOT_KEY: {
+                mappings.HELIOS_KEY: [
+                    focal_spot_lat,
+                    focal_spot_lon,
+                    heliostat_data[mappings.TARGET_OFFSET_U],
+                ],
+                mappings.UTIS_KEY: [0, 0, 0],
+            },
         }
-        save_motor_pos_path = (
+        save_calibration_properties_path = (
             Path(arguments.output)
             / heliostat_data[mappings.HELIOSTAT_ID]
             / mappings.SAVE_CALIBRATION
-            / (mappings.MOTOR_POS_NAME % image + ".json")
+            / (mappings.CALIBRATION_PROPERTIES_NAME % image + ".json")
         )
-        save_motor_pos_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(save_motor_pos_path, "w") as handle:
-            json.dump(motor_pos_data, handle)
+        save_calibration_properties_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(save_calibration_properties_path, "w") as handle:
+            json.dump(calibration_properties_data, handle)
 
-    # create the STAC collections
+    # Create the STAC collections.
     for heliostat, data in calibration_items.groupby(mappings.HELIOSTAT_ID):
         assert isinstance(heliostat, str)
         collection = make_calibration_collection(heliostat_id=heliostat, data=data)
