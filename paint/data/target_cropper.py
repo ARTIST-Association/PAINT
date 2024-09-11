@@ -126,7 +126,7 @@ def get_marker_positions(
     target: Union[int, str],
     search_radius: int = 10,
     resize: bool = False,
-):
+) -> tuple[np.ndarray, float]:
     """
     Load the image, detect marker positions, and return their sub-pixel locations.
 
