@@ -184,7 +184,7 @@ class BinaryExtractor:
                 surface_points_with_facets.append(single_facet_surface_points)
                 surface_normals_with_facets.append(single_facet_surface_normals)
 
-        # to maintain consistency, we cast the west direction to east direction
+        # To maintain consistency, we cast the west direction to east direction.
         canting_e[:, 0] = -canting_e[:, 0]
 
         # extract deflectometry data and save
