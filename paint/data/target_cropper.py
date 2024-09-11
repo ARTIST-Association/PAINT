@@ -43,7 +43,7 @@ def get_marker_data(target: Union[str, int]) -> tuple[list[str], np.ndarray]:
 
     Parameters
     ----------
-    target : Union[str,int]
+    target : Union[str, int]
         Target ID used to determine which marker should be used.
 
     Returns
