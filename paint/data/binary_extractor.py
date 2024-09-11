@@ -147,7 +147,6 @@ class BinaryExtractor:
             canting_n = torch.empty(number_of_facets, 3)
             surface_points_with_facets = []
             surface_normals_with_facets = []
-            min_points = 999999
             for f in range(number_of_facets):
                 facet_header_data = facet_header_struct.unpack_from(
                     file.read(facet_header_struct.size)
@@ -169,8 +168,6 @@ class BinaryExtractor:
                     )
                 )
                 number_of_points = facet_header_data[10]
-                if number_of_points < min_points:
-                    min_points = number_of_points
                 single_facet_surface_points = torch.empty(number_of_points, 3)
                 single_facet_surface_normals = torch.empty(number_of_points, 3)
 
