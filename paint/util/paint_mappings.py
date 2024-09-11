@@ -146,14 +146,24 @@ DEFLECTOMETRY_RAW_KEY = "raw_measurement"
 DEFLECTOMETRY_FILLED_KEY = "filled_measurement"
 DEFLECTOMETRY_RESULTS_KEY = "results_summary"
 CALIBRATION_TARGET_KEY = "target"
-CALIBRATION_MOTOR_POS_KEY = "motor_positions"
+CALIBRATION_PROPERTIES_KEY = "calibration_properties"
 FACET_PROPERTIES_KEY = "facet_properties"
 KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
-MOTOR_POS_NAME = "%d-motor-position"
+CALIBRATION_PROPERTIES_NAME = "%d-calibration-properties"
 WEATHER_DATA_KEY = "weather_data"
 
 BBOX_LAT_LON_DEVIATION = 2e-05
 BBOX_ALTITUDE_DEVIATION = 2
+
+# Calibration Properties
+MOTOR_POS_KEY = "motor_position"
+TARGET_NAME_KEY = "target_name"
+FOCAL_SPOT_KEY = "focal_spot"
+UTIS_KEY = "UTIS"
+HELIOS_KEY = "HeliOS.FDM"
+TARGET_OFFSET_E = "TargetOffsetE"
+TARGET_OFFSET_N = "TargetOffsetN"
+TARGET_OFFSET_U = "TargetOffsetU"
 
 # Convert deflectometry
 FACET_KEY = "facet"
