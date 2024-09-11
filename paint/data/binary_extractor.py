@@ -207,7 +207,7 @@ class BinaryExtractor:
                     data=surface_points_with_facets[i],
                 )
 
-        # extract facet properties data and save
+        # Extract facet properties data and save.
         saved_facet_path = (
             Path(self.output_path)
             / self.heliostat_id
