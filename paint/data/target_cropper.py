@@ -55,17 +55,26 @@ def get_marker_data(target: Union[str, int]) -> tuple[list[str], np.ndarray]:
         Offset values from the center of the template to the desired position in the template.
     """
     if target in {1, 7, mappings.STJ_LOWER}:
-        return ["LM", "RM", "LB", "RB"], np.array(
-            [[26, 78], [128, 84], [25.5, 126], [125, 127]]
-        )
+        return [
+            "stj_left_middle",
+            "stj_right_middle",
+            "stj_left_bottom",
+            "stj_right_bottom",
+        ], np.array([[26, 78], [128, 84], [25.5, 126], [125, 127]])
     elif target in {4, 5, 6, mappings.STJ_UPPER}:
-        return ["LT", "RT", "LM", "RM"], np.array(
-            [[30, 29], [122, 27], [26, 78], [128, 84]]
-        )
+        return [
+            "stj_left_top",
+            "stj_right_top",
+            "stj_left_middle",
+            "stj_right_middle",
+        ], np.array([[30, 29], [122, 27], [26, 78], [128, 84]])
     elif target in {3, mappings.MFT}:
-        return ["MFT_TL", "MFT_TR", "MFT_BL", "MFT_BR"], np.array(
-            [[45, 57], [200, 59], [48.5, 200], [192, 195]]
-        )
+        return [
+            "mft_left_top",
+            "mft_right_top",
+            "mft_left_bottom",
+            "mft_right_bottom",
+        ], np.array([[45, 57], [200, 59], [48.5, 200], [192, 195]])
     else:
         raise ValueError(f"Unsupported target value: {target}")
 
@@ -150,9 +159,7 @@ def get_marker_positions(
 
     # Iterate over each marker to detect and refine its position
     for i, marker_name in enumerate(marker_names):
-        template = cv2.imread(
-            f"{marker_path}/marker{marker_name}.png", cv2.IMREAD_GRAYSCALE
-        )
+        template = cv2.imread(f"{marker_path}/{marker_name}.png", cv2.IMREAD_GRAYSCALE)
         loc_sub, max_val = apply_template_matching(img_gray, template, search_radius)
         marker_positions[i] = loc_sub + offsets[i]
         min_value = min(min_value, max_val)  # Track minimum match value
