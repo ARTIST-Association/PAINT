@@ -122,7 +122,7 @@ def apply_template_matching(
 
 
 def get_marker_positions(
-    image_path: pathlib.Path,
+    image_path: Path,
     target: Union[int, str],
     search_radius: int = 10,
     resize: bool = False,
