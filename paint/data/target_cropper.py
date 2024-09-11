@@ -143,9 +143,9 @@ def get_marker_positions(
 
     Returns
     -------
-    marker_positions : np.ndarray
+    np.ndarray
         All identified marker positions. The height and width coordinates are provided.
-    min_value : float
+    float
         Minimum matching quality value from template matching.
     """
     # Load and preprocess the image.
