@@ -21,7 +21,7 @@ from paint.data.target_cropper import (
         ("mft_image", mappings.MFT, "mft_crop"),
     ],
 )
-def test_target_cropper(image_name: str, target_id: str, expected_name: str):
+def test_target_cropper(image_name: str, target_id: str, expected_name: str) -> None:
     """
     Test the target cropper by comparing to cropped images for each target.
 
@@ -59,7 +59,7 @@ def test_make_marker_data_fail() -> None:
     "image_name, target_id",
     [("stj_image", mappings.MFT)],
 )
-def test_resize_and_fail(image_name: str, target_id: str):
+def test_resize_and_fail(image_name: str, target_id: str) -> None:
     """
     Test failure when marker cannot be identified.
 
