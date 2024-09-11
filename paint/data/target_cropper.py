@@ -149,20 +149,20 @@ def get_marker_positions(
     min_value : float
         Minimum matching quality value from template matching.
     """
-    # Load and preprocess the image
+    # Load and preprocess the image.
     img_gray = load_and_preprocess_image(image_path, resize)
     marker_names, offsets = get_marker_data(target)
     marker_positions = np.zeros((4, 2), dtype=np.float32)
 
-    min_value = float("inf")  # Initialize minimum match quality
+    min_value = float("inf")  # Initialize minimum match quality.
     marker_path = Path(PAINT_ROOT) / mappings.MARKERS_FOLDER  # Path to marker templates
 
-    # Iterate over each marker to detect and refine its position
+    # Iterate over each marker to detect and refine its position.
     for i, marker_name in enumerate(marker_names):
         template = cv2.imread(f"{marker_path}/{marker_name}.png", cv2.IMREAD_GRAYSCALE)
         loc_sub, max_val = apply_template_matching(img_gray, template, search_radius)
         marker_positions[i] = loc_sub + offsets[i]
-        min_value = min(min_value, max_val)  # Track minimum match value
+        min_value = min(min_value, max_val)  # Track minimum match value.
 
     return marker_positions, min_value
 
@@ -219,7 +219,7 @@ def crop_image_with_template_matching(
             [[0, 0], [n_grid, 0], [0, n_grid], [n_grid, n_grid]], dtype=np.float32
         )
 
-        # Compute perspective transform and rectify the image
+        # Compute perspective transform and crop the image.
         transform_matrix = cv2.getPerspectiveTransform(marker_coords, output_coords)
         img_cropped = cv2.warpPerspective(
             original_image, transform_matrix, (n_grid, n_grid)
