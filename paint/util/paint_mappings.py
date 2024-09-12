@@ -160,7 +160,7 @@ MOTOR_POS_KEY = "motor_position"
 TARGET_NAME_KEY = "target_name"
 FOCAL_SPOT_KEY = "focal_spot"
 UTIS_KEY = "UTIS"
-HELIOS_KEY = "HeliOS.FDM"
+HELIOS_KEY = "HeliOS"
 TARGET_OFFSET_E = "TargetOffsetE"
 TARGET_OFFSET_N = "TargetOffsetN"
 TARGET_OFFSET_U = "TargetOffsetU"
@@ -248,6 +248,9 @@ HEIGHT_OFFSET = 1250
 INITIAL_WIDTH = 450
 WIDTH_OFFSET = 2222
 MARKERS_FOLDER = "markers"
+
+# Renovation mappings
+RENOVATION_LATER = "renovation_later"
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
