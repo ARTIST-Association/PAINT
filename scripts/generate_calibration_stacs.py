@@ -55,6 +55,9 @@ def main(arguments: argparse.Namespace) -> None:
     data = pd.read_csv(arguments.input)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
+    # Load list of available images.
+    data_available = pd.read_csv(arguments.input_available)
+
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
@@ -64,6 +67,12 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
+
+    # Filter data to only include metadata for the images on the LSDF.
+    data = data.loc[data_available["ID"].values]
+
+    # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
+    data = data[~data.index.duplicated(keep="last")]
 
     # Generate the STAC item files for each image.
     for image, heliostat_data in data.iterrows():
@@ -152,13 +161,23 @@ def main(arguments: argparse.Namespace) -> None:
 if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data.csv"
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data_full.csv"
+    input_available = (
+        Path(lsdf_root) / "paint" / "PAINT" / "available_calibration_ids.csv"
+    )
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-i",
         "--input",
         type=Path,
         default=str(input_calibration),
+    )
+    parser.add_argument(
+        "-a",
+        "--input_available",
+        type=Path,
+        default=str(input_available),
     )
     parser.add_argument(
         "-o",
