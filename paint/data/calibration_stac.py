@@ -135,37 +135,12 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> dict[str, An
         % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
             "type": "Point",
-            "coordinates": [
-                mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                    heliostat_data[mappings.CALIBRATION_TARGET]
-                ][0],
-                mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                    heliostat_data[mappings.CALIBRATION_TARGET]
-                ][1],
-                mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                    heliostat_data[mappings.CALIBRATION_TARGET]
-                ][2],
+            "coordinates": mappings.CALIBRATION_TARGET_TO_COORDINATES[
+                heliostat_data[mappings.CALIBRATION_TARGET]
             ],
         },
-        "bbox": [
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][0],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][1],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][2],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][0],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][1],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ][2],
+        "bbox": mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
+            heliostat_data[mappings.CALIBRATION_TARGET]
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
