@@ -32,12 +32,21 @@ def make_tower_item(
         "geometry": {
             "type": "Polygon",
             "coordinates": [
-                extreme_coordinates[mappings.LATITUDE_KEY].min(),
-                extreme_coordinates[mappings.LONGITUDE_KEY].min(),
-                extreme_coordinates[mappings.ELEVATION].min(),
-                extreme_coordinates[mappings.LATITUDE_KEY].max(),
-                extreme_coordinates[mappings.LONGITUDE_KEY].max(),
-                extreme_coordinates[mappings.ELEVATION].max(),
+                [
+                    extreme_coordinates[mappings.LATITUDE_KEY].min(),
+                    extreme_coordinates[mappings.LONGITUDE_KEY].min(),
+                    extreme_coordinates[mappings.ELEVATION].min(),
+                ],
+                [
+                    extreme_coordinates[mappings.LATITUDE_KEY].max(),
+                    extreme_coordinates[mappings.LONGITUDE_KEY].max(),
+                    extreme_coordinates[mappings.ELEVATION].max(),
+                ],
+                [
+                    extreme_coordinates[mappings.LATITUDE_KEY].min(),
+                    extreme_coordinates[mappings.LONGITUDE_KEY].min(),
+                    extreme_coordinates[mappings.ELEVATION].min(),
+                ],
             ],
         },
         "bbox": [
