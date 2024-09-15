@@ -129,6 +129,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
 
         expected = {
             "stac_version": "1.0.0",
+            "stac_extensions": [],
             "id": "BC52-calibration-collection",
             "type": "Collection",
             "title": "Calibration images from heliostat BC52",
