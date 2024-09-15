@@ -47,12 +47,12 @@ def make_facet_item(
             ],
         },
         "bbox": [
-            lat_lon[0] - mappings.BBOX_LAT_LON_DEVIATION,
-            lat_lon[1] - mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] - mappings.BBOX_ALTITUDE_DEVIATION,
-            lat_lon[0] + mappings.BBOX_LAT_LON_DEVIATION,
-            lat_lon[1] + mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] + mappings.BBOX_ALTITUDE_DEVIATION,
+            lat_lon[0],
+            lat_lon[1],
+            heliostat_data[mappings.ALTITUDE_KEY],
+            lat_lon[0],
+            lat_lon[1],
+            heliostat_data[mappings.ALTITUDE_KEY],
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT],
