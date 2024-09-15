@@ -45,9 +45,12 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.AZIMUTH,
                 mappings.SUN_ELEVATION,
                 mappings.SYSTEM,
-                mappings.LATITUDE_KEY,
-                mappings.LONGITUDE_KEY,
-                mappings.ELEVATION,
+                mappings.LATITUDE_MIN_KEY,
+                mappings.LONGITUDE_MIN_KEY,
+                mappings.ELEVATION_MIN,
+                mappings.LATITUDE_MAX_KEY,
+                mappings.LONGITUDE_MAX_KEY,
+                mappings.ELEVATION_MAX,
             ]
         )
 
@@ -84,22 +87,31 @@ def main(arguments: argparse.Namespace) -> None:
         )
         calibration_items.loc[len(calibration_items)] = [
             heliostat_data[mappings.HELIOSTAT_ID],
-            f"calibration image {image} and associated calibration properties for heliostat "
+            f"raw and cropped calibration image {image} and associated calibration properties for heliostat "
             f"{heliostat_data[mappings.HELIOSTAT_ID]}",
             url,
             heliostat_data[mappings.CREATED_AT],
             heliostat_data[mappings.AZIMUTH],
             heliostat_data[mappings.SUN_ELEVATION],
             heliostat_data[mappings.SYSTEM],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
                 heliostat_data[mappings.CALIBRATION_TARGET]
             ][0],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
                 heliostat_data[mappings.CALIBRATION_TARGET]
             ][1],
-            mappings.CALIBRATION_TARGET_TO_COORDINATES[
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
                 heliostat_data[mappings.CALIBRATION_TARGET]
             ][2],
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][3],
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][4],
+            mappings.CALIBRATION_TARGET_TO_BOUNDING_BOX[
+                heliostat_data[mappings.CALIBRATION_TARGET]
+            ][5],
         ]
         calibration_item_stac_path = (
             Path(arguments.output)
