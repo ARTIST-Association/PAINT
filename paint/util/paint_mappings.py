@@ -196,13 +196,9 @@ HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat_properties-collection-stac.
 HELIOSTAT_PROPERTIES_COLLECTION_URL = (
     f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{HELIOSTAT_PROPERTIES_COLLECTION_FILE}"
 )
-FACET_PROPERTIES_ITEM = "%s-facet_properties-item-stac.json"
-FACET_PROPERTIES_ITEM_ITEM_URL = (
-    f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{FACET_PROPERTIES_ITEM}"
-)
-KINEMATIC_PROPERTIES_ITEM = "%s-kinematic_properties-item-stac.json"
-KINEMATIC_PROPERTIES_ITEM_URL = (
-    f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{KINEMATIC_PROPERTIES_ITEM}?download=1"
+HELIOSTAT_PROPERTIES_ITEM = "%s-heliostat_properties-item-stac.json"
+HELIOSTAT_PROPERTIES_ITEM_URL = (
+    f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{HELIOSTAT_PROPERTIES_ITEM}"
 )
 
 WEATHER_COLLECTION_ID = "weather-collection"
@@ -327,6 +323,11 @@ MARKERS_FOLDER = "markers"
 
 # Renovation mappings
 RENOVATION_LATER = "renovation_later"
+RENOVATION_PROPERTIES_KEY = "renovation_properties"
+
+# Properties mappings
+HELIOSTAT_POSITION_KEY = "heliostat_position"
+HELIOSTAT_PROPERTIES_KEY = "heliostat_properties"
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
