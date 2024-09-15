@@ -5,7 +5,6 @@ import json
 import os
 import shutil
 from pathlib import Path
-from typing import Tuple
 
 import pandas as pd
 
@@ -16,7 +15,6 @@ from paint.data.deflectometry_stac import (
     make_deflectometry_collection,
     make_deflectometry_item,
 )
-from paint.data.facet_stac import make_facet_item
 from paint.util.preprocessing import load_and_format_heliostat_positions
 
 
@@ -25,15 +23,13 @@ def extract_data_and_generate_stacs(
     input_path: Path,
     df_heliostat_positions: pd.DataFrame,
     deflectometry_items: pd.DataFrame,
-    properties_items: pd.DataFrame,
-) -> Tuple[pd.DataFrame, pd.DataFrame]:
+) -> pd.DataFrame:
     """
     Extract the binary data and generate STACS.
 
     This function extracts the binary data from the ``.binp`` file. After this data is extracted, it also generates
-    the STAC items for the deflectometry measurement and the heliostat facet properties. Additionally, it collects the
-    summary PDFs for the deflectometry measurement, renames them, copies them to the appropriate location and generates
-    a STAC for this PDF.
+    the STAC items for the deflectometry measurement. Additionally, it collects the summary PDFs for the deflectometry
+    measurement, renames them, copies them to the appropriate location and generates a STAC for this PDF.
 
     Parameters
     ----------
@@ -45,15 +41,11 @@ def extract_data_and_generate_stacs(
         A dataframe containing information on the heliostat positions.
     deflectometry_items : pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
-    properties_items : pd.DataFrame
-        A dataframe containing the metadata for all items in the heliostat properties collection.
 
     Returns
     -------
     pd.DataFrame:
         A dataframe containing the metadata for all items in the deflectometry collection.
-    pd.DataFrame:
-        A dataframe containing the metadata for all items in the heliostat properties collection.
     """
     # Extract binary data
     converter = BinaryExtractor(
@@ -63,7 +55,7 @@ def extract_data_and_generate_stacs(
         facet_header_name=arguments.facet_header_name,
         points_on_facet_struct_name=arguments.points_on_facet_struct_name,
     )
-    converter.convert_to_h5_and_extract_properties()
+    converter.convert_to_h5()
     metadata = df_heliostat_positions.loc[converter.heliostat_id][
         [
             mappings.EAST_KEY,
@@ -131,48 +123,16 @@ def extract_data_and_generate_stacs(
         with open(save_deflectometry_path, mode="w") as handle:
             json.dump(stac_item, handle)
 
-        # extract the facet properties item STAC
-        facet_stac = make_facet_item(
-            heliostat_key=converter.heliostat_id, heliostat_data=metadata
-        )
-
-        # Save the facet properties metadata for collection creation later.
-        facet_url = mappings.FACET_PROPERTIES_ITEM_ITEM_URL % (
-            converter.heliostat_id,
-            converter.heliostat_id,
-        )
-        properties_items.loc[len(properties_items)] = [
-            converter.heliostat_id,
-            f"facet properties for {converter.heliostat_id}",
-            facet_url,
-            converter.deflectometry_created_at,
-            lat_lon[0],
-            lat_lon[1],
-            metadata[mappings.ALTITUDE_KEY],
-        ]
-
-        # save facet properties STAC
-        save_facet_path = (
-            Path(arguments.output_path)
-            / converter.heliostat_id
-            / mappings.SAVE_PROPERTIES
-            / (mappings.FACET_PROPERTIES_ITEM % converter.heliostat_id)
-        )
-        save_facet_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(save_facet_path, mode="w") as handle:
-            json.dump(facet_stac, handle)
-
-    return deflectometry_items, properties_items
+    return deflectometry_items
 
 
 def main(arguments: argparse.Namespace):
     """
     Generate deflectometry STACS and facet item STACS.
 
-    This function converts binary data to HDF5 for deflectometry measurements and JSON for facet properties.
+    This function converts binary data to HDF5 for deflectometry measurements.
     Additionally, the deflectometry results summary PDF is moved to the correct location and renamed. Also, the STAC
-    items and collections for deflectometry measurements are created and the STAC items for the facet properties.
-    Finally, the metadata for the facet properties STAC items is saved for later collection creation.
+    items and collections for deflectometry measurements are created.
 
     Parameters
     ----------
@@ -181,27 +141,11 @@ def main(arguments: argparse.Namespace):
     """
     # check if saved metadata exists and load if required
     deflectometry_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/deflectometry_items.csv")
-    properties_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/properties_items.csv")
     if deflectometry_items_path.exists():
         deflectometry_items = pd.read_csv(deflectometry_items_path)
     else:
         deflectometry_items_path.parent.mkdir(parents=True, exist_ok=True)
         deflectometry_items = pd.DataFrame(
-            columns=[
-                mappings.HELIOSTAT_ID,
-                mappings.TITLE_KEY,
-                mappings.URL_KEY,
-                mappings.CREATED_AT,
-                mappings.LATITUDE_KEY,
-                mappings.LONGITUDE_KEY,
-                mappings.ELEVATION,
-            ]
-        )
-    if properties_items_path.exists():
-        properties_items = pd.read_csv(properties_items_path)
-    else:
-        properties_items_path.parent.mkdir(parents=True, exist_ok=True)
-        properties_items = pd.DataFrame(
             columns=[
                 mappings.HELIOSTAT_ID,
                 mappings.TITLE_KEY,
@@ -220,12 +164,11 @@ def main(arguments: argparse.Namespace):
     binp_files = directory.rglob("*.binp")
 
     for input_path in binp_files:
-        deflectometry_items, properties_items = extract_data_and_generate_stacs(
+        deflectometry_items = extract_data_and_generate_stacs(
             arguments=arguments,
             input_path=input_path,
             df_heliostat_positions=df_heliostat_positions,
             deflectometry_items=deflectometry_items,
-            properties_items=properties_items,
         )
 
     for heliostat, data in deflectometry_items.groupby(mappings.HELIOSTAT_ID):
@@ -240,9 +183,6 @@ def main(arguments: argparse.Namespace):
         save_path.parent.mkdir(exist_ok=True, parents=True)
         with open(save_path, "w") as out:
             json.dump(collection, out)
-
-    # save facet items for creating collections
-    properties_items.to_csv(properties_items_path, index=False)
 
 
 if __name__ == "__main__":
