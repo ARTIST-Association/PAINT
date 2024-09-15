@@ -229,9 +229,6 @@ KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
 CALIBRATION_PROPERTIES_NAME = "%d-calibration-properties"
 WEATHER_DATA_KEY = "weather_data"
 
-BBOX_LAT_LON_DEVIATION = 2e-05
-BBOX_ALTITUDE_DEVIATION = 2
-
 # Calibration Properties
 MOTOR_POS_KEY = "motor_position"
 TARGET_NAME_KEY = "target_name"
