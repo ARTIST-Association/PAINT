@@ -25,7 +25,6 @@ def make_calibration_collection(
     """
     return {
         "stac_version": mappings.STAC_VERSION,
-        "stac_extensions": [mappings.ITEM_ASSETS_SCHEMA],
         "id": mappings.CALIBRATION_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
         "title": f"Calibration images from heliostat {heliostat_id}",
@@ -36,12 +35,12 @@ def make_calibration_collection(
         "extent": {
             "spatial": {
                 "bbox": [
-                    data[mappings.LATITUDE_KEY].min(),
-                    data[mappings.LONGITUDE_KEY].min(),
-                    data[mappings.ELEVATION].min(),
-                    data[mappings.LATITUDE_KEY].max(),
-                    data[mappings.LONGITUDE_KEY].max(),
-                    data[mappings.ELEVATION].max(),
+                    data[mappings.LATITUDE_MIN_KEY].min(),
+                    data[mappings.LONGITUDE_MIN_KEY].min(),
+                    data[mappings.ELEVATION_MIN].min(),
+                    data[mappings.LATITUDE_MAX_KEY].max(),
+                    data[mappings.LONGITUDE_MAX_KEY].max(),
+                    data[mappings.ELEVATION_MAX].max(),
                 ]
             },
             "temporal": {
@@ -123,13 +122,11 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> dict[str, An
     """
     return {
         "stac_version": mappings.STAC_VERSION,
-        "stac_extensions": [
-            "view",
-        ],
+        "stac_extensions": [mappings.VIEW_EXTENSION, mappings.PROCESSING_EXTENSION],
         "id": f"{image}",
         "type": "Feature",
         "title": f"Calibration data from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
-        "description": f"Image of focused sunlight on the calibration target from heliostat "
+        "description": f"Raw and cropped image of focused sunlight on the calibration target from heliostat "
         f"{heliostat_data[mappings.HELIOSTAT_ID]} for image {image} with associated motor positions",
         "collection": mappings.CALIBRATION_COLLECTION_ID
         % heliostat_data[mappings.HELIOSTAT_ID],
@@ -191,17 +188,27 @@ def make_calibration_item(image: int, heliostat_data: pd.Series) -> dict[str, An
             },
         ],
         "assets": {
-            mappings.CALIBRATION_TARGET_KEY: {
+            mappings.CALIBRATION_RAW_IMAGE_KEY: {
+                "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}_raw.png",
+                "roles": ["data"],
+                "type": mappings.MIME_PNG,
+                "title": f"Raw calibration image with id {image}",
+            },
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{image}.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
-                "title": f"Calibration image with id {image}",
+                "title": f"Cropped calibration image with id {image}",
+                "processing:lineage": "Target cropping through template matching",
+                "processing:software": f"PAINT target cropper ({mappings.PAINT_REPO_URL})",
             },
             mappings.CALIBRATION_PROPERTIES_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/{mappings.CALIBRATION_PROPERTIES_NAME % image}.json",
                 "roles": ["metadata"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Calibration properties for the calibration image id {image}",
+                "processing:lineage": "Focal spot extraction",
+                "processing:software": f"{mappings.HELIOS_KEY}, {mappings.UTIS_KEY} ({mappings.UTIS_URL})",
             },
         },
     }

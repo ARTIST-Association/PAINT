@@ -11,6 +11,8 @@ MONTH = "Month"
 HOUR = "Hour"
 AZIMUTH = "Azimuth"
 ELEVATION = "Elevation"
+ELEVATION_MIN = "Elevation_min"
+ELEVATION_MAX = "Elevation_max"
 SUN_ELEVATION = "Sun_elevation"
 SYSTEM = "System"
 CALIBRATION_TARGET = "CalibrationTargetId"
@@ -32,9 +34,8 @@ VALIDATION_INDEX = "validation"
 
 # STAC
 STAC_VERSION = "1.0.0"
-ITEM_ASSETS_SCHEMA = (
-    f"https://stac-extensions.github.io/item-assets/v{STAC_VERSION}/schema.json"
-)
+VIEW_EXTENSION = "https://stac-extensions.github.io/view/v1.0.0/schema.json"
+PROCESSING_EXTENSION = "https://stac-extensions.github.io/processing/v1.2.0/schema.json"
 LICENSE = "CDLA-2.0"
 LICENSE_LINK = {
     "rel": "license",
@@ -122,6 +123,13 @@ RECEIVER_BOUNDING_BOX = [
     144.593,
 ]
 
+# Target center coordinates
+STJ_UPPER_CENTER = (50.91338911716799, 6.387794544159513, 130.09766666666667)
+STJ_LOWER_CENTER = (50.91338911716799, 6.387794544159513, 122.8815)
+MFT_CENTER = (50.91339355918569, 6.3875444167659845, 138.97975)
+RECEIVER_CENTER = (50.91341371314919, 6.387794691724733, 142.22674999999998)
+
+
 CATALOG = "Catalog"
 COLLECTION = "Collection"
 FEATURE = "Feature"
@@ -206,10 +214,15 @@ URL_KEY = "url"
 TITLE_KEY = "title"
 LATITUDE_KEY = "latitude"
 LONGITUDE_KEY = "longitude"
+LATITUDE_MIN_KEY = "latitude_min"
+LONGITUDE_MIN_KEY = "longitude_min"
+LATITUDE_MAX_KEY = "latitude_max"
+LONGITUDE_MAX_KEY = "longitude_max"
 DEFLECTOMETRY_RAW_KEY = "raw_measurement"
 DEFLECTOMETRY_FILLED_KEY = "filled_measurement"
 DEFLECTOMETRY_RESULTS_KEY = "results_summary"
-CALIBRATION_TARGET_KEY = "target"
+CALIBRATION_RAW_IMAGE_KEY = "raw_image"
+CALIBRATION_CROPPED_IMAGE_KEY = "cropped_image"
 CALIBRATION_PROPERTIES_KEY = "calibration_properties"
 FACET_PROPERTIES_KEY = "facet_properties"
 KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
@@ -224,10 +237,12 @@ MOTOR_POS_KEY = "motor_position"
 TARGET_NAME_KEY = "target_name"
 FOCAL_SPOT_KEY = "focal_spot"
 UTIS_KEY = "UTIS"
+UTIS_URL = "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization"
 HELIOS_KEY = "HeliOS"
 TARGET_OFFSET_E = "TargetOffsetE"
 TARGET_OFFSET_N = "TargetOffsetN"
 TARGET_OFFSET_U = "TargetOffsetU"
+PAINT_REPO_URL = "https://github.com/ARTIST-Association/PAINT"
 
 # Convert deflectometry
 FACET_KEY = "facet"
