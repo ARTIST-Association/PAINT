@@ -1,4 +1,3 @@
-import json
 import struct
 from pathlib import Path
 from typing import Union
@@ -44,8 +43,8 @@ class BinaryExtractor:
     -------
     nwu_to_enu()
         Cast from an NWU to an ENU coordinate system.
-    convert_to_h5_and_extract_properties()
-        Convert binary data to h5 and extract heliostat properties not to be saved in the deflectometry file.
+    convert_to_h5()
+        Convert binary data to h5.
     """
 
     def __init__(
@@ -116,17 +115,10 @@ class BinaryExtractor:
             [-nwu_tensor[1], nwu_tensor[0], nwu_tensor[2]], dtype=torch.float
         )
 
-    def convert_to_h5_and_extract_properties(
+    def convert_to_h5(
         self,
     ) -> None:
-        """
-        Extract data from a binary file and save the deflectometry measurements and heliostat properties.
-
-        The binary files we consider, contain both deflectometry measurements and certain heliostat properties, such as
-        the number of facets, the facet translation vectors, and the facet canting vectors. Therefore, the deflectometry
-        measurements are extracted and saved as a h5 file, whilst the heliostat properties are extracted and saved in a
-        json file.
-        """
+        """Extract data from a binary file and save the deflectometry measurements."""
         # Create structures for reading binary file correctly.
         surface_header_struct = struct.Struct(self.surface_header_name)
         facet_header_struct = struct.Struct(self.facet_header_name)
@@ -206,28 +198,3 @@ class BinaryExtractor:
                     name=f"{mappings.SURFACE_POINT_KEY}",
                     data=surface_points_with_facets[i],
                 )
-
-        # Extract facet properties data and save.
-        saved_facet_path = (
-            Path(self.output_path)
-            / self.heliostat_id
-            / mappings.SAVE_PROPERTIES
-            / self.json_handle
-        )
-        saved_facet_path.parent.mkdir(parents=True, exist_ok=True)
-        if self.raw_data:
-            with open(saved_facet_path, "w") as handle:
-                properties = {
-                    mappings.NUM_FACETS: number_of_facets,
-                    mappings.FACETS_LIST: [
-                        {
-                            mappings.TRANSLATION_VECTOR: facet_translation_vectors[
-                                i, :
-                            ].tolist(),
-                            mappings.CANTING_E: canting_e[i, :].tolist(),
-                            mappings.CANTING_N: canting_n[i, :].tolist(),
-                        }
-                        for i in range(number_of_facets)
-                    ],
-                }
-                json.dump(properties, handle)
