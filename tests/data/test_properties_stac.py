@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 import paint.util.paint_mappings as mappings
-from paint.data.properties_collection_stac import make_properties_collection
+from paint.data.properties_stac import make_properties_collection
 
 
 @pytest.fixture

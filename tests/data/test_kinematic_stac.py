@@ -4,7 +4,7 @@ import deepdiff
 import pandas as pd
 import pytest
 
-from paint.data.kinematic_stac import make_kinematic_item
+from paint.data.properties_stac import make_properties_item
 
 
 @pytest.fixture
@@ -69,7 +69,7 @@ def test_make_kinematic_item(kinematic_item_data: Tuple[str, pd.Series]) -> None
     """
     heliostat_key, data = kinematic_item_data
     assert isinstance(heliostat_key, str)
-    _, item = make_kinematic_item(heliostat_key=heliostat_key, heliostat_data=data)
+    _, item = make_properties_item(heliostat_key=heliostat_key, heliostat_data=data)
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
