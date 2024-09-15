@@ -25,6 +25,7 @@ def make_calibration_collection(
     """
     return {
         "stac_version": mappings.STAC_VERSION,
+        "stac_extensions": [],
         "id": mappings.CALIBRATION_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
         "title": f"Calibration images from heliostat {heliostat_id}",
