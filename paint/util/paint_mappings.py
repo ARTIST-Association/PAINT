@@ -200,6 +200,7 @@ HELIOSTAT_PROPERTIES_ITEM = "%s-heliostat_properties-item-stac.json"
 HELIOSTAT_PROPERTIES_ITEM_URL = (
     f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{HELIOSTAT_PROPERTIES_ITEM}"
 )
+HELIOSTAT_PROPERTIES_SAVE_NAME = "%s-heliostat_properties.json"
 
 WEATHER_COLLECTION_ID = "weather-collection"
 WEATHER_COLLECTION_FILE = "weather-collection-stac.json"
@@ -322,8 +323,10 @@ WIDTH_OFFSET = 2222
 MARKERS_FOLDER = "markers"
 
 # Renovation mappings
-RENOVATION_LATER = "renovation_later"
-RENOVATION_PROPERTIES_KEY = "renovation_properties"
+RENOVATION_ERROR = "renovation_error"
+RENOVATION_PROPERTIES_KEY = "renovation"
+NO_RENOVATION = "No renovation performed"
+RENOVATION_ID = "Retrofit_mechanische_Umrüstung"
 
 # Properties mappings
 HELIOSTAT_POSITION_KEY = "heliostat_position"

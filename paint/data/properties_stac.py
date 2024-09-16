@@ -16,7 +16,7 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
     heliostat_id: str
         The heliostat ID of the heliostat containing the collection.
     data: pd.DataFrame
-        The dataframe containing all deflectometry metadata.
+        The dataframe containing all properties metadata.
 
     Returns
     -------
@@ -29,9 +29,15 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
         "id": mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
         "title": f"Heliostat properties data for {heliostat_id}",
-        "description": f"All heliostat properties, including the facet properties and kinematic properties for "
-        f"heliostat {heliostat_id}",
-        "keywords": ["csp", "facet", "kinematic", "properties"],
+        "description": f"All heliostat properties for heliostat {heliostat_id}",
+        "keywords": [
+            "csp",
+            "facet",
+            "kinematic",
+            "position",
+            "renovation",
+            "properties",
+        ],
         "license": mappings.LICENSE,
         "providers": [mappings.DLR, mappings.KIT],
         "extent": {
@@ -181,7 +187,8 @@ def make_properties_item(
         ],
         "assets": {
             mappings.HELIOSTAT_PROPERTIES_KEY: {
-                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_PROPERTIES}/{resource}.json",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_PROPERTIES}/"
+                f"{mappings.HELIOSTAT_PROPERTIES_SAVE_NAME % heliostat_key}",
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Heliostat properties for heliostat {heliostat_key}",
