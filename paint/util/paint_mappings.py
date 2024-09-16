@@ -272,11 +272,14 @@ DWD_STAC_URL = f"{URL_BASE}/{SAVE_WEATHER}/{DWD_STAC_NAME}"
 # Juelich weather keys
 JUELICH_START = "start"
 JUELICH_END = "end"
-JUELICH_STAC_NAME = "juelich-weather-item-stac"
+JUELICH_FILE_NAME = "%s-juelich_weather"
+JUELICH_STAC_NAME = "%s-juelich_weather-item-stac"
 JUELICH_STAC_URL = f"{URL_BASE}/{SAVE_WEATHER}/{JUELICH_STAC_NAME}"
 JUELICH_WEATHER_LAT = 50.916518
-JEULICH_WEATHER_LON = 6.387409
-JEULICH_WEATHER_ALTITUDE = 89
+JUELICH_WEATHER_LON = 6.387409
+JUELICH_WEATHER_ALTITUDE = 89
+DATE_TIME_INDEX = "DateTimeIndex"
+
 
 # Tower measurement keys
 STJ_UPPER = "solar_tower_juelich_upper"
