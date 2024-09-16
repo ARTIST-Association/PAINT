@@ -7,6 +7,7 @@ import paint.util.paint_mappings as mappings
 
 def make_juelich_weather_item(
     data: pd.Series,
+    month_group: str,
 ) -> dict[str, Any]:
     """
     Generate a STAC item for the Juelich weather data.
@@ -14,36 +15,39 @@ def make_juelich_weather_item(
     Parameters
     ----------
     data : pd.Series
-        The metadata for the Juelich weather data file.
+        Metadata for the Juelich weather data file.
+    month_group : str
+        Month group being considered.
 
     Returns
     -------
     dict[str, Any]
         The STAC item data as dictionary.
     """
+    resource = mappings.JUELICH_FILE_NAME % month_group
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [],
-        "id": "juelich-weather",
+        "id": resource,
         "type": "Feature",
-        "title": "Weather data from Juelich",
-        "description": "Weather data from the Juelich weather station",
+        "title": f"Weather data from Juelich for {month_group}",
+        "description": f"Weather data from the Juelich weather station for {month_group}",
         "collection": mappings.WEATHER_COLLECTION_ID,
         "geometry": {
             "type": "Point",
             "coordinates": [
                 mappings.JUELICH_WEATHER_LAT,
-                mappings.JEULICH_WEATHER_LON,
-                mappings.JEULICH_WEATHER_ALTITUDE,
+                mappings.JUELICH_WEATHER_LON,
+                mappings.JUELICH_WEATHER_ALTITUDE,
             ],
         },
         "bbox": [
             mappings.JUELICH_WEATHER_LAT,
-            mappings.JEULICH_WEATHER_LON,
-            mappings.JEULICH_WEATHER_ALTITUDE,
+            mappings.JUELICH_WEATHER_LON,
+            mappings.JUELICH_WEATHER_ALTITUDE,
             mappings.JUELICH_WEATHER_LAT,
-            mappings.JEULICH_WEATHER_LON,
-            mappings.JEULICH_WEATHER_ALTITUDE,
+            mappings.JUELICH_WEATHER_LON,
+            mappings.JUELICH_WEATHER_ALTITUDE,
         ],
         "properties": {
             "datetime": "null",
@@ -53,7 +57,7 @@ def make_juelich_weather_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_STAC_NAME}",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_STAC_NAME % month_group}",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
@@ -78,10 +82,10 @@ def make_juelich_weather_item(
         ],
         "assets": {
             mappings.WEATHER_DATA_KEY: {
-                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/juelich-weather.h5",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_FILE_NAME % month_group}.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
-                "title": "Weather data from the Juelich weather station",
+                "title": f"Weather data from the Juelich weather station for {month_group}",
             }
         },
     }
