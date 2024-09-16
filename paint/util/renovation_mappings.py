@@ -1,7 +1,7 @@
 import paint.util.paint_mappings as mappings
 
 renovation_number_to_date = {
-    0: mappings.RENOVATION_LATER,
+    0: mappings.RENOVATION_ERROR,
     1: "2020-06-29/2020-07-05",
     2: "2020-07-06/2020-07-12",
     3: "2020-08-10/2020-08-16",
@@ -33,8 +33,12 @@ renovation_number_to_date = {
     29: "2022-09-12/2022-10-30",
     30: "2022-10-24/2022-12-11",
     31: "2022-12-12/2022-12-25",
-    50: "",
-    60: "",
-    70: "",
-    80: "",
+    32: "2023-01-02/2023-01-29",
+    33: "2023-01-02/2023-02-19",
+    34: "2023-09-11/2023-11-05",
+    35: "2024-01-22/2024-01-28",
+    50: mappings.NO_RENOVATION,
+    60: mappings.NO_RENOVATION,
+    70: mappings.NO_RENOVATION,
+    80: mappings.NO_RENOVATION,
 }
