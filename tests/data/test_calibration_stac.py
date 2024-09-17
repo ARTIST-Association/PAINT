@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple
 
 import deepdiff
 import pandas as pd
@@ -228,7 +228,206 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
         )
 
 
-def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> None:
+@pytest.mark.parametrize(
+    "processed_available, expected",
+    [
+        (
+            True,
+            {
+                "stac_version": "1.0.0",
+                "stac_extensions": [
+                    "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+                    "https://stac-extensions.github.io/processing/v1.2.0/schema.json",
+                ],
+                "id": "115399",
+                "type": "Feature",
+                "title": "Calibration data from heliostat BC52 for image 115399",
+                "description": "Raw and processed calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
+                "collection": "BC52-calibration-collection",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                        [50.913388948892035, 6.387856019176258, 119.268],
+                        [50.91338897581139, 6.387856033619183, 126.476],
+                        [50.913389266158724, 6.3877334528986855, 126.506],
+                        [50.91338944678619, 6.3877331984554475, 119.279],
+                        [50.913388948892035, 6.387856019176258, 119.268],
+                    ],
+                },
+                "bbox": [
+                    50.913388948892035,
+                    6.3877331984554475,
+                    119.268,
+                    50.91338944678619,
+                    6.387856033619183,
+                    126.506,
+                ],
+                "properties": {
+                    "datetime": "2022-06-01Z11:08:45Z",
+                    "created": "2022-06-01Z11:08:45Z",
+                    "updated": "2022-10-27Z07:05:55Z",
+                    "instruments": ["HeliOS.FDM"],
+                },
+                "view:sun_azimuth": -42.06579562155874,
+                "view:sun_elevation": 55.621162346471515,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to this STAC file",
+                    },
+                    {
+                        "rel": "root",
+                        "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the entire catalogue for WRI1030197",
+                    },
+                    {
+                        "rel": "parent",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the collection STAC file",
+                    },
+                    {
+                        "rel": "collection",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the collection STAC file",
+                    },
+                ],
+                "assets": {
+                    "raw_image": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
+                        "roles": ["data"],
+                        "type": "image/png",
+                        "title": "Raw calibration image with id 115399",
+                    },
+                    "calibration_properties": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-properties.json",
+                        "roles": ["metadata"],
+                        "type": "application/geo+json",
+                        "title": "Calibration properties for the calibration image id 115399",
+                        "processing:lineage": "Focal spot extraction",
+                        "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
+                    },
+                    "cropped_image": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_cropped.png",
+                        "roles": ["data"],
+                        "type": "image/png",
+                        "title": "Cropped calibration image with id 115399",
+                        "processing:lineage": "Target cropping through template matching",
+                        "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT)",
+                    },
+                    "flux_image": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux.png",
+                        "roles": ["data"],
+                        "type": "image/png",
+                        "title": "Cropped and segmented calibration image with id 115399",
+                        "processing:lineage": "Target cropping through template matching and segmentation",
+                        "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT), UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
+                    },
+                    "flux_centered_image": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux_centered.png",
+                        "roles": ["data"],
+                        "type": "image/png",
+                        "title": "Cropped, segmented, and centered calibration image with id 115399",
+                        "processing:lineage": "Target cropping through template matching, segmentation, and centering",
+                        "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT), UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
+                    },
+                },
+            },
+        ),
+        (
+            False,
+            {
+                "stac_version": "1.0.0",
+                "stac_extensions": [
+                    "https://stac-extensions.github.io/view/v1.0.0/schema.json",
+                    "https://stac-extensions.github.io/processing/v1.2.0/schema.json",
+                ],
+                "id": "115399",
+                "type": "Feature",
+                "title": "Calibration data from heliostat BC52 for image 115399",
+                "description": "Raw calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
+                "collection": "BC52-calibration-collection",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                        [50.913388948892035, 6.387856019176258, 119.268],
+                        [50.91338897581139, 6.387856033619183, 126.476],
+                        [50.913389266158724, 6.3877334528986855, 126.506],
+                        [50.91338944678619, 6.3877331984554475, 119.279],
+                        [50.913388948892035, 6.387856019176258, 119.268],
+                    ],
+                },
+                "bbox": [
+                    50.913388948892035,
+                    6.3877331984554475,
+                    119.268,
+                    50.91338944678619,
+                    6.387856033619183,
+                    126.506,
+                ],
+                "properties": {
+                    "datetime": "2022-06-01Z11:08:45Z",
+                    "created": "2022-06-01Z11:08:45Z",
+                    "updated": "2022-10-27Z07:05:55Z",
+                    "instruments": ["HeliOS.FDM"],
+                },
+                "view:sun_azimuth": -42.06579562155874,
+                "view:sun_elevation": 55.621162346471515,
+                "links": [
+                    {
+                        "rel": "self",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to this STAC file",
+                    },
+                    {
+                        "rel": "root",
+                        "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the entire catalogue for WRI1030197",
+                    },
+                    {
+                        "rel": "parent",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the collection STAC file",
+                    },
+                    {
+                        "rel": "collection",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
+                        "type": "application/geo+json",
+                        "title": "Reference to the collection STAC file",
+                    },
+                ],
+                "assets": {
+                    "raw_image": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
+                        "roles": ["data"],
+                        "type": "image/png",
+                        "title": "Raw calibration image with id 115399",
+                    },
+                    "calibration_properties": {
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-properties.json",
+                        "roles": ["metadata"],
+                        "type": "application/geo+json",
+                        "title": "Calibration properties for the calibration image id 115399",
+                        "processing:lineage": "Focal spot extraction",
+                        "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
+                    },
+                },
+            },
+        ),
+    ],
+)
+def test_make_calibration_item(
+    calibration_item_data: Tuple[str, pd.Series],
+    processed_available: bool,
+    expected: Dict[str, Any],
+) -> None:
     """
     Test the creation of a STAC item.
 
@@ -239,96 +438,9 @@ def test_make_calibration_item(calibration_item_data: Tuple[str, pd.Series]) -> 
     """
     image, data = calibration_item_data
     assert isinstance(image, int)
-    item = make_calibration_item(image=image, heliostat_data=data)
-    expected = {
-        "stac_version": "1.0.0",
-        "stac_extensions": [
-            "https://stac-extensions.github.io/view/v1.0.0/schema.json",
-            "https://stac-extensions.github.io/processing/v1.2.0/schema.json",
-        ],
-        "id": "115399",
-        "type": "Feature",
-        "title": "Calibration data from heliostat BC52 for image 115399",
-        "description": "Raw and cropped image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated motor positions",
-        "collection": "BC52-calibration-collection",
-        "geometry": {
-            "type": "Point",
-            "coordinates": [
-                [50.913388948892035, 6.387856019176258, 119.268],
-                [50.91338897581139, 6.387856033619183, 126.476],
-                [50.913389266158724, 6.3877334528986855, 126.506],
-                [50.91338944678619, 6.3877331984554475, 119.279],
-                [50.913388948892035, 6.387856019176258, 119.268],
-            ],
-        },
-        "bbox": [
-            50.913388948892035,
-            6.3877331984554475,
-            119.268,
-            50.91338944678619,
-            6.387856033619183,
-            126.506,
-        ],
-        "properties": {
-            "datetime": "2022-06-01Z11:08:45Z",
-            "created": "2022-06-01Z11:08:45Z",
-            "updated": "2022-10-27Z07:05:55Z",
-            "instruments": ["HeliOS.FDM"],
-        },
-        "view:sun_azimuth": -42.06579562155874,
-        "view:sun_elevation": 55.621162346471515,
-        "links": [
-            {
-                "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
-                "type": "application/geo+json",
-                "title": "Reference to this STAC file",
-            },
-            {
-                "rel": "root",
-                "href": "https://paint-database.org/WRI1030197/WRI1030197-catalog-stac.json",
-                "type": "application/geo+json",
-                "title": "Reference to the entire catalogue for WRI1030197",
-            },
-            {
-                "rel": "parent",
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
-                "type": "application/geo+json",
-                "title": "Reference to the collection STAC file",
-            },
-            {
-                "rel": "collection",
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/BC52-calibration-collection-stac.json",
-                "type": "application/geo+json",
-                "title": "Reference to the collection STAC file",
-            },
-        ],
-        "assets": {
-            "raw_image": {
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
-                "roles": ["data"],
-                "type": "image/png",
-                "title": "Raw calibration image with id 115399",
-            },
-            "cropped_image": {
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399.png",
-                "roles": ["data"],
-                "type": "image/png",
-                "title": "Cropped calibration image with id 115399",
-                "processing:lineage": "Target cropping through template matching",
-                "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT)",
-            },
-            "calibration_properties": {
-                "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-properties.json",
-                "roles": ["metadata"],
-                "type": "application/geo+json",
-                "title": "Calibration properties for the calibration image id 115399",
-                "processing:lineage": "Focal spot extraction",
-                "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
-            },
-        },
-    }
-
+    item = make_calibration_item(
+        image=image, heliostat_data=data, processed_available=processed_available
+    )
     assert not deepdiff.DeepDiff(item, expected, ignore_numeric_type_changes=True)
 
 
