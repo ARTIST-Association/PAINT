@@ -435,6 +435,10 @@ def test_make_calibration_item(
     ----------
     calibration_item_data : Tuple[str, pd.Series]
         The test fixture.
+    processed_available: bool
+        Indicates whether processed data is available.
+    expected : Dict[str, Any]
+        The expected STAC item.
     """
     image, data = calibration_item_data
     assert isinstance(image, int)
