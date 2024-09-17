@@ -216,7 +216,7 @@ def make_calibration_item(
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Calibration properties for the calibration image id {image}",
                 "processing:lineage": "Focal spot extraction",
-                "processing:software": f"{mappings.HELIOS_KEY}, {mappings.UTIS_KEY} ({mappings.UTIS_URL})",
+                "processing:software": f"{mappings.HELIOS_KEY}{', ' + mappings.UTIS_KEY + ' (' + mappings.UTIS_URL + ')' if processed_available else ''}",
             },
             **(
                 {

@@ -416,7 +416,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "type": "application/geo+json",
                         "title": "Calibration properties for the calibration image id 115399",
                         "processing:lineage": "Focal spot extraction",
-                        "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
+                        "processing:software": "HeliOS",
                     },
                 },
             },
