@@ -127,7 +127,10 @@ def main(arguments: argparse.Namespace) -> None:
                 id_str=id_string,
                 destination_path_and_name=destination_path,
             )
-            if not copy_success:
+            if copy_success:
+                already_copied_list.append(index)
+                np.savetxt(already_copied_name, np.array(already_copied_list), fmt="%s")
+            else:
                 print(f"Image ID {id_string} could not be found.")
                 failed_copy_list.append(index)
                 np.savetxt(failed_copy_name, np.array(failed_copy_list), fmt="%s")
