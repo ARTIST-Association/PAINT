@@ -67,6 +67,10 @@ def main(arguments: argparse.Namespace) -> None:
         arguments.input_processed_available, index_col=0
     ).index.values
 
+    # Load UTIS focal spot data.
+    utis_data = pd.read_csv(arguments.input_utis)
+    utis_data.set_index(mappings.ID_INDEX, inplace=True)
+
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
@@ -152,23 +156,49 @@ def main(arguments: argparse.Namespace) -> None:
             north_offset_m=heliostat_data[mappings.TARGET_OFFSET_N],
             east_offset_m=heliostat_data[mappings.TARGET_OFFSET_E],
         )
-        calibration_properties_data = {
-            mappings.MOTOR_POS_KEY: {
-                mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
-                mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
-            },
-            mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
-                heliostat_data[mappings.CALIBRATION_TARGET]
-            ],
-            mappings.FOCAL_SPOT_KEY: {
-                mappings.HELIOS_KEY: [
-                    focal_spot_lat,
-                    focal_spot_lon,
-                    heliostat_data[mappings.TARGET_OFFSET_U],
+        if processed_available:
+            utis_lat, utis_long = add_offset_to_lat_lon(
+                north_offset_m=utis_data.loc[image][mappings.UTIS_Y],
+                east_offset_m=utis_data.loc[image][mappings.UTIS_X],
+            )
+            calibration_properties_data = {
+                mappings.MOTOR_POS_KEY: {
+                    mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
+                    mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+                },
+                mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
                 ],
-                mappings.UTIS_KEY: [0, 0, 0],
-            },
-        }
+                mappings.FOCAL_SPOT_KEY: {
+                    mappings.HELIOS_KEY: [
+                        focal_spot_lat,
+                        focal_spot_lon,
+                        heliostat_data[mappings.TARGET_OFFSET_U],
+                    ],
+                    mappings.UTIS_KEY: [
+                        utis_lat,
+                        utis_long,
+                        utis_data.loc[image][mappings.UTIS_ELEVATION],
+                    ],
+                },
+            }
+        else:
+            calibration_properties_data = {
+                mappings.MOTOR_POS_KEY: {
+                    mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
+                    mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+                },
+                mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
+                    heliostat_data[mappings.CALIBRATION_TARGET]
+                ],
+                mappings.FOCAL_SPOT_KEY: {
+                    mappings.HELIOS_KEY: [
+                        focal_spot_lat,
+                        focal_spot_lon,
+                        heliostat_data[mappings.TARGET_OFFSET_U],
+                    ],
+                },
+            }
         save_calibration_properties_path = (
             Path(arguments.output)
             / heliostat_data[mappings.HELIOSTAT_ID]
@@ -204,6 +234,7 @@ if __name__ == "__main__":
     input_processed_available = (
         Path(lsdf_root) / "paint" / "PAINT" / "processed_calibration_ids.csv"
     )
+    input_utis = Path(lsdf_root) / "paint" / "PAINT" / "utis_focal_points.csv"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -223,6 +254,12 @@ if __name__ == "__main__":
         "--input_processed_available",
         type=Path,
         default=str(input_processed_available),
+    )
+    parser.add_argument(
+        "-u",
+        "--input_utis",
+        type=Path,
+        default=str(input_utis),
     )
     parser.add_argument(
         "-o",

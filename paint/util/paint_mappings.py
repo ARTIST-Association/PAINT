@@ -239,6 +239,9 @@ TARGET_OFFSET_E = "TargetOffsetE"
 TARGET_OFFSET_N = "TargetOffsetN"
 TARGET_OFFSET_U = "TargetOffsetU"
 PAINT_REPO_URL = "https://github.com/ARTIST-Association/PAINT"
+UTIS_X = "ApX"
+UTIS_Y = "ApY"
+UTIS_ELEVATION = "ApZ"
 
 # Convert deflectometry
 FACET_KEY = "facet"
