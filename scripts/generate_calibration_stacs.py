@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
@@ -61,6 +62,11 @@ def main(arguments: argparse.Namespace) -> None:
     # Load list of available images.
     data_available = pd.read_csv(arguments.input_available)
 
+    # Load list of available processed images
+    processed_ids_available = pd.read_csv(
+        arguments.input_processed_available, index_col=0
+    ).index.values
+
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
@@ -77,18 +83,36 @@ def main(arguments: argparse.Namespace) -> None:
     # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
     data = data[~data.index.duplicated(keep="last")]
 
+    # Identify IDs where processed images are not available.
+    no_processed_ids = np.setdiff1d(data.index.values, processed_ids_available)
+
     # Generate the STAC item files for each image.
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
-        stac_item = make_calibration_item(image=image, heliostat_data=heliostat_data)
+        processed_available = True
+        if image in no_processed_ids:
+            processed_available = False
+        stac_item = make_calibration_item(
+            image=image,
+            heliostat_data=heliostat_data,
+            processed_available=processed_available,
+        )
         url = mappings.CALIBRATION_ITEM_URL % (
             heliostat_data[mappings.HELIOSTAT_ID],
             image,
         )
+        title = (
+            f"raw and processed calibration image {image} and associated calibration properties for heliostat "
+            f"{heliostat_data[mappings.HELIOSTAT_ID]}"
+        )
+        if not processed_available:
+            title = (
+                f"raw calibration image {image} and associated calibration properties for heliostat "
+                f"{heliostat_data[mappings.HELIOSTAT_ID]}"
+            )
         calibration_items.loc[len(calibration_items)] = [
             heliostat_data[mappings.HELIOSTAT_ID],
-            f"raw and cropped calibration image {image} and associated calibration properties for heliostat "
-            f"{heliostat_data[mappings.HELIOSTAT_ID]}",
+            title,
             url,
             heliostat_data[mappings.CREATED_AT],
             heliostat_data[mappings.AZIMUTH],
@@ -177,6 +201,9 @@ if __name__ == "__main__":
     input_available = (
         Path(lsdf_root) / "paint" / "PAINT" / "available_calibration_ids.csv"
     )
+    input_processed_available = (
+        Path(lsdf_root) / "paint" / "PAINT" / "processed_calibration_ids.csv"
+    )
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -190,6 +217,12 @@ if __name__ == "__main__":
         "--input_available",
         type=Path,
         default=str(input_available),
+    )
+    parser.add_argument(
+        "-p",
+        "--input_processed_available",
+        type=Path,
+        default=str(input_processed_available),
     )
     parser.add_argument(
         "-o",
