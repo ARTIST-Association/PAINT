@@ -65,7 +65,7 @@ def main(arguments: argparse.Namespace) -> None:
         The arguments containing input, output path, and directory to search for images.
     """
     # Read in the data from CSV.
-    data = pd.read_csv(arguments.input_calibration, sep=";", decimal=",")
+    data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
     # Load list of available images.
