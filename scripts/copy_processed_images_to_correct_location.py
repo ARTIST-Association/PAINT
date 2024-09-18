@@ -106,7 +106,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     # Check which files have already been copied.
     already_copied_files = list(
-        arguments.output_folder.rglob(f"*_{arguments.name_key}.png")
+        arguments.output_path.rglob(f"*_{arguments.name_key}.png")
     )
     already_copied_list = [
         file.stem.split("_")[0].asint() for file in already_copied_files
