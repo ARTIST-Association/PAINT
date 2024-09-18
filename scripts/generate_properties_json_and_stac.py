@@ -306,30 +306,3 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     main(arguments=args)
-
-
-# #
-# # # Extract facet properties data and save.
-# # saved_facet_path = (
-# #         Path(self.output_path)
-# #         / self.heliostat_id
-# #         / mappings.SAVE_PROPERTIES
-# #         / self.json_handle
-# # )
-# # saved_facet_path.parent.mkdir(parents=True, exist_ok=True)
-# # if self.raw_data:
-# #     with open(saved_facet_path, "w") as handle:
-# #         properties = {
-# #             mappings.NUM_FACETS: number_of_facets,
-# #             mappings.FACETS_LIST: [
-# #                 {
-# #                     mappings.TRANSLATION_VECTOR: facet_translation_vectors[
-# #                                                  i, :
-# #                                                  ].tolist(),
-# #                     mappings.CANTING_E: canting_e[i, :].tolist(),
-# #                     mappings.CANTING_N: canting_n[i, :].tolist(),
-# #                 }
-# #                 for i in range(number_of_facets)
-# #             ],
-# #         }
-# #         json.dump(properties, handle)
