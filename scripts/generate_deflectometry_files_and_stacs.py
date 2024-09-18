@@ -87,12 +87,20 @@ def extract_data_and_generate_stacs(
                 % (converter.heliostat_id, converter.deflectometry_created_at)
             )
         )
-        shutil.copy2(input_path.parent / pdf_name, new_pdf_name)
+        input_pdf_file = input_path.parent / pdf_name
+        results_exist = False
+
+        if input_pdf_file.exists():
+            shutil.copy2(input_path.parent / pdf_name, new_pdf_name)
+            results_exist = True
+        else:
+            print(f"NO PDF FOR {input_pdf_file}")
 
         # create stac and extract latitude and longitude
         lat_lon, stac_item = make_deflectometry_item(
             heliostat_key=converter.heliostat_id,
             heliostat_data=metadata,
+            results_exist=results_exist,
         )
         # Save item metadata for collection creation later.
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
@@ -176,7 +184,7 @@ def main(arguments: argparse.Namespace):
         already_copied_list = []
     for input_path in binp_files:
         if str(input_path) in already_copied_list:
-            print("SKipping {input_path} since already copied")
+            print(f"SKipping {input_path} since already copied")
         else:
             deflectometry_items = extract_data_and_generate_stacs(
                 arguments=arguments,
