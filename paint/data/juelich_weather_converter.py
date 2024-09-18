@@ -5,7 +5,6 @@ import pandas as pd
 
 import paint.data.juelich_weather_mappings as juelich_mappings
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 
 
 class JuelichWeatherConverter:
@@ -160,10 +159,6 @@ class JuelichWeatherConverter:
         # Append all data frames.
         full_df = pd.concat(df_list)
         print("All files concatenated!")
-        full_df.to_csv(
-            Path(PAINT_ROOT) / "TEMPDATA" / "juelich_weather_concatenated.csv"
-        )
-        print("Temporary CSV saved!")
         return full_df.sort_index()
 
     def merge_and_save_to_hdf5(self) -> pd.DataFrame:
