@@ -247,11 +247,6 @@ UTIS_ELEVATION = "ApZ"
 FACET_KEY = "facet"
 SURFACE_NORMAL_KEY = "surface_normals"
 SURFACE_POINT_KEY = "surface_points"
-FACETS_LIST = "facets"
-NUM_FACETS = "number_of_facets"
-TRANSLATION_VECTOR = "translation_vector"
-CANTING_E = "canting_e"
-CANTING_N = "canting_n"
 DEFLECTOMETRY_SUFFIX = "-deflectometry.h5"
 FACET_PROPERTIES_SUFFIX = "-facet_properties.json"
 DEFLECTOMETRY_CREATED_AT = "deflectometry_created_at"
@@ -339,6 +334,31 @@ RENOVATION_ID = "Retrofit_mechanische_Umrüstung"
 # Properties mappings
 HELIOSTAT_POSITION_KEY = "heliostat_position"
 HELIOSTAT_PROPERTIES_KEY = "heliostat_properties"
+
+# Facet properties
+FACET_1_TRANSLATION = [-0.8075, 0.6425, 0.0402]
+FACET_1_ROTATION_E = [1, 1, 1]
+FACET_1_ROTATION_N = [1, 1, 1]
+FACET_2_TRANSLATION = [0.8075, 0.6425, 0.0402]
+FACET_2_ROTATION_E = [1, 1, -1]
+FACET_2_ROTATION_N = [-1, 1, 1]
+FACET_3_TRANSLATION = [-0.8075, -0.6425, 0.0402]
+FACET_3_ROTATION_E = [1, 1, 1]
+FACET_3_ROTATION_N = [-1, 1, -1]
+FACET_4_TRANSLATION = [0.8075, -0.6425, 0.0402]
+FACET_4_ROTATION_E = [1, 1, -1]
+FACET_4_ROTATION_N = [1, 1, -1]
+FOUR_FACETS = 4
+SPAN_N = "spansN"
+SPAN_E = "spansE"
+FACETS_LIST = "facets"
+NUM_FACETS = "number_of_facets"
+TRANSLATION_VECTOR = "translation_vector"
+CANTING_E = "canting_e"
+CANTING_N = "canting_n"
+CANTING_TYPE = "canting_type"
+CANTING_KEY = "canting"
+MAP_CANTING_TO_READABLE = {"Rec": "receiver canting", "FE": "research level canting"}
 
 # Constants for WGS84
 WGS84_A = 6378137.0  # Major axis in meters
