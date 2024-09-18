@@ -6,6 +6,7 @@ import os
 import shutil
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
@@ -163,13 +164,32 @@ def main(arguments: argparse.Namespace):
     directory = Path(arguments.input_folder)
     binp_files = directory.rglob("*.binp")
 
+    already_copied_list = []
+    already_copied_files_path = (
+        Path(PAINT_ROOT) / "Deflectometry" / "already_copied.csv"
+    )
+    if already_copied_files_path.exists():
+        already_copied_list = pd.read_csv(
+            already_copied_files_path, index_col=0
+        ).index.to_list()
+    else:
+        already_copied_files_path.parent.mkdir(parents=True, exist_ok=True)
     for input_path in binp_files:
-        deflectometry_items = extract_data_and_generate_stacs(
-            arguments=arguments,
-            input_path=input_path,
-            df_heliostat_positions=df_heliostat_positions,
-            deflectometry_items=deflectometry_items,
-        )
+        if input_path in already_copied_list:
+            print("SKipping {input_path} since already copied")
+        else:
+            deflectometry_items = extract_data_and_generate_stacs(
+                arguments=arguments,
+                input_path=input_path,
+                df_heliostat_positions=df_heliostat_positions,
+                deflectometry_items=deflectometry_items,
+            )
+            deflectometry_items.to_csv(deflectometry_items_path)
+            already_copied_list.append(input_path)
+            np.savetxt(
+                already_copied_files_path, np.array(already_copied_list), fmt="%s"
+            )
+            print(f"Finished copying {input_path}")
 
     for heliostat, data in deflectometry_items.groupby(mappings.HELIOSTAT_ID):
         assert isinstance(heliostat, str)
