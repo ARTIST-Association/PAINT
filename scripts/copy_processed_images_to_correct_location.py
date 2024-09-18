@@ -184,7 +184,7 @@ if __name__ == "__main__":
         default=str(input_processed_available),
     )
     parser.add_argument(
-        "--key",
+        "--name_key",
         type=str,
         default=name_key,
     )
