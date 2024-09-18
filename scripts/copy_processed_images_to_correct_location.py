@@ -109,7 +109,7 @@ def main(arguments: argparse.Namespace) -> None:
         arguments.output_path.rglob(f"*_{arguments.name_key}.png")
     )
     already_copied_list = [
-        file.stem.split("_")[0].asint() for file in already_copied_files
+        int(file.stem.split("_")[0]) for file in already_copied_files
     ]
 
     # Drop files that have already been copied.
