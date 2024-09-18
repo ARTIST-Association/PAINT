@@ -96,20 +96,23 @@ def main(arguments: argparse.Namespace) -> None:
     data = data.loc[processed_ids_available]
 
     failed_copy_list = []
-    failed_copy_name = Path(PAINT_ROOT) / "CROPPED_FAILED_COPIES" / "failed_copy.csv"
+    failed_copy_name = (
+        Path(PAINT_ROOT) / f"{arguments.name_key} failed copies" / "failed_copy.csv"
+    )
     if failed_copy_name.exists():
         failed_copy_list = pd.read_csv(failed_copy_name, index_col=0).index.to_list()
     failed_copy_name.parent.mkdir(parents=True, exist_ok=True)
     source = Path(arguments.input_folder)
-    already_copied_list = []
-    already_copied_name = (
-        Path(PAINT_ROOT) / "CROPPED_COPY_DONE" / "cropped_already_copied.csv"
+
+    # Check which files have already been copied.
+    already_copied_files = list(
+        arguments.output_folder.rglob(f"*_{arguments.name_key}.png")
     )
-    if already_copied_name.exists():
-        already_copied_list = pd.read_csv(
-            already_copied_name, index_col=0
-        ).index.to_list()
-    already_copied_name.parent.mkdir(parents=True, exist_ok=True)
+    already_copied_list = [
+        file.stem.split("_")[0].asint() for file in already_copied_files
+    ]
+
+    # Drop files that have already been copied.
     if already_copied_list:
         data = data.drop(already_copied_list)
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
@@ -120,17 +123,14 @@ def main(arguments: argparse.Namespace) -> None:
                 Path(arguments.output_path)
                 / heliostat
                 / mappings.SAVE_CALIBRATION
-                / (id_string + "_cropped.png")
+                / (id_string + "_" + arguments.name_key + ".png")
             )
             copy_success = find_and_copy_file(
                 source_directory=source,
                 id_str=id_string,
                 destination_path_and_name=destination_path,
             )
-            if copy_success:
-                already_copied_list.append(index)
-                np.savetxt(already_copied_name, np.array(already_copied_list), fmt="%s")
-            else:
+            if not copy_success:
                 print(f"Image ID {id_string} could not be found.")
                 failed_copy_list.append(index)
                 np.savetxt(failed_copy_name, np.array(failed_copy_list), fmt="%s")
@@ -153,6 +153,7 @@ if __name__ == "__main__":
     input_processed_available = (
         Path(lsdf_root) / "paint" / "PAINT" / "processed_calibration_ids.csv"
     )
+    name_key = "cropped"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -181,6 +182,11 @@ if __name__ == "__main__":
         "--input_processed_available",
         type=Path,
         default=str(input_processed_available),
+    )
+    parser.add_argument(
+        "--key",
+        type=str,
+        default=name_key,
     )
     args = parser.parse_args()
     main(arguments=args)
