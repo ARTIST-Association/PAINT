@@ -143,7 +143,7 @@ def main(arguments: argparse.Namespace):
     # check if saved metadata exists and load if required
     deflectometry_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/deflectometry_items.csv")
     if deflectometry_items_path.exists():
-        deflectometry_items = pd.read_csv(deflectometry_items_path)
+        deflectometry_items = pd.read_csv(deflectometry_items_path, index_col=0)
     else:
         deflectometry_items_path.parent.mkdir(parents=True, exist_ok=True)
         deflectometry_items = pd.DataFrame(
@@ -164,7 +164,6 @@ def main(arguments: argparse.Namespace):
     directory = Path(arguments.input_folder)
     binp_files = directory.rglob("*.binp")
 
-    already_copied_list = []
     already_copied_files_path = (
         Path(PAINT_ROOT) / "Deflectometry" / "already_copied.csv"
     )
@@ -174,8 +173,9 @@ def main(arguments: argparse.Namespace):
         ).index.to_list()
     else:
         already_copied_files_path.parent.mkdir(parents=True, exist_ok=True)
+        already_copied_list = []
     for input_path in binp_files:
-        if input_path in already_copied_list:
+        if str(input_path) in already_copied_list:
             print("SKipping {input_path} since already copied")
         else:
             deflectometry_items = extract_data_and_generate_stacs(
