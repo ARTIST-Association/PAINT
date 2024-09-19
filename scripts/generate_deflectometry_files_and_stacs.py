@@ -94,7 +94,7 @@ def extract_data_and_generate_stacs(
             shutil.copy2(input_path.parent / pdf_name, new_pdf_name)
             results_exist = True
         else:
-            print(f"NO PDF FOR {input_pdf_file}")
+            print(f"NO PDF FOR {input_pdf_file}!")
 
         # create stac and extract latitude and longitude
         lat_lon, stac_item = make_deflectometry_item(
