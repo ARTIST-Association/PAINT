@@ -15,15 +15,15 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The command line arguments.
     """
     if not arguments.output_path.exists():
         arguments.output_path.mkdir(parents=True, exist_ok=True)
 
-    # Iterate through each folder in the main directory
+    # Iterate through each folder in the main directory.
     for folder in arguments.output_path.iterdir():
-        if folder.is_dir():  # Check if it's a directory
+        if folder.is_dir():  # Check if it's a directory.
             # Boolean flags for subfolder existence
             calibration_available = (folder / "Calibration").is_dir()
             deflectometry_available = (folder / "Deflectometry").is_dir()
