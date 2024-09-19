@@ -166,7 +166,7 @@ def main(arguments: argparse.Namespace):
             ]
         )
 
-    # load heliostat position and reformat for easy parsing
+    # Load heliostat position and reformat for easy parsing.
     df_heliostat_positions = load_and_format_heliostat_positions(arguments)
 
     directory = Path(arguments.input_folder)
