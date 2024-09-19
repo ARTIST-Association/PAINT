@@ -75,7 +75,7 @@ def test_binary_extractor(
         )
         assert os.path.exists(file_path)
 
-        # check the extracted deflectometry shapes are correct
+        # Check the extracted deflectometry shapes are correct.
         with h5py.File(file_path, "r") as file:
             for i in range(4):
                 assert torch.tensor(
