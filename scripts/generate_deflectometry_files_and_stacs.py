@@ -197,7 +197,7 @@ def main(arguments: argparse.Namespace):
             np.savetxt(
                 already_copied_files_path, np.array(already_copied_list), fmt="%s"
             )
-            print(f"Finished copying {input_path}")
+            print(f"Finished copying {input_path}!")
 
     for heliostat, data in deflectometry_items.groupby(mappings.HELIOSTAT_ID):
         assert isinstance(heliostat, str)
