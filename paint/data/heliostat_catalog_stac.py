@@ -4,7 +4,10 @@ import paint.util.paint_mappings as mappings
 
 
 def make_heliostat_catalog(
-    heliostat_id: str, include_deflectometry: bool
+    heliostat_id: str,
+    include_deflectometry: bool,
+    include_calibration: bool,
+    include_properties: bool,
 ) -> dict[str, Any]:
     """
     Generate a catalog for each heliostat STAC.
@@ -14,7 +17,11 @@ def make_heliostat_catalog(
     heliostat_id : str
         The heliostat ID for the considered heliostat.
     include_deflectometry : bool
-        Whether the deflectometry collection is included for this heliostat or not.
+        Whether the deflectometry collection is included for this heliostat.
+    include_calibration : bool
+        Whether the calibration collection is included for this heliostat.
+    include_properties : bool
+        Whether the properties collection is included for this heliostat.
 
     Returns
     -------
@@ -54,19 +61,31 @@ def make_heliostat_catalog(
                 if include_deflectometry
                 else []
             ),
-            {
-                "rel": "child",
-                "href": mappings.CALIBRATION_COLLECTION_URL
-                % (heliostat_id, heliostat_id),
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC collection containing the calibration data",
-            },
-            {
-                "rel": "child",
-                "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
-                % (heliostat_id, heliostat_id),
-                "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC collection containing the heliostat properties",
-            },
+            *(
+                [
+                    {
+                        "rel": "child",
+                        "href": mappings.CALIBRATION_COLLECTION_URL
+                        % (heliostat_id, heliostat_id),
+                        "type": mappings.MIME_GEOJSON,
+                        "title": "Reference to the STAC collection containing the calibration data",
+                    }
+                ]
+                if include_calibration
+                else []
+            ),
+            *(
+                [
+                    {
+                        "rel": "child",
+                        "href": mappings.HELIOSTAT_PROPERTIES_COLLECTION_URL
+                        % (heliostat_id, heliostat_id),
+                        "type": mappings.MIME_GEOJSON,
+                        "title": "Reference to the STAC collection containing the heliostat properties",
+                    }
+                ]
+                if include_properties
+                else []
+            ),
         ],
     }
