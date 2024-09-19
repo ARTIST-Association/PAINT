@@ -35,7 +35,7 @@ def find_and_copy_file(
     Returns
     -------
     bool
-        Indicating whether an image was copied or not.
+        Whether an image was copied or not.
     """
     # Walk through all subdirectories of the source directory.
     for root, dirs, files in os.walk(source_directory):
@@ -71,7 +71,7 @@ def main(arguments: argparse.Namespace) -> None:
     # Load list of available images.
     data_available = pd.read_csv(arguments.input_available)
 
-    # Load list of available processed images
+    # Load list of available processed images.
     processed_ids_available = pd.read_csv(
         arguments.input_processed_available, index_col=0
     ).index.values
@@ -92,7 +92,7 @@ def main(arguments: argparse.Namespace) -> None:
     # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
     data = data[~data.index.duplicated(keep="last")]
 
-    # Only consider IDs for which processed data is available
+    # Only consider IDs for which processed data is available.
     data = data.loc[processed_ids_available]
 
     failed_copy_list = []
@@ -136,10 +136,10 @@ def main(arguments: argparse.Namespace) -> None:
                 np.savetxt(failed_copy_name, np.array(failed_copy_list), fmt="%s")
 
         print(
-            f"Group of Heliostat {heliostat} processed -- see above for missed copies!"
+            f"Group of heliostat {heliostat} processed -- see above for missed copies!"
         )
 
-    print("All Heliostats have been processed!")
+    print("All heliostats have been processed!")
 
 
 if __name__ == "__main__":
