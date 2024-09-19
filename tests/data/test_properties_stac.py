@@ -215,7 +215,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "id": "AA23-heliostat_properties",
         "type": "Feature",
         "title": "Heliostat properties of AA23",
-        "description": "The heliostat properties for heliostat AA23. This includes the position of theheliostat, the kinematic applied, the facet properties, and the renovation date if theheliostat was renovated",
+        "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematic applied, the facet properties, and, if applicable, the renovation date.",
         "collection": "AA23-heliostat_properties-collection",
         "geometry": {
             "type": "Point",
