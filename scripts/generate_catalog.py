@@ -26,7 +26,8 @@ def main(arguments: argparse.Namespace) -> None:
     # Iterate through each folder in the main directory
     for folder in arguments.output_path.iterdir():
         if folder.is_dir():
-            list_of_heliostats.append(folder.name)
+            if folder.name != "Weather":
+                list_of_heliostats.append(folder.name)
 
     catalog_stac = make_catalog(data=list_of_heliostats)
     with open(arguments.output_path / mappings.CATALOG_FILE, "w") as handle:
