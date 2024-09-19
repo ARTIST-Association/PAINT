@@ -18,7 +18,7 @@ def main(arguments: argparse.Namespace) -> None:
     arguments: argparse.Namespace
         The arguments containing the output path.
     """
-    if not arguments.output_path.exist():
+    if not arguments.output_path.exists():
         arguments.output_path.mkdir(parents=True, exist_ok=True)
 
     list_of_heliostats = []
