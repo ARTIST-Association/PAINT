@@ -17,7 +17,7 @@ def make_juelich_weather_item(
     data : pd.Series
         Metadata for the Juelich weather data file.
     month_group : str
-        Month group being considered.
+        Considered month group.
 
     Returns
     -------
