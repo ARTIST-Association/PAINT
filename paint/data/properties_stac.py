@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import pandas as pd
 
@@ -7,14 +7,14 @@ from paint.util import add_offset_to_lat_lon
 from paint.util.utils import to_utc_single
 
 
-def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[str, Any]:
+def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[str, Any]:
     """
     Generate a heliostat properties STAC collection.
 
     Parameters
     ----------
     heliostat_id: str
-        The heliostat ID of the heliostat containing the collection.
+        The heliostat ID of the heliostat for which the collection should be generated.
     data: pd.DataFrame
         The dataframe containing all properties metadata.
 
@@ -104,22 +104,22 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> Dict[st
 def make_properties_item(
     heliostat_key: str,
     heliostat_data: pd.Series,
-) -> Tuple[Tuple[float, float], Dict[str, Any]]:
+) -> tuple[tuple[float, float], dict[str, Any]]:
     """
     Generate a STAC item for the heliostat properties.
 
     Parameters
     ----------
-    heliostat_key: str
+    heliostat_key : str
         The ID of the heliostat which was measured.
-    heliostat_data: pd.Series.
+    heliostat_data : pd.Series.
         The metadata for the heliostat.
 
     Returns
     -------
-    Tuple[float, float]
+    tuple[float, float]
         The latitude and longitude coordinates of the heliostat.
-    Dict[str, Any]
+    dict[str, Any]
         The STAC item data as dictionary.
     """
     resource = heliostat_key + "-heliostat_properties"
@@ -133,9 +133,8 @@ def make_properties_item(
         "id": f"{resource}",
         "type": "Feature",
         "title": f"Heliostat properties of {heliostat_key}",
-        "description": f"The heliostat properties for heliostat {heliostat_key}. This includes the position of the"
-        f"heliostat, the kinematic applied, the facet properties, and the renovation date if the"
-        f"heliostat was renovated",
+        "description": f"The heliostat properties for heliostat {heliostat_key}. These include the heliostat position,"
+        f"the kinematic applied, the facet properties, and, if applicable, the renovation date.",
         "collection": mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID % heliostat_key,
         "geometry": {
             "type": "Point",
