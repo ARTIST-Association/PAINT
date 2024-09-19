@@ -26,13 +26,13 @@ def juelich_data() -> Tuple[str, pd.Series]:
     return "2020-12", pd.Series(data)
 
 
-def test_make_juelich_item(juelich_data: Tuple[str, pd.Series]) -> None:
+def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    data : Tuple[str, pd.Series]
+    data : tuple[str, pd.Series]
         Test fixture.
     """
     month_group, juelich_item_data = juelich_data
