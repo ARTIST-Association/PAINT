@@ -15,7 +15,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The arguments containing the output path.
     """
     if not arguments.output_path.exists():
@@ -23,7 +23,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     list_of_heliostats = []
 
-    # Iterate through each folder in the main directory
+    # Iterate through each folder in the main directory.
     for folder in arguments.output_path.iterdir():
         if folder.is_dir():
             if folder.name != "Weather":
