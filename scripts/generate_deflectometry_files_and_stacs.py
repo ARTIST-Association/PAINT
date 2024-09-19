@@ -30,7 +30,7 @@ def extract_data_and_generate_stacs(
 
     This function extracts the binary data from the ``.binp`` file. After this data is extracted, it also generates
     the STAC items for the deflectometry measurement. Additionally, it collects the summary PDFs for the deflectometry
-    measurement, renames them, copies them to the appropriate location and generates a STAC for this PDF.
+    measurement, renames them, copies them to the appropriate location, and generates a STAC for this PDF.
 
     Parameters
     ----------
