@@ -1,18 +1,16 @@
 from typing import Any
 
-import pandas as pd
-
 import paint.util.paint_mappings as mappings
 
 
-def make_catalog(data: pd.DataFrame) -> dict[str, Any]:
+def make_catalog(data: list) -> dict[str, Any]:
     """
     Generate the catalog STAC.
 
     Parameters
     ----------
-    data : pd.DataFrame
-        Data containing a list of heliostats.
+    data : list
+        A list of heliostats.
 
     Returns
     -------
@@ -60,6 +58,6 @@ def make_catalog(data: pd.DataFrame) -> dict[str, Any]:
                 "title": f"Reference to the STAC catalog containing data for heliostat "
                 f"{helio_id}",
             }
-            for helio_id, _ in data.iterrows()
+            for helio_id in data
         ],
     }
