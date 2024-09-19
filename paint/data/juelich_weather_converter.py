@@ -9,15 +9,15 @@ import paint.util.paint_mappings as mappings
 
 class JuelichWeatherConverter:
     """
-    Merge the Juelich weather data and save it as multiple HDF5 file grouped by month.
+    Merge the Juelich weather data and save it as multiple HDF5 files grouped by month.
 
     Attributes
     ----------
     input_root_dir : Path
-        The root directory to being the search for weather files.
+        The root directory to search for weather files.
     output_path : Path
         The output path to save the HDF5 file.
-    files_list: list[str]
+    files_list : list[str]
         The list of files to be concatenated.
     compression_opts : dict[str, Any]
         The compression options for compressing the HDF5 file.
@@ -27,9 +27,9 @@ class JuelichWeatherConverter:
     find_weather_files()
         Find all weather files in a given directory.
     concatenate_weather()
-        Concatenates the weather files.
+        Concatenate the weather files.
     merge_and_save_to_hdf5()
-        Merges the weather files and save the merged data to multiple HDF5 files.
+        Merge the weather files and save the merged data to multiple HDF5 files.
     """
 
     def __init__(
@@ -168,7 +168,7 @@ class JuelichWeatherConverter:
         Returns
         -------
         pd.Dataframe
-         The metadata for the merged data frame to be used for STAC creation.
+            The metadata for the merged dataframe to be used for STAC creation.
         """
         full_weather_df = self.concatenate_weather()
 
@@ -182,7 +182,7 @@ class JuelichWeatherConverter:
             columns=[mappings.JUELICH_START, mappings.JUELICH_END]
         )
 
-        # Generate one hdf5 file per month.
+        # Generate one HDF5 file per month.
         for group, monthly_weather in full_weather_df.groupby(
             full_weather_df[mappings.DATE_TIME_INDEX].dt.to_period("M")
         ):
