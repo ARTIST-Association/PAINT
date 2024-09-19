@@ -4,7 +4,7 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -28,13 +28,13 @@ def extract_properties_data_and_generate_stac_item(
     heliostat_id: str,
     heliostat_data: pd.Series,
     renovation_data: pd.Series,
-    facet_data: Dict[str, Any],
-) -> Tuple[float, float]:
+    facet_data: dict[str, Any],
+) -> tuple[float, float]:
     """
-    Extract the properties data and generate associated stac items.
+    Extract the properties data and generate associated STAC items.
 
     This function extracts the properties data for a given heliostat, saves this data as a json file, and also generates
-    the associated stac item.
+    the associated STAC item.
 
     Parameters
     ----------
@@ -188,10 +188,10 @@ def extract_properties_data_and_generate_stac_item(
 
 def main(arguments: argparse.Namespace):
     """
-    Generate kinematic properties stac items and save raw data.
+    Generate kinematic properties STAC items and save raw data.
 
     This function extracts the kinematic properties data for each heliostat and saves this as a json file. Additionally,
-    the stac items for each of these files are automatically generated.
+    the STAC items for each of these files are automatically generated.
 
     Parameters
     ----------
@@ -227,7 +227,7 @@ def main(arguments: argparse.Namespace):
     # Load facet data.
     facet_dict = np.load(arguments.input_facets, allow_pickle=True).item()
 
-    # extract kinematic properties data and STAC
+    # Extract kinematic properties data and STAC.
     for key, data in df_concatenated.iterrows():
         assert isinstance(key, str)
 
