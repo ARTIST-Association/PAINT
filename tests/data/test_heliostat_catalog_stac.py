@@ -104,7 +104,20 @@ def test_make_heliostat_catalog(
     include_properties: bool,
     expected: dict[str, Any],
 ) -> None:
-    """Test STAC heliostat catalog generation."""
+    """
+    Test STAC heliostat catalog generation.
+
+    Parameters
+    ----------
+    heliostat_id: str
+    ID of the heliostat for which a STAC is generated.
+    include_deflectometry: bool
+        Whether to include deflectometry measurements.
+    include_calibration: bool
+        Whether to include calibration measurements.
+    include_properties: bool
+        Whether to include heliostat properties.
+    """
     catalog = make_heliostat_catalog(
         heliostat_id=heliostat_id,
         include_deflectometry=include_deflectometry,
