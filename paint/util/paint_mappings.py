@@ -228,7 +228,7 @@ KINEMATIC_PROPERTIES_KEY = "kinematic_properties"
 CALIBRATION_PROPERTIES_NAME = "%d-calibration-properties"
 WEATHER_DATA_KEY = "weather_data"
 
-# Calibration Properties
+# Calibration properties
 MOTOR_POS_KEY = "motor_position"
 TARGET_NAME_KEY = "target_name"
 FOCAL_SPOT_KEY = "focal_spot"
