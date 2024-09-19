@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any
 
 import deepdiff
 import pandas as pd
@@ -12,7 +12,7 @@ from paint.data.calibration_stac import (
 
 
 @pytest.fixture
-def calibration_item_data() -> Tuple[int, pd.Series]:
+def calibration_item_data() -> tuple[int, pd.Series]:
     """
     Make a fixture with data for generating a calibration item.
 
@@ -424,20 +424,20 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
     ],
 )
 def test_make_calibration_item(
-    calibration_item_data: Tuple[str, pd.Series],
+    calibration_item_data: tuple[str, pd.Series],
     processed_available: bool,
-    expected: Dict[str, Any],
+    expected: dict[str, Any],
 ) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    calibration_item_data : Tuple[str, pd.Series]
+    calibration_item_data : tuple[str, pd.Series]
         The test fixture.
-    processed_available: bool
-        Indicates whether processed data is available.
-    expected : Dict[str, Any]
+    processed_available : bool
+        Whether processed data is available.
+    expected : dict[str, Any]
         The expected STAC item.
     """
     image, data = calibration_item_data
