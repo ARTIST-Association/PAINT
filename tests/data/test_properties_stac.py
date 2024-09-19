@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import deepdiff
 import pandas as pd
 import pytest
@@ -149,16 +147,16 @@ def test_make_properties_collection(
 
 
 @pytest.fixture
-def kinematic_item_data() -> Tuple[str, pd.Series]:
+def properties_item_data() -> tuple[str, pd.Series]:
     """
-    Make a fixture with data for generating a kinematic item.
+    Make a fixture with data for generating a properties item.
 
     Returns
     -------
     str
         The heliostat ID.
     pd.Series
-        The data for the kinematic stac item.
+        The data for the properties STAC item.
     """
     data = {
         "CreatedAt": "2021-07-20 07:09:29",
@@ -199,16 +197,16 @@ def kinematic_item_data() -> Tuple[str, pd.Series]:
     return "AA23", pd.Series(data)
 
 
-def test_make_properties_item(kinematic_item_data: Tuple[str, pd.Series]) -> None:
+def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    kinematic_item_data : Tuple[str, pd.Series]
+    properties_item_data : Tuple[str, pd.Series]
         The test fixture.
     """
-    heliostat_key, data = kinematic_item_data
+    heliostat_key, data = properties_item_data
     assert isinstance(heliostat_key, str)
     _, item = make_properties_item(heliostat_key=heliostat_key, heliostat_data=data)
     expected = {
