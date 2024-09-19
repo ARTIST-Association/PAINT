@@ -45,7 +45,7 @@ def extract_data_and_generate_stacs(
 
     Returns
     -------
-    pd.DataFrame:
+    pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
     """
     # Extract binary data
