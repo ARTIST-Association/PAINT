@@ -62,7 +62,7 @@ def main(arguments: argparse.Namespace) -> None:
     # Load list of available images.
     data_available = pd.read_csv(arguments.input_available)
 
-    # Load list of available processed images
+    # Load list of available processed images.
     processed_ids_available = pd.read_csv(
         arguments.input_processed_available, index_col=0
     ).index.values
