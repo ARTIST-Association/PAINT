@@ -1,5 +1,6 @@
+from typing import List
+
 import deepdiff
-import pandas as pd
 import pytest
 
 import paint.data.catalog_stac
@@ -7,36 +8,25 @@ import paint.util.paint_mappings
 
 
 @pytest.fixture
-def catalog_data():
+def catalog_data() -> List[str]:
     """
     Make a fixture with data for generating the catalog.
 
     Returns
     -------
-    pd.DataFrame
+    List[str]
        The test fixture.
     """
-    data = {
-        "HeliostatId": ["AA23", "AA24", "AA25", "AA26"],
-        "CreatedAt": [
-            "2021-07-20 07:09:29",
-            "2021-07-20 07:09:33",
-            "2021-07-20 07:09:37",
-            "2021-07-20 07:09:41",
-        ],
-    }
-    df = pd.DataFrame(data)
-    df = df.set_index("HeliostatId")
-    return df
+    return ["AA23", "AA24", "AA25", "AA26"]
 
 
-def test_make_catalog(catalog_data: pd.DataFrame) -> None:
+def test_make_catalog(catalog_data: List[str]) -> None:
     """
     Test STAC catalog generation.
 
     Parameters
     ----------
-    catalog_data : pd.DataFrame
+    catalog_data : List[str]
         The test fixture.
     """
     catalog = paint.data.catalog_stac.make_catalog(data=catalog_data)
