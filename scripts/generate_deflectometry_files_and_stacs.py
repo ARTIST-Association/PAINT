@@ -148,7 +148,7 @@ def main(arguments: argparse.Namespace):
     arguments : argparse.Namespace
         The command line arguments.
     """
-    # check if saved metadata exists and load if required
+    # Check if saved metadata exists and load if required.
     deflectometry_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/deflectometry_items.csv")
     if deflectometry_items_path.exists():
         deflectometry_items = pd.read_csv(deflectometry_items_path, index_col=0)
