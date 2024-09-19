@@ -203,7 +203,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
 
     Parameters
     ----------
-    properties_item_data : Tuple[str, pd.Series]
+    properties_item_data : tuple[str, pd.Series]
         The test fixture.
     """
     heliostat_key, data = properties_item_data
