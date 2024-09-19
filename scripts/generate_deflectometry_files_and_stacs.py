@@ -184,7 +184,7 @@ def main(arguments: argparse.Namespace):
         already_copied_list = []
     for input_path in binp_files:
         if str(input_path) in already_copied_list:
-            print(f"SKipping {input_path} since already copied")
+            print(f"Skipping {input_path} since already copied!")
         else:
             deflectometry_items = extract_data_and_generate_stacs(
                 arguments=arguments,
