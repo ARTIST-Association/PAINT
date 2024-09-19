@@ -115,10 +115,10 @@ def make_calibration_item(
     ----------
     image: int
         The image id.
-    heliostat_data: pd.Series.
+    heliostat_data : pd.Series
         The data belonging to the heliostat.
-    processed_available: bool
-        Indicating whether processed images are available or not.
+    processed_available : bool
+        Whether processed images are available or not.
 
     Returns
     -------
