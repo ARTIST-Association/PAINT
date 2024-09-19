@@ -109,9 +109,9 @@ def make_deflectometry_item(
     ----------
     heliostat_key: str
         The ID of the heliostat which was measured.
-    heliostat_data: pd.Series.
+    heliostat_data : pd.Series
         The metadata for the heliostat.
-    results_exist: bool
+    results_exist : bool
         Whether the results PDF exists.
 
     Returns
