@@ -1,5 +1,3 @@
-from typing import List
-
 import deepdiff
 import pytest
 
@@ -8,7 +6,7 @@ import paint.util.paint_mappings
 
 
 @pytest.fixture
-def catalog_data() -> List[str]:
+def catalog_data() -> list[str]:
     """
     Make a fixture with data for generating the catalog.
 
@@ -20,7 +18,7 @@ def catalog_data() -> List[str]:
     return ["AA23", "AA24", "AA25", "AA26"]
 
 
-def test_make_catalog(catalog_data: List[str]) -> None:
+def test_make_catalog(catalog_data: list[str]) -> None:
     """
     Test STAC catalog generation.
 
