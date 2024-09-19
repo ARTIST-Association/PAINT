@@ -197,7 +197,9 @@ def test_make_deflectometry_item(
     """
     heliostat_key, data = deflectometry_item_data
     assert isinstance(heliostat_key, str)
-    _, item = make_deflectometry_item(heliostat_key=heliostat_key, heliostat_data=data)
+    _, item = make_deflectometry_item(
+        heliostat_key=heliostat_key, heliostat_data=data, results_exist=True
+    )
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
