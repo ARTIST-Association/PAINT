@@ -1,4 +1,3 @@
-import json
 import os
 import tempfile
 from pathlib import Path
@@ -58,9 +57,6 @@ def test_binary_extractor(
             + str(to_utc_single(test_data_path.name.split("_")[-1].split(".")[0]))
             + mappings.DEFLECTOMETRY_SUFFIX
         )
-        json_handle = (
-            test_data_path.name.split("_")[1] + mappings.FACET_PROPERTIES_SUFFIX
-        )
         converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
@@ -68,7 +64,7 @@ def test_binary_extractor(
             facet_header_name=facet_header_name,
             points_on_facet_struct_name=points_on_facet_struct_name,
         )
-        converter.convert_to_h5_and_extract_properties()
+        converter.convert_to_h5()
 
         # check the HDF5 file
         file_path = (
@@ -79,35 +75,9 @@ def test_binary_extractor(
         )
         assert os.path.exists(file_path)
 
-        # check the HDF5 file
-        json_file_path = (
-            Path(output_path)
-            / converter.heliostat_id
-            / mappings.SAVE_PROPERTIES
-            / json_handle
-        )
-        assert os.path.exists(json_file_path)
-
-        # check the extracted heliostat properties are correct
-        # Open the file and load the JSON data
-        with open(json_file_path, "r") as file:
-            data = json.load(file)
-        assert data[mappings.NUM_FACETS] == 4
-        num_facets = data[mappings.NUM_FACETS]
-        for i in range(num_facets):
-            assert torch.tensor(
-                data[mappings.FACETS_LIST][i][mappings.TRANSLATION_VECTOR]
-            ).shape == torch.Size([3])
-            assert torch.tensor(
-                data[mappings.FACETS_LIST][i][mappings.CANTING_E]
-            ).shape == torch.Size([3])
-            assert torch.tensor(
-                data[mappings.FACETS_LIST][i][mappings.CANTING_N]
-            ).shape == torch.Size([3])
-
-        # check the extracted deflectometry shapes are correct
+        # Check the extracted deflectometry shapes are correct.
         with h5py.File(file_path, "r") as file:
-            for i in range(num_facets):
+            for i in range(4):
                 assert torch.tensor(
                     file[f"{mappings.FACET_KEY}{i+1}"][mappings.SURFACE_NORMAL_KEY],
                     dtype=torch.float32,

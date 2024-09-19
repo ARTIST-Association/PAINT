@@ -5,15 +5,8 @@ import json
 import os
 from pathlib import Path
 
-import pandas as pd
-
 import paint.util.paint_mappings as mappings
 from paint.data.heliostat_catalog_stac import make_heliostat_catalog
-from paint.util.preprocessing import (
-    load_and_format_heliostat_axis_data,
-    load_and_format_heliostat_positions,
-    merge_and_sort_df,
-)
 
 
 def main(arguments: argparse.Namespace) -> None:
@@ -22,63 +15,41 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The command line arguments.
     """
-    arguments.output_path.mkdir(parents=True, exist_ok=True)
-    df_axis = load_and_format_heliostat_axis_data(arguments)
-    df_position = load_and_format_heliostat_positions(arguments)
-    df = merge_and_sort_df(df_heliostat_positions=df_position, df_axis=df_axis)
-    heliostats_with_deflectometry = pd.read_excel(
-        arguments.input_deflectometry_available
-    ).dropna()[mappings.INTERNAL_NAME_INDEX]
-    for heliostat, _ in df.iterrows():
-        assert isinstance(heliostat, str)
-        if heliostat in heliostats_with_deflectometry.values:
+    if not arguments.output_path.exists():
+        arguments.output_path.mkdir(parents=True, exist_ok=True)
+
+    # Iterate through each folder in the main directory.
+    for folder in arguments.output_path.iterdir():
+        if folder.is_dir():  # Check if it's a directory.
+            # Boolean flags for subfolder existence
+            calibration_available = (folder / "Calibration").is_dir()
+            deflectometry_available = (folder / "Deflectometry").is_dir()
+            properties_available = (folder / "Properties").is_dir()
             helio_catalog = make_heliostat_catalog(
-                heliostat_id=heliostat, include_deflectometry=True
+                heliostat_id=folder.name,
+                include_deflectometry=deflectometry_available,
+                include_calibration=calibration_available,
+                include_properties=properties_available,
             )
-        else:
-            helio_catalog = make_heliostat_catalog(
-                heliostat_id=heliostat, include_deflectometry=False
+            save_helio_path = (
+                Path(arguments.output_path)
+                / folder.name
+                / (mappings.HELIOSTAT_CATALOG_FILE % folder.name)
             )
-        save_helio_path = (
-            Path(arguments.output_path)
-            / heliostat
-            / (mappings.HELIOSTAT_CATALOG_FILE % heliostat)
-        )
-        save_helio_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(save_helio_path, "w") as handle:
-            json.dump(helio_catalog, handle)
+            if not save_helio_path.exists():
+                save_helio_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(save_helio_path, "w") as handle:
+                json.dump(helio_catalog, handle)
 
 
 if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
-    )
-    input_deflectometry_available = (
-        Path(lsdf_root) / "paint" / "PAINT" / "deflec_availability.xlsx"
-    )
 
     parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--input_axis",
-        type=Path,
-        default=str(input_axis),
-    )
-    parser.add_argument(
-        "--input_position",
-        type=Path,
-        default=str(input_position),
-    )
-    parser.add_argument(
-        "--input_deflectometry_available",
-        type=Path,
-        default=str(input_deflectometry_available),
-    )
     parser.add_argument(
         "--output_path",
         type=Path,

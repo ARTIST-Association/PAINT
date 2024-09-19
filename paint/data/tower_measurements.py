@@ -104,7 +104,7 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # Save coordinates for STJ upper target.
     stj_upper_coordinates = {
-        mappings.CENTER: mappings.STJ_UPPER_COORDINATES,
+        mappings.CENTER: mappings.STJ_UPPER_CENTER,
         mappings.UPPER_LEFT: stj_upper_left,
         mappings.UPPER_MIDDLE: stj_upper_middle,
         mappings.UPPER_RIGHT: stj_upper_right,
@@ -128,7 +128,7 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # Save coordinates for STJ lower target.
     stj_lower_coordinates = {
-        mappings.CENTER: mappings.STJ_LOWER_COORDINATES,
+        mappings.CENTER: mappings.STJ_LOWER_CENTER,
         mappings.UPPER_LEFT: stj_middle_left,
         mappings.UPPER_RIGHT: stj_middle_right,
         mappings.LOWER_LEFT: stj_lower_left,
@@ -144,7 +144,7 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # Save coordinates for MFT target.
     mft_coordinates = {
-        mappings.CENTER: mappings.MFT_COORDINATES,
+        mappings.CENTER: mappings.MFT_CENTER,
         mappings.UPPER_LEFT: mft_upper_left,
         mappings.UPPER_RIGHT: mft_upper_right,
         mappings.LOWER_LEFT: mft_lower_left,
@@ -179,7 +179,7 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # Save receiver coordinates.
     receiver_coordinates = {
-        mappings.CENTER: mappings.RECEIVER_COORDINATES,
+        mappings.CENTER: mappings.RECEIVER_CENTER,
         mappings.RECEIVER_OUTER_UPPER_LEFT: receiver_outer_upper_left,
         mappings.RECEIVER_OUTER_UPPER_RIGHT: receiver_outer_upper_right,
         mappings.RECEIVER_OUTER_LOWER_LEFT: receiver_outer_lower_left,

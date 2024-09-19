@@ -9,17 +9,15 @@ import paint.util.paint_mappings as mappings
 
 class JuelichWeatherConverter:
     """
-    Merge the Juelich weather data and save it as an HDF5 file.
+    Merge the Juelich weather data and save it as multiple HDF5 files grouped by month.
 
     Attributes
     ----------
     input_root_dir : Path
-        The root directory to being the search for weather files.
+        The root directory to search for weather files.
     output_path : Path
         The output path to save the HDF5 file.
-    file_name : str
-        The file name used to save the HDF5 file.
-    files_list: list[str]
+    files_list : list[str]
         The list of files to be concatenated.
     compression_opts : dict[str, Any]
         The compression options for compressing the HDF5 file.
@@ -29,16 +27,15 @@ class JuelichWeatherConverter:
     find_weather_files()
         Find all weather files in a given directory.
     concatenate_weather()
-        Concatenates the weather files.
+        Concatenate the weather files.
     merge_and_save_to_hdf5()
-        Merges the weather files and save the merged data to HDF5.
+        Merge the weather files and save the merged data to multiple HDF5 files.
     """
 
     def __init__(
         self,
         input_root_dir: str,
         output_path: str,
-        file_name: str,
         compression_method: str = "gzip",
         compression_level: int = 5,
     ) -> None:
@@ -51,8 +48,6 @@ class JuelichWeatherConverter:
             The root directory to search for weather files.
         output_path : str
             The output path to save the HDF5 file.
-        file_name : str
-            The file name used to save the HDF5 file.
         compression_method : str
             The method used to compress the HDF5 file.
         compression_level : int
@@ -62,7 +57,6 @@ class JuelichWeatherConverter:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = file_name
         self.files_list = self.find_weather_files()
         self.compression_opts = {
             "compression": compression_method,
@@ -167,46 +161,66 @@ class JuelichWeatherConverter:
         print("All files concatenated!")
         return full_df.sort_index()
 
-    def merge_and_save_to_hdf5(self) -> pd.Series:
+    def merge_and_save_to_hdf5(self) -> pd.DataFrame:
         """
         Merge the weather files and save the merged data to HDF5.
 
         Returns
         -------
-        pd.Series
-         The metadata for the merged data frame to be used for STAC creation.
+        pd.Dataframe
+            The metadata for the merged dataframe to be used for STAC creation.
         """
         full_weather_df = self.concatenate_weather()
 
-        metadata = pd.Series(
-            {
-                mappings.JUELICH_START: full_weather_df.index.min(),
-                mappings.JUELICH_END: full_weather_df.index.max(),
-            }
+        # Convert index to a datetime object.
+        full_weather_df[mappings.DATE_TIME_INDEX] = pd.to_datetime(
+            full_weather_df.index, format=mappings.TIME_FORMAT
         )
 
-        # Ccreate HDF5 file.
-        with h5py.File(self.output_path / self.file_name, "w") as file:
-            # Save the time data.
-            file.create_dataset(
-                "time", data=full_weather_df.index.to_numpy(), **self.compression_opts
-            )
+        # Generate dataframe for STAC collection creation.
+        metadata_df = pd.DataFrame(
+            columns=[mappings.JUELICH_START, mappings.JUELICH_END]
+        )
 
-            # Save each column with compression.
-            for column in full_weather_df.columns:
-                parameter_name = juelich_mappings.juelich_weather_parameter_mapping[
-                    column
-                ]
+        # Generate one HDF5 file per month.
+        for group, monthly_weather in full_weather_df.groupby(
+            full_weather_df[mappings.DATE_TIME_INDEX].dt.to_period("M")
+        ):
+            assert isinstance(group, pd.Period)
+            group_name = group.strftime("%Y-%m")
+            metadata_df.loc[group_name] = [
+                monthly_weather.index.min(),
+                monthly_weather.index.max(),
+            ]
+
+            # Create HDF5 file.
+            hdf_file_name = self.output_path / (
+                mappings.JUELICH_FILE_NAME % group.strftime("%Y-%m") + ".h5"
+            )
+            with h5py.File(hdf_file_name, "w") as file:
+                # Save the time data.
                 file.create_dataset(
-                    parameter_name,
-                    data=full_weather_df[column].to_numpy(),
+                    "time",
+                    data=monthly_weather.index.to_numpy(),
                     **self.compression_opts,
                 )
-                file[parameter_name].attrs[
-                    juelich_mappings.DESCRIPTION
-                ] = juelich_mappings.juelich_metadata_description[parameter_name]
-                file[parameter_name].attrs[
-                    juelich_mappings.UNITS
-                ] = juelich_mappings.juelich_metadata_units[parameter_name]
 
-        return metadata
+                # Save each column with compression.
+                for column in monthly_weather.drop(columns=[mappings.DATE_TIME_INDEX]):
+                    parameter_name = juelich_mappings.juelich_weather_parameter_mapping[
+                        column
+                    ]
+                    file.create_dataset(
+                        parameter_name,
+                        data=monthly_weather[column].to_numpy(),
+                        **self.compression_opts,
+                    )
+                    file[parameter_name].attrs[
+                        juelich_mappings.DESCRIPTION
+                    ] = juelich_mappings.juelich_metadata_description[parameter_name]
+                    file[parameter_name].attrs[
+                        juelich_mappings.UNITS
+                    ] = juelich_mappings.juelich_metadata_units[parameter_name]
+            print(f"HDF5 created for {group_name}!")
+
+        return metadata_df

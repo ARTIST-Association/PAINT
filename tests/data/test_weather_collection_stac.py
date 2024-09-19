@@ -66,7 +66,7 @@ def test_make_weather_collection(
             },
         ],
         "extent": {
-            "spatial": {"bbox": [[50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0]]},
+            "spatial": {"bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0]},
             "temporal": {"interval": ["2021-03-31Z22:00:00Z", "2024-02-29Z23:00:00Z"]},
         },
         "summaries": {

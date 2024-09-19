@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import deepdiff
 import pandas as pd
 import pytest
@@ -6,49 +8,52 @@ from paint.data.juelich_weather_stac_item import make_juelich_weather_item
 
 
 @pytest.fixture
-def juelich_item_data() -> pd.Series:
+def juelich_data() -> Tuple[str, pd.Series]:
     """
     Make a fixture with data for generating a Juelich weather STAC item.
 
     Returns
     -------
+    str
+        Month group considered.
     pd.Series
-        The data for the Juelich STAC item.
+        Data for the Juelich STAC item.
     """
     data = {
         "start": "2020-12-01Z01:32:00Z",
-        "end": "2021-01-15Z22:59:59Z",
+        "end": "2020-12-15Z22:59:59Z",
     }
-    return pd.Series(data)
+    return "2020-12", pd.Series(data)
 
 
-def test_make_juelich_item(juelich_item_data: pd.Series) -> None:
+def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    juelich_item_data : pd.Series
-        The test fixture.
+    data : tuple[str, pd.Series]
+        Test fixture.
     """
-    item = make_juelich_weather_item(juelich_item_data)
+    month_group, juelich_item_data = juelich_data
+    item = make_juelich_weather_item(month_group=month_group, data=juelich_item_data)
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "juelich-weather",
+        "id": "2020-12-juelich_weather",
         "type": "Feature",
-        "title": "Weather data from Juelich",
-        "description": "Weather data from the Juelich weather station",
+        "title": "Weather data from Juelich for 2020-12",
+        "description": "Weather data from the Juelich weather station for 2020-12",
         "collection": "weather-collection",
         "geometry": {"type": "Point", "coordinates": [50.916518, 6.387409, 89]},
         "bbox": [50.916518, 6.387409, 89, 50.916518, 6.387409, 89],
         "properties": {"datetime": "null"},
         "start_datetime": "2020-12-01Z01:32:00Z",
-        "end_datetime": "2021-01-15Z22:59:59Z",
+        "end_datetime": "2020-12-15Z22:59:59Z",
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/Weather/juelich-weather-item-stac",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather-item-stac",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -73,10 +78,10 @@ def test_make_juelich_item(juelich_item_data: pd.Series) -> None:
         ],
         "assets": {
             "weather_data": {
-                "href": "https://paint-database.org/WRI1030197/Weather/juelich-weather.h5",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
-                "title": "Weather data from the Juelich weather station",
+                "title": "Weather data from the Juelich weather station for 2020-12",
             }
         },
     }

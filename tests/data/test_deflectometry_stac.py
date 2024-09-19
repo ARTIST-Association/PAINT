@@ -197,7 +197,9 @@ def test_make_deflectometry_item(
     """
     heliostat_key, data = deflectometry_item_data
     assert isinstance(heliostat_key, str)
-    _, item = make_deflectometry_item(heliostat_key=heliostat_key, heliostat_data=data)
+    _, item = make_deflectometry_item(
+        heliostat_key=heliostat_key, heliostat_data=data, results_exist=True
+    )
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
@@ -211,12 +213,12 @@ def test_make_deflectometry_item(
             "coordinates": [50.914686955478864, 6.387702537483708, 88.66962],
         },
         "bbox": [
-            50.914666955478864,
-            6.387682537483708,
-            86.66962,
-            50.91470695547886,
-            6.387722537483708,
-            90.66962,
+            50.914686955478864,
+            6.387702537483708,
+            88.66962,
+            50.914686955478864,
+            6.387702537483708,
+            88.66962,
         ],
         "properties": {
             "datetime": "2023-09-18Z11:39:25Z",

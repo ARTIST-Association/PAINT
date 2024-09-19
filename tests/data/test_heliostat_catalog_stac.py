@@ -7,10 +7,12 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
 
 
 @pytest.mark.parametrize(
-    "heliostat_id, include_deflectometry, expected",
+    "heliostat_id, include_deflectometry, include_calibration, include_properties, expected",
     [
         (
             "AA23",
+            True,
+            True,
             True,
             {
                 "stac_version": "1.0.0",
@@ -56,6 +58,8 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
         (
             "AA41",
             False,
+            True,
+            True,
             {
                 "stac_version": "1.0.0",
                 "stac_extensions": [],
@@ -94,11 +98,31 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
     ],
 )
 def test_make_heliostat_catalog(
-    heliostat_id: str, include_deflectometry: bool, expected: dict[str, Any]
+    heliostat_id: str,
+    include_deflectometry: bool,
+    include_calibration: bool,
+    include_properties: bool,
+    expected: dict[str, Any],
 ) -> None:
-    """Test STAC heliostat catalog generation."""
+    """
+    Test STAC heliostat catalog generation.
+
+    Parameters
+    ----------
+    heliostat_id : str
+        ID of the heliostat for which a STAC is generated.
+    include_deflectometry : bool
+        Whether to include deflectometry measurements.
+    include_calibration : bool
+        Whether to include calibration measurements.
+    include_properties : bool
+        Whether to include heliostat properties.
+    """
     catalog = make_heliostat_catalog(
-        heliostat_id=heliostat_id, include_deflectometry=include_deflectometry
+        heliostat_id=heliostat_id,
+        include_deflectometry=include_deflectometry,
+        include_calibration=include_calibration,
+        include_properties=include_properties,
     )
 
     assert not deepdiff.DeepDiff(catalog, expected)

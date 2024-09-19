@@ -100,6 +100,7 @@ def make_deflectometry_collection(
 def make_deflectometry_item(
     heliostat_key: str,
     heliostat_data: pd.Series,
+    results_exist: bool,
 ) -> tuple[tuple[float, float], dict[str, Any]]:
     """
     Generate a STAC item for a deflectometry measurement.
@@ -108,8 +109,10 @@ def make_deflectometry_item(
     ----------
     heliostat_key: str
         The ID of the heliostat which was measured.
-    heliostat_data: pd.Series.
+    heliostat_data : pd.Series
         The metadata for the heliostat.
+    results_exist : bool
+        Whether the results PDF exists.
 
     Returns
     -------
@@ -143,12 +146,12 @@ def make_deflectometry_item(
             ],
         },
         "bbox": [
-            lat_lon[0] - mappings.BBOX_LAT_LON_DEVIATION,
-            lat_lon[1] - mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] - mappings.BBOX_ALTITUDE_DEVIATION,
-            lat_lon[0] + mappings.BBOX_LAT_LON_DEVIATION,
-            lat_lon[1] + mappings.BBOX_LAT_LON_DEVIATION,
-            heliostat_data[mappings.ALTITUDE_KEY] + mappings.BBOX_ALTITUDE_DEVIATION,
+            lat_lon[0],
+            lat_lon[1],
+            heliostat_data[mappings.ALTITUDE_KEY],
+            lat_lon[0],
+            lat_lon[1],
+            heliostat_data[mappings.ALTITUDE_KEY],
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT],
@@ -198,12 +201,18 @@ def make_deflectometry_item(
                 "title": f"Filled deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
             },
-            mappings.DEFLECTOMETRY_RESULTS_KEY: {
-                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
-                "roles": ["metadata"],
-                "type": mappings.MIME_PDF,
-                "title": f"Summary of deflectometry measurement of {heliostat_key} at "
-                f"{heliostat_data[mappings.CREATED_AT]}",
-            },
+            **(
+                {
+                    mappings.DEFLECTOMETRY_RESULTS_KEY: {
+                        "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
+                        "roles": ["metadata"],
+                        "type": mappings.MIME_PDF,
+                        "title": f"Summary of deflectometry measurement of {heliostat_key} at "
+                        f"{heliostat_data[mappings.CREATED_AT]}",
+                    }
+                }
+                if results_exist
+                else {}
+            ),
         },
     }
