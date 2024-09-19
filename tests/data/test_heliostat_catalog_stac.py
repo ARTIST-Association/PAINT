@@ -109,13 +109,13 @@ def test_make_heliostat_catalog(
 
     Parameters
     ----------
-    heliostat_id: str
-    ID of the heliostat for which a STAC is generated.
-    include_deflectometry: bool
+    heliostat_id : str
+        ID of the heliostat for which a STAC is generated.
+    include_deflectometry : bool
         Whether to include deflectometry measurements.
-    include_calibration: bool
+    include_calibration : bool
         Whether to include calibration measurements.
-    include_properties: bool
+    include_properties : bool
         Whether to include heliostat properties.
     """
     catalog = make_heliostat_catalog(
