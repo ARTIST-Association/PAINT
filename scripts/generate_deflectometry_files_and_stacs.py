@@ -96,7 +96,7 @@ def extract_data_and_generate_stacs(
         else:
             print(f"NO PDF FOR {input_pdf_file}!")
 
-        # create stac and extract latitude and longitude
+        # Create STAC and extract latitude and longitude.
         lat_lon, stac_item = make_deflectometry_item(
             heliostat_key=converter.heliostat_id,
             heliostat_data=metadata,
