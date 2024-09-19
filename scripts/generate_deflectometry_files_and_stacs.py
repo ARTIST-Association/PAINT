@@ -137,7 +137,7 @@ def extract_data_and_generate_stacs(
 
 def main(arguments: argparse.Namespace):
     """
-    Generate deflectometry STACS and facet item STACS.
+    Generate deflectometry STACs and facet item STACs.
 
     This function converts binary data to HDF5 for deflectometry measurements.
     Additionally, the deflectometry results summary PDF is moved to the correct location and renamed. Also, the STAC
