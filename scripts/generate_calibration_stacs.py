@@ -90,6 +90,8 @@ def main(arguments: argparse.Namespace) -> None:
     # Identify IDs where processed images are not available.
     no_processed_ids = np.setdiff1d(data.index.values, processed_ids_available)
 
+    num_images = len(data)
+    count = 0
     # Generate the STAC item files for each image.
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
@@ -208,6 +210,11 @@ def main(arguments: argparse.Namespace) -> None:
         save_calibration_properties_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_calibration_properties_path, "w") as handle:
             json.dump(calibration_properties_data, handle)
+        count = count + 1
+        if count % 1000 == 0:
+            print(
+                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count/num_images)*100:.2f}%"
+            )
 
     # Create the STAC collections.
     for heliostat, data in calibration_items.groupby(mappings.HELIOSTAT_ID):
@@ -222,6 +229,7 @@ def main(arguments: argparse.Namespace) -> None:
         save_path.parent.mkdir(exist_ok=True, parents=True)
         with open(save_path, "w") as out:
             json.dump(collection, out)
+    print("Script Finished With Success")
 
 
 if __name__ == "__main__":
