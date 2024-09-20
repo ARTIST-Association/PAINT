@@ -200,6 +200,14 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     tower_properties = {
+        mappings.POWER_PLANT_KEY: {
+            mappings.ID_KEY: mappings.POWER_PLANT_GPPD_ID,
+            mappings.TOWER_COORDINATES_KEY: (
+                mappings.POWER_PLANT_LAT,
+                mappings.POWER_PLANT_LON,
+                mappings.POWER_PLANT_ALT,
+            ),
+        },
         mappings.STJ_UPPER: {
             mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,

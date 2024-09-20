@@ -17,6 +17,10 @@ from paint.data.tower_measurements import get_tower_measurements
                 "Elevation": np.array([119.268, 144.82]),
             },
             {
+                "power_plant_properties": {
+                    "ID": "WRI1030197",
+                    "coordinates": (50.913296351383806, 6.387514846666862, 87),
+                },
                 "solar_tower_juelich_upper": {
                     "type": "planar",
                     "normal_vector": (0, 1, 0),
