@@ -201,18 +201,22 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     tower_properties = {
         mappings.STJ_UPPER: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
             mappings.TOWER_COORDINATES_KEY: stj_upper_coordinates,
         },
         mappings.STJ_LOWER: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
             mappings.TOWER_COORDINATES_KEY: stj_lower_coordinates,
         },
         mappings.MFT: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
             mappings.TOWER_COORDINATES_KEY: mft_coordinates,
         },
         mappings.RECEIVER: {
+            mappings.TOWER_TYPE_KEY: mappings.CONVEX_CYLINDER_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
             mappings.TOWER_COORDINATES_KEY: receiver_coordinates,
         },
