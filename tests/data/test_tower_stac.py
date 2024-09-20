@@ -39,7 +39,8 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
         "type": "Feature",
         "title": "The coordinates of different targets from the Juelich solar tower",
         "description": "The latitude, longitude, and elevation coordinates for the center and corners of all "
-        "calibration targets and the receiver for the Juelich solar tower as well as the associated normal vectors",
+        "calibration targets and the receiver for the Juelich solar tower as well as the associated normal vectors and"
+        "geometry type",
         "geometry": {
             "type": "Polygon",
             "coordinates": [
