@@ -18,6 +18,7 @@ from paint.data.tower_measurements import get_tower_measurements
             },
             {
                 "solar_tower_juelich_upper": {
+                    "type": "planar",
                     "normal_vector": (0, 1, 0),
                     "coordinates": {
                         "center": (
@@ -37,6 +38,7 @@ from paint.data.tower_measurements import get_tower_measurements
                     },
                 },
                 "solar_tower_juelich_lower": {
+                    "type": "planar",
                     "normal_vector": (0, 1, 0),
                     "coordinates": {
                         "center": (50.91338911716799, 6.387794544159513, 122.8815),
@@ -56,6 +58,7 @@ from paint.data.tower_measurements import get_tower_measurements
                     },
                 },
                 "multi_focus_tower": {
+                    "type": "planar",
                     "normal_vector": (0, 1, 0),
                     "coordinates": {
                         "center": (50.91339355918569, 6.3875444167659845, 138.97975),
@@ -66,6 +69,7 @@ from paint.data.tower_measurements import get_tower_measurements
                     },
                 },
                 "receiver": {
+                    "type": "convex_cylinder",
                     "normal_vector": (0, 1, 0),
                     "coordinates": {
                         "center": (
