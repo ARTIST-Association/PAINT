@@ -284,7 +284,7 @@ DATE_TIME_INDEX = "DateTimeIndex"
 # Tower measurement keys
 STJ_UPPER = "solar_tower_juelich_upper"
 STJ_LOWER = "solar_tower_juelich_lower"
-MFT = "multi_functions_tower"
+MFT = "multi_focus_tower"
 CENTER = "center"
 RECEIVER = "receiver"
 UPPER_RIGHT = "upper_right"
@@ -307,6 +307,9 @@ TOWER_KEY = "measurements"
 TOWER_FILE_NAME = "juelich-tower-measurements"
 TOWER_STAC_NAME = "juelich-tower-measurements-item-stac"
 TOWER_STAC_URL = f"{URL_BASE}/{TOWER_STAC_NAME}"
+TOWER_NORMAL_VECTOR = (0, 1, 0)
+TOWER_NORMAL_VECTOR_KEY = "normal_vector"
+TOWER_COORDINATES_KEY = "coordinates"
 
 CALIBRATION_TARGET_TO_NAME = {
     1: STJ_LOWER,
@@ -334,6 +337,10 @@ RENOVATION_ID = "Retrofit_mechanische_Umrüstung"
 # Properties mappings
 HELIOSTAT_POSITION_KEY = "heliostat_position"
 HELIOSTAT_PROPERTIES_KEY = "heliostat_properties"
+HELIOSTAT_WIDTH_KEY = "width"
+HELIOSTAT_HEIGHT_KEY = "height"
+HELIOSTAT_WIDTH = 3.2200000286102295
+HELIOSTAT_HEIGHT = 2.559999942779541
 
 # Facet properties
 FACET_1_TRANSLATION = [-0.8075, 0.6425, 0.0402]
