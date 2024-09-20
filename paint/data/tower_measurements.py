@@ -192,12 +192,31 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # ------------------ Final Coordinates ----------------------------------------------------
     # Create full tower measurements dictionary.
-    tower_measurements = {
+    tower_coordinates = {
         mappings.STJ_UPPER: stj_upper_coordinates,
         mappings.STJ_LOWER: stj_lower_coordinates,
         mappings.MFT: mft_coordinates,
         mappings.RECEIVER: receiver_coordinates,
     }
 
+    tower_properties = {
+        mappings.STJ_UPPER: {
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: stj_upper_coordinates,
+        },
+        mappings.STJ_LOWER: {
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: stj_lower_coordinates,
+        },
+        mappings.MFT: {
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: mft_coordinates,
+        },
+        mappings.RECEIVER: {
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: receiver_coordinates,
+        },
+    }
+
     # Also save min and max of all coordinates for STAC file.
-    return find_min_max_coordinate(tower_measurements), tower_measurements
+    return find_min_max_coordinate(tower_coordinates), tower_properties
