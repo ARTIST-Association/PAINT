@@ -6,8 +6,12 @@ ENV_PATH=/home/paint/venv
 sudo apt-get update
 sudo apt-get -y install git
 
-# Clone repository.
-git clone https://github.com/ARTIST-Association/PAINT.git $PAINT_ROOT
+# Check if repository exists, if not clone, if it exists pull.
+if [ ! -d "$PAINT_ROOT" ]; then
+  git clone https://github.com/ARTIST-Association/PAINT.git $PAINT_ROOT
+else
+  git pull
+fi
 
 # Navigate to repository and create virtual environment if it doesn't exist yet.
 cd $PAINT_ROOT
