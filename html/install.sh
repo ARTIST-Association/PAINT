@@ -4,7 +4,11 @@ ENV_PATH=/home/paint/venv
 
 # Install git.
 sudo apt-get update
-sudo apt-get -y install git python3-venv
+sudo apt-get -y install apache2 git python3-venv
+
+# Enable apache proxy.
+sudo a2enmod proxy
+sudo a2enmod proxy_http
 
 # Check if repository exists, if not clone, if it exists pull.
 if [ ! -d "$PAINT_ROOT" ]; then
