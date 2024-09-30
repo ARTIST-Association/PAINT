@@ -10,3 +10,6 @@ cd ${PAINT_ROOT}/html || exit 1
 
 # Start flask application.
 python wsgi.py &
+
+# Restart apache.
+sudo systemctl restart apache2
