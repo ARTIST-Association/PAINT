@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from flask import Flask, render_template
+from waitress import serve
 
 app = Flask(__name__)
 
@@ -97,4 +98,4 @@ def resources() -> str:
 
 
 if __name__ == "__main__":
-    app.run()
+    serve(app, host="127.0.0.1", port=8000)
