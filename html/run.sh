@@ -9,4 +9,4 @@ source $ENV_PATH/bin/activate
 cd ${PAINT_ROOT}/html || exit 1
 
 # Start flask application.
-flask run &
+python wsgi.py &
