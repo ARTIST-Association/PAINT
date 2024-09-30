@@ -25,4 +25,4 @@ source $ENV_PATH/bin/activate
 pip install --upgrade pip
 
 # Install dependencies.
-pip install .
+pip install --upgrade .
