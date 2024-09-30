@@ -29,7 +29,8 @@ dependencies = [
     "openpyxl",
     "Flask",
     "pystac",
-    "opencv-python"
+    "opencv-python",
+    "waitress"
 ]
 
 [project.optional-dependencies]
