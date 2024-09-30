@@ -10,12 +10,12 @@ sudo apt-get -y install git
 if [ ! -d "$PAINT_ROOT" ]; then
   git clone https://github.com/ARTIST-Association/PAINT.git $PAINT_ROOT
 else
-  cd $PAINT_ROOT
+  cd "${PAINT_ROOT}" || exit 1
   git pull
 fi
 
 # Navigate to repository and create virtual environment if it doesn't exist yet.
-cd $PAINT_ROOT
+cd "${PAINT_ROOT}" || exit 1
 if [ ! -d "$ENV_PATH" ]; then
   python3 -m venv $ENV_PATH
 fi

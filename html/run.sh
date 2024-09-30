@@ -6,7 +6,7 @@ ENV_PATH=/home/paint/venv
 source $ENV_PATH/bin/activate
 
 # Navigate to html directory.
-cd $PAINT_ROOT/html
+cd ${PAINT_ROOT}/html || exit 1
 
 # Start flask application.
 flask run &
