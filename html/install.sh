@@ -10,6 +10,7 @@ sudo apt-get -y install git
 if [ ! -d "$PAINT_ROOT" ]; then
   git clone https://github.com/ARTIST-Association/PAINT.git $PAINT_ROOT
 else
+  cd $PAINT_ROOT
   git pull
 fi
 
