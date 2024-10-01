@@ -30,7 +30,7 @@ def make_heliostat_catalog(
     """
     if include_deflectometry and include_calibration and include_properties:
         description = (
-            "Calibration images, deflectometry measurements and heliostat properties"
+            "Calibration images, deflectometry measurements, and heliostat properties"
         )
     elif include_deflectometry and include_calibration and not include_properties:
         description = "Calibration images and deflectometry measurements"
@@ -41,6 +41,8 @@ def make_heliostat_catalog(
     elif not include_deflectometry and not include_calibration and include_properties:
         description = "Heliostat properties"
     elif not include_deflectometry and include_calibration and not include_properties:
+        description = "Calibration images"
+    elif not include_deflectometry and include_calibration and include_properties:
         description = "Calibration images and heliostat properties"
     else:
         raise ValueError("This heliostat doesn't seem to have any data!")
