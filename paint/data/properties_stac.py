@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util import add_offset_to_lat_lon
+from paint.util import convert_gk_to_lat_long
 from paint.util.utils import to_utc_single
 
 
@@ -104,6 +104,7 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[st
 def make_properties_item(
     heliostat_key: str,
     heliostat_data: pd.Series,
+    use_wgs84: bool,
 ) -> tuple[tuple[float, float], dict[str, Any]]:
     """
     Generate a STAC item for the heliostat properties.
@@ -114,6 +115,8 @@ def make_properties_item(
         The ID of the heliostat which was measured.
     heliostat_data : pd.Series.
         The metadata for the heliostat.
+    use_wgs84 : bool
+        Indicates whether to use WGS84 coordinates.
 
     Returns
     -------
@@ -123,9 +126,10 @@ def make_properties_item(
         The STAC item data as dictionary.
     """
     resource = heliostat_key + "-heliostat_properties"
-    lat_lon = add_offset_to_lat_lon(
-        east_offset_m=heliostat_data[mappings.EAST_KEY],
-        north_offset_m=heliostat_data[mappings.NORTH_KEY],
+    lat_lon = convert_gk_to_lat_long(
+        right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.EAST_KEY],
+        height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.NORTH_KEY],
+        use_wgs84=use_wgs84,
     )
     return lat_lon, {
         "stac_version": mappings.STAC_VERSION,
