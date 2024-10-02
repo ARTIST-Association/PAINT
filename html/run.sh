@@ -11,12 +11,12 @@ source $ENV_PATH/bin/activate
 cd ${PAINT_ROOT}/html || exit 1
 
 # Copy configuration files to correct folder.
-cp paint_domain.conf $AVAILABLE_PATH/paint_domain.conf
-cp paint_domain-le-ssl.conf $AVAILABLE_PATH/paint_domain-le-ssl.conf
+sudo cp paint_domain.conf $AVAILABLE_PATH/paint_domain.conf
+sudo cp paint_domain-le-ssl.conf $AVAILABLE_PATH/paint_domain-le-ssl.conf
 
 # Create symlinks in enabled folder.
-ln -sf $AVAILABLE_PATH/paint_domain.conf $ENABLED_PATH/paint_domain.conf
-ln -sf $AVAILABLE_PATH/paint_domain-le-ssl.conf $ENABLED_PATH/paint_domain-le-ssl.conf
+sudo ln -sf $AVAILABLE_PATH/paint_domain.conf $ENABLED_PATH/paint_domain.conf
+sudo ln -sf $AVAILABLE_PATH/paint_domain-le-ssl.conf $ENABLED_PATH/paint_domain-le-ssl.conf
 
 # Start flask application.
 python wsgi.py &
