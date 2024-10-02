@@ -9,6 +9,8 @@ sudo apt-get -y install apache2 git python3-venv
 # Enable apache proxy.
 sudo a2enmod proxy
 sudo a2enmod proxy_http
+sudo a2enmod alias
+sudo a2enmod cache
 
 # Check if repository exists, if not clone, if it exists pull.
 if [ ! -d "$PAINT_ROOT" ]; then
