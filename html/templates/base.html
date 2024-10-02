@@ -40,6 +40,15 @@
                         {% else %}
                         <a href="/data" class="nav-link text-black p-3">
                         {% endif %}
+                            <i class="bi bi-clipboard-data-fill me-2"></i> Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        {% if active == "repository" %}
+                        <a href="/WRI1030197" class="nav-link text-black p-3 active" aria-current="page">
+                        {% else %}
+                        <a href="/WRI1030197" class="nav-link text-black p-3">
+                        {% endif %}
                             <i class="bi bi-database-fill me-2"></i> Data
                         </a>
                     </li>
