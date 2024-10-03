@@ -15,7 +15,7 @@
 
 <body>
     <nav class="navbar navbar-expand-lg sticky-top bg-white py-0">
-        <div class="d-flex container col-8">
+        <div class="container col-lg-8">
             <a class="mx-3 navbar-brand text-herman text-primary" href="/">
                 Paint Database
             </a>
@@ -23,7 +23,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="d-flex collapse navbar-collapse justify-content-end" id="navbar">
+            <div class="collapse navbar-collapse justify-content-end" id="navbar">
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         {% if active == "home" %}
@@ -90,12 +90,12 @@
     </nav>
 
     <!-- main content -->
-    <div class="container col-8">
+    <div class="container-fluid col-8">
         {% block content %}
         {% endblock %}
 
         <!-- footer -->
-        <footer class="d-flex flex-wrap py-3 my-4 border-top">
+        <footer class="d-flex flex-column flex-md-row justify-content-between py-3 my-4 border-top">
 
             {% if active == "privacy" %}
             <a href="/data-privacy" class="nav-link p-3 me-5 active" aria-current="page">Data privacy protection</a>

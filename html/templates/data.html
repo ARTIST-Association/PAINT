@@ -2,11 +2,11 @@
 {% set active = "data" %}
 
 {% block content %}
-<div class="position-relative text-white">
+<div class="position-relative text-white d-none d-md-block">
     <img class="img-fluid w-100" src="static/img/quartz.png">
     <div class="position-absolute top-50 start-5 translate-middle-y">
-        <h1 class="px-4 py-2 fs-large border-start border-2 border-white">Database Overview</h1>
-        <p class="my-3 fs-3">Calibration images, deflectometry measurements, kinematic information</p>
+        <h1 class="px-4 py-2 fs-large border-start border-2 border-white paint-large-header">Database Overview</h1>
+        <p class="my-3 dynamic-p paint-small-header">Calibration, deflectometry, kinematic, weather</p>
     </div>
 </div>
 
@@ -17,21 +17,21 @@ Our web page offers an <a href="/WRI1030197">HTML-browsable version</a> of the d
 <h4 class="my-4 py-2 text-primary">Data Types</h4>
 
 <dl class="row">
-    <dt class="col-sm-2 text-primary">Calibration</dt>
-    <dd class="col-sm-8">RGB photos of the focused sunlight spots of heliostats on dedicated calibration receivers.</dd>
-    <dd class="col-sm-2">Format: <a href="https://www.w3.org/TR/2003/REC-PNG-20031110/">PNG</a></dd>
+    <dt class="col-lg-2 col-12 text-primary">Calibration</dt>
+    <dd class="col-lg-8 col-12">RGB photos of the focused sunlight spots of heliostats on dedicated calibration receivers.</dd>
+    <dd class="col-lg-2 col-12">Format: <a href="https://www.w3.org/TR/2003/REC-PNG-20031110/">PNG</a></dd>
 
-    <dt class="col-sm-2 text-primary">Deflectometry</dt>
-    <dd class="col-sm-8">This measurement method allows the assessment of reflective surface properties. PAINT contains strip-pattern deflectometries of the power plant's heliostats, enabling identification of surface deformations.</dd>
-    <dd class="col-sm-2">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
+    <dt class="col-lg-2 col-12 text-primary">Deflectometry</dt>
+    <dd class="col-lg-8 col-12">This measurement method allows the assessment of reflective surface properties. PAINT contains strip-pattern deflectometries of the power plant's heliostats, enabling identification of surface deformations.</dd>
+    <dd class="col-lg-2 col-12">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
 
-    <dt class="col-sm-2 text-primary">Kinematic</dt>
-    <dd class="col-sm-8">Mechanical arrangement and angles of the heliostat motors.</dd>
-    <dd class="col-sm-2">Format: <a href="https://www.json.org/json-en.html">JSON</a></dd>
+    <dt class="col-lg-2 col-12 text-primary">Kinematic</dt>
+    <dd class="col-lg-8 col-12">Mechanical arrangement and angles of the heliostat motors.</dd>
+    <dd class="col-lg-2 col-12">Format: <a href="https://www.json.org/json-en.html">JSON</a></dd>
 
-    <dt class="col-sm-2 text-primary">Weather</dt>
-    <dd class="col-sm-8">Medium-quality data from plant-local sensors and high-quality data from the DWD weather station in Aachen-Orsbach. Measured quantities include short- and long-wave radiation, global surface irradiance, sunshine duration, cloud cover, humidity, vapor pressure, and visibility range.</dd>
-    <dd class="col-sm-2">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
+    <dt class="col-lg-2 col-12 text-primary">Weather</dt>
+    <dd class="col-lg-8 col-12">Medium-quality data from plant-local sensors and high-quality data from the DWD weather station in Aachen-Orsbach. Measured quantities include short- and long-wave radiation, global surface irradiance, sunshine duration, cloud cover, humidity, vapor pressure, and visibility range.</dd>
+    <dd class="col-lg-2 col-12">Format: <a href="https://docs.hdfgroup.org/hdf5/v1_14/_f_m_t3.html">HDF5</a></dd>
 </dl>
 
 <h4 class="my-4 py-2 text-primary">License</h4>

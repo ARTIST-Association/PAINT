@@ -53,3 +53,11 @@ ul li::marker {
 .text-herman {
     font-family: "Hermann Bold", sans-serif !important;
 }
+
+.paint-large-header {
+    font-size: calc(3vw + 1rem);
+}
+
+.paint-small-header {
+    font-size: calc(1.5vw + 0.5rem);
+}
