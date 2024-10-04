@@ -60,6 +60,11 @@ POWER_PLANT_GPPD_ID = "WRI1030197"
 POWER_PLANT_LAT = 50.913296351383806
 POWER_PLANT_LON = 6.387514846666862
 POWER_PLANT_ALT = 87
+POWER_PLANT_KEY = "power_plant_properties"
+ID_KEY = "ID"
+GK_HEIGHT_BASE = 5642086.619
+GK_RIGHT_BASE = 2527317.095
+
 
 # Target coordinates
 STJ_UPPER_COORDINATES = [
@@ -284,7 +289,7 @@ DATE_TIME_INDEX = "DateTimeIndex"
 # Tower measurement keys
 STJ_UPPER = "solar_tower_juelich_upper"
 STJ_LOWER = "solar_tower_juelich_lower"
-MFT = "multi_functions_tower"
+MFT = "multi_focus_tower"
 CENTER = "center"
 RECEIVER = "receiver"
 UPPER_RIGHT = "upper_right"
@@ -307,6 +312,12 @@ TOWER_KEY = "measurements"
 TOWER_FILE_NAME = "juelich-tower-measurements"
 TOWER_STAC_NAME = "juelich-tower-measurements-item-stac"
 TOWER_STAC_URL = f"{URL_BASE}/{TOWER_STAC_NAME}"
+TOWER_NORMAL_VECTOR = (0, 1, 0)
+TOWER_NORMAL_VECTOR_KEY = "normal_vector"
+TOWER_COORDINATES_KEY = "coordinates"
+TOWER_TYPE_KEY = "type"
+PLANAR_KEY = "planar"
+CONVEX_CYLINDER_KEY = "convex_cylinder"
 
 CALIBRATION_TARGET_TO_NAME = {
     1: STJ_LOWER,
@@ -334,6 +345,10 @@ RENOVATION_ID = "Retrofit_mechanische_Umrüstung"
 # Properties mappings
 HELIOSTAT_POSITION_KEY = "heliostat_position"
 HELIOSTAT_PROPERTIES_KEY = "heliostat_properties"
+HELIOSTAT_WIDTH_KEY = "width"
+HELIOSTAT_HEIGHT_KEY = "height"
+HELIOSTAT_WIDTH = 3.2200000286102295
+HELIOSTAT_HEIGHT = 2.559999942779541
 
 # Facet properties
 FACET_1_TRANSLATION = [-0.8075, 0.6425, 0.0402]

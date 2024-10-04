@@ -20,7 +20,7 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
                 "id": "AA23-heliostat-catalog",
                 "type": "Catalog",
                 "title": "Operational data for the heliostat AA23",
-                "description": "Calibration images, deflectometry measurements, heliostat properties, and weather data",
+                "description": "Calibration images, deflectometry measurements, and heliostat properties",
                 "links": [
                     {
                         "rel": "self",
@@ -66,7 +66,7 @@ from paint.data.heliostat_catalog_stac import make_heliostat_catalog
                 "id": "AA41-heliostat-catalog",
                 "type": "Catalog",
                 "title": "Operational data for the heliostat AA41",
-                "description": "Calibration images, deflectometry measurements, heliostat properties, and weather data",
+                "description": "Calibration images and heliostat properties",
                 "links": [
                     {
                         "rel": "self",

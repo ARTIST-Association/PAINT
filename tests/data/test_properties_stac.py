@@ -208,7 +208,9 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
     """
     heliostat_key, data = properties_item_data
     assert isinstance(heliostat_key, str)
-    _, item = make_properties_item(heliostat_key=heliostat_key, heliostat_data=data)
+    _, item = make_properties_item(
+        heliostat_key=heliostat_key, heliostat_data=data, use_wgs84=True
+    )
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
@@ -219,14 +221,14 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "collection": "AA23-heliostat_properties-collection",
         "geometry": {
             "type": "Point",
-            "coordinates": [50.913521077320304, 6.38670151979386, 88.711],
+            "coordinates": [50.913645649495926, 6.386983287938452, 88.711],
         },
         "bbox": [
-            50.913521077320304,
-            6.38670151979386,
+            50.913645649495926,
+            6.386983287938452,
             88.711,
-            50.913521077320304,
-            6.38670151979386,
+            50.913645649495926,
+            6.386983287938452,
             88.711,
         ],
         "properties": {
