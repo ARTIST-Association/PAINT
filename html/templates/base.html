@@ -130,11 +130,18 @@
 
         // Add click event listener to the "Data" nav item
         dataNavItem.addEventListener('click', function(event) {
-            // Show the spinner
+            // Show the spinner when clicking on the Data link
             dataSpinner.classList.remove('d-none');
-            dataSpinner.classList.add('d-flex'); // Show spinner (flexbox)
+            dataSpinner.classList.add('d-flex');
+        });
 
-            // Allow navigation to continue naturally after showing the spinner
+        // Handle the pageshow event to ensure the spinner is hidden when navigating back
+        window.addEventListener('pageshow', function(event) {
+            // If the page is loaded from the cache (back/forward navigation), hide the spinner
+            if (event.persisted) {
+                dataSpinner.classList.add('d-none');
+                dataSpinner.classList.remove('d-flex');
+            }
         });
     });
 </script>
