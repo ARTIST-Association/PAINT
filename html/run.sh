@@ -18,6 +18,9 @@ sudo cp paint_domain-le-ssl.conf $AVAILABLE_PATH/paint_domain-le-ssl.conf
 sudo ln -sf $AVAILABLE_PATH/paint_domain.conf $ENABLED_PATH/paint_domain.conf
 sudo ln -sf $AVAILABLE_PATH/paint_domain-le-ssl.conf $ENABLED_PATH/paint_domain-le-ssl.conf
 
+# Kill flask application.
+kill $(ps aux | grep '[p]ython wsgi.py' | awk '{print $2}')
+
 # Start flask application.
 python wsgi.py &
 
