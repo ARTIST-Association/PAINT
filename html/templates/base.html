@@ -14,6 +14,12 @@
 </head>
 
 <body>
+    <div id="dataSpinner" class="d-none justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-white" style="z-index: 1050;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
     <nav class="navbar navbar-expand-lg sticky-top bg-white py-0">
         <div class="container col-lg-8">
             <a class="mx-3 navbar-brand text-herman text-primary" href="/">
@@ -45,9 +51,9 @@
                     </li>
                     <li class="nav-item">
                         {% if active == "repository" %}
-                        <a href="/WRI1030197" class="nav-link text-black p-3 active" aria-current="page">
+                        <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 active" aria-current="page">
                         {% else %}
-                        <a href="/WRI1030197" class="nav-link text-black p-3">
+                        <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3">
                         {% endif %}
                             <i class="bi bi-database-fill me-2"></i> Data
                         </a>
@@ -113,6 +119,25 @@
             <span class="ml-auto fw-lighter p-3">© 2024 Artist Association</span>
         </footer>
      </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the "Data" nav item link by its ID
+        var dataNavItem = document.getElementById('dataNavItem');
+
+        // Get the spinner
+        var dataSpinner = document.getElementById('dataSpinner');
+
+        // Add click event listener to the "Data" nav item
+        dataNavItem.addEventListener('click', function(event) {
+            // Show the spinner
+            dataSpinner.classList.remove('d-none');
+            dataSpinner.classList.add('d-flex'); // Show spinner (flexbox)
+
+            // Allow navigation to continue naturally after showing the spinner
+        });
+    });
+</script>
 
 </body>
 
