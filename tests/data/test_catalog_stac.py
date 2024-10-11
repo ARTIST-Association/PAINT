@@ -56,7 +56,7 @@ def test_make_catalog(catalog_data: list[str]) -> None:
             },
             {
                 "rel": "child",
-                "href": "https://paint-database.org/WRI1030197/juelich-tower-measurements-item-stac",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-tower-measurements-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the STAC item containing the tower measurement data",
             },

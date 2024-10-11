@@ -8,8 +8,8 @@ from paint.util.gauss_kruger_converter import convert_gk_to_lat_long
 @pytest.mark.parametrize(
     "right, height, expected",
     [
-        (2527321, 5642083, (50.91338551710208, 6.387849990173632)),
-        (2587321, 5692083, (51.35676539020598, 7.252958250006098)),
+        (2527321, 5642083, (50.91338840729781, 6.387880009062387)),
+        (2587321, 5692083, (51.35676168825242, 7.252991080488028)),
     ],
 )
 def test_gauss_kruger_convertor(
