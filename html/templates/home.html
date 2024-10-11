@@ -2,11 +2,11 @@
 {% set active = "home" %}
 
 {% block content %}
-<div class="position-relative text-white">
+<div class="position-relative text-white d-none d-md-block">
     <img class="img-fluid w-100" src="static/img/heliostats.png">
     <div class="position-absolute top-50 start-5 translate-middle-y">
-        <h1 class="px-4 py-2 fs-large border-start border-2 border-white">PAINT</h1>
-        <p class="my-3 fs-3">A FAIR database for operational data of CSPs</p>
+        <h1 class="px-4 py-2 border-start border-2 border-white dynamic-h1 paint-large-header">PAINT</h1>
+        <p class="my-3 dynamic-p paint-small-header">A FAIR database for operational data of CSPs</p>
     </div>
 </div>
 
@@ -14,7 +14,7 @@
 
 The PAINT database makes operational data of concentrating solar power plants available in accordance with the <a href="https://www.nature.com/articles/sdata201618">FAIR data principles</a>, i.e., making them findable, accessible, interoperable, and reusable.
 
-Currently, the data encompasses calibration images, deflectometry measurements, kinematic settings, and weather information of the concentrating solar power plant in Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries follow the <a href="https://stacspec.org/en">spatio-temporal asset catalog (STAC) standard</a>.
+Currently, the <a href="/WRI1030197">data</a> encompasses calibration images, deflectometry measurements, kinematic settings, and weather information of the concentrating solar power plant in Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries follow the <a href="https://stacspec.org/en">spatio-temporal asset catalog (STAC) standard</a>.
 
 PAINT closely follows open science guidelines and makes all software to (pre-)process data publicly available in the <a href="https://github.com/ARTIST-Association/PAINT/">project's source code repository</a>.
 

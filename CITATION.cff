@@ -1,0 +1,81 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: PAINT
+message: >-
+  If you use this dataset, please cite it using the metadata
+  from this file.
+type: dataset
+authors:
+  - given-names: Max
+    family-names: Pargmann
+    email: max.pargmann@dlr.de
+    affiliation: German Aerospace Center (DLR)
+    orcid: 'https://orcid.org/0000-0002-4705-6285'
+  - given-names: Kaleb
+    family-names: Phipps
+    email: kaleb.phipps@kit.edu
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    orcid: 'https://orcid.org/0000-0002-9197-1739'
+  - given-names: Marie
+    family-names: Weiel
+    email: marie.weiel@kit.edu
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    orcid: 'https://orcid.org/0000-0001-9648-4385'
+  - given-names: Mathias
+    family-names: Kuhl
+    email: mathias.kuhl@dlr.de
+    affiliation: German Aerospace Center (DLR)
+    orcid: 'https://orcid.org/0000-0003-0097-7260'
+  - given-names: Marlene
+    family-names: Busch
+    email: marlene.busch@dlr.de
+    affiliation: German Aerospace Center (DLR)
+  - given-names: Felix
+    family-names: Göhring
+    email: felix.goehring@dlr.de
+    affiliation: German Aerospace Center (DLR)
+  - given-names: Daniel
+    family-names: Maldonado Quinto
+    email: daniel.maldonadoquinto@dlr.de
+    affiliation: German Aerospace Center (DLR)
+  - given-names: Robert
+    family-names: Pitz-Paal
+    orcid: 'https://orcid.org/0000-0002-3542-3391'
+    email: rRobert.pitz-paal@dlr.de
+    affiliation: German Aerospace Center (DLR)
+  - given-names: Moritz
+    family-names: Leibauer
+    email: moritz.leibauer@synhelion.com
+    affiliation: Synhelion Germany
+  - given-names: Markus
+    family-names: Götz
+    email: markus.goetz@kit.edu
+    affiliation: Karlsruhe Institute of Technology (KIT)
+    orcid: 'https://orcid.org/0000-0002-2233-1041'
+repository-code: 'https://github.com/ARTIST-Association/PAINT'
+url: 'https://www.paint-database.org'
+abstract: >-
+  The PAINT database makes operational data of concentrating
+  solar power plants available in accordance with the FAIR
+  data principles, i.e., making them findable, accessible,
+  interoperable, and reusable. Currently, the data
+  encompasses calibration images, deflectometry
+  measurements, kinematic settings, and weather information
+  of the concentrating solar power plant in Jülich, Germany,
+  with the global power plant id (GPPD) WRI1030197. Metadata
+  for all database entries follow the spatio-temporal asset
+  catalog (STAC) standard. PAINT closely follows open
+  science guidelines and makes all software to (pre-)process
+  data publicly available in the project's source code
+  repository.
+keywords:
+  - Solar Tower Power Plant
+  - Concentrated Solar Energy
+  - Database
+  - Heliostat Calibration
+  - Deflectometry
+  - Surface Reconstruction
+  - Benchmark
+license: CDLA 2.0
