@@ -57,7 +57,7 @@ def make_juelich_weather_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_STAC_NAME % month_group}",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_STAC_NAME % month_group}.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
