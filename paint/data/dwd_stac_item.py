@@ -54,7 +54,7 @@ def make_dwd_item(
         "links": [
             {
                 "rel": "self",
-                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.DWD_STAC_NAME}",
+                "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.DWD_STAC_NAME}.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },
