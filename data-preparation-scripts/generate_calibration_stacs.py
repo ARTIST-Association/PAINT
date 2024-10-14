@@ -229,7 +229,7 @@ def main(arguments: argparse.Namespace) -> None:
         save_path.parent.mkdir(exist_ok=True, parents=True)
         with open(save_path, "w") as out:
             json.dump(collection, out)
-    print("Script Finished With Success")
+    print("Script finished with success!")
 
 
 if __name__ == "__main__":
