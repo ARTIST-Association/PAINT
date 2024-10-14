@@ -28,13 +28,34 @@ def make_heliostat_catalog(
     dict[str, Any]
         The STAC catalog as dictionary
     """
+    if include_deflectometry and include_calibration and include_properties:
+        description = (
+            "Calibration images, deflectometry measurements, and heliostat properties"
+        )
+    elif include_deflectometry and include_calibration and not include_properties:
+        description = "Calibration images and deflectometry measurements"
+    elif include_deflectometry and not include_calibration and include_properties:
+        description = "Deflectometry measurements and heliostat properties"
+    elif include_deflectometry and not include_calibration and not include_properties:
+        description = "Deflectometry measurements"
+    elif not include_deflectometry and not include_calibration and include_properties:
+        description = "Heliostat properties"
+    elif not include_deflectometry and include_calibration and not include_properties:
+        description = "Calibration images"
+    elif not include_deflectometry and include_calibration and include_properties:
+        description = "Calibration images and heliostat properties"
+    else:
+        raise ValueError(
+            f"This heliostat {heliostat_id} doesn't seem to have any data!"
+        )
+
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [],
         "id": mappings.HELIOSTAT_CATALOG_ID % heliostat_id,
         "type": mappings.CATALOG,
         "title": f"Operational data for the heliostat {heliostat_id}",
-        "description": "Calibration images, deflectometry measurements, heliostat properties, and weather data",
+        "description": description,
         "links": [
             {
                 "rel": "self",

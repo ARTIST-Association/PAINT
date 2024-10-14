@@ -14,7 +14,7 @@ from paint.data.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
-from paint.util import add_offset_to_lat_lon
+from paint.util import convert_gk_to_lat_long
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
@@ -90,6 +90,8 @@ def main(arguments: argparse.Namespace) -> None:
     # Identify IDs where processed images are not available.
     no_processed_ids = np.setdiff1d(data.index.values, processed_ids_available)
 
+    num_images = len(data)
+    count = 0
     # Generate the STAC item files for each image.
     for image, heliostat_data in data.iterrows():
         assert isinstance(image, int)
@@ -152,14 +154,14 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(stac_item, handle)
 
         # Save associated calibration properties.
-        focal_spot_lat, focal_spot_lon = add_offset_to_lat_lon(
-            north_offset_m=heliostat_data[mappings.TARGET_OFFSET_N],
-            east_offset_m=heliostat_data[mappings.TARGET_OFFSET_E],
+        focal_spot_lat, focal_spot_lon = convert_gk_to_lat_long(
+            right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_E],
+            height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_N],
         )
         if processed_available:
-            utis_lat, utis_long = add_offset_to_lat_lon(
-                north_offset_m=utis_data.loc[image][mappings.UTIS_Y],
-                east_offset_m=utis_data.loc[image][mappings.UTIS_X],
+            utis_lat, utis_long = convert_gk_to_lat_long(
+                right=mappings.GK_RIGHT_BASE + utis_data.loc[image][mappings.UTIS_X],
+                height=mappings.GK_HEIGHT_BASE + utis_data.loc[image][mappings.UTIS_Y],
             )
             calibration_properties_data = {
                 mappings.MOTOR_POS_KEY: {
@@ -208,6 +210,11 @@ def main(arguments: argparse.Namespace) -> None:
         save_calibration_properties_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_calibration_properties_path, "w") as handle:
             json.dump(calibration_properties_data, handle)
+        count = count + 1
+        if count % 1000 == 0:
+            print(
+                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count/num_images)*100:.2f}%."
+            )
 
     # Create the STAC collections.
     for heliostat, data in calibration_items.groupby(mappings.HELIOSTAT_ID):
@@ -222,6 +229,7 @@ def main(arguments: argparse.Namespace) -> None:
         save_path.parent.mkdir(exist_ok=True, parents=True)
         with open(save_path, "w") as out:
             json.dump(collection, out)
+    print("Script finished with success!")
 
 
 if __name__ == "__main__":

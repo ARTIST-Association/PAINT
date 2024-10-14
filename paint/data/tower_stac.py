@@ -28,7 +28,8 @@ def make_tower_item(
         "type": "Feature",
         "title": "The coordinates of different targets from the Juelich solar tower",
         "description": "The latitude, longitude, and elevation coordinates for the center and corners of all "
-        "calibration targets and the receiver for the Juelich solar tower",
+        "calibration targets and the receiver for the Juelich solar tower as well as the associated normal vectors, "
+        "geometry type, and properties of the power plant",
         "geometry": {
             "type": "Polygon",
             "coordinates": [

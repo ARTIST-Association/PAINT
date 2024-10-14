@@ -219,14 +219,14 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "collection": "AA23-heliostat_properties-collection",
         "geometry": {
             "type": "Point",
-            "coordinates": [50.913521077320304, 6.38670151979386, 88.711],
+            "coordinates": [50.9136480567095, 6.386990188439183, 88.711],
         },
         "bbox": [
-            50.913521077320304,
-            6.38670151979386,
+            50.9136480567095,
+            6.386990188439183,
             88.711,
-            50.913521077320304,
-            6.38670151979386,
+            50.9136480567095,
+            6.386990188439183,
             88.711,
         ],
         "properties": {

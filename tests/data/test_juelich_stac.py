@@ -53,7 +53,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather-item-stac",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },

@@ -58,7 +58,8 @@ def extract_properties_data_and_generate_stac_item(
     """
     # Generate properties STAC.
     lat_lon, properties_stac = make_properties_item(
-        heliostat_key=heliostat_id, heliostat_data=heliostat_data
+        heliostat_key=heliostat_id,
+        heliostat_data=heliostat_data,
     )
 
     # Save properties STAC.
@@ -167,6 +168,8 @@ def extract_properties_data_and_generate_stac_item(
             lat_lon[1],
             heliostat_data[mappings.ALTITUDE_KEY],
         ],
+        mappings.HELIOSTAT_HEIGHT_KEY: mappings.HELIOSTAT_HEIGHT,
+        mappings.HELIOSTAT_WIDTH_KEY: mappings.HELIOSTAT_WIDTH,
         mappings.KINEMATIC_PROPERTIES_KEY: kinematic_data,
         mappings.FACET_PROPERTIES_KEY: facets_dict,
         mappings.RENOVATION_PROPERTIES_KEY: renovation_date,

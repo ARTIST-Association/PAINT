@@ -62,7 +62,7 @@ def main(arguments: argparse.Namespace) -> None:
 
         weather_items.loc[len(weather_items)] = [
             f"Juelich weather data for {group_name}",
-            mappings.JUELICH_STAC_URL % group_name,
+            f"{mappings.JUELICH_STAC_URL % group_name}.json",
             metadata[mappings.JUELICH_START],
             metadata[mappings.JUELICH_END],
             mappings.JUELICH_WEATHER_LAT,
