@@ -213,7 +213,7 @@ def main(arguments: argparse.Namespace) -> None:
         count = count + 1
         if count % 1000 == 0:
             print(
-                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count/num_images)*100:.2f}%"
+                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count/num_images)*100:.2f}%."
             )
 
     # Create the STAC collections.
