@@ -116,5 +116,5 @@ def to_utc_single(datetime_str: str, local_tz: str = "Europe/Berlin") -> str:
     # Convert the localized datetime to UTC
     utc_time = local_time.astimezone(pytz.utc)
 
-    # Return the UTC datetime as a string
+    # Return the UTC datetime as a string.
     return utc_time.strftime(mappings.TIME_FORMAT)
