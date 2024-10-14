@@ -17,7 +17,7 @@ The PAINT database makes operational data of concentrating solar power plants av
 principles, i.e., making them findable, accessible, interoperable, and reusable. Currently, the data encompasses
 calibration images, deflectometry measurements, kinematic settings, and weather information of the concentrating solar
 power plant in Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries
-follow the spatio-temporal asset catalog (STAC) standard.
+follows the spatio-temporal asset catalog (STAC) standard.
 
 ## Installation
 We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can
@@ -37,14 +37,14 @@ Alternatively, you can install ``PAINT`` locally. To achieve this, there are two
 The ``PAINT`` repository is structured as shown below:
 ```
 .
-├── data-preparation-scripts #scripts used to generate STAC files and structure data
-├── html #code for the paint-database.org website
-├── markers #saved markers for the WRI1030197 power plant in Jülich
-├── paint #python package/
+├── data-preparation-scripts # Scripts used to generate STAC files and structure data
+├── html # Code for the paint-database.org website
+├── markers # Saved markers for the WRI1030197 power plant in Jülich
+├── paint # Python package/
 │   ├── data
 │   └── util
-├── plots #scripts to generate plots
-└── tests #tests for the python package/
+├── plots # Scripts to generate plots
+└── tests # Tests for the python package/
     ├── data
     └── util
 ```
