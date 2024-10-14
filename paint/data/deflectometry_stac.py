@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util.utils import add_offset_to_lat_lon
+from paint.util import convert_gk_to_lat_long
 
 
 def make_deflectometry_collection(
@@ -124,9 +124,9 @@ def make_deflectometry_item(
     resource = (
         heliostat_key + "-" + heliostat_data[mappings.CREATED_AT] + "-deflectometry"
     )
-    lat_lon = add_offset_to_lat_lon(
-        east_offset_m=heliostat_data[mappings.EAST_KEY],
-        north_offset_m=heliostat_data[mappings.NORTH_KEY],
+    lat_lon = convert_gk_to_lat_long(
+        right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.EAST_KEY],
+        height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.NORTH_KEY],
     )
     return lat_lon, {
         "stac_version": mappings.STAC_VERSION,

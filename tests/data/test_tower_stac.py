@@ -35,10 +35,12 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "juelich-tower-measurements",
+        "id": "WRI1030197-tower-measurements",
         "type": "Feature",
         "title": "The coordinates of different targets from the Juelich solar tower",
-        "description": "The latitude, longitude, and elevation coordinates for the center and corners of all calibration targets and the receiver for the Juelich solar tower",
+        "description": "The latitude, longitude, and elevation coordinates for the center and corners of all "
+        "calibration targets and the receiver for the Juelich solar tower as well as the associated normal vectors, "
+        "geometry type, and properties of the power plant",
         "geometry": {
             "type": "Polygon",
             "coordinates": [
@@ -58,7 +60,7 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/juelich-tower-measurements-item-stac.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-tower-measurements-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -77,7 +79,7 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
         ],
         "assets": {
             "measurements": {
-                "href": "https://paint-database.org/WRI1030197/juelich-tower-measurements.json",
+                "href": "https://paint-database.org/WRI1030197/WRI1030197-tower-measurements.json",
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Tower measurement properties",

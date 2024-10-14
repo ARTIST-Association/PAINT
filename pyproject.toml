@@ -30,7 +30,8 @@ dependencies = [
     "Flask",
     "pystac",
     "opencv-python",
-    "waitress"
+    "waitress",
+    "pyproj"
 ]
 
 [project.optional-dependencies]

@@ -137,10 +137,22 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     # ------------------ Multi Focus Tower (MFT) Coordinates ----------------------------------------------------
-    mft_upper_left = convert_gk_to_lat_long(2527302.216, 5642083.778) + (142.175,)
-    mft_upper_right = convert_gk_to_lat_long(2527296.804, 5642083.786) + (142.172,)
-    mft_lower_right = convert_gk_to_lat_long(2527296.794, 5642083.779) + (135.783,)
-    mft_lower_left = convert_gk_to_lat_long(2527302.206, 5642083.784) + (135.789,)
+    mft_upper_left = convert_gk_to_lat_long(
+        2527302.216,
+        5642083.778,
+    ) + (142.175,)
+    mft_upper_right = convert_gk_to_lat_long(
+        2527296.804,
+        5642083.786,
+    ) + (142.172,)
+    mft_lower_right = convert_gk_to_lat_long(
+        2527296.794,
+        5642083.779,
+    ) + (135.783,)
+    mft_lower_left = convert_gk_to_lat_long(
+        2527302.206,
+        5642083.784,
+    ) + (135.789,)
 
     # Save coordinates for MFT target.
     mft_coordinates = {
@@ -152,30 +164,38 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     # ------------------ Receiver Coordinates ----------------------------------------------------
-    receiver_outer_upper_left = convert_gk_to_lat_long(2527319.349, 5642087.315) + (
-        144.805,
-    )
-    receiver_inner_upper_left = convert_gk_to_lat_long(2527319.163, 5642087.223) + (
-        144.592,
-    )
-    receiver_inner_upper_right = convert_gk_to_lat_long(2527315.028, 5642087.236) + (
-        144.593,
-    )
-    receiver_outer_upper_right = convert_gk_to_lat_long(2527314.796, 5642087.343) + (
-        144.82,
-    )
-    receiver_outer_lower_left = convert_gk_to_lat_long(2527319.322, 5642084.89) + (
-        139.596,
-    )
-    receiver_inner_lower_left = convert_gk_to_lat_long(2527319.155, 5642085.008) + (
-        139.86,
-    )
-    receiver_inner_lower_right = convert_gk_to_lat_long(2527315.032, 5642084.998) + (
-        139.862,
-    )
-    receiver_outer_lower_right = convert_gk_to_lat_long(2527314.818, 5642084.892) + (
-        139.592,
-    )
+    receiver_outer_upper_left = convert_gk_to_lat_long(
+        2527319.349,
+        5642087.315,
+    ) + (144.805,)
+    receiver_inner_upper_left = convert_gk_to_lat_long(
+        2527319.163,
+        5642087.223,
+    ) + (144.592,)
+    receiver_inner_upper_right = convert_gk_to_lat_long(
+        2527315.028,
+        5642087.236,
+    ) + (144.593,)
+    receiver_outer_upper_right = convert_gk_to_lat_long(
+        2527314.796,
+        5642087.343,
+    ) + (144.82,)
+    receiver_outer_lower_left = convert_gk_to_lat_long(
+        2527319.322,
+        5642084.89,
+    ) + (139.596,)
+    receiver_inner_lower_left = convert_gk_to_lat_long(
+        2527319.155,
+        5642085.008,
+    ) + (139.86,)
+    receiver_inner_lower_right = convert_gk_to_lat_long(
+        2527315.032,
+        5642084.998,
+    ) + (139.862,)
+    receiver_outer_lower_right = convert_gk_to_lat_long(
+        2527314.818,
+        5642084.892,
+    ) + (139.592,)
 
     # Save receiver coordinates.
     receiver_coordinates = {
@@ -192,12 +212,43 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
 
     # ------------------ Final Coordinates ----------------------------------------------------
     # Create full tower measurements dictionary.
-    tower_measurements = {
+    tower_coordinates = {
         mappings.STJ_UPPER: stj_upper_coordinates,
         mappings.STJ_LOWER: stj_lower_coordinates,
         mappings.MFT: mft_coordinates,
         mappings.RECEIVER: receiver_coordinates,
     }
 
+    tower_properties = {
+        mappings.POWER_PLANT_KEY: {
+            mappings.ID_KEY: mappings.POWER_PLANT_GPPD_ID,
+            mappings.TOWER_COORDINATES_KEY: (
+                mappings.POWER_PLANT_LAT,
+                mappings.POWER_PLANT_LON,
+                mappings.POWER_PLANT_ALT,
+            ),
+        },
+        mappings.STJ_UPPER: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: stj_upper_coordinates,
+        },
+        mappings.STJ_LOWER: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: stj_lower_coordinates,
+        },
+        mappings.MFT: {
+            mappings.TOWER_TYPE_KEY: mappings.PLANAR_KEY,
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: mft_coordinates,
+        },
+        mappings.RECEIVER: {
+            mappings.TOWER_TYPE_KEY: mappings.CONVEX_CYLINDER_KEY,
+            mappings.TOWER_NORMAL_VECTOR_KEY: mappings.TOWER_NORMAL_VECTOR,
+            mappings.TOWER_COORDINATES_KEY: receiver_coordinates,
+        },
+    }
+
     # Also save min and max of all coordinates for STAC file.
-    return find_min_max_coordinate(tower_measurements), tower_measurements
+    return find_min_max_coordinate(tower_coordinates), tower_properties
