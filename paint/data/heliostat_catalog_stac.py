@@ -45,7 +45,9 @@ def make_heliostat_catalog(
     elif not include_deflectometry and include_calibration and include_properties:
         description = "Calibration images and heliostat properties"
     else:
-        raise ValueError("This heliostat doesn't seem to have any data!")
+        raise ValueError(
+            f"This heliostat {heliostat_id} doesn't seem to have any data!"
+        )
 
     return {
         "stac_version": mappings.STAC_VERSION,
