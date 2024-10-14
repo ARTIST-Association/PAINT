@@ -20,9 +20,7 @@ def main(arguments: argparse.Namespace) -> None:
         The arguments containing the output path.
     """
     # Load measurements.
-    extreme_measurements, tower_measurements = get_tower_measurements(
-        use_wgs84=arguments.use_wgs84
-    )
+    extreme_measurements, tower_measurements = get_tower_measurements()
 
     # Create STAC item.
     tower_stac = make_tower_item(extreme_measurements)
@@ -55,12 +53,6 @@ if __name__ == "__main__":
         "--output",
         type=Path,
         default=str(output_folder),
-    )
-    parser.add_argument(
-        "-u",
-        "--use_wgs84",
-        type=bool,
-        default=True,
     )
     args = parser.parse_args()
 

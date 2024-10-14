@@ -53,7 +53,7 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather-item-stac",
+                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },

@@ -14,7 +14,7 @@ from paint.data.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
-from paint.util import add_offset_to_lat_lon
+from paint.util import convert_gk_to_lat_long
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
@@ -154,14 +154,14 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(stac_item, handle)
 
         # Save associated calibration properties.
-        focal_spot_lat, focal_spot_lon = add_offset_to_lat_lon(
-            north_offset_m=heliostat_data[mappings.TARGET_OFFSET_N],
-            east_offset_m=heliostat_data[mappings.TARGET_OFFSET_E],
+        focal_spot_lat, focal_spot_lon = convert_gk_to_lat_long(
+            right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_E],
+            height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_N],
         )
         if processed_available:
-            utis_lat, utis_long = add_offset_to_lat_lon(
-                north_offset_m=utis_data.loc[image][mappings.UTIS_Y],
-                east_offset_m=utis_data.loc[image][mappings.UTIS_X],
+            utis_lat, utis_long = convert_gk_to_lat_long(
+                right=mappings.GK_RIGHT_BASE + utis_data.loc[image][mappings.UTIS_X],
+                height=mappings.GK_HEIGHT_BASE + utis_data.loc[image][mappings.UTIS_Y],
             )
             calibration_properties_data = {
                 mappings.MOTOR_POS_KEY: {

@@ -64,9 +64,7 @@ def find_min_max_coordinate(
     }
 
 
-def get_tower_measurements(
-    use_wgs84: bool,
-) -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
+def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     """
     Generate the tower measurement data.
 
@@ -74,11 +72,6 @@ def get_tower_measurements(
     them to latitude and longitude coordinates, considers the elevation and returns these values in a dictionary.
     Additionally, the min and max values for each of the dimensions in the coordinates are saved for the STAC item
     creation.
-
-    Parameters
-    ----------
-    use_wgs84 : bool
-        Indicates whether to use WGS84 coordinates.
 
     Returns
     -------
@@ -91,27 +84,22 @@ def get_tower_measurements(
     stj_upper_left = convert_gk_to_lat_long(
         2527321.418,
         5642083.398,
-        use_wgs84=use_wgs84,
     ) + (133.684,)
     stj_upper_middle = convert_gk_to_lat_long(
         2527317.1,
         5642083.369,
-        use_wgs84=use_wgs84,
     ) + (133.71,)
     stj_upper_right = convert_gk_to_lat_long(
         2527312.789,
         5642083.369,
-        use_wgs84=use_wgs84,
     ) + (133.719,)
     stj_middle_left = convert_gk_to_lat_long(
         2527321.423,
         5642083.387,
-        use_wgs84=use_wgs84,
     ) + (126.476,)
     stj_middle_right = convert_gk_to_lat_long(
         2527312.802,
         5642083.374,
-        use_wgs84=use_wgs84,
     ) + (126.506,)
 
     # Save coordinates for STJ upper target.
@@ -128,17 +116,14 @@ def get_tower_measurements(
     stj_lower_left = convert_gk_to_lat_long(
         2527321.422,
         5642083.384,
-        use_wgs84=use_wgs84,
     ) + (119.268,)
     stj_lower_middle = convert_gk_to_lat_long(
         2527317.097,
         5642083.391,
-        use_wgs84=use_wgs84,
     ) + (119.269,)
     stj_lower_right = convert_gk_to_lat_long(
         2527312.784,
         5642083.394,
-        use_wgs84=use_wgs84,
     ) + (119.279,)
 
     # Save coordinates for STJ lower target.
@@ -153,16 +138,20 @@ def get_tower_measurements(
 
     # ------------------ Multi Focus Tower (MFT) Coordinates ----------------------------------------------------
     mft_upper_left = convert_gk_to_lat_long(
-        2527302.216, 5642083.778, use_wgs84=use_wgs84
+        2527302.216,
+        5642083.778,
     ) + (142.175,)
     mft_upper_right = convert_gk_to_lat_long(
-        2527296.804, 5642083.786, use_wgs84=use_wgs84
+        2527296.804,
+        5642083.786,
     ) + (142.172,)
     mft_lower_right = convert_gk_to_lat_long(
-        2527296.794, 5642083.779, use_wgs84=use_wgs84
+        2527296.794,
+        5642083.779,
     ) + (135.783,)
     mft_lower_left = convert_gk_to_lat_long(
-        2527302.206, 5642083.784, use_wgs84=use_wgs84
+        2527302.206,
+        5642083.784,
     ) + (135.789,)
 
     # Save coordinates for MFT target.
@@ -176,28 +165,36 @@ def get_tower_measurements(
 
     # ------------------ Receiver Coordinates ----------------------------------------------------
     receiver_outer_upper_left = convert_gk_to_lat_long(
-        2527319.349, 5642087.315, use_wgs84=use_wgs84
+        2527319.349,
+        5642087.315,
     ) + (144.805,)
     receiver_inner_upper_left = convert_gk_to_lat_long(
-        2527319.163, 5642087.223, use_wgs84=use_wgs84
+        2527319.163,
+        5642087.223,
     ) + (144.592,)
     receiver_inner_upper_right = convert_gk_to_lat_long(
-        2527315.028, 5642087.236, use_wgs84=use_wgs84
+        2527315.028,
+        5642087.236,
     ) + (144.593,)
     receiver_outer_upper_right = convert_gk_to_lat_long(
-        2527314.796, 5642087.343, use_wgs84=use_wgs84
+        2527314.796,
+        5642087.343,
     ) + (144.82,)
     receiver_outer_lower_left = convert_gk_to_lat_long(
-        2527319.322, 5642084.89, use_wgs84=use_wgs84
+        2527319.322,
+        5642084.89,
     ) + (139.596,)
     receiver_inner_lower_left = convert_gk_to_lat_long(
-        2527319.155, 5642085.008, use_wgs84=use_wgs84
+        2527319.155,
+        5642085.008,
     ) + (139.86,)
     receiver_inner_lower_right = convert_gk_to_lat_long(
-        2527315.032, 5642084.998, use_wgs84=use_wgs84
+        2527315.032,
+        5642084.998,
     ) + (139.862,)
     receiver_outer_lower_right = convert_gk_to_lat_long(
-        2527314.818, 5642084.892, use_wgs84=use_wgs84
+        2527314.818,
+        5642084.892,
     ) + (139.592,)
 
     # Save receiver coordinates.
