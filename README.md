@@ -13,7 +13,11 @@
 
 ## What is ``PAINT``
 
-PAINT is a FAIR database for Concentrating Solar Power plants (CSP).
+The PAINT database makes operational data of concentrating solar power plants available in accordance with the FAIR data
+principles, i.e., making them findable, accessible, interoperable, and reusable. Currently, the data encompasses
+calibration images, deflectometry measurements, kinematic settings, and weather information of the concentrating solar
+power plant in Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries
+follow the spatio-temporal asset catalog (STAC) standard.
 
 ## Installation
 We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can
@@ -33,14 +37,16 @@ Alternatively, you can install ``PAINT`` locally. To achieve this, there are two
 The ``PAINT`` repository is structured as shown below:
 ```
 .
-├── paint # Parent package
-│   ├── data # Objects in the field, e.g. heliostats and receivers
-│   └── util
-├── plots # scripts to create summary plots of the data
-├── tests/
+├── data-preparation-scripts #scripts used to generate STAC files and structure data
+├── html #code for the paint-database.org website
+├── markers #saved markers for the WRI1030197 power plant in Jülich
+├── paint #python package/
 │   ├── data
 │   └── util
-└── tutorials # small use example for the PAINT data API
+├── plots #scripts to generate plots
+└── tests #tests for the python package/
+    ├── data
+    └── util
 ```
 
 ## How to contribute
