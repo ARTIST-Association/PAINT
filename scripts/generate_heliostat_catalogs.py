@@ -23,7 +23,9 @@ def main(arguments: argparse.Namespace) -> None:
 
     # Iterate through each folder in the main directory.
     for folder in arguments.output_path.iterdir():
-        if folder.is_dir():  # Check if it's a directory.
+        if (
+            folder.is_dir() and folder.name != "Weather"
+        ):  # Check if it's a directory and not the weather folder.
             # Boolean flags for subfolder existence
             calibration_available = (folder / "Calibration").is_dir()
             deflectometry_available = (folder / "Deflectometry").is_dir()
