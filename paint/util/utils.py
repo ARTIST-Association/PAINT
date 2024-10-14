@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Tuple, Union
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -9,7 +9,7 @@ from dateutil import parser
 import paint.util.paint_mappings as mappings
 
 
-def calculate_azimuth_and_elevation(df: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+def calculate_azimuth_and_elevation(df: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
     """
     Calculate the azimuth and elevation given sun positions.
 
