@@ -1,0 +1,8 @@
+coverage:
+  status:
+    project:
+      default:
+        threshold: 5%  # Allow up to 5% decrease in overall project coverage.
+    patch:
+      default:
+        threshold: 5%  # Allow up to 5% decrease in coverage for a specific patch (PR).
