@@ -57,6 +57,9 @@ if [ ! -d "$ENV_PATH" ]; then
   python3 -m venv $ENV_PATH
 fi
 
+# Navigate to html directory.
+cd ${PAINT_ROOT}/html || exit 1
+
 # Copy configuration files to correct folder.
 sudo cp paint_domain.conf $AVAILABLE_PATH/paint_domain.conf
 sudo cp paint_domain-le-ssl.conf $AVAILABLE_PATH/paint_domain-le-ssl.conf
@@ -64,6 +67,9 @@ sudo cp paint_domain-le-ssl.conf $AVAILABLE_PATH/paint_domain-le-ssl.conf
 # Create symlinks in enabled folder.
 sudo ln -sf $AVAILABLE_PATH/paint_domain.conf $ENABLED_PATH/paint_domain.conf
 sudo ln -sf $AVAILABLE_PATH/paint_domain-le-ssl.conf $ENABLED_PATH/paint_domain-le-ssl.conf
+
+# Navigate back to repository root.
+cd "${PAINT_ROOT}" || exit 1
 
 sudo a2ensite paint_domain.conf
 sudo a2dissite 000-default.conf
