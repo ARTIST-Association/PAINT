@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" href="/favicon.ico?v=2" type="image/x-icon">
     <title>PAINT – FAIR Concentrating Solar Power Plant Database</title>
-
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -14,80 +14,81 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg sticky-top bg-white py-0">
-        <div class="container col-lg-8">
-            <a class="mx-3 navbar-brand text-herman text-primary" href="/">
-                Paint Database
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <div class="collapse navbar-collapse justify-content-end" id="navbar">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        {% if active == "home" %}
-                        <a href="/" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-house-fill me-2"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if active == "data" %}
-                        <a href="/data" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/data" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-clipboard-data-fill me-2"></i> Overview
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if active == "repository" %}
-                        <a href="/WRI1030197" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/WRI1030197" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-database-fill me-2"></i> Data
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if active == "resources" %}
-                        <a href="/resources" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/resources" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-link me-2"></i> Resources
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if active == "papers" %}
-                        <a href="/papers" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/papers" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-file-text-fill me-2"></i> Papers
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        {% if active == "partners" %}
-                        <a href="/partners" class="nav-link text-black p-3 active" aria-current="page">
-                        {% else %}
-                        <a href="/partners" class="nav-link text-black p-3">
-                        {% endif %}
-                            <i class="bi bi-people-fill me-2"></i> Partners
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#114;&#116;&#105;&#115;&#116;&#64;&#108;&#105;&#115;&#116;&#115;&#46;&#107;&#105;&#116;&#46;&#101;&#100;&#117;" class="nav-link text-black p-3">
-                            <i class="bi bi-envelope-fill me-2"></i> Contact
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <div id="dataSpinner" class="d-none justify-content-center align-items-center position-fixed top-0 start-0 w-100 h-100 bg-white" style="z-index: 1050;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
         </div>
-    </nav>
+    </div>
+
+<nav class="navbar navbar-expand-custom sticky-top bg-white py-0 col-12">
+    <div class="container col-8">
+        <a class="mx-3 navbar-brand text-herman text-primary" href="/">
+            Paint Database
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    {% if active == "home" %}
+                    <a href="/" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-house-fill me-2"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% if active == "data" %}
+                    <a href="/data" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/data" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-clipboard-data-fill me-2"></i> Overview
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% if active == "repository" %}
+                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-database-fill me-2"></i> Data
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% if active == "resources" %}
+                    <a href="/resources" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/resources" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-link me-2"></i> Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% if active == "papers" %}
+                    <a href="/papers" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/papers" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-file-text-fill me-2"></i> Papers
+                    </a>
+                </li>
+                <li class="nav-item">
+                    {% if active == "partners" %}
+                    <a href="/partners" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    {% else %}
+                    <a href="/partners" class="nav-link text-black p-3 d-flex align-items-center">
+                    {% endif %}
+                        <i class="bi bi-people-fill me-2"></i> Partners
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
     <!-- main content -->
     <div class="container-fluid col-8">
@@ -104,15 +105,47 @@
             {% endif %}
 
             {% if active == "legal" %}
-            <a href="/legal-information" class="nav-link p-3 active" aria-current="page">Legal information</a>
+            <a href="/legal-information" class="nav-link p-3 me-5 active" aria-current="page">Legal information</a>
             {% else %}
-            <a href="/legal-information" class="nav-link p-3">Legal information</a>
+            <a href="/legal-information" class="nav-link p-3 me-5 ">Legal information</a>
+            {% endif %}
+
+            {% if active == "contact" %}
+            <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#114;&#116;&#105;&#115;&#116;&#64;&#108;&#105;&#115;&#116;&#115;&#46;&#107;&#105;&#116;&#46;&#101;&#100;&#117;" class="nav-link p-3 me-5 active" aria-current="page">Contact</a>
+            {% else %}
+            <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#114;&#116;&#105;&#115;&#116;&#64;&#108;&#105;&#115;&#116;&#115;&#46;&#107;&#105;&#116;&#46;&#101;&#100;&#117;" class="nav-link p-3 me-5 ">Contact</a>
             {% endif %}
 
             <span class="flex-grow-1"></span>
             <span class="ml-auto fw-lighter p-3">© 2024 Artist Association</span>
         </footer>
      </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the "Data" nav item link by its ID
+        var dataNavItem = document.getElementById('dataNavItem');
+
+        // Get the spinner
+        var dataSpinner = document.getElementById('dataSpinner');
+
+        // Add click event listener to the "Data" nav item
+        dataNavItem.addEventListener('click', function(event) {
+            // Show the spinner when clicking on the Data link
+            dataSpinner.classList.remove('d-none');
+            dataSpinner.classList.add('d-flex');
+        });
+
+        // Handle the pageshow event to ensure the spinner is hidden when navigating back
+        window.addEventListener('pageshow', function(event) {
+            // If the page is loaded from the cache (back/forward navigation), hide the spinner
+            if (event.persisted) {
+                dataSpinner.classList.add('d-none');
+                dataSpinner.classList.remove('d-flex');
+            }
+        });
+    });
+</script>
 
 </body>
 
