@@ -55,8 +55,10 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[st
             },
             "temporal": {
                 "interval": [
-                    data[mappings.CREATED_AT].min(),
-                    data[mappings.CREATED_AT].max(),
+                    [
+                        data[mappings.CREATED_AT].min(),
+                        data[mappings.CREATED_AT].max(),
+                    ]
                 ]
             },
         },
