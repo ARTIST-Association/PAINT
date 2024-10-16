@@ -2,18 +2,18 @@ import deepdiff
 import numpy as np
 import pytest
 
-from paint.data.tower_stac import make_tower_item
+from paint.preprocessing.tower_stac import make_tower_item
 
 
 @pytest.fixture
 def tower_item_data() -> dict[str, np.ndarray]:
     """
-    Make a fixture with data for generating a tower STAC item.
+    Make a fixture with preprocessing for generating a tower STAC item.
 
     Returns
     -------
     dict[str, np.ndarray]
-        The data for the Juelich stac item.
+        The preprocessing for the Juelich stac item.
     """
     return {
         "longitude": np.array([6.38750587, 6.38785603]),
@@ -80,7 +80,7 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
         "assets": {
             "measurements": {
                 "href": "https://paint-database.org/WRI1030197/WRI1030197-tower-measurements.json",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": "application/geo+json",
                 "title": "Tower measurement properties",
             }

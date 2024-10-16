@@ -2,22 +2,22 @@ import deepdiff
 import pandas as pd
 import pytest
 
-from paint.data.weather_collection_stac import make_weather_collection
+from paint.preprocessing.weather_collection_stac import make_weather_collection
 
 
 @pytest.fixture
 def weather_collection_data():
     """
-    Make a fixture with data for generating the weather collection.
+    Make a fixture with preprocessing for generating the weather collection.
 
     Returns
     -------
     pd.DataFrame
-        The data for the weather collection as a test fixture.
+        The preprocessing for the weather collection as a test fixture.
     """
-    # Define the data
+    # Define the preprocessing
     data = {
-        "title": ["DWD weather data"],
+        "title": ["DWD weather preprocessing"],
         "url": ["INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1"],
         "start": ["2021-03-31Z22:00:00Z"],
         "end": ["2024-02-29Z23:00:00Z"],
@@ -106,7 +106,7 @@ def test_make_weather_collection(
                 "rel": "item",
                 "href": "INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1",
                 "type": "application/geo+json",
-                "title": "STAC item of DWD weather data",
+                "title": "STAC item of DWD weather preprocessing",
             },
         ],
     }
@@ -115,6 +115,6 @@ def test_make_weather_collection(
 
 
 def test_make_weather_collection_fail() -> None:
-    """Test conversion failure on incomplete input data."""
+    """Test conversion failure on incomplete input preprocessing."""
     with pytest.raises(KeyError):
         make_weather_collection(pd.DataFrame())
