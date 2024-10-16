@@ -36,18 +36,22 @@ def make_calibration_collection(
         "extent": {
             "spatial": {
                 "bbox": [
-                    data[mappings.LATITUDE_MIN_KEY].min(),
-                    data[mappings.LONGITUDE_MIN_KEY].min(),
-                    data[mappings.ELEVATION_MIN].min(),
-                    data[mappings.LATITUDE_MAX_KEY].max(),
-                    data[mappings.LONGITUDE_MAX_KEY].max(),
-                    data[mappings.ELEVATION_MAX].max(),
+                    [
+                        data[mappings.LATITUDE_MIN_KEY].min(),
+                        data[mappings.LONGITUDE_MIN_KEY].min(),
+                        data[mappings.ELEVATION_MIN].min(),
+                        data[mappings.LATITUDE_MAX_KEY].max(),
+                        data[mappings.LONGITUDE_MAX_KEY].max(),
+                        data[mappings.ELEVATION_MAX].max(),
+                    ]
                 ]
             },
             "temporal": {
                 "interval": [
-                    data[mappings.CREATED_AT].min().strftime(mappings.TIME_FORMAT),
-                    data[mappings.CREATED_AT].max().strftime(mappings.TIME_FORMAT),
+                    [
+                        data[mappings.CREATED_AT].min().strftime(mappings.TIME_FORMAT),
+                        data[mappings.CREATED_AT].max().strftime(mappings.TIME_FORMAT),
+                    ]
                 ]
             },
         },
