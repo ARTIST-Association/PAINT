@@ -24,7 +24,7 @@ class HistogramMeasurementPlot:
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The measurement data.
+        The measurement preprocessing.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
     columns_to_consider : List[str]
@@ -39,7 +39,7 @@ class HistogramMeasurementPlot:
     Methods
     -------
     load_data()
-        Load data and include time features.
+        Load preprocessing and include time features.
     create_histogram()
         Create a single histogram.
     create_stacked_bar_chart()
@@ -65,7 +65,7 @@ class HistogramMeasurementPlot:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement data.
+            The path to the measurement preprocessing.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
         columns_to_consider : List[str]
@@ -89,17 +89,17 @@ class HistogramMeasurementPlot:
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the data and include additional time features.
+        Load the preprocessing and include additional time features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement data.
+            The path to the measurement preprocessing.
 
         Returns
         -------
         pd.DataFrame
-            The loaded data with additional time features.
+            The loaded preprocessing with additional time features.
         """
         measurements_df = pd.read_csv(path_to_measurements).set_index(mappings.ID_INDEX)
         measurements_df[mappings.CREATED_AT] = pd.to_datetime(
@@ -127,16 +127,16 @@ class HistogramMeasurementPlot:
         x_ticks: Optional[List[str]] = None,
     ) -> Axes:
         """
-        Generate a histogram plot based on a given axis and data.
+        Generate a histogram plot based on a given axis and preprocessing.
 
         Parameters
         ----------
         ax : Axes
             The axis used to plot the histogram.
         df : pd.DataFrame
-            The data to plot.
+            The preprocessing to plot.
         column : str
-            The column from the data to plot.
+            The column from the preprocessing to plot.
         bins : int
             The number of bins to use in the histogram (Default: 20_.
         x_ticks : List[str], optional
@@ -166,16 +166,16 @@ class HistogramMeasurementPlot:
         x_ticks: Optional[List[str]] = None,
     ) -> Axes:
         """
-        Generate a stacked bar chart based on given axis and data.
+        Generate a stacked bar chart based on given axis and preprocessing.
 
         Parameters
         ----------
         ax : Axes
             The axis used to plot the histogram.
         df : pd.DataFrame
-            The data to plot.
+            The preprocessing to plot.
         time_column : str
-            The time column from the data to use in the plot.
+            The time column from the preprocessing to use in the plot.
         x_ticks : List[str], optional
             Labels to use for the x-ticks.
 
@@ -210,12 +210,12 @@ class HistogramMeasurementPlot:
         y_lim: Optional[Tuple[float, float]] = None,
     ) -> None:
         """
-        Generate a joint plot based on two columns in the data.
+        Generate a joint plot based on two columns in the preprocessing.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The data to plot.
+            The preprocessing to plot.
         x_column : str
             The column to consider for the x-axis of the plot.
         y_column : str
@@ -312,7 +312,7 @@ if __name__ == "__main__":
     sys.argv = [
         "create_dataset_hour_split.py",
         "--path_to_measurements",
-        "data/calib_data.csv",
+        "preprocessing/calib_data.csv",
         "--output_path",
         f"{PAINT_ROOT}/plots/saved_plots",
     ]

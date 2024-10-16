@@ -22,27 +22,27 @@ def home() -> str:
 @app.route("/data")
 def data() -> str:
     """
-    Register the controller for the data page.
+    Register the controller for the preprocessing page.
 
     Returns
     -------
     str
-        The rendered template of the data page
+        The rendered template of the preprocessing page
     """
-    return render_template("data.html")
+    return render_template("preprocessing.html")
 
 
 @app.route("/data-privacy")
 def data_privacy() -> str:
     """
-    Register the controller for the data page.
+    Register the controller for the preprocessing page.
 
     Returns
     -------
     str
-        The rendered template of the data-privacy statement
+        The rendered template of the preprocessing-privacy statement
     """
-    return render_template("data-privacy.html")
+    return render_template("preprocessing-privacy.html")
 
 
 @app.route("/legal-information")

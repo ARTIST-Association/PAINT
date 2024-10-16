@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 
 import paint.util.paint_mappings as mappings
-from paint.data.tower_measurements import get_tower_measurements
-from paint.data.tower_stac import make_tower_item
+from paint.preprocessing.tower_measurements import get_tower_measurements
+from paint.preprocessing.tower_stac import make_tower_item
 
 
 def main(arguments: argparse.Namespace) -> None:

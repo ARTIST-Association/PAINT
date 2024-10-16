@@ -9,25 +9,25 @@ def make_dwd_item(
     data: pd.Series,
 ) -> dict[str, Any]:
     """
-    Generate a STAC item for the DWD weather data.
+    Generate a STAC item for the DWD weather preprocessing.
 
     Parameters
     ----------
     data : pd.Series
-        The metadata for the DWD weather data file.
+        The metadata for the DWD weather preprocessing file.
 
     Returns
     -------
     dict[str, Any]
-        The STAC item data as dictionary.
+        The STAC item preprocessing as dictionary.
     """
     return {
         "stac_version": mappings.STAC_VERSION,
         "stac_extensions": [],
         "id": "dwd-weather",
         "type": "Feature",
-        "title": "Weather data from the DWD",
-        "description": f"Weather data from the DWD station ID {data[mappings.DWD_STATION_ID]}, i.e. "
+        "title": "Weather preprocessing from the DWD",
+        "description": f"Weather preprocessing from the DWD station ID {data[mappings.DWD_STATION_ID]}, i.e. "
         f"{data[mappings.DWD_STATION_NAME]}",
         "collection": mappings.WEATHER_COLLECTION_ID,
         "geometry": {
@@ -80,9 +80,9 @@ def make_dwd_item(
         "assets": {
             mappings.WEATHER_DATA_KEY: {
                 "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/dwd-weather.h5",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": mappings.MIME_HDF5,
-                "title": "Weather data from the DWD",
+                "title": "Weather preprocessing from the DWD",
             }
         },
     }

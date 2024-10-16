@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 import paint.util.paint_mappings as mappings
-from paint.data.catalog_stac import make_catalog
+from paint.preprocessing.catalog_stac import make_catalog
 
 
 def main(arguments: argparse.Namespace) -> None:

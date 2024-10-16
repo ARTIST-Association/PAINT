@@ -24,7 +24,7 @@ def plot_stacked_bar_chart_with_inset(
     Parameters
     ----------
     grouped_df: pd.DataFrame
-        The measurement data from heliostats grouped by the heliostat ID.
+        The measurement preprocessing from heliostats grouped by the heliostat ID.
     example_heliostat_df : pd.DataFrame
         The example measurements of a single heliostat.
     train_split_name : str
@@ -124,7 +124,7 @@ def mark_insufficient_data_as_nan(
     minimum_test_entries: int,
 ) -> pd.DataFrame:
     """
-    Mark data splits with insufficient data as `NaN`.
+    Mark preprocessing splits with insufficient preprocessing as `NaN`.
 
     This function updates the dataset split to set 'NaN' for heliostats where the 'train' set is smaller than the
     minimum number of required training samples, and the 'test' set is smaller than the minimum number of test samples.
@@ -132,7 +132,7 @@ def mark_insufficient_data_as_nan(
     Parameters
     ----------
     df : pd.DataFrame
-        The considered data that contains the dataset split column.
+        The considered preprocessing that contains the dataset split column.
     column : str
         The column name used to check for 'train' and 'test' entries.
     minimum_train_entries : int
@@ -143,7 +143,7 @@ def mark_insufficient_data_as_nan(
     Returns
     -------
     pd.DataFrame
-        Updated data with adjusted dataset split set to `NaN`.
+        Updated preprocessing with adjusted dataset split set to `NaN`.
     """
     # Group by HeliostatId and count the number of 'train' and 'test' entries
     counts = (

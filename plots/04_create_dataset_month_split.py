@@ -24,7 +24,7 @@ class DatasetMonthSplit:
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The measured data.
+        The measured preprocessing.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
     number_of_train_samples : List[int]
@@ -37,9 +37,9 @@ class DatasetMonthSplit:
     Methods
     -------
     load_data()
-        Load the data and include additional features.
+        Load the preprocessing and include additional features.
     classify_date_split()
-        Classify the data according to the date split.
+        Classify the preprocessing according to the date split.
     plot_month_split()
         Plot the month split.
     """
@@ -60,7 +60,7 @@ class DatasetMonthSplit:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement data.
+            The path to the measurement preprocessing.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
         number_of_train_samples : List[int]
@@ -87,17 +87,17 @@ class DatasetMonthSplit:
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the data and include additional features.
+        Load the preprocessing and include additional features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement data.
+            The path to the measurement preprocessing.
 
         Returns
         -------
         pd.DataFrame
-            The loaded data with additional time features.
+            The loaded preprocessing with additional time features.
         """
         df = pd.read_csv(path_to_measurements).set_index(
             mappings.ID_INDEX
@@ -144,23 +144,23 @@ class DatasetMonthSplit:
         self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int
     ) -> pd.DataFrame:
         """
-        Classify the data according to the date.
+        Classify the preprocessing according to the date.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The data frame to classify.
+            The preprocessing frame to classify.
         split_name : str
             The name of the split.
         train_head : int
-            The head values to consider in the training data.
+            The head values to consider in the training preprocessing.
         validation_head:
-            The head values to consider in the validation data.
+            The head values to consider in the validation preprocessing.
 
         Returns
         -------
         pd.DataFrame
-            The data classified according to the date.
+            The preprocessing classified according to the date.
         """
         # Helper function to calculate distance to nearest Dec 21 and Jun 21
 
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     sys.argv = [
         "create_dataset_hour_split.py",
         "--path_to_measurements",
-        "data/calib_data.csv",
+        "preprocessing/calib_data.csv",
         "--output_path",
         f"{PAINT_ROOT}/plots/saved_plots",
         "--file_name",

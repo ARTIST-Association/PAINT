@@ -22,8 +22,8 @@ def make_catalog(data: list) -> dict[str, Any]:
         "stac_extensions": [],
         "id": mappings.CATALOG_ID,
         "type": mappings.CATALOG,
-        "title": f"Operational data of concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID}",
-        "description": "Calibration images, deflectometry measurements, heliostat properties, and weather data",
+        "title": f"Operational preprocessing of concentrating solar power plant {mappings.POWER_PLANT_GPPD_ID}",
+        "description": "Calibration images, deflectometry measurements, heliostat properties, and weather preprocessing",
         "links": [
             {
                 "rel": "self",
@@ -41,13 +41,13 @@ def make_catalog(data: list) -> dict[str, Any]:
                 "rel": "child",
                 "href": mappings.WEATHER_COLLECTION_URL,
                 "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC collection containing the weather data",
+                "title": "Reference to the STAC collection containing the weather preprocessing",
             },
             {
                 "rel": "child",
                 "href": mappings.TOWER_STAC_URL,
                 "type": mappings.MIME_GEOJSON,
-                "title": "Reference to the STAC item containing the tower measurement data",
+                "title": "Reference to the STAC item containing the tower measurement preprocessing",
             },
         ]
         + [
@@ -55,7 +55,7 @@ def make_catalog(data: list) -> dict[str, Any]:
                 "rel": "child",
                 "href": mappings.HELIOSTAT_CATALOG_URL % (helio_id, helio_id),
                 "type": mappings.MIME_GEOJSON,
-                "title": f"Reference to the STAC catalog containing data for heliostat "
+                "title": f"Reference to the STAC catalog containing preprocessing for heliostat "
                 f"{helio_id}",
             }
             for helio_id in data

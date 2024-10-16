@@ -25,7 +25,7 @@ def main(arguments: argparse.Namespace) -> None:
     arguments: argparse.Namespace
         The arguments containing input and directory to search for images.
     """
-    # read in the data in CSV
+    # read in the preprocessing in CSV
     data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
 

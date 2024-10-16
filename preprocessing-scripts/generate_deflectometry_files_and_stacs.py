@@ -11,8 +11,8 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.binary_extractor import BinaryExtractor
-from paint.data.deflectometry_stac import (
+from paint.preprocessing.binary_extractor import BinaryExtractor
+from paint.preprocessing.deflectometry_stac import (
     make_deflectometry_collection,
     make_deflectometry_item,
 )
@@ -26,9 +26,9 @@ def extract_data_and_generate_stacs(
     deflectometry_items: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Extract the binary data and generate STACS.
+    Extract the binary preprocessing and generate STACS.
 
-    This function extracts the binary data from the ``.binp`` file. After this data is extracted, it also generates
+    This function extracts the binary preprocessing from the ``.binp`` file. After this preprocessing is extracted, it also generates
     the STAC items for the deflectometry measurement. Additionally, it collects the summary PDFs for the deflectometry
     measurement, renames them, copies them to the appropriate location, and generates a STAC for this PDF.
 
@@ -48,7 +48,7 @@ def extract_data_and_generate_stacs(
     pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
     """
-    # Extract binary data.
+    # Extract binary preprocessing.
     converter = BinaryExtractor(
         input_path=input_path,
         output_path=arguments.output_path,
@@ -139,7 +139,7 @@ def main(arguments: argparse.Namespace):
     """
     Generate deflectometry STACs and facet item STACs.
 
-    This function converts binary data to HDF5 for deflectometry measurements.
+    This function converts binary preprocessing to HDF5 for deflectometry measurements.
     Additionally, the deflectometry results summary PDF is moved to the correct location and renamed. Also, the STAC
     items and collections for deflectometry measurements are created.
 

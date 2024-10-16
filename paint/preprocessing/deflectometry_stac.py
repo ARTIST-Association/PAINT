@@ -29,8 +29,8 @@ def make_deflectometry_collection(
         "stac_extensions": [],
         "id": mappings.DEFLECTOMETRY_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
-        "title": f"Deflectometry data for heliostat {heliostat_id}",
-        "description": f"All deflectometry data, including raw measurements, filled measurements and results summary "
+        "title": f"Deflectometry preprocessing for heliostat {heliostat_id}",
+        "description": f"All deflectometry preprocessing, including raw measurements, filled measurements and results summary "
         f"for heliostat {heliostat_id}",
         "keywords": ["csp", "deflectometry"],
         "license": mappings.LICENSE,
@@ -121,7 +121,7 @@ def make_deflectometry_item(
     tuple[float, float]
         The latitude and longitude coordinates of the heliostat that being measured.
     dict[str, Any]
-        The STAC item data as dictionary.
+        The STAC item preprocessing as dictionary.
     """
     resource = (
         heliostat_key + "-" + heliostat_data[mappings.CREATED_AT] + "-deflectometry"
@@ -136,7 +136,7 @@ def make_deflectometry_item(
         "id": f"{resource}",
         "type": "Feature",
         "title": f"Deflectometry measurement of {heliostat_key}",
-        "description": f"Measured raw and filled deflectometry data containing point clouds and surface normals for "
+        "description": f"Measured raw and filled deflectometry preprocessing containing point clouds and surface normals for "
         f"heliosat {heliostat_key} and the deflectometry measurement results summary",
         "collection": mappings.DEFLECTOMETRY_COLLECTION_ID % heliostat_key,
         "geometry": {
@@ -191,14 +191,14 @@ def make_deflectometry_item(
         "assets": {
             mappings.DEFLECTOMETRY_RAW_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Raw deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
             },
             mappings.DEFLECTOMETRY_FILLED_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-filled-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Filled deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",

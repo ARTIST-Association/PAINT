@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 import paint.util.paint_mappings as mappings
-from paint.data.heliostat_catalog_stac import make_heliostat_catalog
+from paint.preprocessing.heliostat_catalog_stac import make_heliostat_catalog
 
 
 def main(arguments: argparse.Namespace) -> None:
