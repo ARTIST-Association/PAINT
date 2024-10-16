@@ -3,7 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -48,7 +48,7 @@ class DatasetHourSplit:
         self,
         path_to_measurements: Union[Path, str],
         output_path: Union[str, Path],
-        number_of_train_samples: List[int],
+        number_of_train_samples: list[int],
         number_of_validation_samples: int,
         default_example_heliostat: int = 11447,
         file_name: str = "03_combined_plots",
