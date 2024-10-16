@@ -4,7 +4,7 @@ import deepdiff
 import numpy as np
 import pytest
 
-from paint.data.tower_measurements import get_tower_measurements
+from paint.preprocessing.tower_measurements import get_tower_measurements
 
 
 @pytest.mark.parametrize(

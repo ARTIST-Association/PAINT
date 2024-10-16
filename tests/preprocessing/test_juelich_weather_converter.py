@@ -5,20 +5,22 @@ from pathlib import Path
 import h5py
 import numpy as np
 
-import paint.data.juelich_weather_mappings as juelich_weather_mappings
+import paint.preprocessing.juelich_weather_mappings as juelich_weather_mappings
 from paint import PAINT_ROOT
-from paint.data.juelich_weather_converter import JuelichWeatherConverter
+from paint.preprocessing.juelich_weather_converter import JuelichWeatherConverter
 
 
 def test_juelich_weather_convertor():
     """
     Test the Juelich weather convertor.
 
-    This test merges two text files saved as test data and generates the resulting Juelich weather HDF5. This file is
-    then compared to an existing HDF5 also saved in the test data folder.
+    This test merges two text files saved as test preprocessing and generates the resulting Juelich weather HDF5. This file is
+    then compared to an existing HDF5 also saved in the test preprocessing folder.
     """
     # Load the expected HDF5 file.
-    expected_hdf5_file = f"{PAINT_ROOT}/tests/data/test_data/2021-01-juelich_weather.h5"
+    expected_hdf5_file = (
+        f"{PAINT_ROOT}/tests/preprocessing/test_data/2021-01-juelich_weather.h5"
+    )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
@@ -26,7 +28,7 @@ def test_juelich_weather_convertor():
 
         # Define and run weather converter.
         weather_converter = JuelichWeatherConverter(
-            input_root_dir=f"{PAINT_ROOT}/tests/data/test_data/juelich_weather",
+            input_root_dir=f"{PAINT_ROOT}/tests/preprocessing/test_data/juelich_weather",
             output_path=output_path,
         )
         _ = weather_converter.merge_and_save_to_hdf5()
@@ -36,9 +38,10 @@ def test_juelich_weather_convertor():
         assert os.path.exists(file_path)
 
         # Check the content of the HDF5 file.
-        with h5py.File(file_path, "r") as output, h5py.File(
-            expected_hdf5_file, "r"
-        ) as expected:
+        with (
+            h5py.File(file_path, "r") as output,
+            h5py.File(expected_hdf5_file, "r") as expected,
+        ):
             # Check all keys are present.
             assert all(key in expected.keys() for key in output.keys())
 

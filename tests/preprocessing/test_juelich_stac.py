@@ -1,61 +1,61 @@
+from typing import Tuple
+
 import deepdiff
 import pandas as pd
 import pytest
 
-from paint.data.dwd_stac_item import make_dwd_item
+from paint.preprocessing.juelich_weather_stac_item import make_juelich_weather_item
 
 
 @pytest.fixture
-def dwd_item_data() -> pd.Series:
+def juelich_data() -> Tuple[str, pd.Series]:
     """
-    Make a fixture with data for generating a DWD weather STAC item.
+    Make a fixture with preprocessing for generating a Juelich weather STAC item.
 
     Returns
     -------
+    str
+        Month group considered.
     pd.Series
-        The data for the DWD stac item.
+        Data for the Juelich STAC item.
     """
     data = {
-        "StationID": 15000,
-        "latitude": 50.7983,
-        "longitude": 6.0244,
-        "Elevation": 231.0,
-        "StationName": "Aachen-Orsbach",
-        "start": "2021-03-31Z22:00:00Z",
-        "end": "2024-02-29Z23:00:00Z",
+        "start": "2020-12-01Z01:32:00Z",
+        "end": "2020-12-15Z22:59:59Z",
     }
-    return pd.Series(data)
+    return "2020-12", pd.Series(data)
 
 
-def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
+def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    dwd_item_data : pd.Series
-        The test fixture.
+    preprocessing : tuple[str, pd.Series]
+        Test fixture.
     """
-    item = make_dwd_item(data=dwd_item_data)
+    month_group, juelich_item_data = juelich_data
+    item = make_juelich_weather_item(month_group=month_group, data=juelich_item_data)
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "dwd-weather",
+        "id": "2020-12-juelich_weather",
         "type": "Feature",
-        "title": "Weather data from the DWD",
-        "description": "Weather data from the DWD station ID 15000, i.e. Aachen-Orsbach",
+        "title": "Weather preprocessing from Juelich for 2020-12",
+        "description": "Weather preprocessing from the Juelich weather station for 2020-12",
         "collection": "weather-collection",
-        "geometry": {"type": "Point", "coordinates": [50.7983, 6.0244, 231.0]},
-        "bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0],
+        "geometry": {"type": "Point", "coordinates": [50.916518, 6.387409, 89]},
+        "bbox": [50.916518, 6.387409, 89, 50.916518, 6.387409, 89],
         "properties": {
             "datetime": None,
-            "start_datetime": "2021-03-31Z22:00:00Z",
-            "end_datetime": "2024-02-29Z23:00:00Z",
+            "start_datetime": "2020-12-01Z01:32:00Z",
+            "end_datetime": "2020-12-15Z22:59:59Z",
         },
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather-item-stac.json",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -80,10 +80,10 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         ],
         "assets": {
             "weather_data": {
-                "href": "https://paint-database.org/WRI1030197/Weather/dwd-weather.h5",
-                "roles": ["data"],
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather.h5",
+                "roles": ["preprocessing"],
                 "type": "application/x-hdf5",
-                "title": "Weather data from the DWD",
+                "title": "Weather preprocessing from the Juelich weather station for 2020-12",
             }
         },
     }

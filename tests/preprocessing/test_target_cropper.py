@@ -6,7 +6,7 @@ import pytest
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.target_cropper import (
+from paint.preprocessing.target_cropper import (
     crop_image_with_template_matching,
     get_marker_data,
     load_and_preprocess_image,
@@ -34,9 +34,15 @@ def test_target_cropper(image_name: str, target_id: str, expected_name: str) -> 
     expected_name : str
         Name of the expected file used to verify the crop.
     """
-    image_path = Path(PAINT_ROOT) / "tests" / "data" / "test_data" / f"{image_name}.png"
+    image_path = (
+        Path(PAINT_ROOT) / "tests" / "preprocessing" / "test_data" / f"{image_name}.png"
+    )
     expected_path = (
-        Path(PAINT_ROOT) / "tests" / "data" / "test_data" / f"{expected_name}.png"
+        Path(PAINT_ROOT)
+        / "tests"
+        / "preprocessing"
+        / "test_data"
+        / f"{expected_name}.png"
     )
     expected_cropped = cv2.imread(str(expected_path))
     cropped_result = crop_image_with_template_matching(
@@ -70,7 +76,9 @@ def test_resize_and_fail(image_name: str, target_id: str) -> None:
     target_id : str
         ID of the target
     """
-    image_path = Path(PAINT_ROOT) / "tests" / "data" / "test_data" / f"{image_name}.png"
+    image_path = (
+        Path(PAINT_ROOT) / "tests" / "preprocessing" / "test_data" / f"{image_name}.png"
+    )
 
     with pytest.raises(RuntimeError):
         crop_image_with_template_matching(image_path=image_path, target=target_id)

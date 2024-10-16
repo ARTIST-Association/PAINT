@@ -5,7 +5,7 @@ import pandas as pd
 import pytest
 
 import paint.util.paint_mappings as mappings
-from paint.data.calibration_stac import (
+from paint.preprocessing.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
@@ -14,14 +14,14 @@ from paint.data.calibration_stac import (
 @pytest.fixture
 def calibration_item_data() -> tuple[int, pd.Series]:
     """
-    Make a fixture with data for generating a calibration item.
+    Make a fixture with preprocessing for generating a calibration item.
 
     Returns
     -------
     int
         The image ID.
     pd.Series
-        The data for the calibration STAC item.
+        The preprocessing for the calibration STAC item.
     """
     data = {
         "FieldId": 1,
@@ -63,12 +63,12 @@ def calibration_item_data() -> tuple[int, pd.Series]:
 @pytest.fixture
 def calibration_collection_data():
     """
-    Make a fixture with data for generating the calibration collection.
+    Make a fixture with preprocessing for generating the calibration collection.
 
     Returns
     -------
     pd.DataFrame
-        The data for the calibration collection as a test fixture.
+        The preprocessing for the calibration collection as a test fixture.
     """
     data = {
         mappings.HELIOSTAT_ID: ["BC52", "BC52", "BC52", "BC52"],
@@ -241,7 +241,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 ],
                 "id": "115399",
                 "type": "Feature",
-                "title": "Calibration data from heliostat BC52 for image 115399",
+                "title": "Calibration preprocessing from heliostat BC52 for image 115399",
                 "description": "Raw and processed calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
                 "collection": "BC52-calibration-collection",
                 "geometry": {
@@ -299,7 +299,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "assets": {
                     "raw_image": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
-                        "roles": ["data"],
+                        "roles": ["preprocessing"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
                     },
@@ -313,7 +313,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     },
                     "cropped_image": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_cropped.png",
-                        "roles": ["data"],
+                        "roles": ["preprocessing"],
                         "type": "image/png",
                         "title": "Cropped calibration image with id 115399",
                         "processing:lineage": "Target cropping through template matching",
@@ -321,7 +321,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     },
                     "flux_image": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux.png",
-                        "roles": ["data"],
+                        "roles": ["preprocessing"],
                         "type": "image/png",
                         "title": "Cropped and segmented calibration image with id 115399",
                         "processing:lineage": "Target cropping through template matching and segmentation",
@@ -329,7 +329,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     },
                     "flux_centered_image": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux_centered.png",
-                        "roles": ["data"],
+                        "roles": ["preprocessing"],
                         "type": "image/png",
                         "title": "Cropped, segmented, and centered calibration image with id 115399",
                         "processing:lineage": "Target cropping through template matching, segmentation, and centering",
@@ -348,7 +348,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 ],
                 "id": "115399",
                 "type": "Feature",
-                "title": "Calibration data from heliostat BC52 for image 115399",
+                "title": "Calibration preprocessing from heliostat BC52 for image 115399",
                 "description": "Raw calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
                 "collection": "BC52-calibration-collection",
                 "geometry": {
@@ -406,7 +406,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "assets": {
                     "raw_image": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
-                        "roles": ["data"],
+                        "roles": ["preprocessing"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
                     },
@@ -436,7 +436,7 @@ def test_make_calibration_item(
     calibration_item_data : tuple[str, pd.Series]
         The test fixture.
     processed_available : bool
-        Whether processed data is available.
+        Whether processed preprocessing is available.
     expected : dict[str, Any]
         The expected STAC item.
     """
@@ -449,6 +449,6 @@ def test_make_calibration_item(
 
 
 def test_make_calibration_collection_fail() -> None:
-    """Test conversion failure on incomplete input data."""
+    """Test conversion failure on incomplete input preprocessing."""
     with pytest.raises(KeyError):
         make_calibration_collection("AB123", pd.DataFrame())

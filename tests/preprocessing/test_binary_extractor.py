@@ -8,7 +8,7 @@ import torch
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.binary_extractor import BinaryExtractor
+from paint.preprocessing.binary_extractor import BinaryExtractor
 from paint.util.utils import to_utc_single
 
 
@@ -17,7 +17,7 @@ from paint.util.utils import to_utc_single
     [
         (
             Path(
-                f"{PAINT_ROOT}/tests/data/test_data/Helio_AA23_test_data_230918133925.binp"
+                f"{PAINT_ROOT}/tests/preprocessing/test_data/Helio_AA23_test_data_230918133925.binp"
             ),
             "=5f2I2f",
             "=i9fI",
@@ -34,8 +34,8 @@ def test_binary_extractor(
     """
     Test the binary extractor.
 
-    This test extracts the deflectometry data to h5 and the heliostat properties to json and saves these files in a
-    temporary directory. Then, we test if the appropriate keys are available and the shape of the data matches the
+    This test extracts the deflectometry preprocessing to h5 and the heliostat properties to json and saves these files in a
+    temporary directory. Then, we test if the appropriate keys are available and the shape of the preprocessing matches the
     expected shape.
 
     Parameters

@@ -3,20 +3,23 @@ import pandas as pd
 import pytest
 
 import paint.util.paint_mappings as mappings
-from paint.data.properties_stac import make_properties_collection, make_properties_item
+from paint.preprocessing.properties_stac import (
+    make_properties_collection,
+    make_properties_item,
+)
 
 
 @pytest.fixture
 def properties_collection_data() -> pd.DataFrame:
     """
-    Make a fixture with data for generating the heliostat properties collection.
+    Make a fixture with preprocessing for generating the heliostat properties collection.
 
     Returns
     -------
     pd.DataFrame
-        The data for the heliostat properties collection as a test fixture.
+        The preprocessing for the heliostat properties collection as a test fixture.
     """
-    # Define the data
+    # Define the preprocessing
     data = {
         "HeliostatId": ["AY39", "AY39"],
         "title": ["kinematic properties for AY39", "facet properties for AY39"],
@@ -53,7 +56,7 @@ def test_make_properties_collection(
             "stac_extensions": [],
             "id": "AY39-heliostat_properties-collection",
             "type": "Collection",
-            "title": "Heliostat properties data for AY39",
+            "title": "Heliostat properties preprocessing for AY39",
             "description": "All heliostat properties for heliostat AY39",
             "keywords": [
                 "csp",
@@ -149,14 +152,14 @@ def test_make_properties_collection(
 @pytest.fixture
 def properties_item_data() -> tuple[str, pd.Series]:
     """
-    Make a fixture with data for generating a properties item.
+    Make a fixture with preprocessing for generating a properties item.
 
     Returns
     -------
     str
         The heliostat ID.
     pd.Series
-        The data for the properties STAC item.
+        The preprocessing for the properties STAC item.
     """
     data = {
         "CreatedAt": "2021-07-20 07:09:29",
@@ -262,7 +265,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "assets": {
             "heliostat_properties": {
                 "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties.json",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": "application/geo+json",
                 "title": "Heliostat properties for heliostat AA23",
             }
@@ -273,6 +276,6 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
 
 
 def test_make_properties_collection_fail() -> None:
-    """Test conversion failure on incomplete input data."""
+    """Test conversion failure on incomplete input preprocessing."""
     with pytest.raises(KeyError):
         make_properties_collection("AB123", pd.DataFrame())
