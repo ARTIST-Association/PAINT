@@ -3,7 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import pandas as pd
 from general_plotting_functions import (
@@ -17,19 +17,22 @@ from paint import PAINT_ROOT
 from paint.util.utils import calculate_azimuth_and_elevation
 
 
-class DatasetMonthSplit:
+class DatasetSolsticeSplit:
     """
-    Create monthly splits of the dataset.
+    Create solstice-based splits of the dataset.
+
+    This split focuses on the distance to the solstices. The training data is collected near the winter solstice, while
+    the test data is gathered near the summer solstice.
 
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The measured preprocessing.
+        The preprocessed measurement data.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
-    number_of_train_samples : List[int]
+    number_of_train_samples : list[int]
         The number of samples used for training.
-    number_of_validation_samples : List[int]
+    number_of_validation_samples : int
         The number of samples used for validation.
     file_name : str
         The file name to save the plot.
@@ -38,163 +41,170 @@ class DatasetMonthSplit:
     -------
     load_data()
         Load the preprocessing and include additional features.
-    classify_date_split()
+    split_data()
         Classify the preprocessing according to the date split.
-    plot_month_split()
-        Plot the month split.
+    plot_solstice_split()
+        Plot the solstice-splitted data.
     """
 
     def __init__(
         self,
         path_to_measurements: Union[Path, str],
         output_path: Union[str, Path],
-        number_of_train_samples: List[int],
+        number_of_train_samples: list[int],
         number_of_validation_samples: int,
         default_example_heliostat: int = 11447,
         file_name: str = "03_combined_plots",
         save_as_pdf: bool = True,
     ) -> None:
         """
-        Initialize the hour dataset splitter.
+        Initialize the solstice dataset splitter.
 
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement preprocessing.
+            The path to the preprocessed measurement data.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
-        number_of_train_samples : List[int]
+        number_of_train_samples : list[int]
             The number of samples used for training.
-        number_of_validation_samples : List[int]
+        number_of_validation_samples : int
             The number of samples used for validation.
         file_name : str
             The file name to save the plot.
         save_as_pdf : bool
-            Indicates if the output should be saved as PDF (Default: True).
+            If the output should be saved as PDF (Default: True).
         """
-        self.measurements_df = self.load_data(Path(path_to_measurements))
-        self.output_path = Path(output_path)
+        self.measurements_df = self.load_data(
+            Path(path_to_measurements)
+        )  # Preprocessed data to split
+        self.number_of_train_samples = (
+            number_of_train_samples  # Numbers of train samples to consider
+        )
+        self.number_of_validation_samples = (
+            number_of_validation_samples  # Number of validation samples to use
+        )
+        self.default_example_heliostat = default_example_heliostat
+        self.output_path = Path(output_path)  # Output path to save plotted figure to
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        self.number_of_train_samples = number_of_train_samples
-        self.number_of_validation_samples = number_of_validation_samples
-        self.default_example_heliostat = default_example_heliostat
-        if save_as_pdf:
-            self.file_name = file_name + ".pdf"
-        else:
-            self.file_name = file_name + ".png"
+        self.file_name = file_name + ".pdf" if save_as_pdf else file_name + ".png"
 
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the preprocessing and include additional features.
+        Load the preprocessed measurement data and include additional features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement preprocessing.
+            The path to the preprocessed measurement data.
 
         Returns
         -------
         pd.DataFrame
-            The loaded preprocessing with additional time features.
+            The loaded preprocessed measurement data with additional time features.
         """
         df = pd.read_csv(path_to_measurements).set_index(
             mappings.ID_INDEX
-        )  # Set df id as index
+        )  # Set heliostat ID as dataframe index.
         df[mappings.CREATED_AT] = pd.to_datetime(df[mappings.CREATED_AT])
         df[mappings.AZIMUTH], df[mappings.ELEVATION] = calculate_azimuth_and_elevation(
             df
-        )  # Calculate Azimuth and Elevation from Sun Vector
+        )  # Calculate azimuth and elevation from sun vector.
         return df
 
     @staticmethod
-    def nearest_solstice_distance(
-        timestamp: pd.Timestamp, month: int, day: int
-    ) -> float:
+    def get_nearest_solstice_distance(timestamp: pd.Timestamp, season: str) -> float:
         """
         Calculate the distances to the nearest December 21 and June 21.
 
         Parameters
         ----------
         timestamp : pd.Timestamp
-            The current time step considered
-        month : int
-            The month to compare.
-        day : int
-            The day to compare.
+            The current time stamp considered.
+        season : str
+            Whether to consider summer or winter solstice. Must be either "summer" or "winter".
 
         Returns
         -------
         float
             The time distance to the nearest solstice in seconds.
         """
-        year = timestamp.year
-        current_year_solstice = pd.Timestamp(year=year, month=month, day=day, hour=12)
-        next_year_solstice = pd.Timestamp(year=year + 1, month=month, day=day, hour=12)
-        prev_year_solstice = pd.Timestamp(year=year - 1, month=month, day=day, hour=12)
+        day = 21  # Solstice day of month
+        if season == "summer":
+            month = 6  # Summer solstice month
+        elif season == "winter":
+            month = 12  # Winter solstice month
+        else:
+            raise ValueError(f"Season {season} must be either summer or winter.")
+        year = timestamp.year  # Considered year
+        current_solstice = pd.Timestamp(year=year, month=month, day=day, hour=12)
+        next_solstice = pd.Timestamp(year=year + 1, month=month, day=day, hour=12)
+        previous_solstice = pd.Timestamp(year=year - 1, month=month, day=day, hour=12)
 
         return min(
-            abs((timestamp - current_year_solstice).total_seconds()),
-            abs((timestamp - next_year_solstice).total_seconds()),
-            abs((timestamp - prev_year_solstice).total_seconds()),
+            abs((timestamp - current_solstice).total_seconds()),
+            abs((timestamp - next_solstice).total_seconds()),
+            abs((timestamp - previous_solstice).total_seconds()),
         )
 
-    def classify_date_split(
+    def split_data(
         self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int
     ) -> pd.DataFrame:
         """
-        Classify the preprocessing according to the date.
+        Split the preprocessed measurement data according to the date and return the requested fraction.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The preprocessing frame to classify.
+            The preprocessed measurement data frame to classify.
         split_name : str
             The name of the split.
         train_head : int
-            The head values to consider in the training preprocessing.
+            The number of head values to consider in the training dataset.
         validation_head:
-            The head values to consider in the validation preprocessing.
+            The number of head values to consider in the validation dataset.
 
         Returns
         -------
         pd.DataFrame
-            The preprocessing classified according to the date.
+            The preprocessed measurement data split according to the date.
         """
-        # Helper function to calculate distance to nearest Dec 21 and Jun 21
-
-        # Calculate distances
+        # Calculate distances to nearest winter and summer solstice.
         df[mappings.DECEMBER_DISTANCE] = df[mappings.CREATED_AT].apply(
-            lambda x: self.nearest_solstice_distance(x, 12, 21)
-        )
+            lambda x: self.get_nearest_solstice_distance(timestamp=x, season="winter")
+        )  # Winter solstice
         df[mappings.JUNE_DISTANCE] = df[mappings.CREATED_AT].apply(
-            lambda x: self.nearest_solstice_distance(x, 6, 21)
-        )
+            lambda x: self.get_nearest_solstice_distance(timestamp=x, season="summer")
+        )  # Summer solstice
 
-        # Sort by distance
+        # Training data is collected near winter solstice.
+        # Sort data by distance to winter solstice and include the `train_head` first time stamps in the training set.
         df = df.sort_values(by=[mappings.DECEMBER_DISTANCE, mappings.CREATED_AT])
         train_indices = df.head(train_head).index
-
+        # Test data is collected near summer solstice.
+        # Sort data by distance to summer solstice and include the `validation_head` first time stamps in the validation
+        # set.
         df = df.sort_values(by=[mappings.JUNE_DISTANCE, mappings.CREATED_AT])
         validation_indices = df.head(validation_head).index
 
-        # Assign split labels
+        # Assign split labels.
         df[split_name] = mappings.TEST_INDEX
         df.loc[train_indices, split_name] = mappings.TRAIN_INDEX
         df.loc[validation_indices, split_name] = mappings.VALIDATION_INDEX
 
         return df[split_name]
 
-    def plot_month_split(self):
-        """Plot the month split."""
+    def plot_solstice_split(self):
+        """Plot the solstice split."""
         for i, n in enumerate(self.number_of_train_samples):
             self.measurements_df[
                 f"{mappings.DATA_SET_AZIMUTH}_{n}"
             ] = self.measurements_df.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
             ).apply(
-                lambda x: self.classify_date_split(
+                lambda x: self.split_data(
                     x,
                     f"{mappings.DATA_SET_AZIMUTH}_{n}",
                     n,
@@ -253,7 +263,7 @@ if __name__ == "__main__":
     parser.add_argument("--save_as_pdf", action="store_true", default=True)
     args = parser.parse_args()
 
-    plotter = DatasetMonthSplit(
+    plotter = DatasetSolsticeSplit(
         path_to_measurements=args.path_to_measurements,
         output_path=args.output_path,
         number_of_train_samples=args.number_of_train_samples,
@@ -262,4 +272,4 @@ if __name__ == "__main__":
         file_name=args.file_name,
         save_as_pdf=args.save_as_pdf,
     )
-    plotter.plot_month_split()
+    plotter.plot_solstice_split()
