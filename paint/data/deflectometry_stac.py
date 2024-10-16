@@ -50,8 +50,10 @@ def make_deflectometry_collection(
             },
             "temporal": {
                 "interval": [
-                    data[mappings.CREATED_AT].min(),
-                    data[mappings.CREATED_AT].max(),
+                    [
+                        data[mappings.CREATED_AT].min(),
+                        data[mappings.CREATED_AT].max(),
+                    ]
                 ]
             },
         },
