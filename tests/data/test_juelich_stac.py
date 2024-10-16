@@ -47,9 +47,11 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
         "collection": "weather-collection",
         "geometry": {"type": "Point", "coordinates": [50.916518, 6.387409, 89]},
         "bbox": [50.916518, 6.387409, 89, 50.916518, 6.387409, 89],
-        "properties": {"datetime": "null"},
-        "start_datetime": "2020-12-01Z01:32:00Z",
-        "end_datetime": "2020-12-15Z22:59:59Z",
+        "properties": {
+            "datetime": None,
+            "start_datetime": "2020-12-01Z01:32:00Z",
+            "end_datetime": "2020-12-15Z22:59:59Z",
+        },
         "links": [
             {
                 "rel": "self",

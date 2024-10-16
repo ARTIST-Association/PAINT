@@ -92,7 +92,7 @@ def test_make_properties_collection(
                     ]
                 },
                 "temporal": {
-                    "interval": ["2021-12-03Z12:28:26Z", "2023-09-18Z11:39:25Z"]
+                    "interval": [["2021-12-03Z12:28:26Z", "2023-09-18Z11:39:25Z"]]
                 },
             },
             "summaries": {

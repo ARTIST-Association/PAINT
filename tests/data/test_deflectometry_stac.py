@@ -123,7 +123,7 @@ def test_make_deflectometry_collection(
                     ]
                 },
                 "temporal": {
-                    "interval": ["2022-06-26Z07:07:07Z", "2024-09-18Z11:39:25Z"]
+                    "interval": [["2022-06-26Z07:07:07Z", "2024-09-18Z11:39:25Z"]]
                 },
             },
             "summaries": {

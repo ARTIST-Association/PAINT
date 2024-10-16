@@ -151,9 +151,9 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 },
             ],
             "extent": {
-                "spatial": {"bbox": [50.4, 5.0, 100, 70.1, 8.1, 400]},
+                "spatial": {"bbox": [[50.4, 5.0, 100, 70.1, 8.1, 400]]},
                 "temporal": {
-                    "interval": ["2022-06-01Z11:08:45Z", "2022-06-02Z10:26:01Z"]
+                    "interval": [["2022-06-01Z11:08:45Z", "2022-06-02Z10:26:01Z"]]
                 },
             },
             "summaries": {
