@@ -42,10 +42,12 @@ The ``PAINT`` repository is structured as shown below:
 ├── markers # Saved markers for the WRI1030197 power plant in Jülich
 ├── paint # Python package/
 │   ├── data
+│   ├── preprocessing
 │   └── util
 ├── plots # Scripts to generate plots
 └── tests # Tests for the python package/
     ├── data
+    ├── preprocessing
     └── util
 ```
 
