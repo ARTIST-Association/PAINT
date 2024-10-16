@@ -32,18 +32,22 @@ def make_weather_collection(data: pd.DataFrame) -> Dict[str, Any]:
         "extent": {
             "spatial": {
                 "bbox": [
-                    data[mappings.LATITUDE_KEY].min(),
-                    data[mappings.LONGITUDE_KEY].min(),
-                    int(data[mappings.ELEVATION].min()),
-                    data[mappings.LATITUDE_KEY].max(),
-                    data[mappings.LONGITUDE_KEY].max(),
-                    int(data[mappings.ELEVATION].max()),
+                    [
+                        data[mappings.LATITUDE_KEY].min(),
+                        data[mappings.LONGITUDE_KEY].min(),
+                        int(data[mappings.ELEVATION].min()),
+                        data[mappings.LATITUDE_KEY].max(),
+                        data[mappings.LONGITUDE_KEY].max(),
+                        int(data[mappings.ELEVATION].max()),
+                    ]
                 ]
             },
             "temporal": {
                 "interval": [
-                    data[mappings.DWD_START].min(),
-                    data[mappings.DWD_END].max(),
+                    [
+                        data[mappings.DWD_START].min(),
+                        data[mappings.DWD_END].max(),
+                    ]
                 ]
             },
         },
