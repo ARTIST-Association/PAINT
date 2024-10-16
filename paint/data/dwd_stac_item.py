@@ -47,10 +47,10 @@ def make_dwd_item(
             data[mappings.ELEVATION],
         ],
         "properties": {
-            "datetime": "null",
+            "datetime": None,
+            "start_datetime": data[mappings.DWD_START],
+            "end_datetime": data[mappings.DWD_END],
         },
-        "start_datetime": data[mappings.DWD_START],
-        "end_datetime": data[mappings.DWD_END],
         "links": [
             {
                 "rel": "self",
