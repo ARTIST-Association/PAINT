@@ -50,10 +50,10 @@ def make_juelich_weather_item(
             mappings.JUELICH_WEATHER_ALTITUDE,
         ],
         "properties": {
-            "datetime": "null",
+            "datetime": None,
+            "start_datetime": data[mappings.JUELICH_START],
+            "end_datetime": data[mappings.JUELICH_END],
         },
-        "start_datetime": data[mappings.JUELICH_START],
-        "end_datetime": data[mappings.JUELICH_END],
         "links": [
             {
                 "rel": "self",
