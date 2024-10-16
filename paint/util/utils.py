@@ -25,12 +25,12 @@ def calculate_azimuth_and_elevation(df: pd.DataFrame) -> tuple[np.ndarray, np.nd
     np.ndarray
         The calculated elevation in degrees.
     """
-    # extract sun positions in each coordinate
+    # Extract sun positions in each coordinate.
     sun_position_east = np.array(df[mappings.SUN_POSITION_EAST])
     sun_position_north = -np.array(df[mappings.SUN_POSITION_NORTH])
     sun_position_up = np.array(df[mappings.SUN_POSITION_UP])
 
-    # calculate azimuth and evaluation and return.
+    # Calculate azimuth and evaluation and return.
     azimuth_degree = np.degrees(np.arctan2(sun_position_east, sun_position_north))
     elevation_degree = np.degrees(
         np.arctan2(
