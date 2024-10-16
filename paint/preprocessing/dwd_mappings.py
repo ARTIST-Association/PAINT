@@ -9,4 +9,4 @@ dwd_parameter_mapping = {
     "visibility_range": "visibility_range",
     "weather": "weather_type",
 }
-"""Dictionary to map DWD names to simpler names for saving the data."""
+"""Dictionary to map DWD names to simpler names for saving the preprocessing."""

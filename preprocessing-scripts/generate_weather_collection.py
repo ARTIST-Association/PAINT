@@ -9,7 +9,7 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.weather_collection_stac import make_weather_collection
+from paint.preprocessing.weather_collection_stac import make_weather_collection
 
 
 def main(arguments: argparse.Namespace) -> None:

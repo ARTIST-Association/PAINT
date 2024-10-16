@@ -24,7 +24,7 @@ class DatasetHourSplit:
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The measured data.
+        The measured preprocessing.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
     number_of_train_samples : List[int]
@@ -37,9 +37,9 @@ class DatasetHourSplit:
     Methods
     -------
     load_data()
-        Load the data and include additional features.
+        Load the preprocessing and include additional features.
     classify_azimuth_split()
-        Classify the data according to the azimuth split.
+        Classify the preprocessing according to the azimuth split.
     plot_hour_split()
         Plot the hour split.
     """
@@ -60,7 +60,7 @@ class DatasetHourSplit:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement data.
+            The path to the measurement preprocessing.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
         number_of_train_samples : List[int]
@@ -87,17 +87,17 @@ class DatasetHourSplit:
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the data and include additional features.
+        Load the preprocessing and include additional features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement data.
+            The path to the measurement preprocessing.
 
         Returns
         -------
         pd.DataFrame
-            The loaded data with additional time features.
+            The loaded preprocessing with additional time features.
         """
         df = pd.read_csv(path_to_measurements).set_index(
             mappings.ID_INDEX
@@ -116,12 +116,12 @@ class DatasetHourSplit:
         tail: int,
     ) -> pd.DataFrame:
         """
-        Classify the azimuth split in the data.
+        Classify the azimuth split in the preprocessing.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The data to be classified.
+            The preprocessing to be classified.
         split_name : str
             The name of the split used.
         head : int
@@ -132,7 +132,7 @@ class DatasetHourSplit:
         Returns
         -------
         pd.DataFrame
-            The data classified by the azimuth split.
+            The preprocessing classified by the azimuth split.
         """
         df = df.sort_values(
             by=[mappings.AZIMUTH, mappings.CREATED_AT]
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     sys.argv = [
         "create_dataset_hour_split.py",
         "--path_to_measurements",
-        "data/calib_data.csv",
+        "preprocessing/calib_data.csv",
         "--output_path",
         f"{PAINT_ROOT}/plots/saved_plots",
         "--file_name",
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     sys.argv = [
         "create_dataset_hour_split.py",
         "--path_to_measurements",
-        "data/calib_data.csv",
+        "preprocessing/calib_data.csv",
     ]
     parser = argparse.ArgumentParser()
 

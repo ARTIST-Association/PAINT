@@ -28,7 +28,7 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[st
         "stac_extensions": [],
         "id": mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID % heliostat_id,
         "type": mappings.COLLECTION,
-        "title": f"Heliostat properties data for {heliostat_id}",
+        "title": f"Heliostat properties preprocessing for {heliostat_id}",
         "description": f"All heliostat properties for heliostat {heliostat_id}",
         "keywords": [
             "csp",
@@ -122,7 +122,7 @@ def make_properties_item(
     tuple[float, float]
         The latitude and longitude coordinates of the heliostat.
     dict[str, Any]
-        The STAC item data as dictionary.
+        The STAC item preprocessing as dictionary.
     """
     resource = heliostat_key + "-heliostat_properties"
     lat_lon = convert_gk_to_lat_long(
@@ -190,7 +190,7 @@ def make_properties_item(
             mappings.HELIOSTAT_PROPERTIES_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_PROPERTIES}/"
                 f"{mappings.HELIOSTAT_PROPERTIES_SAVE_NAME % heliostat_key}",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Heliostat properties for heliostat {heliostat_key}",
             }

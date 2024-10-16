@@ -66,9 +66,9 @@ def find_min_max_coordinate(
 
 def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     """
-    Generate the tower measurement data.
+    Generate the tower measurement preprocessing.
 
-    This data takes the measured Gauss-Kruger coordinates for each considered calibration target and receiver, converts
+    This preprocessing takes the measured Gauss-Kruger coordinates for each considered calibration target and receiver, converts
     them to latitude and longitude coordinates, considers the elevation and returns these values in a dictionary.
     Additionally, the min and max values for each of the dimensions in the coordinates are saved for the STAC item
     creation.

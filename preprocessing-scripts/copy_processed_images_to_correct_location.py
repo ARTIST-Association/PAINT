@@ -35,7 +35,7 @@ def find_and_copy_file(
     Returns
     -------
     bool
-        Indicating whether an image was copied or not.
+        Whether an image was copied or not.
     """
     # Walk through all subdirectories of the source directory.
     for root, dirs, files in os.walk(source_directory):
@@ -57,16 +57,24 @@ def find_and_copy_file(
 
 def main(arguments: argparse.Namespace) -> None:
     """
-    Copy all calibration images into the correct location.
+    Copy all processed calibration images into the correct location.
 
     Parameters
     ----------
     arguments : argparse.Namespace
         The arguments containing input, output path, and directory to search for images.
     """
-    # Read in the data from CSV.
-    data = pd.read_csv(arguments.input_calibration, sep=";", decimal=",")
+    # Read in the preprocessing from CSV.
+    data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
+
+    # Load list of available images.
+    data_available = pd.read_csv(arguments.input_available)
+
+    # Load list of available processed images.
+    processed_ids_available = pd.read_csv(
+        arguments.input_processed_available, index_col=0
+    ).index.values
 
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
@@ -78,21 +86,35 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
+    # Filter preprocessing to only include metadata for the images on the LSDF.
+    data = data.loc[data_available["ID"].values]
+
+    # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
+    data = data[~data.index.duplicated(keep="last")]
+
+    # Only consider IDs for which processed preprocessing is available.
+    data = data.loc[processed_ids_available]
+
+    failed_copy_list = []
+    failed_copy_name = (
+        Path(PAINT_ROOT) / f"{arguments.name_key} failed copies" / "failed_copy.csv"
+    )
+    if failed_copy_name.exists():
+        failed_copy_list = pd.read_csv(failed_copy_name, index_col=0).index.to_list()
+    failed_copy_name.parent.mkdir(parents=True, exist_ok=True)
     source = Path(arguments.input_folder)
-    failed_copies_list = []
-    failed_copies_name = Path(PAINT_ROOT) / "FAILED_COPIES" / "Failed_IDs_2024.csv"
-    if failed_copies_name.exists():
-        failed_copies_list = pd.read_csv(
-            failed_copies_name, index_col=0
-        ).index.to_list()
-    failed_copies_name.parent.mkdir(parents=True, exist_ok=True)
-    # missing_id_path = Path(PAINT_ROOT) / "MISSING_IDS"
-    # missing_ids = pd.read_csv(
-    #     missing_id_path / "Updated_Missing_IDs.csv", index_col=0
-    # ).index.to_list()
-    # data = data.loc[missing_ids]
-    if failed_copies_list:
-        data = data.drop(failed_copies_list)
+
+    # Check which files have already been copied.
+    already_copied_files = list(
+        arguments.output_path.rglob(f"*_{arguments.name_key}.png")
+    )
+    already_copied_list = [
+        int(file.stem.split("_")[0]) for file in already_copied_files
+    ]
+
+    # Drop files that have already been copied.
+    if already_copied_list:
+        data = data.drop(already_copied_list)
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
         for index in heliostat_data.index:
             assert isinstance(heliostat, str)
@@ -101,7 +123,7 @@ def main(arguments: argparse.Namespace) -> None:
                 Path(arguments.output_path)
                 / heliostat
                 / mappings.SAVE_CALIBRATION
-                / (id_string + ".png")
+                / (id_string + "_" + arguments.name_key + ".png")
             )
             copy_success = find_and_copy_file(
                 source_directory=source,
@@ -110,23 +132,28 @@ def main(arguments: argparse.Namespace) -> None:
             )
             if not copy_success:
                 print(f"Image ID {id_string} could not be found.")
-                failed_copies_list.append(index)
-                np.savetxt(failed_copies_name, np.array(failed_copies_list), fmt="%s")
+                failed_copy_list.append(index)
+                np.savetxt(failed_copy_name, np.array(failed_copy_list), fmt="%s")
 
         print(
-            f"Group of Heliostat {heliostat} processed -- see above for missed copies!"
+            f"Group of heliostat {heliostat} processed -- see above for missed copies!"
         )
 
-    print("All Heliostats have been processed!")
+    print("All heliostats have been processed!")
 
 
 if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataRaw" / "2024"
+    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataCropped"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_calibration = (
-        Path(lsdf_root) / "paint" / "PAINT" / "2024_Q1_Q2_calibrationdata.csv"
+    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data_full.csv"
+    input_available = (
+        Path(lsdf_root) / "paint" / "PAINT" / "available_calibration_ids.csv"
     )
+    input_processed_available = (
+        Path(lsdf_root) / "paint" / "PAINT" / "processed_calibration_ids.csv"
+    )
+    name_key = "cropped"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -145,6 +172,21 @@ if __name__ == "__main__":
         "--input_calibration",
         type=Path,
         default=str(input_calibration),
+    )
+    parser.add_argument(
+        "--input_available",
+        type=Path,
+        default=str(input_available),
+    )
+    parser.add_argument(
+        "--input_processed_available",
+        type=Path,
+        default=str(input_processed_available),
+    )
+    parser.add_argument(
+        "--name_key",
+        type=str,
+        default=name_key,
     )
     args = parser.parse_args()
     main(arguments=args)

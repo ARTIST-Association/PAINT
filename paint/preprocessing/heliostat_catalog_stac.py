@@ -46,7 +46,7 @@ def make_heliostat_catalog(
         description = "Calibration images and heliostat properties"
     else:
         raise ValueError(
-            f"This heliostat {heliostat_id} doesn't seem to have any data!"
+            f"This heliostat {heliostat_id} doesn't seem to have any preprocessing!"
         )
 
     return {
@@ -54,7 +54,7 @@ def make_heliostat_catalog(
         "stac_extensions": [],
         "id": mappings.HELIOSTAT_CATALOG_ID % heliostat_id,
         "type": mappings.CATALOG,
-        "title": f"Operational data for the heliostat {heliostat_id}",
+        "title": f"Operational preprocessing for the heliostat {heliostat_id}",
         "description": description,
         "links": [
             {
@@ -76,7 +76,7 @@ def make_heliostat_catalog(
                         "href": mappings.DEFLECTOMETRY_COLLECTION_URL
                         % (heliostat_id, heliostat_id),
                         "type": mappings.MIME_GEOJSON,
-                        "title": "Reference to the STAC collection containing the deflectometry data",
+                        "title": "Reference to the STAC collection containing the deflectometry preprocessing",
                     }
                 ]
                 if include_deflectometry
@@ -89,7 +89,7 @@ def make_heliostat_catalog(
                         "href": mappings.CALIBRATION_COLLECTION_URL
                         % (heliostat_id, heliostat_id),
                         "type": mappings.MIME_GEOJSON,
-                        "title": "Reference to the STAC collection containing the calibration data",
+                        "title": "Reference to the STAC collection containing the calibration preprocessing",
                     }
                 ]
                 if include_calibration

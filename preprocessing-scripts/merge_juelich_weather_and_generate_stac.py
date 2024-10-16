@@ -9,15 +9,15 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.juelich_weather_converter import JuelichWeatherConverter
-from paint.data.juelich_weather_stac_item import make_juelich_weather_item
+from paint.preprocessing.juelich_weather_converter import JuelichWeatherConverter
+from paint.preprocessing.juelich_weather_stac_item import make_juelich_weather_item
 
 
 def main(arguments: argparse.Namespace) -> None:
     """
-    Merge the Juelich weather data and save it as an HDF5 file and generate the associate STAC item.
+    Merge the Juelich weather preprocessing and save it as an HDF5 file and generate the associate STAC item.
 
-    This script merges all Juelich weather data files and saves the result as an HDF5 file before generating the
+    This script merges all Juelich weather preprocessing files and saves the result as an HDF5 file before generating the
     appropriate STAC item. Additionally, the metadata for this item is saved for collection creation later.
 
     Parameters
@@ -61,7 +61,7 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(juelich_stac, handle)
 
         weather_items.loc[len(weather_items)] = [
-            f"Juelich weather data for {group_name}",
+            f"Juelich weather preprocessing for {group_name}",
             f"{mappings.JUELICH_STAC_URL % group_name}.json",
             metadata[mappings.JUELICH_START],
             metadata[mappings.JUELICH_END],

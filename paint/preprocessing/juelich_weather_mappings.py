@@ -26,7 +26,7 @@ juelich_weather_parameter_mapping = {
     "PT100Global": TEMPERATURE_GLOBAL,
     "PT100Diffuse": TEMPERATURE_DIFFUSE,
 }
-"""Dictionary to map parameter names for the Juelich weather data."""
+"""Dictionary to map parameter names for the Juelich weather preprocessing."""
 
 juelich_metadata_description = {
     DIRECT_IRRADIATION: "The direct irradiance, i.e., part of the solar irradiance directly reaching the surface.",

@@ -9,8 +9,8 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
-from paint.data.dwd_stac_item import make_dwd_item
-from paint.data.dwd_weather import DWDWeatherData
+from paint.preprocessing.dwd_stac_item import make_dwd_item
+from paint.preprocessing.dwd_weather import DWDWeatherData
 from paint.util.utils import to_utc_single
 
 
@@ -75,7 +75,7 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(dwd_stac, handle)
         dwd_url = mappings.DWD_STAC_URL
         weather_items.loc[len(weather_items)] = [
-            "DWD weather data",
+            "DWD weather preprocessing",
             f"{dwd_url}.json",
             data[mappings.DWD_START],
             data[mappings.DWD_END],

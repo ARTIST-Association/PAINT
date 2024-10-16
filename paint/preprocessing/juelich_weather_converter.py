@@ -3,13 +3,13 @@ from pathlib import Path
 import h5py
 import pandas as pd
 
-import paint.data.juelich_weather_mappings as juelich_mappings
+import paint.preprocessing.juelich_weather_mappings as juelich_mappings
 import paint.util.paint_mappings as mappings
 
 
 class JuelichWeatherConverter:
     """
-    Merge the Juelich weather data and save it as multiple HDF5 files grouped by month.
+    Merge the Juelich weather preprocessing and save it as multiple HDF5 files grouped by month.
 
     Attributes
     ----------
@@ -29,7 +29,7 @@ class JuelichWeatherConverter:
     concatenate_weather()
         Concatenate the weather files.
     merge_and_save_to_hdf5()
-        Merge the weather files and save the merged data to multiple HDF5 files.
+        Merge the weather files and save the merged preprocessing to multiple HDF5 files.
     """
 
     def __init__(
@@ -76,12 +76,12 @@ class JuelichWeatherConverter:
 
     def concatenate_weather(self) -> pd.DataFrame:
         """
-        Load all weather.txt files as a data frame and return the concatenated data frame.
+        Load all weather.txt files as a preprocessing frame and return the concatenated preprocessing frame.
 
         Returns
         -------
         pd.DataFrame
-            The concatenated data frame.
+            The concatenated preprocessing frame.
         """
         df_list = []
         for file in self.files_list:
@@ -120,7 +120,7 @@ class JuelichWeatherConverter:
                     .dt.tz_convert("UTC")
                 )
 
-            # Clean data frame.
+            # Clean preprocessing frame.
             df = df.drop(
                 columns=[
                     "Date",
@@ -156,14 +156,14 @@ class JuelichWeatherConverter:
             df.index = df["DateTime"].dt.strftime(mappings.TIME_FORMAT)
             df = df.drop(columns="DateTime")
             df_list.append(df)
-        # Append all data frames.
+        # Append all preprocessing frames.
         full_df = pd.concat(df_list)
         print("All files concatenated!")
         return full_df.sort_index()
 
     def merge_and_save_to_hdf5(self) -> pd.DataFrame:
         """
-        Merge the weather files and save the merged data to HDF5.
+        Merge the weather files and save the merged preprocessing to HDF5.
 
         Returns
         -------
@@ -198,7 +198,7 @@ class JuelichWeatherConverter:
                 mappings.JUELICH_FILE_NAME % group.strftime("%Y-%m") + ".h5"
             )
             with h5py.File(hdf_file_name, "w") as file:
-                # Save the time data.
+                # Save the time preprocessing.
                 file.create_dataset(
                     "time",
                     data=monthly_weather.index.to_numpy(),

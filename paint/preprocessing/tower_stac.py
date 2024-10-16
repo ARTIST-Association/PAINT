@@ -19,7 +19,7 @@ def make_tower_item(
     Returns
     -------
     dict[str, Any]
-        The STAC item data as dictionary.
+        The STAC item preprocessing as dictionary.
     """
     return {
         "stac_version": mappings.STAC_VERSION,
@@ -88,7 +88,7 @@ def make_tower_item(
         "assets": {
             mappings.TOWER_KEY: {
                 "href": f"{mappings.URL_BASE}/{mappings.TOWER_FILE_NAME}.json",
-                "roles": ["data"],
+                "roles": ["preprocessing"],
                 "type": mappings.MIME_GEOJSON,
                 "title": "Tower measurement properties",
             }
