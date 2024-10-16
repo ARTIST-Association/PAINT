@@ -47,9 +47,11 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "collection": "weather-collection",
         "geometry": {"type": "Point", "coordinates": [50.7983, 6.0244, 231.0]},
         "bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0],
-        "properties": {"datetime": "null"},
-        "start_datetime": "2021-03-31Z22:00:00Z",
-        "end_datetime": "2024-02-29Z23:00:00Z",
+        "properties": {
+            "datetime": None,
+            "start_datetime": "2021-03-31Z22:00:00Z",
+            "end_datetime": "2024-02-29Z23:00:00Z",
+        },
         "links": [
             {
                 "rel": "self",
