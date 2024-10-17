@@ -43,6 +43,9 @@ sudo a2enmod proxy_http
 sudo a2enmod alias
 sudo a2enmod cache
 
+# Enable headers running.
+sudo a2enmod headers
+
 # Check if repository exists, if not clone, if it exists pull.
 if [ ! -d "$PAINT_ROOT" ]; then
   git clone https://github.com/ARTIST-Association/PAINT.git $PAINT_ROOT
