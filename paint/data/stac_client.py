@@ -42,7 +42,7 @@ class StacClient:
 
     def __init__(
         self,
-        output_dir=Union[str, pathlib.Path],
+        output_dir: Union[str, pathlib.Path],
         chunk_size: int = 1024 * 1024,
     ) -> None:
         """
