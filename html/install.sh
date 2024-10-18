@@ -87,8 +87,16 @@ pip install --upgrade pip
 # Install dependencies.
 pip install --upgrade .
 
-# Mount to the LSDF
-echo "Mount to the LSDF"
-sudo sshfs -o umask=0,uid=0,gid=0,allow_other scc-paint-0001@os-login.lsdf.kit.edu:/lsdf/kit/scc/projects/paint /mnt/lsdf
-
-echo "Installation and setup complete."
+# Mount to the LSDF if not already mounted.
+echo "Checking if LSDF is already mounted..."
+if mountpoint -q /mnt/lsdf; then
+  echo "LSDF is already mounted."
+else
+  echo "Mounting to the LSDF..."
+  sudo sshfs -o umask=0,uid=0,gid=0,allow_other scc-paint-0001@os-login.lsdf.kit.edu:/lsdf/kit/scc/projects/paint /mnt/lsdf
+  if [ $? -eq 0 ]; then
+    echo "Mount successful."
+  else
+    echo "Failed to mount."
+  fi
+fi
