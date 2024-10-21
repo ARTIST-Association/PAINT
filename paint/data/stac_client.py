@@ -196,6 +196,9 @@ class StacClient:
         get_calibration: bool,
         get_deflectometry: bool,
         get_properties: bool,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        filtered_calibration_keys: Optional[list[str]] = None,
     ):
         """
         Download data for one or more heliostats.
@@ -210,7 +213,22 @@ class StacClient:
             Indicate whether to download deflectometry data.
         get_properties : bool
             Indicate whether to download properties data.
+        start_date : datetime, optional
+            Optional start date to filter the heliostat data.
+        end_date :  datetime, optional
+            Optional end date to filter the heliostat data.
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of:`raw, processed, properties`.
         """
+        # Check if keys provided to the filtered_calibration_key dictionary are acceptable
+        if filtered_calibration_keys is not None:
+            accepted_keys = ["raw", "processed", "properties"]
+            for key in filtered_calibration_keys:
+                if key not in accepted_keys:
+                    raise ValueError(
+                        "The filtered calibration keys can only be one or more of: `raw, processed, properties`!"
+                    )
+
         # Find the catalogs for each desired heliostat.
         heliostat_catalogs_list = [
             self.get_catalog(
@@ -219,6 +237,8 @@ class StacClient:
             for heliostat in heliostats
         ]
 
+        # TODO: Include time filtering as with the weather - make sure to log an error if both dates are not provided
+        # TODO: Include specific filter for the calibration data - i.e. only the raw images or something similar.
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
             log.info(f"Processing heliostat catalog {heliostat_catalog.id}")
