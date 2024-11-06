@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -245,9 +244,8 @@ def main(arguments: argparse.Namespace):
             facet_data=facet_dict[key],
         )
 
-        # Save item metadata for collection creation later.
         url = mappings.HELIOSTAT_PROPERTIES_ITEM_URL % (key, key)
-        properties_items.loc[len(properties_items)] = [
+        properties_items.loc[0] = [
             key,
             f"heliostat properties for {key}",
             url,
@@ -270,14 +268,22 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
-    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    # lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    # input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    # output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    # input_position = (
+    #     Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    # )
+    # input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
+    # input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
+
+    input_axis = Path(PAINT_ROOT) / "ExampleDataKIT" / "axis_data.csv"
+    output_folder = Path(PAINT_ROOT) / "ARGH"
     input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+        Path(PAINT_ROOT) / "ExampleDataKIT" / "Heliostatpositionen_xyz.xlsx"
     )
-    input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
-    input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
+    input_renovations = Path(PAINT_ROOT) / "ExampleDataKIT" / "renovation_data.csv"
+    input_facets = Path(PAINT_ROOT) / "ExampleDataKIT" / "facet_data.npy"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
