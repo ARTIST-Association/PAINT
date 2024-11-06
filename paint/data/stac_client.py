@@ -5,7 +5,6 @@ from typing import Optional, Union
 
 import pystac
 import requests
-from pystac import STACError
 
 import paint.util.paint_mappings as mappings
 from paint.util import set_logger_config
@@ -105,8 +104,7 @@ class StacClient:
         """
         Help to get a child from a STAC catalog or collection.
 
-        Since pystac returns `None` if a child is not present, it is important we check the return type and raise
-        and error if the collection is not available.
+        Since pystac returns `None` if a child is not present, it is important we log a warning if this is the case.
 
         Parameters
         ----------
@@ -119,15 +117,12 @@ class StacClient:
         -------
         Union[pystac.Catalog, pystac.Collection, pystac.Item]
             Child STAC catalog, collection, or item.
-
-        Raises
-        ------
-        STACError
-            If the child ID does not exist in the parent.
         """
         child = parent.get_child(child_id)
         if child is None:
-            raise STACError(f"Child with ID '{child_id}' not found in {parent.id}.")
+            log.warning(
+                f"The child with ID {child_id} is not available, data for this child will not be downloaded."
+            )
         return child
 
     def download_file(self, url: str, file_name: Union[str, pathlib.Path]) -> None:
@@ -150,12 +145,104 @@ class StacClient:
                 file.write(data)
                 downloaded_length += len(data)
 
+    def process_heliostat_items(
+        self,
+        items: list[pystac.item.Item],
+        start_date: Optional[datetime],
+        end_date: Optional[datetime],
+        filtered_calibration_keys: Optional[list[str]],
+        collection_id: str,
+        heliostat_catalog_id: str,
+        save_folder: str,
+    ) -> None:
+        """
+        Process and download items, either with or without date filtering and calibration key filtering.
+
+        Parameters
+        ----------
+        items : list[pystac.item.Item]
+            List of items to be processed.
+        start_date : datetime, optional
+            Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
+            is downloaded (Default is None).
+        end_date :  datetime, optional
+            Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
+            is downloaded (Default is None).
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
+            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
+            downloaded (Default is None).
+        collection_id : str
+            ID of the collection to download.
+        heliostat_catalog_id : str
+            The ID of the considered heliostat catalog.
+        save_folder : str
+            Name of the folder to save the collection items in.
+        """
+        for item in items:
+            item_time = item.properties["datetime"]
+            if start_date and end_date:
+                # If start and end dates are provided, filter based on them
+                if not (
+                    start_date
+                    <= datetime.strptime(item_time, mappings.TIME_FORMAT)
+                    <= end_date
+                ):
+                    continue
+
+            log.info(f"Processing and downloading item {item.id}")
+
+            if (
+                filtered_calibration_keys is not None
+                and mappings.SAVE_CALIBRATION.lower() in collection_id.split("-")
+            ):
+                # Only process the calibration keys if provided
+                for key, asset in item.assets.items():
+                    if key in filtered_calibration_keys:
+                        self.download_heliostat_asset(
+                            asset, heliostat_catalog_id, save_folder
+                        )
+            else:
+                # Process all assets in the item
+                for asset in item.assets.values():
+                    self.download_heliostat_asset(
+                        asset, heliostat_catalog_id, save_folder
+                    )
+
+    def download_heliostat_asset(
+        self, asset: pystac.asset.Asset, heliostat_catalog_id: str, save_folder: str
+    ) -> None:
+        """
+        Download the asset from the provided URL and save it to the selected location.
+
+        Parameters
+        ----------
+        asset : pystac.asset.Asset
+            STAC asset to be downloaded and saved.
+        heliostat_catalog_id : str
+            The ID of the considered heliostat catalog.
+        save_folder : str
+            Name of the folder to save the asset in.
+        """
+        url = asset.href
+        file_end = url.split("/")[-1]
+        file_name = (
+            self.output_dir
+            / heliostat_catalog_id.split("-")[0]
+            / save_folder
+            / file_end
+        )
+        file_name.parent.mkdir(parents=True, exist_ok=True)
+        self.download_file(url, file_name)
+
     def download_heliostat_data(
         self,
         heliostat_catalog: pystac.catalog.Catalog,
         collection_id: str,
         save_folder: str,
-        log_message: str,
+        start_date: Optional[datetime] = None,
+        end_date: Optional[datetime] = None,
+        filtered_calibration_keys: Optional[list[str]] = None,
     ) -> None:
         """
         Download items from a specified collection from a heliostat and save them to a designated path.
@@ -168,34 +255,47 @@ class StacClient:
             ID of the collection to download.
         save_folder : str
             Name of the folder to save the collection items in.
-        log_message : str
-            Message to log during processing.
+        start_date : datetime, optional
+            Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
+            is downloaded (Default is None).
+        end_date :  datetime, optional
+            Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
+            is downloaded (Default is None).
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
+            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
+            downloaded (Default is None).
         """
-        items = self.get_child(
-            parent=heliostat_catalog, child_id=collection_id
-        ).get_items()
-        log.info(log_message)
+        child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
+        if child is None:
+            log.warning(
+                f"No data downloaded for {collection_id} in {heliostat_catalog.id}!"
+            )
+            return
 
-        for item in items:
-            log.info(f"Processing and downloading item {item.id}")
-            for asset in item.assets.values():
-                url = asset.href
-                file_end = url.split("/")[-1]
-                file_name = (
-                    self.output_dir
-                    / heliostat_catalog.id.split("-")[0]
-                    / save_folder
-                    / file_end
-                )
-                file_name.parent.mkdir(parents=True, exist_ok=True)
-                self.download_file(url, file_name)
+        items = child.get_items()
+
+        # Log if data is filtered by date.
+        if start_date and end_date:
+            log.info(
+                f"Downloading data between {start_date.strftime(mappings.TIME_FORMAT)} and {end_date.strftime(mappings.TIME_FORMAT)}"
+            )
+
+        # Call the helper function to process and download items.
+        self.process_heliostat_items(
+            items,
+            start_date,
+            end_date,
+            filtered_calibration_keys,
+            collection_id,
+            heliostat_catalog.id,
+            save_folder,
+        )
 
     def get_heliostat_data(
         self,
-        heliostats: list[str],
-        get_calibration: bool,
-        get_deflectometry: bool,
-        get_properties: bool,
+        heliostats: Optional[list[str]] = None,
+        collections: Optional[list[str]] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         filtered_calibration_keys: Optional[list[str]] = None,
@@ -205,40 +305,101 @@ class StacClient:
 
         Parameters
         ----------
-        heliostats : list[str]
-            A list of heliostats whose data should be downloaded.
-        get_calibration : bool
-            Indicate whether to download calibration data.
-        get_deflectometry : bool
-            Indicate whether to download deflectometry data.
-        get_properties : bool
-            Indicate whether to download properties data.
+        heliostats : list[str], optional
+            An optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
+            downloaded (Default is None).
+        collections : list[str], optional
+            List of collections to be downloaded. These collections must be one of: `calibration, deflectometry,
+            properties`. If no list is provided, all collections are downloaded (Default is None).
         start_date : datetime, optional
-            Optional start date to filter the heliostat data.
+            Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
+            is downloaded (Default is None).
         end_date :  datetime, optional
-            Optional end date to filter the heliostat data.
+            Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
+            is downloaded (Default is None).
         filtered_calibration_keys : list[str]
-            List of keys to filter the calibration data. These keys must be one of:`raw, processed, properties`.
+            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
+            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
+            downloaded (Default is None).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable
-        if filtered_calibration_keys is not None:
-            accepted_keys = ["raw", "processed", "properties"]
+        if heliostats is None:
+            log.warning(
+                "No heliostats selected - downloading data for all heliostats! This may take a while..."
+            )
+            root = self.get_catalog(href=mappings.CATALOGUE_URL)
+            heliostat_catalogs_list = list(root.get_children())
+            for i in range(
+                len(heliostat_catalogs_list) - 1, -1, -1
+            ):  # Iterate backwards through the list.
+                child = heliostat_catalogs_list[i]
+                if (
+                    child.id == mappings.WEATHER_COLLECTION_ID
+                    or child.id == mappings.TOWER_FILE_NAME
+                ):
+                    heliostat_catalogs_list.pop(i)
+        else:
+            # Find the catalogs for each desired heliostat.
+            log.info("Loading catalogs for desired heliostats. ")
+            heliostat_catalogs_list = [
+                self.get_catalog(
+                    href=mappings.HELIOSTAT_CATALOG_URL % (heliostat, heliostat)
+                )
+                for heliostat in heliostats
+            ]
+
+        # Log warning if now collection keys provided.
+        if collections is None:
+            log.warning(
+                "No collections selected - downloading data for all collections!"
+            )
+            get_calibration = True
+            get_deflectometry = True
+            get_properties = True
+        # Check if collection keys provided are acceptable.
+        else:
+            allowed_values = {
+                mappings.SAVE_DEFLECTOMETRY.lower(),
+                mappings.SAVE_CALIBRATION.lower(),
+                mappings.SAVE_PROPERTIES.lower(),
+            }
+            for item in collections:
+                if item not in allowed_values:
+                    raise ValueError(
+                        f"The heliostat collection must be one of: `deflectometry, calibration, "
+                        f"properties`! The key {item} is not accepted!"
+                    )
+            # Set boolean flags based on the presence of each allowed value in collections.
+            get_calibration = mappings.SAVE_CALIBRATION.lower() in collections
+            get_deflectometry = mappings.SAVE_DEFLECTOMETRY.lower() in collections
+            get_properties = mappings.SAVE_PROPERTIES.lower() in collections
+
+        # Log warning if now filtered calibration keys provided.
+        if get_calibration and filtered_calibration_keys is None:
+            log.warning(
+                "No calibration filters provided - downloading all calibration data, i.e. raw, cropped, flux, centered"
+                "flux and calibration properties!"
+            )
+        # Check if keys provided to the filtered_calibration_key dictionary are acceptable
+        elif get_calibration and filtered_calibration_keys is not None:
+            accepted_keys = [
+                mappings.CALIBRATION_RAW_IMAGE_KEY,
+                mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+                mappings.CALIBRATION_FLUX_IMAGE_KEY,
+                mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+                mappings.CALIBRATION_PROPERTIES_KEY,
+            ]
             for key in filtered_calibration_keys:
                 if key not in accepted_keys:
                     raise ValueError(
-                        "The filtered calibration keys can only be one or more of: `raw, processed, properties`!"
+                        f"The filtered calibration keys can only be one or more of: `raw_image, cropped_image, "
+                        f"flux_image, flux_centered_image, calibration_properties'! The key {key} is not accepted!"
                     )
 
-        # Find the catalogs for each desired heliostat.
-        heliostat_catalogs_list = [
-            self.get_catalog(
-                href=mappings.HELIOSTAT_CATALOG_URL % (heliostat, heliostat)
-            )
-            for heliostat in heliostats
-        ]
+        # Error if only a start or end date is provided, but not both.
+        if (start_date and not end_date) or (end_date and not start_date):
+            raise ValueError("Please provide both start date and end date, or neither.")
 
-        # TODO: Include time filtering as with the weather - make sure to log an error if both dates are not provided
-        # TODO: Include specific filter for the calibration data - i.e. only the raw images or something similar.
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
             log.info(f"Processing heliostat catalog {heliostat_catalog.id}")
@@ -253,7 +414,9 @@ class StacClient:
                     heliostat_catalog,
                     calibration_id,
                     mappings.SAVE_CALIBRATION,
-                    f"Processing and downloading calibration items for heliostat {heliostat_catalog.id}",
+                    start_date,
+                    end_date,
+                    filtered_calibration_keys,
                 )
 
             # Download deflectometry data.
@@ -266,7 +429,8 @@ class StacClient:
                     heliostat_catalog,
                     deflectometry_id,
                     mappings.SAVE_DEFLECTOMETRY,
-                    f"Processing and downloading deflectometry items for heliostat {heliostat_catalog.id}",
+                    start_date,
+                    end_date,
                 )
 
             # Download properties data.
@@ -279,7 +443,8 @@ class StacClient:
                     heliostat_catalog,
                     properties_id,
                     mappings.SAVE_PROPERTIES,
-                    f"Processing and downloading properties items for heliostat {heliostat_catalog.id}",
+                    start_date,
+                    end_date,
                 )
 
     def download_weather_assets(
@@ -318,8 +483,7 @@ class StacClient:
 
     def get_weather_data(
         self,
-        include_juelich: bool,
-        include_dwd: bool,
+        data_sources: Optional[list[str]] = None,
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
     ) -> None:
@@ -328,31 +492,35 @@ class StacClient:
 
         Parameters
         ----------
-        include_juelich : bool
-            Indicating whether to include Jülich weather data.
-        include_dwd : bool
-            Indicating whether to include DWD weather data.
+        data_sources : list[str], optional
+            List of weather sources to include. Must be from: `DWD, Jülich`. If no source is provided data form all
+            sources is downloaded (Default is None).
         start_date : datetime, optional
             Optional start date to filter the weather data.
         end_date : datetime, optional
             Optional end date to filter the weather data.
         """
-        if not (include_juelich or include_dwd):
-            raise ValueError(
-                "You must download at least one of Jülich or DWD weather data!"
-            )
+        if data_sources is None:
+            include_juelich = True
+            include_dwd = True
+            data_sources = ["Jülich", "DWD"]
+        else:
+            allowed_values = {"Jülich", "DWD"}
+            for item in data_sources:
+                if item not in allowed_values:
+                    raise ValueError(
+                        f"The weather source must be one of: `Jülich, DWD! The key {item} is not accepted!"
+                    )
+            # Set boolean flags based on the presence of each allowed value in collections.
+            include_juelich = "Jülich" in data_sources
+            include_dwd = "DWD" in data_sources
 
         weather_collection = pystac.Collection.from_file(
             href=mappings.WEATHER_COLLECTION_URL
         )
 
-        # Set up download message
-        sources = []
-        if include_juelich:
-            sources.append("Jülich")
-        if include_dwd:
-            sources.append("DWD")
-        download_message = f"Downloading {' and '.join(sources)} weather data"
+        assert isinstance(data_sources, list)
+        download_message = f"Downloading {' and '.join(data_sources)} weather data"
 
         # Download only for a specific time period.
         if start_date and end_date:
