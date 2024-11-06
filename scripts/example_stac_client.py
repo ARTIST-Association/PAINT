@@ -16,16 +16,11 @@ if __name__ == "__main__":
         default=f"{PAINT_ROOT}/download_test",
     )
     parser.add_argument(
-        "--include_juelich",
-        type=bool,
-        help="Boolean indicating whether to include Jülich weather data.",
-        default=True,
-    )
-    parser.add_argument(
-        "--include_dwd",
-        type=bool,
-        help="Boolean indicating whether to include DWD weather data.",
-        default=False,
+        "--weather_data_sources",
+        type=str,
+        help="List of data sources to use for weather data.",
+        nargs="+",
+        default=["Jülich", "DWD"],
     )
     parser.add_argument(
         "--start_date",
@@ -44,25 +39,21 @@ if __name__ == "__main__":
         type=str,
         help="List of heliostats to be downloaded.",
         nargs="+",
-        default=["AA23"],
+        default=["AA23", "AA37"],
     )
     parser.add_argument(
-        "--include_calibration",
-        type=bool,
-        help="Boolean indicating whether to include calibration data.",
-        default=False,
+        "--collections",
+        type=str,
+        help="List of collections to be downloaded.",
+        nargs="+",
+        default=["properties", "calibration"],
     )
     parser.add_argument(
-        "--include_deflectometry",
-        type=bool,
-        help="Boolean indicating whether to include deflectometry data.",
-        default=True,
-    )
-    parser.add_argument(
-        "--include_properties",
-        type=bool,
-        help="Boolean indicating whether to include heliostat properties data.",
-        default=True,
+        "--filtered_calibration",
+        type=str,
+        help="List of calibration items to download.",
+        nargs="+",
+        default=["cropped_image", "calibration_properties"],
     )
     args = parser.parse_args()
 
@@ -70,14 +61,12 @@ if __name__ == "__main__":
     client = StacClient(output_dir=args.output_dir)
     client.get_tower_measurements()
     client.get_weather_data(
-        include_dwd=args.include_dwd,
-        include_juelich=args.include_juelich,
+        data_sources=args.weather_data_sources,
         start_date=datetime.strptime(args.start_date, mappings.TIME_FORMAT),
         end_date=datetime.strptime(args.end_date, mappings.TIME_FORMAT),
     )
     client.get_heliostat_data(
         heliostats=args.heliostats,
-        get_calibration=args.include_calibration,
-        get_deflectometry=args.include_deflectometry,
-        get_properties=args.include_properties,
+        collections=args.collections,
+        filtered_calibration_keys=args.filtered_calibration,
     )
