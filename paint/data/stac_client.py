@@ -302,7 +302,7 @@ class StacClient:
         start_date: Optional[datetime] = None,
         end_date: Optional[datetime] = None,
         filtered_calibration_keys: Optional[list[str]] = None,
-    ):
+    ) -> None:
         """
         Download data for one or more heliostats.
 
@@ -325,7 +325,7 @@ class StacClient:
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
             is downloaded (Default is None).
         """
-        # Check if keys provided to the filtered_calibration_key dictionary are acceptable
+        # Check if keys provided to the filtered_calibration_key dictionary are acceptable.
         if heliostats is None:
             log.warning(
                 "No heliostats selected - downloading data for all heliostats! This may take a while..."
@@ -351,7 +351,7 @@ class StacClient:
                 for heliostat in heliostats
             ]
 
-        # Log warning if now collection keys provided.
+        # Log warning if no collection keys provided.
         if collections is None:
             log.warning(
                 "No collections selected - downloading data for all collections!"
@@ -369,21 +369,21 @@ class StacClient:
             for item in collections:
                 if item not in allowed_values:
                     raise ValueError(
-                        f"The heliostat collection must be one of: `deflectometry, calibration, "
-                        f"properties`! The key {item} is not accepted!"
+                        f"The heliostat collection must be one of: `deflectometry`, `calibration`, "
+                        f"`properties`! The key `{item}` is not accepted!"
                     )
             # Set boolean flags based on the presence of each allowed value in collections.
             get_calibration = mappings.SAVE_CALIBRATION.lower() in collections
             get_deflectometry = mappings.SAVE_DEFLECTOMETRY.lower() in collections
             get_properties = mappings.SAVE_PROPERTIES.lower() in collections
 
-        # Log warning if now filtered calibration keys provided.
+        # Log warning if no filtered calibration keys provided.
         if get_calibration and filtered_calibration_keys is None:
             log.warning(
                 "No calibration filters provided - downloading all calibration data, i.e. raw, cropped, flux, centered"
-                "flux and calibration properties!"
+                "flux, and calibration properties!"
             )
-        # Check if keys provided to the filtered_calibration_key dictionary are acceptable
+        # Check if keys provided to the `filtered_calibration_key` dictionary are acceptable.
         elif get_calibration and filtered_calibration_keys is not None:
             accepted_keys = [
                 mappings.CALIBRATION_RAW_IMAGE_KEY,
@@ -395,8 +395,9 @@ class StacClient:
             for key in filtered_calibration_keys:
                 if key not in accepted_keys:
                     raise ValueError(
-                        f"The filtered calibration keys can only be one or more of: `raw_image, cropped_image, "
-                        f"flux_image, flux_centered_image, calibration_properties'! The key {key} is not accepted!"
+                        f"The filtered calibration keys can only be one or more of: `raw_image`, `cropped_image`, "
+                        f"`flux_image`, `flux_centered_image`, `calibration_properties`'! The key `{key}` is not "
+                        f"accepted!"
                     )
 
         # Error if only a start or end date is provided, but not both.
@@ -451,7 +452,7 @@ class StacClient:
                 )
 
     def download_weather_assets(
-        self, weather_item, include_juelich: bool, include_dwd: bool
+        self, weather_item: pystac.item.Item, include_juelich: bool, include_dwd: bool
     ):
         """
         Download weather assets for Jülich and/or DWD depending on flags.
@@ -461,9 +462,9 @@ class StacClient:
         weather_item : pystac.item.Item
             Weather item containing assets.
         include_juelich : bool
-            Indicating whether to include Jülich data.
+            Whether to include Jülich data.
         include_dwd : bool
-            Indicating whether to include DWD data.
+            Whether to include DWD data.
         """
         if "juelich" in weather_item.id and include_juelich:
             log.info(
@@ -474,9 +475,9 @@ class StacClient:
                 f"Processing and downloading DWD weather data item {weather_item.id}"
             )
         else:
-            return  # If item does not match filters, skip
+            return  # If item does not match filters, skip.
 
-        # Download the assets
+        # Download the assets.
         for asset in weather_item.assets.values():
             url = asset.href
             file_end = asset.href.split("/")[-1]
@@ -512,7 +513,7 @@ class StacClient:
             for item in data_sources:
                 if item not in allowed_values:
                     raise ValueError(
-                        f"The weather source must be one of: `Jülich, DWD! The key {item} is not accepted!"
+                        f"The weather source must be one of: `Jülich`, `DWD`! The key `{item}` is not accepted!"
                     )
             # Set boolean flags based on the presence of each allowed value in collections.
             include_juelich = "Jülich" in data_sources
