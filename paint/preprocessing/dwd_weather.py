@@ -10,10 +10,10 @@ from paint.preprocessing.dwd_mappings import dwd_parameter_mapping
 
 class DWDWeatherData:
     """
-    Download and save DWD weather preprocessing in a HDF5 file.
+    Download and save DWD weather data in an HDF5 file.
 
-    This class enables DWD weather preprocessing to be downloaded in either a 10-minute or 1-hour resolution from selected
-    weather stations. The preprocessing is then saved as an HDF5 file, either grouped by resolution or by parameter.
+    This class enables DWD weather data to be downloaded in either a 10-minute or 1-hour resolution from selected
+    weather stations. The data is then saved as an HDF5 file, either grouped by resolution or by parameter.
 
     Attributes
     ----------
@@ -22,24 +22,24 @@ class DWDWeatherData:
     parameters_1h : list[str]
         The parameters to be downloaded in a 1h temporal resolution.
     station_ids : list[str]
-        The station IDs to be considered when downloading preprocessing.
+        The station IDs to be considered when downloading data.
     start_date : str
-        The start date of the downloaded preprocessing.
+        The start date of the downloaded data.
     end_date : str
-        The end date of the downloaded preprocessing.
+        The end date of the downloaded data.
     output_path : str
-        The path to save the downloaded preprocessing.
+        The path to save the downloaded data.
     file_name : str
-        The name of the downloaded preprocessing (Default: "dwd_weather").
+        The name of the downloaded data (Default: "dwd_weather").
     settings : Settings
-        The settings required for downloading preprocessing.
+        The settings required for downloading data.
     compression_opts : dict[str, Any]
         The compression options for compressing the HDF5 file.
 
     Methods
     -------
     download_and_save_data()
-        Download and save DWD weather preprocessing.
+        Download and save DWD weather data.
     """
 
     def __init__(
@@ -58,7 +58,7 @@ class DWDWeatherData:
         compression_level: int = 5,
     ) -> None:
         """
-        Initialize the DWD weather preprocessing object.
+        Initialize the DWD weather data object.
 
         Parameters
         ----------
@@ -67,15 +67,15 @@ class DWDWeatherData:
         parameters_1h : list[str]
             The parameters to be downloaded in a 1h temporal resolution.
         station_ids : list[str]
-            The station IDs to be considered when downloading preprocessing.
+            The station IDs to be considered when downloading data.
         start_date : str
-            The start date of the downloaded preprocessing.
+            The start date of the downloaded data.
         end_date : str
-            The end date of the downloaded preprocessing.
+            The end date of the downloaded data.
         output_path : str
-            The path to save the downloaded preprocessing.
+            The path to save the downloaded data.
         file_name : str
-            The name of the downloaded preprocessing (Default: "dwd_weather").
+            The name of the downloaded data (Default: "dwd_weather").
         ts_shape : str
             A string indicating how the time series shape should be handled in the ``wetterdienst`` package (Default:
             ``long``).
@@ -111,18 +111,18 @@ class DWDWeatherData:
         self,
     ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
-        Download the raw preprocessing using the DWD Wetterdienst pacakge.
+        Download the raw data using the DWD Wetterdienst pacakge.
 
         Returns
         -------
         pd.DataFrame
-            The metadata for each weather station included in the 10min temporal resolution preprocessing request.
+            The metadata for each weather station included in the 10min temporal resolution data request.
         pd.DataFrame
-            The metadata for each weather station included in the 1h temporal resolution preprocessing request.
+            The metadata for each weather station included in the 1h temporal resolution data request.
         pd.DataFrame
-            The preprocessing for the weather variables downloaded in 10min temporal resolution.
+            The data for the weather variables downloaded in 10min temporal resolution.
         pd.DataFrame
-            The preprocessing for the weather variables downloaded in 1h temporal resolution.
+            The data for the weather variables downloaded in 1h temporal resolution.
         """
         request_10min = DwdObservationRequest(
             parameter=self.parameters_10min,
@@ -148,14 +148,14 @@ class DWDWeatherData:
 
     def download_and_save_data(self) -> pd.DataFrame:
         """
-        Download the desired DWD weather preprocessing and save it to an HDF5 file.
+        Download the desired DWD weather data and save it to an HDF5 file.
 
         Returns
         -------
         pd.Dataframe
             The metadata used for creating the STAC item.
         """
-        # download the preprocessing
+        # Download the data.
         metadata_10min, metadata_1h, df_10min, df_1h = self._get_raw_data()
         metadata_to_save = metadata_1h[
             ["station_id", "latitude", "longitude", "height", "name"]

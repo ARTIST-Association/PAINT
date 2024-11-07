@@ -13,10 +13,10 @@ def make_calibration_collection(
 
     Parameters
     ----------
-    heliostat_id: str
-        The heliostat id of the heliostat being considered.
-    data: pd.DataFrame
-        The dataframe containing all image preprocessing.
+    heliostat_id : str
+        The heliostat ID of the heliostat being considered.
+    data : pd.DataFrame
+        The dataframe containing all image data.
 
     Returns
     -------
@@ -117,17 +117,17 @@ def make_calibration_item(
 
     Parameters
     ----------
-    image: int
-        The image id.
+    image : int
+        The image ID.
     heliostat_data : pd.Series
-        The preprocessing belonging to the heliostat.
+        The data belonging to the heliostat.
     processed_available : bool
         Whether processed images are available or not.
 
     Returns
     -------
     dict[str, Any]
-        The STAC item preprocessing as dictionary.
+        The STAC item data as dictionary.
     """
     description = (
         f"Raw and processed calibration image of focused sunlight on the calibration target from heliostat "
@@ -143,7 +143,7 @@ def make_calibration_item(
         "stac_extensions": [mappings.VIEW_EXTENSION, mappings.PROCESSING_EXTENSION],
         "id": f"{image}",
         "type": "Feature",
-        "title": f"Calibration preprocessing from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
+        "title": f"Calibration data from heliostat {heliostat_data[mappings.HELIOSTAT_ID]} for image {image}",
         "description": description,
         "collection": mappings.CALIBRATION_COLLECTION_ID
         % heliostat_data[mappings.HELIOSTAT_ID],
@@ -209,7 +209,7 @@ def make_calibration_item(
             mappings.CALIBRATION_RAW_IMAGE_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
                 f"{image}_raw.png",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Raw calibration image with id {image}",
             },
@@ -227,7 +227,7 @@ def make_calibration_item(
                     mappings.CALIBRATION_CROPPED_IMAGE_KEY: {
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
                         f"{image}_cropped.png",
-                        "roles": ["preprocessing"],
+                        "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped calibration image with id {image}",
                         "processing:lineage": "Target cropping through template matching",
@@ -236,7 +236,7 @@ def make_calibration_item(
                     mappings.CALIBRATION_FLUX_IMAGE_KEY: {
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
                         f"{image}_flux.png",
-                        "roles": ["preprocessing"],
+                        "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped and segmented calibration image with id {image}",
                         "processing:lineage": "Target cropping through template matching and segmentation",
@@ -247,7 +247,7 @@ def make_calibration_item(
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/"
                         f"{mappings.SAVE_CALIBRATION}/"
                         f"{image}_flux_centered.png",
-                        "roles": ["preprocessing"],
+                        "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped, segmented, and centered calibration image with id {image}",
                         "processing:lineage": "Target cropping through template matching, segmentation, and centering",

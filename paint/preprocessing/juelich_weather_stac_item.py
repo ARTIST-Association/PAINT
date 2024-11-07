@@ -10,19 +10,19 @@ def make_juelich_weather_item(
     month_group: str,
 ) -> dict[str, Any]:
     """
-    Generate a STAC item for the Juelich weather preprocessing.
+    Generate a STAC item for the Juelich weather data.
 
     Parameters
     ----------
     data : pd.Series
-        Metadata for the Juelich weather preprocessing file.
+        Metadata for the Juelich weather data file.
     month_group : str
         Considered month group.
 
     Returns
     -------
     dict[str, Any]
-        The STAC item preprocessing as dictionary.
+        The STAC item data as dictionary.
     """
     resource = mappings.JUELICH_FILE_NAME % month_group
     return {
@@ -30,8 +30,8 @@ def make_juelich_weather_item(
         "stac_extensions": [],
         "id": resource,
         "type": "Feature",
-        "title": f"Weather preprocessing from Juelich for {month_group}",
-        "description": f"Weather preprocessing from the Juelich weather station for {month_group}",
+        "title": f"Weather data from Juelich for {month_group}",
+        "description": f"Weather data from the Juelich weather station for {month_group}",
         "collection": mappings.WEATHER_COLLECTION_ID,
         "geometry": {
             "type": "Point",
@@ -83,9 +83,9 @@ def make_juelich_weather_item(
         "assets": {
             mappings.WEATHER_DATA_KEY: {
                 "href": f"{mappings.URL_BASE}/{mappings.SAVE_WEATHER}/{mappings.JUELICH_FILE_NAME % month_group}.h5",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": mappings.MIME_HDF5,
-                "title": f"Weather preprocessing from the Juelich weather station for {month_group}",
+                "title": f"Weather data from the Juelich weather station for {month_group}",
             }
         },
     }
