@@ -8,7 +8,7 @@ from paint.preprocessing.tower_stac import make_tower_item
 @pytest.fixture
 def tower_item_data() -> dict[str, np.ndarray]:
     """
-    Make a fixture with preprocessing for generating a tower STAC item.
+    Make a fixture with data for generating a tower STAC item.
 
     Returns
     -------
