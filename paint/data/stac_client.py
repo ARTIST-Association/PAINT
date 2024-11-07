@@ -142,6 +142,8 @@ class StacClient:
         # Open the file in binary write mode and download the content.
         with open(file_name, "wb") as file:
             downloaded_length = 0
+            # Iterate over chunks of data in the response and write each chunk of data to file until the download
+            # is complete.
             for data in response.iter_content(chunk_size=self.chunk_size):
                 file.write(data)
                 downloaded_length += len(data)
