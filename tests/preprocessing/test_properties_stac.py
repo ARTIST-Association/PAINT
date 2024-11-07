@@ -276,6 +276,6 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
 
 
 def test_make_properties_collection_fail() -> None:
-    """Test conversion failure on incomplete input preprocessing."""
+    """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
         make_properties_collection("AB123", pd.DataFrame())
