@@ -265,7 +265,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "assets": {
             "heliostat_properties": {
                 "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties.json",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Heliostat properties for heliostat AA23",
             }
