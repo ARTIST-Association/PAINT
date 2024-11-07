@@ -103,7 +103,7 @@ class StacClient:
         """
         Help to get a child from a STAC catalog or collection.
 
-        Since pystac returns `None` if a child is not present, it is important we log a warning if this is the case.
+        Since PySTAC returns `None` if a child is not present, it is important we log a warning if this is the case.
 
         Parameters
         ----------
