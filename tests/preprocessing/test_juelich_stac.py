@@ -32,7 +32,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
 
     Parameters
     ----------
-    preprocessing : tuple[str, pd.Series]
+    data : tuple[str, pd.Series]
         Test fixture.
     """
     month_group, juelich_item_data = juelich_data
