@@ -185,7 +185,7 @@ class StacClient:
         for item in items:
             item_time = item.properties["datetime"]
             if start_date and end_date:
-                # If start and end dates are provided, filter based on them
+                # If start and end dates are provided, filter based on them.
                 if not (
                     start_date
                     <= datetime.strptime(item_time, mappings.TIME_FORMAT)
@@ -199,14 +199,14 @@ class StacClient:
                 filtered_calibration_keys is not None
                 and mappings.SAVE_CALIBRATION.lower() in collection_id.split("-")
             ):
-                # Only process the calibration keys if provided
+                # Only process the calibration keys if provided.
                 for key, asset in item.assets.items():
                     if key in filtered_calibration_keys:
                         self.download_heliostat_asset(
                             asset, heliostat_catalog_id, save_folder
                         )
             else:
-                # Process all assets in the item
+                # Process all assets in the item.
                 for asset in item.assets.values():
                     self.download_heliostat_asset(
                         asset, heliostat_catalog_id, save_folder
