@@ -63,7 +63,7 @@ class StacClient:
         """
         Help to load a STAC catalog.
 
-        Since pystac does not check if the URL exists before attempting to download a catalog we catch any errors raised
+        Since PySTAC does not check if the URL exists before attempting to download a catalog, we catch any errors raised
         and raise a value error indicating that the desired catalog does not exist.
 
         Parameters
