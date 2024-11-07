@@ -13,7 +13,7 @@ def weather_collection_data():
     Returns
     -------
     pd.DataFrame
-        The preprocessing for the weather collection as a test fixture.
+        The data for the weather collection as a test fixture.
     """
     # Define the preprocessing
     data = {
