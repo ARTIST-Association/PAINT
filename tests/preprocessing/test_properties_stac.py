@@ -56,7 +56,7 @@ def test_make_properties_collection(
             "stac_extensions": [],
             "id": "AY39-heliostat_properties-collection",
             "type": "Collection",
-            "title": "Heliostat properties preprocessing for AY39",
+            "title": "Heliostat properties data for AY39",
             "description": "All heliostat properties for heliostat AY39",
             "keywords": [
                 "csp",
