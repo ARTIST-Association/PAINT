@@ -14,8 +14,8 @@ def test_juelich_weather_convertor():
     """
     Test the Juelich weather convertor.
 
-    This test merges two text files saved as test preprocessing and generates the resulting Juelich weather HDF5. This file is
-    then compared to an existing HDF5 also saved in the test preprocessing folder.
+    This test merges two text files saved as test data and generates the resulting Juelich weather HDF5. This file is
+    then compared to an existing HDF5 also saved in the test data folder.
     """
     # Load the expected HDF5 file.
     expected_hdf5_file = (
