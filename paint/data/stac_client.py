@@ -89,7 +89,7 @@ class StacClient:
             # Handle the 404 error explicitly by checking the message content.
             if "404" in error_message or "Could not read uri" in error_message:
                 raise ValueError(
-                    f"The desired catalog with the URL '{href}' doesn't exist (404 error)!"
+                    f"The desired catalog with the URL '{href}' does not exist (404 error)!"
                 )
             else:
                 # Raise the original exception for all other errors
