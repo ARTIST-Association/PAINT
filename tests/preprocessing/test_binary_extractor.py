@@ -34,8 +34,8 @@ def test_binary_extractor(
     """
     Test the binary extractor.
 
-    This test extracts the deflectometry preprocessing to h5 and the heliostat properties to json and saves these files in a
-    temporary directory. Then, we test if the appropriate keys are available and the shape of the preprocessing matches the
+    This test extracts the deflectometry data to h5 and the heliostat properties to json and saves these files in a
+    temporary directory. Then, we test if the appropriate keys are available and the shape of the data matches the
     expected shape.
 
     Parameters

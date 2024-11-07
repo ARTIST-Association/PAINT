@@ -1,7 +1,6 @@
 import os
 import tempfile
 from pathlib import Path
-from typing import Tuple
 from unittest.mock import MagicMock, patch
 
 import h5py
@@ -12,20 +11,20 @@ from paint.preprocessing.dwd_weather import DWDWeatherData
 
 
 @pytest.fixture
-def mock_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def mock_data() -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
-    Generate mock preprocessing instead of downloading the preprocessing from DWD.
+    Generate mock data instead of downloading the data from DWD.
 
     Returns
     -------
     pd.DataFrame
-        The mock metadata a weather station included in the 10min temporal resolution preprocessing request.
+        The mock metadata a weather station included in the 10min temporal resolution data request.
     pd.DataFrame
-        The mock metadata a weather station included in the 1h temporal resolution preprocessing request.
+        The mock metadata a weather station included in the 1h temporal resolution data request.
     pd.DataFrame
-        The mock preprocessing for the weather variables downloaded in 10min temporal resolution.
+        The mock data for the weather variables downloaded in 10min temporal resolution.
     pd.DataFrame
-        The mock preprocessing for the weather variables downloaded in 1h temporal resolution.
+        The mock data for the weather variables downloaded in 1h temporal resolution.
     """
     metadata = pd.DataFrame(
         {
@@ -94,22 +93,22 @@ def mock_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
 @patch("paint.preprocessing.dwd_weather.DWDWeatherData._get_raw_data")
 def test_dwd_weather(
     mock_request: MagicMock,
-    mock_data: Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame],
-):
+    mock_data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame],
+) -> None:
     """
-    Test the DWD weather preprocessing script by downloading mock preprocessing and checking if the saved HDF5 is correct.
+    Test the DWD weather data script by downloading mock data and checking if the saved HDF5 is correct.
 
-    Note, this test does not test the DWD Wetterdienst API. If breaking changes are made to this API then this test
+    Note that this test does not test the DWD Wetterdienst API. If breaking changes are made to this API then this test
     will not cover these changes.
 
     Parameters
     ----------
     mock_request : MagicMock
         The mock requests object.
-    mock_data : Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
-        The mock preprocessing used instead of actual downloaded preprocessing.
+    mock_data : tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]
+        The mock data used instead of actual downloaded data.
     """
-    # Set the return value for the mocked ``_get_raw_data`` function to our test preprocessing.
+    # Set the return value for the mocked ``_get_raw_data`` function to our test data.
     mock_request.return_value = mock_data
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -133,22 +132,22 @@ def test_dwd_weather(
         )
         dwd_weather.download_and_save_data()
 
-        # Check the HDF5 file
+        # Check the HDF5 file.
         file_path = Path(output_path, file_name)
         assert os.path.exists(file_path)
 
         with h5py.File(file_path, "r") as file:
-            # Select station
+            # Select station.
             station = file["15000"]
 
-            # Check metadata
+            # Check metadata.
             assert station.attrs["latitude"] == 50.7983
             assert station.attrs["longitude"] == 6.0244
             assert station.attrs["height"] == 231.0
             assert station.attrs["name"] == "Aachen-Orsbach"
             assert station.attrs["state"] == "Nordrhein-Westfalen"
 
-            # Check 10min preprocessing
+            # Check 10min data.
             assert "global_radiation_10min" in station.keys()
             assert (
                 station["global_radiation_10min"]["time"][:].astype(str)
@@ -174,7 +173,7 @@ def test_dwd_weather(
                 station["sunshine_duration_10min"]["value"][:] == [10.0, 11.0, 12.0]
             ).all()
 
-            # Check 1h preprocessing
+            # Check 1h data.
             assert "cloud_cover_1h" in station.keys()
             assert (
                 station["cloud_cover_1h"]["time"][:].astype(str)
@@ -199,8 +198,8 @@ def test_dwd_weather(
             ).all()
 
 
-def test_raw_download():
-    """Runs the raw download function to catch any errors in the request. No assertions are tested."""
+def test_raw_download() -> None:
+    """Run the raw download function to catch any errors in the request. No assertions are tested."""
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
         file_name = "test_raw_downlaod.h5"

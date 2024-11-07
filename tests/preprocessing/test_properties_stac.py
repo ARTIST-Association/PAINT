@@ -12,7 +12,7 @@ from paint.preprocessing.properties_stac import (
 @pytest.fixture
 def properties_collection_data() -> pd.DataFrame:
     """
-    Make a fixture with preprocessing for generating the heliostat properties collection.
+    Make a fixture with data for generating the heliostat properties collection.
 
     Returns
     -------

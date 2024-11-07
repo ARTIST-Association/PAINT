@@ -1,5 +1,3 @@
-from typing import Tuple
-
 import deepdiff
 import pandas as pd
 import pytest
@@ -12,16 +10,16 @@ from paint.preprocessing.deflectometry_stac import (
 
 
 @pytest.fixture
-def deflectometry_item_data() -> Tuple[str, pd.Series]:
+def deflectometry_item_data() -> tuple[str, pd.Series]:
     """
-    Make a fixture with preprocessing for generating a deflectometry item.
+    Make a fixture with data for generating a deflectometry item.
 
     Returns
     -------
     str
         The heliostat ID.
     pd.Series
-        The preprocessing for the deflectometry STAC item.
+        The data for the deflectometry STAC item.
     """
     data = {
         "East": 13.2,
@@ -34,18 +32,18 @@ def deflectometry_item_data() -> Tuple[str, pd.Series]:
 
 
 @pytest.fixture
-def deflectometry_collection_data():
+def deflectometry_collection_data() -> pd.DataFrame:
     """
-    Make a fixture with preprocessing for generating the deflectometry collection.
+    Make a fixture with data for generating the deflectometry collection.
 
     Returns
     -------
     pd.DataFrame
-        The preprocessing for the deflectometry collection as a test fixture.
+        The data for the deflectometry collection as a test fixture.
     """
     import pandas as pd
 
-    # Define the preprocessing
+    # Define the data.
     data = {
         "HeliostatId": ["AY39", "AY39", "AY39"],
         "title": [
@@ -91,8 +89,8 @@ def test_make_deflectometry_collection(
             "stac_extensions": [],
             "id": "AY39-deflectometry-collection",
             "type": "Collection",
-            "title": "Deflectometry preprocessing for heliostat AY39",
-            "description": "All deflectometry preprocessing, including raw measurements, filled measurements and results summary for heliostat AY39",
+            "title": "Deflectometry data for heliostat AY39",
+            "description": "All deflectometry data, including raw measurements, filled measurements and results summary for heliostat AY39",
             "keywords": ["csp", "deflectometry"],
             "license": "CDLA-2.0",
             "providers": [
@@ -185,14 +183,14 @@ def test_make_deflectometry_collection(
 
 
 def test_make_deflectometry_item(
-    deflectometry_item_data: Tuple[str, pd.Series],
+    deflectometry_item_data: tuple[str, pd.Series],
 ) -> None:
     """
     Test the creation of a STAC item.
 
     Parameters
     ----------
-    deflectometry_item_data : Tuple[str, pd.Series]
+    deflectometry_item_data : tuple[str, pd.Series]
         The test fixture.
     """
     heliostat_key, data = deflectometry_item_data
@@ -206,7 +204,7 @@ def test_make_deflectometry_item(
         "id": "AY39-2023-09-18Z11:39:25Z-deflectometry",
         "type": "Feature",
         "title": "Deflectometry measurement of AY39",
-        "description": "Measured raw and filled deflectometry preprocessing containing point clouds and surface normals for heliosat AY39 and the deflectometry measurement results summary",
+        "description": "Measured raw and filled deflectometry data containing point clouds and surface normals for heliostat AY39 and the deflectometry measurement results summary",
         "collection": "AY39-deflectometry-collection",
         "geometry": {
             "type": "Point",
@@ -254,13 +252,13 @@ def test_make_deflectometry_item(
         "assets": {
             "raw_measurement": {
                 "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry.h5",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Raw deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
             "filled_measurement": {
                 "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-filled-2023-09-18Z11:39:25Z-deflectometry.h5",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Filled deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
@@ -277,6 +275,6 @@ def test_make_deflectometry_item(
 
 
 def test_make_delfectometry_collection_fail() -> None:
-    """Test conversion failure on incomplete input preprocessing."""
+    """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
         make_deflectometry_collection("AB123", pd.DataFrame())
