@@ -3,7 +3,7 @@
 import argparse
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Union
 
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -24,12 +24,12 @@ class HistogramMeasurementPlot:
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The measurement preprocessing.
+        The measurement data.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
-    columns_to_consider : List[str]
+    columns_to_consider : list[str]
         The columns to include in the histogram plot.
-    joint_columns : List[str]
+    joint_columns : list[str]
         The columns to consider in the joint histogram plot.
     base_file_name : str
         The base file name used to generate plot names.
@@ -39,7 +39,7 @@ class HistogramMeasurementPlot:
     Methods
     -------
     load_data()
-        Load preprocessing and include time features.
+        Load data and include time features.
     create_histogram()
         Create a single histogram.
     create_stacked_bar_chart()
@@ -54,8 +54,8 @@ class HistogramMeasurementPlot:
         self,
         path_to_measurements: Union[Path, str],
         output_path: Union[str, Path],
-        columns_to_consider: List[str],
-        joint_columns: List[str],
+        columns_to_consider: list[str],
+        joint_columns: list[str],
         base_file_name: str = "02_histograms",
         save_as_pdf: bool = True,
     ) -> None:
@@ -65,12 +65,12 @@ class HistogramMeasurementPlot:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement preprocessing.
+            The path to the measurement data.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
-        columns_to_consider : List[str]
+        columns_to_consider : list[str]
             The columns to include in the histogram plot.
-        joint_columns : List[str]
+        joint_columns : list[str]
             The columns to consider in the joint histogram plot.
         base_file_name : str
             The base file name used to generate plot names.
@@ -89,17 +89,17 @@ class HistogramMeasurementPlot:
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the preprocessing and include additional time features.
+        Load the data and include additional time features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement preprocessing.
+            The path to the measurement data.
 
         Returns
         -------
         pd.DataFrame
-            The loaded preprocessing with additional time features.
+            The loaded data with additional time features.
         """
         measurements_df = pd.read_csv(path_to_measurements).set_index(mappings.ID_INDEX)
         measurements_df[mappings.CREATED_AT] = pd.to_datetime(
@@ -124,22 +124,22 @@ class HistogramMeasurementPlot:
         df: pd.DataFrame,
         column: str,
         bins: int = 20,
-        x_ticks: Optional[List[str]] = None,
+        x_ticks: Optional[list[str]] = None,
     ) -> Axes:
         """
-        Generate a histogram plot based on a given axis and preprocessing.
+        Generate a histogram plot based on a given axis and data.
 
         Parameters
         ----------
         ax : Axes
             The axis used to plot the histogram.
         df : pd.DataFrame
-            The preprocessing to plot.
+            The data to plot.
         column : str
-            The column from the preprocessing to plot.
+            The column from the data to plot.
         bins : int
-            The number of bins to use in the histogram (Default: 20_.
-        x_ticks : List[str], optional
+            The number of bins to use in the histogram (Default: 20).
+        x_ticks : list[str], optional
             Labels to use for the x-ticks.
 
         Returns
@@ -163,20 +163,20 @@ class HistogramMeasurementPlot:
         ax: Axes,
         df: pd.DataFrame,
         time_column: str,
-        x_ticks: Optional[List[str]] = None,
+        x_ticks: Optional[list[str]] = None,
     ) -> Axes:
         """
-        Generate a stacked bar chart based on given axis and preprocessing.
+        Generate a stacked bar chart based on given axis and data.
 
         Parameters
         ----------
         ax : Axes
             The axis used to plot the histogram.
         df : pd.DataFrame
-            The preprocessing to plot.
+            The data to plot.
         time_column : str
-            The time column from the preprocessing to use in the plot.
-        x_ticks : List[str], optional
+            The time column from the data to use in the plot.
+        x_ticks : list[str], optional
             Labels to use for the x-ticks.
 
         Returns
@@ -206,16 +206,16 @@ class HistogramMeasurementPlot:
         y_column: str,
         width: int,
         height: int,
-        x_lim: Optional[Tuple[float, float]] = None,
-        y_lim: Optional[Tuple[float, float]] = None,
+        x_lim: Optional[tuple[float, float]] = None,
+        y_lim: Optional[tuple[float, float]] = None,
     ) -> None:
         """
-        Generate a joint plot based on two columns in the preprocessing.
+        Generate a joint plot based on two columns in the data.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The preprocessing to plot.
+            The data to plot.
         x_column : str
             The column to consider for the x-axis of the plot.
         y_column : str

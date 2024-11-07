@@ -105,19 +105,19 @@ def merge_and_sort_df(
     df_heliostat_positions: pd.DataFrame, df_axis: pd.DataFrame
 ) -> pd.DataFrame:
     """
-    Concatenate the heliostat position and heliostat axis preprocessing and sort in the correct order.
+    Concatenate the heliostat position and heliostat axis data and sort in the correct order.
 
     Parameters
     ----------
     df_heliostat_positions : pd.DataFrame
         The dataframe containing the heliostat positions.
     df_axis : pd.DataFrame
-        The dataframe containing the heliostat axis preprocessing.
+        The dataframe containing the heliostat axis data.
 
     Returns
     -------
     pd.DataFrame
-        The concatenated and sorted preprocessing frame.
+        The concatenated and sorted dataframe.
     """
     df_concatenated = pd.concat([df_heliostat_positions, df_axis], axis=1, join="inner")
     created_at = df_concatenated.pop(mappings.CREATED_AT)

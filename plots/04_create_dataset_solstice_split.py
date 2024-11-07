@@ -27,7 +27,7 @@ class DatasetSolsticeSplit:
     Attributes
     ----------
     measurements_df : pd.DataFrame
-        The preprocessed measurement data.
+        The measured data.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
     number_of_train_samples : list[int]
@@ -40,9 +40,9 @@ class DatasetSolsticeSplit:
     Methods
     -------
     load_data()
-        Load the preprocessing and include additional features.
+        Load the data and include additional features.
     split_data()
-        Classify the preprocessing according to the date split.
+        Classify the data according to the solstice split.
     plot_solstice_split()
         Plot the solstice-splitted data.
     """
@@ -63,7 +63,7 @@ class DatasetSolsticeSplit:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the preprocessed measurement data.
+            The path to the measured data.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
         number_of_train_samples : list[int]
@@ -77,7 +77,7 @@ class DatasetSolsticeSplit:
         """
         self.measurements_df = self.load_data(
             Path(path_to_measurements)
-        )  # Preprocessed data to split
+        )  # Data to split
         self.number_of_train_samples = (
             number_of_train_samples  # Numbers of train samples to consider
         )
@@ -93,17 +93,17 @@ class DatasetSolsticeSplit:
     @staticmethod
     def load_data(path_to_measurements: Path) -> pd.DataFrame:
         """
-        Load the preprocessed measurement data and include additional features.
+        Load the data and include additional features.
 
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the preprocessed measurement data.
+            The path to the measurement data.
 
         Returns
         -------
         pd.DataFrame
-            The loaded preprocessed measurement data with additional time features.
+            The loaded data with additional time features.
         """
         df = pd.read_csv(path_to_measurements).set_index(
             mappings.ID_INDEX
@@ -153,12 +153,12 @@ class DatasetSolsticeSplit:
         self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int
     ) -> pd.DataFrame:
         """
-        Split the preprocessed measurement data according to the date and return the requested fraction.
+        Split the data according to the date and return the requested fraction.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The preprocessed measurement data frame to classify.
+            The dataframe to classify.
         split_name : str
             The name of the split.
         train_head : int
@@ -169,7 +169,7 @@ class DatasetSolsticeSplit:
         Returns
         -------
         pd.DataFrame
-            The preprocessed measurement data split according to the date.
+            The data split according to the date.
         """
         # Calculate distances to nearest winter and summer solstice.
         df[mappings.DECEMBER_DISTANCE] = df[mappings.CREATED_AT].apply(
@@ -196,7 +196,7 @@ class DatasetSolsticeSplit:
 
         return df[split_name]
 
-    def plot_solstice_split(self):
+    def plot_solstice_split(self) -> None:
         """Plot the solstice split."""
         for i, n in enumerate(self.number_of_train_samples):
             self.measurements_df[

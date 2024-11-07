@@ -25,7 +25,7 @@ class HeliostatPositionPlot:
     count_df : pd.DataFrame()
         The counts of the heliostats.
     deflectometry_df : pd.DataFrame()
-        The deflectometry preprocessing from the heliostats.
+        The deflectometry data from the heliostats.
     output_path : Path
         The output path indicating where to save the plot.
     file_name : str
@@ -34,8 +34,8 @@ class HeliostatPositionPlot:
     Methods
     -------
     load_data()
-        Load the preprocessing required for the plot.
-    get_colour()
+        Load the data required for the plot.
+    get_color()
         Helper function to determine the colors for plotting the heliostat positions.
     plot_heliostat_positions()
         Plots the heliostat positions and saves this plot as PDF or PNG.
@@ -56,17 +56,17 @@ class HeliostatPositionPlot:
         Parameters
         ----------
         path_to_positions : Union[str, Path]
-            The path to load the heliostat position preprocessing.
+            The path to load the heliostat position data.
         path_to_measurements : Union[str, Path]
-            The path to load the heliostat measurement preprocessing.
+            The path to load the heliostat measurement data.
         path_to_deflectometry : Union[str, Path]
-            The path to load the deflectometry preprocessing.
+            The path to load the deflectometry data.
         output_path : Union[str, Path]
             The output path indicating where to save the plot.
         file_name : str
-            The file name used to save the plot (default: "heliostat_positions").
+            The file name used to save the plot (Default: "heliostat_positions").
         save_as_pdf : boolean
-            Flag indicating whether to save the plot as a PDF or not (default: True).
+            Flag indicating whether to save the plot as a PDF or not (Default: True).
         """
         self.position_df, self.count_df, self.deflectometry_df = self.load_data(
             path_to_positions=Path(path_to_positions),
@@ -86,16 +86,16 @@ class HeliostatPositionPlot:
         path_to_positions: Path, path_to_measurements: Path, path_to_deflectometry: Path
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
-        Load the preprocessing and return the preprocessing frames required to generate the heliostat position plot.
+        Load the data and return the dataframes required to generate the heliostat position plot.
 
         Parameters
         ----------
         path_to_positions : Path
-            The path to load the heliostat position preprocessing.
+            The path to load the heliostat position data.
         path_to_measurements : Path
-            The path to load the heliostat measurement preprocessing.
-        path_to_deflectometry : Path
-            The path to load the deflectometry preprocessing.
+            The path to load the heliostat measurement data.
+        path_to_deflectometry : data
+            The path to load the deflectometry data.
 
         Returns
         -------
@@ -104,33 +104,33 @@ class HeliostatPositionPlot:
         pd.DataFrame
             The counts of the heliostats.
         pd.DataFrame
-            The deflectometry preprocessing from the heliostats.
+            The deflectometry preprdataocessing from the heliostats.
         """
-        # Load heliosat positions.
+        # Load heliostat positions.
         df_heliostat_positions = pd.read_excel(path_to_positions, header=0)
         df_heliostat_positions.set_index(
             mappings.INTERNAL_NAME_INDEX, inplace=True
-        )  # Set "InternalName" as the index
+        )  # Set "InternalName" as the index.
         df_heliostat_positions.rename_axis(
             mappings.HELIOSTAT_ID, inplace=True
-        )  # Rename the index
+        )  # Rename the index.
         df_heliostat_positions = df_heliostat_positions[mappings.X_Y_Z_POSITIONS]
 
-        # Load measurements
+        # Load measurements.
         df_measurements = pd.read_csv(path_to_measurements)
         df_measurements = df_measurements.set_index(
             mappings.ID_INDEX
-        )  # Set df id as index
-        # Get all existing heliostat IDs and their entry counts
+        )  # Set df id as index.
+        # Get all existing heliostat IDs and their entry counts.
         heliostat_counts = df_measurements[mappings.HELIOSTAT_ID].value_counts()
-        # Replace HeliostatId with heliostat names in heliostat_counts dataframe
+        # Replace HeliostatId with heliostat names in `heliostat_counts` dataframe.
         heliostat_counts.index = heliostat_counts.index.map(heliostat_id_to_name)
 
-        # Load deflectometry availability from file
+        # Load deflectometry availability from file.
         df_deflectometry = pd.read_excel(path_to_deflectometry)
         df_deflectometry.set_index(
             mappings.INTERNAL_NAME_INDEX, inplace=True
-        )  # Set "InternalName" as the index
+        )  # Set "InternalName" as the index.
 
         return df_heliostat_positions, heliostat_counts, df_deflectometry
 
@@ -142,7 +142,7 @@ class HeliostatPositionPlot:
         Parameters
         ----------
         surface_measurement : float
-            The measured surface value from the deflectometry preprocessing.
+            The measured surface value from the deflectometry ata.
 
         Returns
         -------
@@ -230,7 +230,7 @@ class HeliostatPositionPlot:
         y_max = 250
         plt.ylim(y_min, y_max)
         plt.tight_layout()
-        plt.legend(title="Accuracy of available\ndeflectometry preprocessing:")
+        plt.legend(title="Accuracy of available\ndeflectometry data:")
         plt.savefig(self.output_path / self.file_name, dpi=300)
 
 

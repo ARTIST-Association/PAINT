@@ -24,7 +24,7 @@ def plot_stacked_bar_chart_with_inset(
     Parameters
     ----------
     grouped_df: pd.DataFrame
-        The measurement preprocessing from heliostats grouped by the heliostat ID.
+        The measurement data from heliostats grouped by the heliostat ID.
     example_heliostat_df : pd.DataFrame
         The example measurements of a single heliostat.
     train_split_name : str
@@ -38,18 +38,18 @@ def plot_stacked_bar_chart_with_inset(
     show_y_label : bool
         Indicates whether to show the y-axis label (default: False)
     """
-    # Compute the total measurements for each HeliostatID
+    # Compute the total measurements for each HeliostatID.
     grouped_df[mappings.TOTAL_INDEX] = grouped_df.sum(axis=1)
 
-    # Sort by total measurements for clearer plotting
+    # Sort by total measurements for clearer plotting.
     grouped_df = grouped_df.sort_values(mappings.TOTAL_INDEX)
 
     bar_width = 2  # Bar width
 
     if ax is None:
-        _, ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects
+        _, ax = plt.subplots(figsize=(10, 6))  # Create figure and axis objects.
 
-    # Plot each layer of the stacked bar chart
+    # Plot each layer of the stacked bar chart.
     ax.bar(
         grouped_df[mappings.TOTAL_INDEX],
         grouped_df[mappings.TRAIN_INDEX],
@@ -74,16 +74,16 @@ def plot_stacked_bar_chart_with_inset(
         bottom=grouped_df[mappings.TRAIN_INDEX] + grouped_df[mappings.TEST_INDEX],
     )
 
-    # Customize the plot
+    # Customize the plot.
     ax.set_xlabel("# Measurements per Heliostat")
     ax.set_ylabel("# Measurements per Heliostat")
 
     ax.set_xlim(
         0, number_of_heliostats
-    )  # Ensure x-axis starts at 0 and ends at the number of heliostats
+    )  # Ensure x-axis starts at 0 and ends at the number of heliostats.
     ax.set_ylim(
         0, number_of_heliostats
-    )  # Ensure y-axis starts at 0 and ends at the number of heliostats
+    )  # Ensure y-axis starts at 0 and ends at the number of heliostats.
 
     if show_legend:
         ax.legend(bbox_to_anchor=(0.3, 1.05), loc="center left", ncol=3)
@@ -124,15 +124,15 @@ def mark_insufficient_data_as_nan(
     minimum_test_entries: int,
 ) -> pd.DataFrame:
     """
-    Mark preprocessing splits with insufficient preprocessing as `NaN`.
+    Mark data splits with insufficient data as `NaN`.
 
-    This function updates the dataset split to set 'NaN' for heliostats where the 'train' set is smaller than the
+    This function updates the dataset split to set `NaN` for heliostats where the 'train' set is smaller than the
     minimum number of required training samples, and the 'test' set is smaller than the minimum number of test samples.
 
     Parameters
     ----------
     df : pd.DataFrame
-        The considered preprocessing that contains the dataset split column.
+        The considered data that contains the dataset split column.
     column : str
         The column name used to check for 'train' and 'test' entries.
     minimum_train_entries : int
@@ -143,29 +143,29 @@ def mark_insufficient_data_as_nan(
     Returns
     -------
     pd.DataFrame
-        Updated preprocessing with adjusted dataset split set to `NaN`.
+        Updated data with adjusted dataset split set to `NaN`.
     """
-    # Group by HeliostatId and count the number of 'train' and 'test' entries
+    # Group by HeliostatId and count the number of 'train' and 'test' entries.
     counts = (
         df.groupby(mappings.HELIOSTAT_ID)[column].value_counts().unstack(fill_value=0)
     )
 
-    # Identify HeliostatIds with 'train' set smaller than n_train
+    # Identify HeliostatIds with 'train' set smaller than `n_train`.
     insufficient_train_heliostats = counts[
         counts.get(mappings.TRAIN_INDEX, 0) < minimum_train_entries
     ].index
 
-    # Identify HeliostatIds with 'test' set smaller than m_validation
+    # Identify HeliostatIds with 'test' set smaller than `n_validation`.
     insufficient_test_heliostats = counts[
         counts.get(mappings.TEST_INDEX, 0) < minimum_test_entries
     ].index
 
-    # Combine both sets of insufficient HeliostatIds
+    # Combine both sets of insufficient HeliostatIds.
     insufficient_heliostats = set(insufficient_train_heliostats).union(
         insufficient_test_heliostats
     )
 
-    # Update the dataset split for those HeliostatIds
+    # Update the dataset split for those HeliostatIds.
     df.loc[df[mappings.HELIOSTAT_ID].isin(insufficient_heliostats), column] = np.nan
 
     return df
