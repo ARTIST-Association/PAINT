@@ -168,17 +168,17 @@ class StacClient:
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
             is downloaded (Default is None).
-        end_date :  datetime, optional
+        end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
             is downloaded (Default is None).
         filtered_calibration_keys : list[str]
-            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
-            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
-            downloaded (Default is None).
+            List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
+            `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
+            is downloaded (Default is None).
         collection_id : str
             ID of the collection to download.
         heliostat_catalog_id : str
-            The ID of the considered heliostat catalog.
+            ID of the considered heliostat catalog.
         save_folder : str
             Name of the folder to save the collection items in.
         """
