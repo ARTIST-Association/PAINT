@@ -21,9 +21,9 @@ class StacClient:
     Attributes
     ----------
     output_dir : pathlib.Path
-        The output directory for saving the downloaded data.`
-    chunk_size: int
-        Chunk size used for download (Default: `1024 * 1024).
+        The output directory for saving the downloaded data.
+    chunk_size : int
+        Chunk size used for download (Default: 1024 * 1024).
 
     Methods
     -------
