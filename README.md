@@ -40,12 +40,12 @@ The ``PAINT`` repository is structured as shown below:
 ├── data-preparation-scripts # Scripts used to generate STAC files and structure data
 ├── html # Code for the paint-database.org website
 ├── markers # Saved markers for the WRI1030197 power plant in Jülich
-├── paint # Python package/
+├── paint # Python package
 │   ├── data
 │   ├── preprocessing
 │   └── util
 ├── plots # Scripts to generate plots
-└── tests # Tests for the python package/
+└── tests # Tests for the python package
     ├── data
     ├── preprocessing
     └── util
