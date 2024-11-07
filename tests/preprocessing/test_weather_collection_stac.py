@@ -15,7 +15,7 @@ def weather_collection_data():
     pd.DataFrame
         The data for the weather collection as a test fixture.
     """
-    # Define the preprocessing
+    # Define the data.
     data = {
         "title": ["DWD weather preprocessing"],
         "url": ["INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1"],
