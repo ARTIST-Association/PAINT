@@ -17,7 +17,7 @@ def weather_collection_data():
     """
     # Define the data.
     data = {
-        "title": ["DWD weather preprocessing"],
+        "title": ["DWD weather data"],
         "url": ["INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1"],
         "start": ["2021-03-31Z22:00:00Z"],
         "end": ["2024-02-29Z23:00:00Z"],
