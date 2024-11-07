@@ -19,7 +19,7 @@ def properties_collection_data() -> pd.DataFrame:
     pd.DataFrame
         The data for the heliostat properties collection as a test fixture.
     """
-    # Define the preprocessing
+    # Define the data.
     data = {
         "HeliostatId": ["AY39", "AY39"],
         "title": ["kinematic properties for AY39", "facet properties for AY39"],
