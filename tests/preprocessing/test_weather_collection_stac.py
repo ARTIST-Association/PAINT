@@ -8,7 +8,7 @@ from paint.preprocessing.weather_collection_stac import make_weather_collection
 @pytest.fixture
 def weather_collection_data():
     """
-    Make a fixture with preprocessing for generating the weather collection.
+    Make a fixture with data for generating the weather collection.
 
     Returns
     -------
