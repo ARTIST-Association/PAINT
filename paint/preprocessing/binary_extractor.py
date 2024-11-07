@@ -11,27 +11,27 @@ from paint.util.utils import to_utc_single
 
 class BinaryExtractor:
     """
-    Implement an extractor that extracts preprocessing from a binary file and saves it to h5 and json.
+    Implement an extractor that extracts data from a binary file and saves it to h5 and json.
 
-    This extractor considers preprocessing form a binary file that contains deflectometry preprocessing and heliostat properties. The preprocessing
-    is extracted and the deflectometry preprocessing saved in a h5 format and the heliostat properties as a json.
+    This extractor considers data from a binary file containing deflectometry data and heliostat properties. The data
+    is extracted and the deflectometry data saved as an h5 file and the heliostat properties as a json.
 
     Attributes
     ----------
     input_path : Path
-        The file path to the binary preprocessing file that will be converted.
+        The file path to the binary data file that will be converted.
     output_path : Path
         The file path to save the converted h5 file.
     file_name : str
         The file name of the converted h5 file.
     raw_data : bool
-        Whether the raw preprocessing or filled preprocessing is extracted.
+        Whether the raw data or filled data is extracted.
     heliostat_id : str
         The heliostat ID of the heliostat considered in the binary file.
     json_handle : str
-        The file path to save the json containing the heliostat properties preprocessing.
+        The file path to save the json containing the heliostat properties data.
     deflectometry_created_at : str
-        The time stamp for when the deflectometry preprocessing was created. Required for properties later.
+        The time stamp for when the deflectometry data was created. Required for properties later.
     surface_header_name : str
         The name for the surface header in the binary file.
     facet_header_name : str
@@ -44,7 +44,7 @@ class BinaryExtractor:
     nwu_to_enu()
         Cast from an NWU to an ENU coordinate system.
     convert_to_h5()
-        Convert binary preprocessing to h5.
+        Convert binary data to h5.
     """
 
     def __init__(
@@ -61,7 +61,7 @@ class BinaryExtractor:
         Parameters
         ----------
         input_path : Union[str, Path]
-            The file path to the binary preprocessing file that will be converted.
+            The file path to the binary data file that will be converted.
         output_path : Union[str, Path]
             The file path to save the converted h5 deflectometry file.
         surface_header_name : str
@@ -118,7 +118,7 @@ class BinaryExtractor:
     def convert_to_h5(
         self,
     ) -> None:
-        """Extract preprocessing from a binary file and save the deflectometry measurements."""
+        """Extract data from a binary file and save the deflectometry measurements."""
         # Create structures for reading binary file correctly.
         surface_header_struct = struct.Struct(self.surface_header_name)
         facet_header_struct = struct.Struct(self.facet_header_name)
@@ -133,7 +133,7 @@ class BinaryExtractor:
             n_xy = surface_header_data[5:7]
             number_of_facets = int(n_xy[0] * n_xy[1])
 
-            # Create empty tensors for storing preprocessing.
+            # Create empty tensors for storing data.
             facet_translation_vectors = torch.empty(number_of_facets, 3)
             canting_e = torch.empty(number_of_facets, 3)
             canting_n = torch.empty(number_of_facets, 3)
@@ -179,7 +179,7 @@ class BinaryExtractor:
         # To maintain consistency, we cast the west direction to east direction.
         canting_e[:, 0] = -canting_e[:, 0]
 
-        # extract deflectometry preprocessing and save
+        # Extract deflectometry data and save.
         saved_deflectometry_path = (
             Path(self.output_path)
             / self.heliostat_id
