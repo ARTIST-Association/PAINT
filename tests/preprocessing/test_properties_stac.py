@@ -17,7 +17,7 @@ def properties_collection_data() -> pd.DataFrame:
     Returns
     -------
     pd.DataFrame
-        The preprocessing for the heliostat properties collection as a test fixture.
+        The data for the heliostat properties collection as a test fixture.
     """
     # Define the preprocessing
     data = {
