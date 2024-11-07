@@ -13,7 +13,7 @@ def tower_item_data() -> dict[str, np.ndarray]:
     Returns
     -------
     dict[str, np.ndarray]
-        The preprocessing for the Juelich stac item.
+        The data for the Juelich STAC item.
     """
     return {
         "longitude": np.array([6.38750587, 6.38785603]),
