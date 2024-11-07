@@ -106,7 +106,7 @@ def test_make_weather_collection(
                 "rel": "item",
                 "href": "INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1",
                 "type": "application/geo+json",
-                "title": "STAC item of DWD weather preprocessing",
+                "title": "STAC item of DWD weather data",
             },
         ],
     }
