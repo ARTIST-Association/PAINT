@@ -159,7 +159,7 @@ def properties_item_data() -> tuple[str, pd.Series]:
     str
         The heliostat ID.
     pd.Series
-        The preprocessing for the properties STAC item.
+        The data for the properties STAC item.
     """
     data = {
         "CreatedAt": "2021-07-20 07:09:29",
