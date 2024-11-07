@@ -115,6 +115,6 @@ def test_make_weather_collection(
 
 
 def test_make_weather_collection_fail() -> None:
-    """Test conversion failure on incomplete input preprocessing."""
+    """Test conversion failure on incomplete input data."""
     with pytest.raises(KeyError):
         make_weather_collection(pd.DataFrame())
