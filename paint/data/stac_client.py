@@ -10,8 +10,7 @@ import paint.util.paint_mappings as mappings
 from paint.util import set_logger_config
 
 set_logger_config()
-log = logging.getLogger(__name__)
-"""A logger for the STAC client."""
+log = logging.getLogger(__name__)  # Logger for the STAC client
 
 
 class StacClient:
