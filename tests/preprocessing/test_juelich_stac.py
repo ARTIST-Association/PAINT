@@ -10,7 +10,7 @@ from paint.preprocessing.juelich_weather_stac_item import make_juelich_weather_i
 @pytest.fixture
 def juelich_data() -> Tuple[str, pd.Series]:
     """
-    Make a fixture with preprocessing for generating a Juelich weather STAC item.
+    Make a fixture with data for generating a Juelich weather STAC item.
 
     Returns
     -------
