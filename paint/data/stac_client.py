@@ -49,9 +49,9 @@ class StacClient:
         Parameters
         ----------
         output_dir : Union[str, pathlib.Path]
-            The output directory for saving the downloaded data.`
-        chunk_size: int
-            Chunk size used for download (Default: `1024 * 1024).
+            The output directory for saving the downloaded data.
+        chunk_size : int
+            Chunk size used for download (Default: 1024 * 1024).
         """
         self.output_dir = pathlib.Path(output_dir)
         if not self.output_dir.is_dir():
