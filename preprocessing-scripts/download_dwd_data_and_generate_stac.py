@@ -75,7 +75,7 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(dwd_stac, handle)
         dwd_url = mappings.DWD_STAC_URL
         weather_items.loc[len(weather_items)] = [
-            "DWD weather preprocessing",
+            "DWD weather data",
             f"{dwd_url}.json",
             data[mappings.DWD_START],
             data[mappings.DWD_END],

@@ -64,7 +64,7 @@ def main(arguments: argparse.Namespace) -> None:
     arguments : argparse.Namespace
         The arguments containing input, output path, and directory to search for images.
     """
-    # Read in the preprocessing from CSV.
+    # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
@@ -86,13 +86,13 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
-    # Filter preprocessing to only include metadata for the images on the LSDF.
+    # Filter data to only include metadata for the images on the LSDF.
     data = data.loc[data_available["ID"].values]
 
     # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
     data = data[~data.index.duplicated(keep="last")]
 
-    # Only consider IDs for which processed preprocessing is available.
+    # Only consider IDs for which processed data is available.
     data = data.loc[processed_ids_available]
 
     failed_copy_list = []

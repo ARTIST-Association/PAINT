@@ -55,7 +55,7 @@ def main(arguments: argparse.Namespace) -> None:
             ]
         )
 
-    # Read in the preprocessing in CSV.
+    # Read in the data from CSV.
     data = pd.read_csv(arguments.input)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
@@ -67,7 +67,7 @@ def main(arguments: argparse.Namespace) -> None:
         arguments.input_processed_available, index_col=0
     ).index.values
 
-    # Load UTIS focal spot preprocessing.
+    # Load UTIS focal spot data.
     utis_data = pd.read_csv(arguments.input_utis)
     utis_data.set_index(mappings.ID_INDEX, inplace=True)
 
@@ -81,7 +81,7 @@ def main(arguments: argparse.Namespace) -> None:
     data[mappings.SUN_ELEVATION] = elevation
     data[mappings.HELIOSTAT_ID] = data[mappings.HELIOSTAT_ID].map(heliostat_id_to_name)
 
-    # Filter preprocessing to only include metadata for the images on the LSDF.
+    # Filter data to only include metadata for the images on the LSDF.
     data = data.loc[data_available["ID"].values]
 
     # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).

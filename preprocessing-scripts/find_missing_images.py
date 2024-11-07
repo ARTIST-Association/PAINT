@@ -22,18 +22,18 @@ def main(arguments: argparse.Namespace) -> None:
 
     Parameters
     ----------
-    arguments: argparse.Namespace
+    arguments : argparse.Namespace
         The arguments containing input and directory to search for images.
     """
-    # read in the preprocessing in CSV
+    # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration)
     data.set_index(mappings.ID_INDEX, inplace=True)
 
-    # convert all timestamps to UTC
+    # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
     data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
 
-    # compute azimuth and elevation
+    # Compute azimuth and elevation.
     azimuth, elevation = calculate_azimuth_and_elevation(data)
     data[mappings.AZIMUTH] = azimuth
     data[mappings.SUN_ELEVATION] = elevation

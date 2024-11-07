@@ -34,22 +34,22 @@ def extract_properties_data_and_generate_stac_item(
     facet_data: dict[str, Any],
 ) -> tuple[float, float]:
     """
-    Extract the properties preprocessing and generate associated STAC items.
+    Extract the properties data and generate associated STAC items.
 
-    This function extracts the properties preprocessing for a given heliostat, saves this preprocessing as a json file, and also generates
+    This function extracts the properties data for a given heliostat, saves this data as a json file, and also generates
     the associated STAC item.
 
     Parameters
     ----------
     arguments : argparse.Namespace
-        Command line arguments.
+        Command-line arguments.
     heliostat_id : str
         ID of the heliostat considered.
     heliostat_data : pd.Series
         Data for the heliostat.
     renovation_data : pd.Series
         Data for the renovations.
-    facet_data : Dict[str, Any]
+    facet_data : dict[str, Any]
         Data for the facets.
 
     Returns
@@ -76,7 +76,7 @@ def extract_properties_data_and_generate_stac_item(
     with open(save_properties_stac_path, mode="w") as handle:
         json.dump(properties_stac, handle)
 
-    # Convert kinematic preprocessing to dict and remove metadata.
+    # Convert kinematic data to dict and remove metadata.
     kinematic_data = heliostat_data.to_dict()
     for key_to_remove in [
         mappings.CREATED_AT,
@@ -93,9 +93,9 @@ def extract_properties_data_and_generate_stac_item(
         renovation_data[mappings.RENOVATION_ID]
     ]
     if renovation_date is mappings.RENOVATION_ERROR:
-        raise ValueError(f"Renovation preprocessing is missing for {heliostat_id}!")
+        raise ValueError(f"Renovation data is missing for {heliostat_id}!")
 
-    # Extract facets preprocessing.
+    # Extract facets data.
     facets_dict = {
         mappings.CANTING_TYPE: mappings.MAP_CANTING_TO_READABLE[
             facet_data[mappings.CANTING_KEY]
@@ -164,7 +164,7 @@ def extract_properties_data_and_generate_stac_item(
             },
         ],
     }
-    # Save all preprocessing in properties dictionary.
+    # Save all data in properties dictionary.
     properties_data = {
         mappings.HELIOSTAT_POSITION_KEY: [
             lat_lon[0],
@@ -178,7 +178,7 @@ def extract_properties_data_and_generate_stac_item(
         mappings.RENOVATION_PROPERTIES_KEY: renovation_date,
     }
 
-    # Save properties preprocessing.
+    # Save properties data.
     save_properties_path = (
         Path(arguments.output_path)
         / heliostat_id
@@ -194,9 +194,9 @@ def extract_properties_data_and_generate_stac_item(
 
 def main(arguments: argparse.Namespace):
     """
-    Generate kinematic properties STAC items and save raw preprocessing.
+    Generate kinematic properties STAC items and save raw data.
 
-    This function extracts the kinematic properties preprocessing for each heliostat and saves this as a json file. Additionally,
+    This function extracts the kinematic properties data for each heliostat and saves this as a json file. Additionally,
     the STAC items for each of these files are automatically generated.
 
     Parameters
@@ -221,19 +221,19 @@ def main(arguments: argparse.Namespace):
                 mappings.ELEVATION,
             ]
         )
-    # Load heliostat position and axis preprocessing and reformat for easy parsing.
+    # Load heliostat position and axis data and reformat for easy parsing.
     df_heliostat_positions = load_and_format_heliostat_positions(arguments)
     df_axis = load_and_format_heliostat_axis_data(arguments)
     df_concatenated = merge_and_sort_df(df_heliostat_positions, df_axis)
 
-    # Load renovation preprocessing.
+    # Load renovation data.
     df_renovations = pd.read_csv(arguments.input_renovations)
     df_renovations.index = df_renovations[mappings.INTERNAL_NAME_INDEX]
 
-    # Load facet preprocessing.
+    # Load facet data.
     facet_dict = np.load(arguments.input_facets, allow_pickle=True).item()
 
-    # Extract kinematic properties preprocessing and STAC.
+    # Extract kinematic properties data and STAC.
     for key, data in df_concatenated.iterrows():
         assert isinstance(key, str)
 
@@ -288,19 +288,19 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input_axis",
         type=Path,
-        help="Path to the axis preprocessing input file",
+        help="Path to the axis data input file",
         default=str(input_axis),
     )
     parser.add_argument(
         "--input_renovations",
         type=Path,
-        help="Path to the renovations preprocessing input file",
+        help="Path to the renovations data input file",
         default=str(input_renovations),
     )
     parser.add_argument(
         "--input_facets",
         type=Path,
-        help="Path to the facet preprocessing input file",
+        help="Path to the facet data input file",
         default=str(input_facets),
     )
     parser.add_argument(

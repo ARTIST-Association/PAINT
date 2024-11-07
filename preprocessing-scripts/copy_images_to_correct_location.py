@@ -64,7 +64,7 @@ def main(arguments: argparse.Namespace) -> None:
     arguments : argparse.Namespace
         The arguments containing input, output path, and directory to search for images.
     """
-    # Read in the preprocessing from CSV.
+    # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration, sep=";", decimal=",")
     data.set_index(mappings.ID_INDEX, inplace=True)
 
@@ -90,7 +90,7 @@ def main(arguments: argparse.Namespace) -> None:
     # missing_ids = pd.read_csv(
     #     missing_id_path / "Updated_Missing_IDs.csv", index_col=0
     # ).index.to_list()
-    # preprocessing = preprocessing.loc[missing_ids]
+    # data = data.loc[missing_ids]
     if failed_copies_list:
         data = data.drop(failed_copies_list)
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):

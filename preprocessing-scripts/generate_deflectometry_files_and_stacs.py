@@ -26,11 +26,11 @@ def extract_data_and_generate_stacs(
     deflectometry_items: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Extract the binary preprocessing and generate STACS.
+    Extract the binary data and generate STACs.
 
-    This function extracts the binary preprocessing from the ``.binp`` file. After this preprocessing is extracted, it also generates
-    the STAC items for the deflectometry measurement. Additionally, it collects the summary PDFs for the deflectometry
-    measurement, renames them, copies them to the appropriate location, and generates a STAC for this PDF.
+    This function extracts the binary data from the ``.binp`` file. Afterwards, it also generates the STAC items for the
+    deflectometry measurement. Additionally, it collects the summary PDFs for the deflectometry measurement, renames
+    them, copies them to the appropriate location, and generates a STAC for this PDF.
 
     Parameters
     ----------
@@ -48,7 +48,7 @@ def extract_data_and_generate_stacs(
     pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
     """
-    # Extract binary preprocessing.
+    # Extract binary data.
     converter = BinaryExtractor(
         input_path=input_path,
         output_path=arguments.output_path,
@@ -139,7 +139,7 @@ def main(arguments: argparse.Namespace):
     """
     Generate deflectometry STACs and facet item STACs.
 
-    This function converts binary preprocessing to HDF5 for deflectometry measurements.
+    This function converts binary data to HDF5 for deflectometry measurements.
     Additionally, the deflectometry results summary PDF is moved to the correct location and renamed. Also, the STAC
     items and collections for deflectometry measurements are created.
 
