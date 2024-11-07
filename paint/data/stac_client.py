@@ -92,7 +92,7 @@ class StacClient:
                     f"The desired catalog with the URL '{href}' does not exist (404 error)!"
                 )
             else:
-                # Raise the original exception for all other errors
+                # Raise the original exception for all other errors.
                 raise
 
     @staticmethod
