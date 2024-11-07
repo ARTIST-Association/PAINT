@@ -261,13 +261,13 @@ class StacClient:
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
             is downloaded (Default is None).
-        end_date :  datetime, optional
+        end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
             is downloaded (Default is None).
         filtered_calibration_keys : list[str]
-            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
-            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
-            downloaded (Default is None).
+            List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
+            `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
+            is downloaded (Default is None).
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
@@ -312,18 +312,18 @@ class StacClient:
             An optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
             downloaded (Default is None).
         collections : list[str], optional
-            List of collections to be downloaded. These collections must be one of: `calibration, deflectometry,
-            properties`. If no list is provided, all collections are downloaded (Default is None).
+            List of collections to be downloaded. These collections must be one of: `calibration`, `deflectometry`,
+            `properties`. If no list is provided, all collections are downloaded (Default is None).
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
             is downloaded (Default is None).
-        end_date :  datetime, optional
+        end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
             is downloaded (Default is None).
         filtered_calibration_keys : list[str]
-            List of keys to filter the calibration data. These keys must be one of:`raw_image, cropped_image,
-            flux_image, flux_centered_image, calibration_properties`. If no list is provided, all calibration data is
-            downloaded (Default is None).
+            List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
+            `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
+            is downloaded (Default is None).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable
         if heliostats is None:
