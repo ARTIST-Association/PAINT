@@ -80,7 +80,7 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
         "assets": {
             "measurements": {
                 "href": "https://paint-database.org/WRI1030197/WRI1030197-tower-measurements.json",
-                "roles": ["preprocessing"],
+                "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Tower measurement properties",
             }
