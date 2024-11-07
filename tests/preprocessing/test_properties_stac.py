@@ -152,7 +152,7 @@ def test_make_properties_collection(
 @pytest.fixture
 def properties_item_data() -> tuple[str, pd.Series]:
     """
-    Make a fixture with preprocessing for generating a properties item.
+    Make a fixture with data for generating a properties item.
 
     Returns
     -------
