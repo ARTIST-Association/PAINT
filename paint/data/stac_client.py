@@ -135,6 +135,8 @@ class StacClient:
         file_name : Union[str, pathlib.Path]
             File name to be saved.
         """
+        # Send an HTTP GET request to the specified url to retrieve the file.
+        # Download the file in chunks (`stream=True`) instead of loading the entire file into memory.
         response = requests.get(url, stream=True)
 
         # Open the file in binary write mode and download the content
