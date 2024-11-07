@@ -139,7 +139,7 @@ class StacClient:
         # Download the file in chunks (`stream=True`) instead of loading the entire file into memory.
         response = requests.get(url, stream=True)
 
-        # Open the file in binary write mode and download the content
+        # Open the file in binary write mode and download the content.
         with open(file_name, "wb") as file:
             downloaded_length = 0
             for data in response.iter_content(chunk_size=self.chunk_size):
