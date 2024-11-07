@@ -83,7 +83,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
                 "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
-                "title": "Weather preprocessing from the Juelich weather station for 2020-12",
+                "title": "Weather data from the Juelich weather station for 2020-12",
             }
         },
     }
