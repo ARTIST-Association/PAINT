@@ -497,7 +497,7 @@ class StacClient:
         Parameters
         ----------
         data_sources : list[str], optional
-            List of weather sources to include. Must be from: `DWD, Jülich`. If no source is provided data form all
+            List of weather sources to include. Must be from: `DWD, `Jülich`. If no source is provided, data from all
             sources is downloaded (Default is None).
         start_date : datetime, optional
             Optional start date to filter the weather data.
