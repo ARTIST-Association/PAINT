@@ -1,10 +1,13 @@
 import logging
 import pathlib
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
-from typing import Union
+from typing import Any, Union
 
+import pandas as pd
 import pystac
 import requests
+from tqdm import tqdm
 
 import paint.util.paint_mappings as mappings
 from paint.util import set_logger_config
@@ -119,7 +122,7 @@ class StacClient:
         child = parent.get_child(child_id)
         if child is None:
             log.warning(
-                f"The child with ID {child_id} is not available, data for this child will not be downloaded."
+                f"The child with ID {child_id} is not available, data for this child cannot be accessed."
             )
         return child
 
@@ -455,7 +458,7 @@ class StacClient:
 
     def download_weather_assets(
         self, weather_item: pystac.item.Item, include_juelich: bool, include_dwd: bool
-    ):
+    ) -> None:
         """
         Download weather assets for Jülich and/or DWD depending on flags.
 
@@ -566,3 +569,231 @@ class StacClient:
             file_end = asset.href.split("/")[-1]
             file_name = self.output_dir / file_end
             self.download_file(url=url, file_name=file_name)
+
+    def get_child_metadata(
+        self,
+        child: Union[
+            pystac.catalog.Catalog, pystac.item.Item, pystac.collection.Collection
+        ],
+        base_id: str,
+        data: list[Any],
+        pbar: tqdm,
+    ) -> None:
+        """
+        Extract metadata from children in a catalog.
+
+        Parameters
+        ----------
+        child: Union[pystac.item.Item, pystac.collection.Collection, pystac.catalog.Catalog]
+            Child used for metadata extraction.
+        base_id: str
+            Base ID used to define the heliostat collection being accessed.
+        data : list[Any]
+            Combined list to save all data.
+        pbar : tqdm
+            Progress bar.
+        """
+        # Skip non-heliostat catalogs.
+        if (
+            child.id == mappings.WEATHER_COLLECTION_ID
+            or child.id == mappings.TOWER_FILE_NAME
+        ):
+            return
+
+        # Load the collection.
+        heliostat_collection = self.get_child(
+            child,
+            child_id=base_id % child.id.split("-")[0],
+        )
+
+        # Return none if the collection does not exist.
+        if heliostat_collection is None:
+            return
+
+        # Collect data for each item.
+        for item in heliostat_collection.get_items():
+            # Metadata for calibration items are different.
+            if (
+                heliostat_collection.id.split("-")[1]
+                == mappings.SAVE_CALIBRATION.lower()
+            ):
+                data.append(
+                    {
+                        mappings.HELIOSTAT_ID: child.id.split("-")[0],
+                        mappings.AZIMUTH: item.extra_fields.get("view:sun_azimuth"),
+                        mappings.ELEVATION: item.extra_fields.get("view:sun_elevation"),
+                        f"{mappings.LOWER_LEFT}_{mappings.LATITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[0][0],
+                        f"{mappings.LOWER_LEFT}_{mappings.LONGITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[0][1],
+                        f"{mappings.LOWER_LEFT}_{mappings.ELEVATION}": item.geometry.get(
+                            "coordinates"
+                        )[0][2],
+                        f"{mappings.UPPER_LEFT}_{mappings.LATITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[1][0],
+                        f"{mappings.UPPER_LEFT}_{mappings.LONGITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[1][1],
+                        f"{mappings.UPPER_LEFT}_{mappings.ELEVATION}": item.geometry.get(
+                            "coordinates"
+                        )[1][2],
+                        f"{mappings.UPPER_RIGHT}_{mappings.LATITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[2][0],
+                        f"{mappings.UPPER_RIGHT}_{mappings.LONGITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[2][1],
+                        f"{mappings.UPPER_RIGHT}_{mappings.ELEVATION}": item.geometry.get(
+                            "coordinates"
+                        )[2][2],
+                        f"{mappings.LOWER_RIGHT}_{mappings.LATITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[3][0],
+                        f"{mappings.LOWER_RIGHT}_{mappings.LONGITUDE_KEY}": item.geometry.get(
+                            "coordinates"
+                        )[3][1],
+                        f"{mappings.LOWER_RIGHT}_{mappings.ELEVATION}": item.geometry.get(
+                            "coordinates"
+                        )[3][2],
+                        mappings.DATETIME: item.datetime,
+                        "item_id": item.id,
+                    }
+                )
+            # Metadata for properties and deflectometry items are identical.
+            elif (
+                heliostat_collection.id.split("-")[1]
+                == mappings.SAVE_DEFLECTOMETRY.lower()
+                or heliostat_collection.id.split("-")[1].split("_")[1]
+                == mappings.SAVE_PROPERTIES.lower()
+            ):
+                data.append(
+                    {
+                        mappings.HELIOSTAT_ID: child.id.split("-")[0],
+                        mappings.LATITUDE_KEY: item.geometry.get("coordinates")[0],
+                        mappings.LONGITUDE_KEY: item.geometry.get("coordinates")[1],
+                        mappings.ELEVATION: item.geometry.get("coordinates")[2],
+                        mappings.DATETIME: item.datetime,
+                        "item_id": item.id,
+                    }
+                )
+            else:
+                raise ValueError(
+                    f"The collection {heliostat_collection.id.split('-')[0]} is not valid"
+                )
+        pbar.update(1)
+
+    def get_heliostat_metadata(
+        self,
+        heliostats: Union[list[str], None] = None,
+        collections: Union[list[str], None] = None,
+    ) -> None:
+        """
+        Download metadata for desired heliostats.
+
+        Parameters
+        ----------
+        heliostats : list[str], optional
+            Heliostats for which the metadata should be downloaded. If no list is provided, the metadata for all
+            heliostats is downloaded (Default is `None`).
+        collections: list[str], optional
+            Collection for which metadata should be downloaded. If now list is provided, the metadata for all
+            collections is downloaded (Default is `None`).
+        """
+        # Log warning if no collection keys provided.
+        if collections is None:
+            log.warning(
+                "No collections selected - downloading data for all collections!"
+            )
+            collections = [
+                mappings.SAVE_DEFLECTOMETRY.lower(),
+                mappings.SAVE_CALIBRATION.lower(),
+                mappings.SAVE_PROPERTIES.lower(),
+            ]
+        # Check if collection keys provided are acceptable.
+        else:
+            allowed_values = {
+                mappings.SAVE_DEFLECTOMETRY.lower(),
+                mappings.SAVE_CALIBRATION.lower(),
+                mappings.SAVE_PROPERTIES.lower(),
+            }
+            for item in collections:
+                if item not in allowed_values:
+                    raise ValueError(
+                        f"The heliostat collection must be one of: `deflectometry`, `calibration`, "
+                        f"`properties`! The key `{item}` is not accepted!"
+                    )
+        if heliostats is None:
+            save_description = "all_heliostats"
+            root = self.get_catalog(href=mappings.CATALOGUE_URL)
+            log.info("Loading all children in root catalog - please be patient!")
+            all_children = list(
+                root.get_children()
+            )  # Convert generator to list to save time later.
+        else:
+            # Find the catalogs for each desired heliostat.
+            log.info("Loading catalogs for desired heliostats. ")
+            all_children = [
+                self.get_catalog(
+                    href=mappings.HELIOSTAT_CATALOG_URL % (heliostat, heliostat)
+                )
+                for heliostat in heliostats
+            ]
+            save_description = f"{len(all_children)}_heliostats"
+
+        for collection in collections:
+            log.info(f"Downloading metadata for the {collection} collection!")
+            log.info(
+                f"Generating metadata dataframe for {len(all_children)} heliostat catalogs!"
+            )
+            if len(all_children) > 200 and collection == "calibration":
+                log.info(
+                    "This process will take a while, so now would be a good time to grab a coffee!"
+                )
+            if collection == mappings.SAVE_CALIBRATION.lower():
+                id_base = mappings.CALIBRATION_COLLECTION_ID
+            elif collection == mappings.SAVE_DEFLECTOMETRY.lower():
+                id_base = mappings.DEFLECTOMETRY_COLLECTION_ID
+            elif collection == mappings.SAVE_PROPERTIES.lower():
+                id_base = mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID
+            else:
+                raise ValueError(
+                    f"Considered collection must be one of `{mappings.SAVE_DEFLECTOMETRY.lower()}, "
+                    f"{mappings.SAVE_CALIBRATION.lower()}, {mappings.SAVE_PROPERTIES.lower()}`! The collection"
+                    f"{collection} is not recognised!"
+                )
+
+            # Empty list to store metadata.
+            data: list[Any] = []
+
+            # Use tqdm to track progress.
+            with tqdm(
+                desc="Processing Heliostat Catalogs",
+                unit=" catalog",
+                total=len(all_children),
+            ) as pbar:
+                # Process children in parallel.
+                with ThreadPoolExecutor() as executor:
+                    executor.map(
+                        lambda child: self.get_child_metadata(
+                            child=child,
+                            base_id=id_base,
+                            data=data,
+                            pbar=pbar,
+                        ),
+                        all_children,
+                        chunksize=100,
+                    )
+
+            # Create DataFrame from collected data.
+            metadata_df = pd.DataFrame(data).set_index("item_id")
+            metadata_df.index.name = mappings.ID_INDEX
+            save_location = (
+                self.output_dir
+                / "metadata"
+                / f"{collection}_metadata_{save_description}.csv"
+            )
+            save_location.parent.mkdir(parents=True, exist_ok=True)
+            metadata_df.to_csv(save_location)
