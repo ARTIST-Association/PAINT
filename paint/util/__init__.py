@@ -1,7 +1,7 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 import colorlog
 
@@ -20,7 +20,7 @@ from .utils import (
 
 def set_logger_config(
     level: int = logging.INFO,
-    log_file: Optional[Union[str, Path]] = None,
+    log_file: Union[str, Path, None] = None,
     log_to_stdout: bool = True,
     colors: bool = True,
 ) -> None:
