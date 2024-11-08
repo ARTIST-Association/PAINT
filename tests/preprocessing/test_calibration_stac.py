@@ -245,7 +245,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "description": "Raw and processed calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
                 "collection": "BC52-calibration-collection",
                 "geometry": {
-                    "type": "Point",
+                    "type": "Polygon",
                     "coordinates": [
                         [50.913391839040266, 6.38788603808917, 119.268],
                         [50.91339186595943, 6.387886052532388, 126.47],
@@ -352,7 +352,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "description": "Raw calibration image of focused sunlight on the calibration target from heliostat BC52 for image 115399 with associated calibration properties",
                 "collection": "BC52-calibration-collection",
                 "geometry": {
-                    "type": "Point",
+                    "type": "Polygon",
                     "coordinates": [
                         [50.913391839040266, 6.38788603808917, 119.268],
                         [50.91339186595943, 6.387886052532388, 126.47],

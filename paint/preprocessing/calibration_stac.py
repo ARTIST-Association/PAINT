@@ -148,7 +148,7 @@ def make_calibration_item(
         "collection": mappings.CALIBRATION_COLLECTION_ID
         % heliostat_data[mappings.HELIOSTAT_ID],
         "geometry": {
-            "type": "Point",
+            "type": "Polygon",
             "coordinates": mappings.CALIBRATION_TARGET_TO_COORDINATES[
                 heliostat_data[mappings.CALIBRATION_TARGET]
             ],
