@@ -1,7 +1,7 @@
 import logging
 import pathlib
 from datetime import datetime
-from typing import Optional, Union
+from typing import Union
 
 import pystac
 import requests
@@ -54,8 +54,7 @@ class StacClient:
             Chunk size used for download (Default: 1024 * 1024).
         """
         self.output_dir = pathlib.Path(output_dir)
-        if not self.output_dir.is_dir():
-            self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.chunk_size = chunk_size
 
     @staticmethod
@@ -151,9 +150,9 @@ class StacClient:
     def process_heliostat_items(
         self,
         items: list[pystac.item.Item],
-        start_date: Optional[datetime],
-        end_date: Optional[datetime],
-        filtered_calibration_keys: Optional[list[str]],
+        start_date: Union[datetime, None],
+        end_date: Union[datetime, None],
+        filtered_calibration_keys: Union[list[str], None],
         collection_id: str,
         heliostat_catalog_id: str,
         save_folder: str,
@@ -191,6 +190,7 @@ class StacClient:
                     <= datetime.strptime(item_time, mappings.TIME_FORMAT)
                     <= end_date
                 ):
+                    log.debug(f"No data found between {start_date} and {end_date}!")
                     continue
 
             log.info(f"Processing and downloading item {item.id}")
@@ -243,9 +243,9 @@ class StacClient:
         heliostat_catalog: pystac.catalog.Catalog,
         collection_id: str,
         save_folder: str,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        filtered_calibration_keys: Optional[list[str]] = None,
+        start_date: Union[datetime, None] = None,
+        end_date: Union[datetime, None] = None,
+        filtered_calibration_keys: Union[list[str], None] = None,
     ) -> None:
         """
         Download items from a specified collection from a heliostat and save them to a designated path.
@@ -260,14 +260,14 @@ class StacClient:
             Name of the folder to save the collection items in.
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
@@ -297,11 +297,11 @@ class StacClient:
 
     def get_heliostat_data(
         self,
-        heliostats: Optional[list[str]] = None,
-        collections: Optional[list[str]] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
-        filtered_calibration_keys: Optional[list[str]] = None,
+        heliostats: Union[list[str], None] = None,
+        collections: Union[list[str], None] = None,
+        start_date: Union[datetime, None] = None,
+        end_date: Union[datetime, None] = None,
+        filtered_calibration_keys: Union[list[str], None] = None,
     ) -> None:
         """
         Download data for one or more heliostats.
@@ -310,20 +310,20 @@ class StacClient:
         ----------
         heliostats : list[str], optional
             An optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
-            downloaded (Default is None).
+            downloaded (Default is `None`).
         collections : list[str], optional
             List of collections to be downloaded. These collections must be one of: `calibration`, `deflectometry`,
-            `properties`. If no list is provided, all collections are downloaded (Default is None).
+            `properties`. If no list is provided, all collections are downloaded (Default is `None`).
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
-            is downloaded (Default is None).
+            is downloaded (Default is `None`).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable.
         if heliostats is None:
@@ -403,6 +403,8 @@ class StacClient:
         # Error if only a start or end date is provided, but not both.
         if (start_date and not end_date) or (end_date and not start_date):
             raise ValueError("Please provide both start date and end date, or neither.")
+        if start_date and end_date and start_date > end_date:
+            raise ValueError("The start date must be before the end date.")
 
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
@@ -487,9 +489,9 @@ class StacClient:
 
     def get_weather_data(
         self,
-        data_sources: Optional[list[str]] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        data_sources: Union[list[str], None] = None,
+        start_date: Union[datetime, None] = None,
+        end_date: Union[datetime, None] = None,
     ) -> None:
         """
         Get weather data.
@@ -498,7 +500,7 @@ class StacClient:
         ----------
         data_sources : list[str], optional
             List of weather sources to include. Must be from: `DWD, `Jülich`. If no source is provided, data from all
-            sources is downloaded (Default is None).
+            sources is downloaded (Default is `None`).
         start_date : datetime, optional
             Optional start date to filter the weather data.
         end_date : datetime, optional
@@ -528,6 +530,8 @@ class StacClient:
 
         # Download only for a specific time period.
         if start_date and end_date:
+            if start_date > end_date:
+                raise ValueError("The start date must be before the end date.")
             log.info(
                 f"{download_message} between {start_date.strftime(mappings.TIME_FORMAT)} and "
                 f"{end_date.strftime(mappings.TIME_FORMAT)}"
