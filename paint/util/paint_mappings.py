@@ -25,6 +25,7 @@ SUN_POSITION_UP = "SunPosU"
 DATA_SET_AZIMUTH = "DataSet_Azimuth"
 JUNE_DISTANCE = "Jun_Distance"
 DECEMBER_DISTANCE = "Dec_Distance"
+DATETIME = "DateTime"
 
 # dataset
 TOTAL_INDEX = "Total"
