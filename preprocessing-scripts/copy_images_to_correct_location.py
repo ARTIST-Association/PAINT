@@ -86,11 +86,6 @@ def main(arguments: argparse.Namespace) -> None:
             failed_copies_name, index_col=0
         ).index.to_list()
     failed_copies_name.parent.mkdir(parents=True, exist_ok=True)
-    # missing_id_path = Path(PAINT_ROOT) / "MISSING_IDS"
-    # missing_ids = pd.read_csv(
-    #     missing_id_path / "Updated_Missing_IDs.csv", index_col=0
-    # ).index.to_list()
-    # data = data.loc[missing_ids]
     if failed_copies_list:
         data = data.drop(failed_copies_list)
     for heliostat, heliostat_data in data.groupby(mappings.HELIOSTAT_ID):
