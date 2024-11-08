@@ -140,4 +140,4 @@ testpaths = [
 ]
 
 [tool.coverage.run]
-omit = []
+omit = ["paint/data/stac_client.py"]
