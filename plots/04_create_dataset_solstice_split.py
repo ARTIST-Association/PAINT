@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Union
 
@@ -236,16 +235,6 @@ class DatasetSolsticeSplit:
 
 
 if __name__ == "__main__":
-    # sys.argv for development and testing purposes
-    sys.argv = [
-        "create_dataset_hour_split.py",
-        "--path_to_measurements",
-        "preprocessing/calib_data.csv",
-        "--output_path",
-        f"{PAINT_ROOT}/plots/saved_plots",
-        "--file_name",
-        "04_combined_plots",
-    ]
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
