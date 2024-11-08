@@ -204,7 +204,7 @@ def test_make_deflectometry_item(
         "id": "AY39-2023-09-18Z11:39:25Z-deflectometry",
         "type": "Feature",
         "title": "Deflectometry measurement of AY39",
-        "description": "Measured raw and filled deflectometry data containing point clouds and surface normals for heliostat AY39 and the deflectometry measurement results summary",
+        "description": "Measured raw and filled deflectometry data containing point clouds and surface normals for heliosat AY39 and the deflectometry measurement results summary",
         "collection": "AY39-deflectometry-collection",
         "geometry": {
             "type": "Point",
