@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ def plot_stacked_bar_chart_with_inset(
     example_heliostat_df: pd.DataFrame,
     train_split_name: str,
     number_of_heliostats: int = 610,
-    ax: Optional[Axes] = None,
+    ax: Union[Axes, None] = None,
     show_legend: bool = False,
     show_y_label: bool = False,
 ) -> None:
