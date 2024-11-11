@@ -169,14 +169,14 @@ class StacClient:
             List of items to be processed.
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default: ``None``).
         end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
-            is downloaded (Default is None).
+            is downloaded (Default: ``None``).
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
-            is downloaded (Default is None).
+            is downloaded (Default: ``None``).
         collection_id : str
             ID of the collection to download.
         heliostat_catalog_id : str
@@ -263,14 +263,14 @@ class StacClient:
             Name of the folder to save the collection items in.
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
@@ -313,20 +313,20 @@ class StacClient:
         ----------
         heliostats : list[str], optional
             An optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
-            downloaded (Default is `None`).
+            downloaded (Default: ``None``).
         collections : list[str], optional
             List of collections to be downloaded. These collections must be one of: `calibration`, `deflectometry`,
-            `properties`. If no list is provided, all collections are downloaded (Default is `None`).
+            `properties`. If no list is provided, all collections are downloaded (Default: ``None``).
         start_date : datetime, optional
             Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         end_date : datetime, optional
             Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: `raw_image`, `cropped_image`,
             `flux_image`, `flux_centered_image`, `calibration_properties`. If no list is provided, all calibration data
-            is downloaded (Default is `None`).
+            is downloaded (Default: ``None``).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable.
         if heliostats is None:
@@ -503,7 +503,7 @@ class StacClient:
         ----------
         data_sources : list[str], optional
             List of weather sources to include. Must be from: `DWD, `Jülich`. If no source is provided, data from all
-            sources is downloaded (Default is `None`).
+            sources is downloaded (Default: ``None``).
         start_date : datetime, optional
             Optional start date to filter the weather data.
         end_date : datetime, optional
@@ -697,10 +697,10 @@ class StacClient:
         ----------
         heliostats : list[str], optional
             Heliostats for which the metadata should be downloaded. If no list is provided, the metadata for all
-            heliostats is downloaded (Default is `None`).
+            heliostats is downloaded (Default: ``None``).
         collections: list[str], optional
             Collection for which metadata should be downloaded. If now list is provided, the metadata for all
-            collections is downloaded (Default is `None`).
+            collections is downloaded (Default: ``None``).
         """
         # Log warning if no collection keys provided.
         if collections is None:
