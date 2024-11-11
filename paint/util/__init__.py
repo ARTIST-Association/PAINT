@@ -31,12 +31,12 @@ def set_logger_config(
     ----------
     level : int
         The default level for logging. Default is ``logging.INFO``.
-    log_file : str | Path, optional
+    log_file : Union[str, Path], optional
         The file to save the log to.
     log_to_stdout : bool
-        A flag indicating if the log should be printed on stdout. Default is True.
+        A flag indicating if the log should be printed on stdout (Default: True).
     colors : bool
-        A flag for using colored logs. Default is True.
+        A flag for using colored logs (Default: True).
     """
     # Get base logger for ARTIST.
     base_logger = logging.getLogger("paint")
