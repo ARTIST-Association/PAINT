@@ -11,10 +11,10 @@ from paint.util.utils import to_utc_single
 
 class BinaryExtractor:
     """
-    Implement an extractor that extracts data from a binary file and saves it to h5 and json.
+    Implement an extractor that extracts data from a binary file and saves it to h5.
 
     This extractor considers data from a binary file containing deflectometry data and heliostat properties. The data
-    is extracted and the deflectometry data saved as an h5 file and the heliostat properties as a json.
+    is extracted and only the deflectometry data is saved in an h5 file.
 
     Attributes
     ----------
@@ -96,25 +96,6 @@ class BinaryExtractor:
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
 
-    @staticmethod
-    def nwu_to_enu(nwu_tensor: torch.Tensor) -> torch.Tensor:
-        """
-        Cast the coordinate system from NWU to ENU.
-
-        Parameters
-        ----------
-        nwu_tensor : torch.Tensor
-            The tensor in the NWU coordinate system.
-
-        Returns
-        -------
-        torch.Tensor
-            The converted tensor in the ENU coordinate system.
-        """
-        return torch.tensor(
-            [-nwu_tensor[1], nwu_tensor[0], nwu_tensor[2]], dtype=torch.float
-        )
-
     def convert_to_h5(
         self,
     ) -> None:
@@ -134,9 +115,9 @@ class BinaryExtractor:
             number_of_facets = int(n_xy[0] * n_xy[1])
 
             # Create empty tensors for storing data.
-            facet_translation_vectors = torch.empty(number_of_facets, 3)
-            canting_e = torch.empty(number_of_facets, 3)
-            canting_n = torch.empty(number_of_facets, 3)
+            _unused_facet_translation_vectors = torch.empty(number_of_facets, 3)
+            _unused_canting_e = torch.empty(number_of_facets, 3)
+            _unused_canting_n = torch.empty(number_of_facets, 3)
             surface_points_with_facets = []
             surface_normals_with_facets = []
             for f in range(number_of_facets):
@@ -144,20 +125,16 @@ class BinaryExtractor:
                     file.read(facet_header_struct.size)
                 )
 
-                facet_translation_vectors[f] = torch.tensor(
+                _unused_facet_translation_vectors[f] = torch.tensor(
                     facet_header_data[1:4], dtype=torch.float
                 )
-                canting_n[f] = self.nwu_to_enu(
-                    torch.tensor(
-                        facet_header_data[4:7],
-                        dtype=torch.float,
-                    )
+                _unused_canting_n[f] = torch.tensor(
+                    facet_header_data[4:7],
+                    dtype=torch.float,
                 )
-                canting_e[f] = self.nwu_to_enu(
-                    torch.tensor(
-                        facet_header_data[7:10],
-                        dtype=torch.float,
-                    )
+                _unused_canting_e[f] = torch.tensor(
+                    facet_header_data[7:10],
+                    dtype=torch.float,
                 )
                 number_of_points = facet_header_data[10]
                 single_facet_surface_points = torch.empty(number_of_points, 3)
@@ -175,9 +152,6 @@ class BinaryExtractor:
                     )
                 surface_points_with_facets.append(single_facet_surface_points)
                 surface_normals_with_facets.append(single_facet_surface_normals)
-
-        # To maintain consistency, we cast the west direction to east direction.
-        canting_e[:, 0] = -canting_e[:, 0]
 
         # Extract deflectometry data and save.
         saved_deflectometry_path = (
