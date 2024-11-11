@@ -19,12 +19,12 @@ class HeliostatPositionPlot:
 
     Attributes
     ----------
-    position_df : pd.DataFrame()
-        The positions of the heliostats.
-    count_df : pd.DataFrame()
-        The counts of the heliostats.
-    deflectometry_df : pd.DataFrame()
-        The deflectometry data from the heliostats.
+    position_df : pd.DataFrame
+        The heliostats' positions.
+    count_df : pd.DataFrame
+        The heliostats' counts.
+    deflectometry_df : pd.DataFrame
+        The heliostats' deflectometry data.
     output_path : Path
         The output path indicating where to save the plot.
     file_name : str
@@ -35,9 +35,9 @@ class HeliostatPositionPlot:
     load_data()
         Load the data required for the plot.
     get_color()
-        Helper function to determine the colors for plotting the heliostat positions.
+        Determine the colors for plotting the heliostat positions.
     plot_heliostat_positions()
-        Plots the heliostat positions and saves this plot as PDF or PNG.
+        Plot the heliostat positions and save this plot as PDF or PNG.
     """
 
     def __init__(
@@ -55,17 +55,17 @@ class HeliostatPositionPlot:
         Parameters
         ----------
         path_to_positions : Union[str, Path]
-            The path to load the heliostat position data.
+            The path to load the heliostat position data from.
         path_to_measurements : Union[str, Path]
-            The path to load the heliostat measurement data.
+            The path to load the heliostat measurement data from.
         path_to_deflectometry : Union[str, Path]
-            The path to load the deflectometry data.
+            The path to load the deflectometry data from.
         output_path : Union[str, Path]
             The output path indicating where to save the plot.
         file_name : str
             The file name used to save the plot (Default: "heliostat_positions").
-        save_as_pdf : boolean
-            Flag indicating whether to save the plot as a PDF or not (Default: True).
+        save_as_pdf : bool
+            Whether to save the plot as a PDF or not (Default: True).
         """
         self.position_df, self.count_df, self.deflectometry_df = self.load_data(
             path_to_positions=Path(path_to_positions),
@@ -75,9 +75,9 @@ class HeliostatPositionPlot:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        if save_as_pdf:
+        if save_as_pdf:  # Save as PDF.
             self.file_name = file_name + ".pdf"
-        else:
+        else:  # Save as PNG.
             self.file_name = file_name + ".png"
 
     @staticmethod
@@ -93,7 +93,7 @@ class HeliostatPositionPlot:
             The path to load the heliostat position data.
         path_to_measurements : Path
             The path to load the heliostat measurement data.
-        path_to_deflectometry : data
+        path_to_deflectometry : Path
             The path to load the deflectometry data.
 
         Returns
@@ -103,7 +103,7 @@ class HeliostatPositionPlot:
         pd.DataFrame
             The counts of the heliostats.
         pd.DataFrame
-            The deflectometry preprdataocessing from the heliostats.
+            The deflectometry data from the heliostats.
         """
         # Load heliostat positions.
         df_heliostat_positions = pd.read_excel(path_to_positions, header=0)
@@ -141,10 +141,11 @@ class HeliostatPositionPlot:
         Parameters
         ----------
         surface_measurement : float
-            The measured surface value from the deflectometry ata.
+            The measured surface value from the deflectometry data.
 
         Returns
         -------
+        str
             The desired color for the plot.
         """
         if surface_measurement > 95:
@@ -157,7 +158,7 @@ class HeliostatPositionPlot:
 
     def plot_heliostat_positions(self):
         """Generate the heliostat position plot."""
-        # Merge positions and heliostat counts
+        # Merge positions and heliostat counts.
         merged_df = pd.merge(
             self.position_df,
             self.count_df,
@@ -165,22 +166,22 @@ class HeliostatPositionPlot:
             right_index=True,
         )
 
-        # Create a list of Internal names where "DeflectometryAvailable" is True
+        # Create a list of internal names where "DeflectometryAvailable" is True.
         highlighted_heliostats = self.deflectometry_df.index[
             ~self.deflectometry_df[mappings.DEFLECTOMETRY_AVAILABLE].isna()
         ].tolist()
 
-        # Add a column to identify highlighted heliostats
+        # Add a column to identify highlighted heliostats.
         merged_df["highlight"] = merged_df.index.isin(highlighted_heliostats)
 
-        # Map MeasuredSurface values to colors
+        # Map MeasuredSurface values to colors.
 
-        # Add a column for color based on MeasuredSurface
+        # Add a column for color based on MeasuredSurface.
         merged_df["color"] = self.deflectometry_df[mappings.MEASURED_SURFACE].map(
             self.get_color
         )
 
-        # Plotting
+        # Plot.
         plt.figure(figsize=(10, 6))
         plt.scatter(
             merged_df["x"],
@@ -190,7 +191,7 @@ class HeliostatPositionPlot:
             alpha=0.7,
         )
 
-        # Highlight specific heliostats with colors
+        # Highlight specific heliostats with colors.
         percentage_labels = {
             "green": ">95% accuracy",
             "indigo": "90%-95% accuracy",
@@ -213,19 +214,19 @@ class HeliostatPositionPlot:
         plt.ylabel("North distance to tower")
         plt.grid(True)
 
-        # Add square at (0, 0)
+        # Add square at (0, 0).
         rect = Rectangle(
             (-5, -8), 10, 8, linewidth=2, edgecolor="darkgrey", facecolor="grey"
         )
         plt.gca().add_patch(rect)
 
-        # Add square at (-17.5, 0)
+        # Add square at (-17.5, 0).
         rect = Rectangle(
             (-22.5, -8), 10, 8, linewidth=2, edgecolor="black", facecolor="grey"
         )
         plt.gca().add_patch(rect)
 
-        y_min = -8  # Define your desired minimum y-value
+        y_min = -8  # Define desired minimum y-value.
         y_max = 250
         plt.ylim(y_min, y_max)
         plt.tight_layout()
