@@ -1,9 +1,18 @@
+import logging
+
 import numpy as np
 import pandas as pd
 import pytest
 
 import paint.util.paint_mappings as mappings
 import paint.util.utils
+
+
+def test_set_logger_conf() -> None:
+    """Test logger configurator."""
+    log = logging.getLogger(__name__)  # Get logger instance.
+    paint.util.set_logger_config()
+    log.info("This is a test log statement.")
 
 
 def test_calculate_azimuth_and_elevation() -> None:
