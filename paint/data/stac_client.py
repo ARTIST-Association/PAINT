@@ -23,7 +23,7 @@ class StacClient:
     Attributes
     ----------
     output_dir : pathlib.Path
-        The output directory for saving the downloaded data.
+        Output directory for saving the downloaded data.
     chunk_size : int
         Chunk size used for download (Default: 1024 * 1024).
 
@@ -52,7 +52,7 @@ class StacClient:
         Parameters
         ----------
         output_dir : Union[str, pathlib.Path]
-            The output directory for saving the downloaded data.
+            Output directory for saving the downloaded data.
         chunk_size : int
             Chunk size used for download (Default: 1024 * 1024).
         """
@@ -226,7 +226,7 @@ class StacClient:
         asset : pystac.asset.Asset
             STAC asset to be downloaded and saved.
         heliostat_catalog_id : str
-            The ID of the considered heliostat catalog.
+            ID of the considered heliostat catalog.
         save_folder : str
             Name of the folder to save the asset in.
         """
