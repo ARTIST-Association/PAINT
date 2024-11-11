@@ -39,6 +39,10 @@ class StacClient:
         Download heliostat data for a specified STAC collection.
     get_heliostat_data()
         Get data for one or more heliostats.
+    get_child_metadata()
+        Extract metadata from children in a catalog.
+    get_heliostat_metadata()
+        Download metadata for desired heliostats.
     """
 
     def __init__(
@@ -606,13 +610,13 @@ class StacClient:
             child_id=base_id % child.id.split("-")[0],
         )
 
-        # Return none if the collection does not exist.
+        # Return `None` if the collection does not exist.
         if heliostat_collection is None:
             return
 
         # Collect data for each item.
         for item in heliostat_collection.get_items():
-            # Metadata for calibration items are different.
+            # Metadata for calibration items is different.
             if (
                 heliostat_collection.id.split("-")[1]
                 == mappings.SAVE_CALIBRATION.lower()
@@ -662,7 +666,7 @@ class StacClient:
                         "item_id": item.id,
                     }
                 )
-            # Metadata for properties and deflectometry items are identical.
+            # Metadata for properties and deflectometry items is identical.
             elif (
                 heliostat_collection.id.split("-")[1]
                 == mappings.SAVE_DEFLECTOMETRY.lower()
@@ -698,8 +702,8 @@ class StacClient:
         heliostats : list[str], optional
             Heliostats for which the metadata should be downloaded. If no list is provided, the metadata for all
             heliostats is downloaded (Default: ``None``).
-        collections: list[str], optional
-            Collection for which metadata should be downloaded. If now list is provided, the metadata for all
+        collections : list[str], optional
+            Collection for which metadata should be downloaded. If no list is provided, the metadata for all
             collections is downloaded (Default: ``None``).
         """
         # Log warning if no collection keys provided.
@@ -734,7 +738,7 @@ class StacClient:
             )  # Convert generator to list to save time later.
         else:
             # Find the catalogs for each desired heliostat.
-            log.info("Loading catalogs for desired heliostats. ")
+            log.info("Loading catalogs for desired heliostats.")
             all_children = [
                 self.get_catalog(
                     href=mappings.HELIOSTAT_CATALOG_URL % (heliostat, heliostat)
