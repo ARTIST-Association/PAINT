@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Tuple, Union
 
@@ -20,12 +19,12 @@ class HeliostatPositionPlot:
 
     Attributes
     ----------
-    position_df : pd.DataFrame()
-        The positions of the heliostats.
-    count_df : pd.DataFrame()
-        The counts of the heliostats.
-    deflectometry_df : pd.DataFrame()
-        The deflectometry data from the heliostats.
+    position_df : pd.DataFrame
+        The heliostats' positions.
+    count_df : pd.DataFrame
+        The heliostats' counts.
+    deflectometry_df : pd.DataFrame
+        The heliostats' deflectometry data.
     output_path : Path
         The output path indicating where to save the plot.
     file_name : str
@@ -35,10 +34,10 @@ class HeliostatPositionPlot:
     -------
     load_data()
         Load the data required for the plot.
-    get_colour()
-        Helper function to determine the colors for plotting the heliostat positions.
+    get_color()
+        Determine the colors for plotting the heliostat positions.
     plot_heliostat_positions()
-        Plots the heliostat positions and saves this plot as PDF or PNG.
+        Plot the heliostat positions and save this plot as PDF or PNG.
     """
 
     def __init__(
@@ -56,17 +55,17 @@ class HeliostatPositionPlot:
         Parameters
         ----------
         path_to_positions : Union[str, Path]
-            The path to load the heliostat position data.
+            The path to load the heliostat position data from.
         path_to_measurements : Union[str, Path]
-            The path to load the heliostat measurement data.
+            The path to load the heliostat measurement data from.
         path_to_deflectometry : Union[str, Path]
-            The path to load the deflectometry data.
+            The path to load the deflectometry data from.
         output_path : Union[str, Path]
             The output path indicating where to save the plot.
         file_name : str
-            The file name used to save the plot (default: "heliostat_positions").
-        save_as_pdf : boolean
-            Flag indicating whether to save the plot as a PDF or not (default: True).
+            The file name used to save the plot (Default: "heliostat_positions").
+        save_as_pdf : bool
+            Whether to save the plot as a PDF or not (Default: True).
         """
         self.position_df, self.count_df, self.deflectometry_df = self.load_data(
             path_to_positions=Path(path_to_positions),
@@ -76,9 +75,9 @@ class HeliostatPositionPlot:
         self.output_path = Path(output_path)
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
-        if save_as_pdf:
+        if save_as_pdf:  # Save as PDF.
             self.file_name = file_name + ".pdf"
-        else:
+        else:  # Save as PNG.
             self.file_name = file_name + ".png"
 
     @staticmethod
@@ -86,7 +85,7 @@ class HeliostatPositionPlot:
         path_to_positions: Path, path_to_measurements: Path, path_to_deflectometry: Path
     ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """
-        Load the data and return the data frames required to generate the heliostat position plot.
+        Load the data and return the dataframes required to generate the heliostat position plot.
 
         Parameters
         ----------
@@ -106,31 +105,31 @@ class HeliostatPositionPlot:
         pd.DataFrame
             The deflectometry data from the heliostats.
         """
-        # Load heliosat positions.
+        # Load heliostat positions.
         df_heliostat_positions = pd.read_excel(path_to_positions, header=0)
         df_heliostat_positions.set_index(
             mappings.INTERNAL_NAME_INDEX, inplace=True
-        )  # Set "InternalName" as the index
+        )  # Set "InternalName" as the index.
         df_heliostat_positions.rename_axis(
             mappings.HELIOSTAT_ID, inplace=True
-        )  # Rename the index
+        )  # Rename the index.
         df_heliostat_positions = df_heliostat_positions[mappings.X_Y_Z_POSITIONS]
 
-        # Load measurements
+        # Load measurements.
         df_measurements = pd.read_csv(path_to_measurements)
         df_measurements = df_measurements.set_index(
             mappings.ID_INDEX
-        )  # Set df id as index
-        # Get all existing heliostat IDs and their entry counts
+        )  # Set df id as index.
+        # Get all existing heliostat IDs and their entry counts.
         heliostat_counts = df_measurements[mappings.HELIOSTAT_ID].value_counts()
-        # Replace HeliostatId with heliostat names in heliostat_counts dataframe
+        # Replace HeliostatId with heliostat names in `heliostat_counts` dataframe.
         heliostat_counts.index = heliostat_counts.index.map(heliostat_id_to_name)
 
-        # Load deflectometry availability from file
+        # Load deflectometry availability from file.
         df_deflectometry = pd.read_excel(path_to_deflectometry)
         df_deflectometry.set_index(
             mappings.INTERNAL_NAME_INDEX, inplace=True
-        )  # Set "InternalName" as the index
+        )  # Set "InternalName" as the index.
 
         return df_heliostat_positions, heliostat_counts, df_deflectometry
 
@@ -146,6 +145,7 @@ class HeliostatPositionPlot:
 
         Returns
         -------
+        str
             The desired color for the plot.
         """
         if surface_measurement > 95:
@@ -158,7 +158,7 @@ class HeliostatPositionPlot:
 
     def plot_heliostat_positions(self):
         """Generate the heliostat position plot."""
-        # Merge positions and heliostat counts
+        # Merge positions and heliostat counts.
         merged_df = pd.merge(
             self.position_df,
             self.count_df,
@@ -166,22 +166,22 @@ class HeliostatPositionPlot:
             right_index=True,
         )
 
-        # Create a list of Internal names where "DeflectometryAvailable" is True
+        # Create a list of internal names where "DeflectometryAvailable" is True.
         highlighted_heliostats = self.deflectometry_df.index[
             ~self.deflectometry_df[mappings.DEFLECTOMETRY_AVAILABLE].isna()
         ].tolist()
 
-        # Add a column to identify highlighted heliostats
+        # Add a column to identify highlighted heliostats.
         merged_df["highlight"] = merged_df.index.isin(highlighted_heliostats)
 
-        # Map MeasuredSurface values to colors
+        # Map MeasuredSurface values to colors.
 
-        # Add a column for color based on MeasuredSurface
+        # Add a column for color based on MeasuredSurface.
         merged_df["color"] = self.deflectometry_df[mappings.MEASURED_SURFACE].map(
             self.get_color
         )
 
-        # Plotting
+        # Plot.
         plt.figure(figsize=(10, 6))
         plt.scatter(
             merged_df["x"],
@@ -191,7 +191,7 @@ class HeliostatPositionPlot:
             alpha=0.7,
         )
 
-        # Highlight specific heliostats with colors
+        # Highlight specific heliostats with colors.
         percentage_labels = {
             "green": ">95% accuracy",
             "indigo": "90%-95% accuracy",
@@ -214,19 +214,19 @@ class HeliostatPositionPlot:
         plt.ylabel("North distance to tower")
         plt.grid(True)
 
-        # Add square at (0, 0)
+        # Add square at (0, 0).
         rect = Rectangle(
             (-5, -8), 10, 8, linewidth=2, edgecolor="darkgrey", facecolor="grey"
         )
         plt.gca().add_patch(rect)
 
-        # Add square at (-17.5, 0)
+        # Add square at (-17.5, 0).
         rect = Rectangle(
             (-22.5, -8), 10, 8, linewidth=2, edgecolor="black", facecolor="grey"
         )
         plt.gca().add_patch(rect)
 
-        y_min = -8  # Define your desired minimum y-value
+        y_min = -8  # Define desired minimum y-value.
         y_max = 250
         plt.ylim(y_min, y_max)
         plt.tight_layout()
@@ -235,21 +235,6 @@ class HeliostatPositionPlot:
 
 
 if __name__ == "__main__":
-    # sys.argv for development and testing purposes
-    sys.argv = [
-        "heliostat_position.py",
-        "--path_to_positions",
-        "data/Heliostatpositionen_xyz.xlsx",
-        "--path_to_measurements",
-        "data/calib_data.csv",
-        "--path_to_deflectometry",
-        "data/deflec_availability.xlsx",
-        "--output_path",
-        f"{PAINT_ROOT}/plots/saved_plots",
-        "--file_name",
-        "01_heliostat_positions",
-    ]
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

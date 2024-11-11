@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 from pathlib import Path
-from typing import List, Union
+from typing import Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -27,9 +26,9 @@ class DatasetHourSplit:
         The measured data.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
-    number_of_train_samples : List[int]
+    number_of_train_samples : list[int]
         The number of samples used for training.
-    number_of_validation_samples : List[int]
+    number_of_validation_samples : list[int]
         The number of samples used for validation.
     file_name : str
         The file name to save the plot.
@@ -48,7 +47,7 @@ class DatasetHourSplit:
         self,
         path_to_measurements: Union[Path, str],
         output_path: Union[str, Path],
-        number_of_train_samples: List[int],
+        number_of_train_samples: list[int],
         number_of_validation_samples: int,
         default_example_heliostat: int = 11447,
         file_name: str = "03_combined_plots",
@@ -60,12 +59,12 @@ class DatasetHourSplit:
         Parameters
         ----------
         path_to_measurements : Union[Path, str]
-            The path to the measurement data.
+            The path to the data.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
-        number_of_train_samples : List[int]
+        number_of_train_samples : list[int]
             The number of samples used for training.
-        number_of_validation_samples : List[int]
+        number_of_validation_samples : list[int]
             The number of samples used for validation.
         file_name : str
             The file name to save the plot.
@@ -92,7 +91,7 @@ class DatasetHourSplit:
         Parameters
         ----------
         path_to_measurements : Path
-            The path to the measurement data.
+            The path to the data.
 
         Returns
         -------
@@ -192,23 +191,6 @@ class DatasetHourSplit:
 
 
 if __name__ == "__main__":
-    # sys.argv for development and testing purposes
-    sys.argv = [
-        "create_dataset_hour_split.py",
-        "--path_to_measurements",
-        "data/calib_data.csv",
-        "--output_path",
-        f"{PAINT_ROOT}/plots/saved_plots",
-        "--file_name",
-        "03_combined_plots",
-    ]
-
-    # sys.argv for development and testing purposes
-    sys.argv = [
-        "create_dataset_hour_split.py",
-        "--path_to_measurements",
-        "data/calib_data.csv",
-    ]
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

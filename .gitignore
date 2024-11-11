@@ -1,6 +1,3 @@
-# Ignore the data folder and all its contents
-/data/
-/stac/
 # Ignore file types
 *.png
 *.pdf

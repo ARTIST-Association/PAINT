@@ -117,7 +117,7 @@ def merge_and_sort_df(
     Returns
     -------
     pd.DataFrame
-        The concatenated and sorted data frame.
+        The concatenated and sorted dataframe.
     """
     df_concatenated = pd.concat([df_heliostat_positions, df_axis], axis=1, join="inner")
     created_at = df_concatenated.pop(mappings.CREATED_AT)

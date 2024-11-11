@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 
 import argparse
-import sys
 from pathlib import Path
-from typing import List, Optional, Tuple, Union
+from typing import Union
 
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -27,9 +26,9 @@ class HistogramMeasurementPlot:
         The measurement data.
     output_path : Union[Path, str]
         The path to the output directory to save the plots.
-    columns_to_consider : List[str]
+    columns_to_consider : list[str]
         The columns to include in the histogram plot.
-    joint_columns : List[str]
+    joint_columns : list[str]
         The columns to consider in the joint histogram plot.
     base_file_name : str
         The base file name used to generate plot names.
@@ -54,8 +53,8 @@ class HistogramMeasurementPlot:
         self,
         path_to_measurements: Union[Path, str],
         output_path: Union[str, Path],
-        columns_to_consider: List[str],
-        joint_columns: List[str],
+        columns_to_consider: list[str],
+        joint_columns: list[str],
         base_file_name: str = "02_histograms",
         save_as_pdf: bool = True,
     ) -> None:
@@ -68,9 +67,9 @@ class HistogramMeasurementPlot:
             The path to the measurement data.
         output_path : Union[Path, str]
             The path to the output directory to save the plots.
-        columns_to_consider : List[str]
+        columns_to_consider : list[str]
             The columns to include in the histogram plot.
-        joint_columns : List[str]
+        joint_columns : list[str]
             The columns to consider in the joint histogram plot.
         base_file_name : str
             The base file name used to generate plot names.
@@ -124,7 +123,7 @@ class HistogramMeasurementPlot:
         df: pd.DataFrame,
         column: str,
         bins: int = 20,
-        x_ticks: Optional[List[str]] = None,
+        x_ticks: Union[list[str], None] = None,
     ) -> Axes:
         """
         Generate a histogram plot based on a given axis and data.
@@ -138,8 +137,8 @@ class HistogramMeasurementPlot:
         column : str
             The column from the data to plot.
         bins : int
-            The number of bins to use in the histogram (Default: 20_.
-        x_ticks : List[str], optional
+            The number of bins to use in the histogram (Default: 20).
+        x_ticks : list[str], optional
             Labels to use for the x-ticks.
 
         Returns
@@ -163,7 +162,7 @@ class HistogramMeasurementPlot:
         ax: Axes,
         df: pd.DataFrame,
         time_column: str,
-        x_ticks: Optional[List[str]] = None,
+        x_ticks: Union[list[str], None] = None,
     ) -> Axes:
         """
         Generate a stacked bar chart based on given axis and data.
@@ -176,7 +175,7 @@ class HistogramMeasurementPlot:
             The data to plot.
         time_column : str
             The time column from the data to use in the plot.
-        x_ticks : List[str], optional
+        x_ticks : list[str], optional
             Labels to use for the x-ticks.
 
         Returns
@@ -206,8 +205,8 @@ class HistogramMeasurementPlot:
         y_column: str,
         width: int,
         height: int,
-        x_lim: Optional[Tuple[float, float]] = None,
-        y_lim: Optional[Tuple[float, float]] = None,
+        x_lim: Union[tuple[float, float], None] = None,
+        y_lim: Union[tuple[float, float], None] = None,
     ) -> None:
         """
         Generate a joint plot based on two columns in the data.
@@ -308,15 +307,6 @@ class HistogramMeasurementPlot:
 
 
 if __name__ == "__main__":
-    # sys.argv for development and testing purposes
-    sys.argv = [
-        "create_dataset_hour_split.py",
-        "--path_to_measurements",
-        "data/calib_data.csv",
-        "--output_path",
-        f"{PAINT_ROOT}/plots/saved_plots",
-    ]
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument(

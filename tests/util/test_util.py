@@ -1,9 +1,30 @@
+import logging
+import pathlib
+
 import numpy as np
 import pandas as pd
 import pytest
 
 import paint.util.paint_mappings as mappings
 import paint.util.utils
+
+
+@pytest.mark.parametrize("colors", [True, False])
+def test_set_logger_conf(colors: bool, tmp_path: pathlib.Path) -> None:
+    """
+    Test logger configurator.
+
+    Parameters
+    ----------
+    colors : bool
+        Flag for using colored logs
+    tmp_path : pathlib.Path
+        Temporary path
+    """
+    log_file = tmp_path / "test.log"
+    paint.util.set_logger_config(colors=colors, log_file=log_file)
+    log = logging.getLogger(__name__)  # Get logger instance.
+    log.info("This is a test log statement.")
 
 
 def test_calculate_azimuth_and_elevation() -> None:

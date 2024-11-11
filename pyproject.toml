@@ -22,7 +22,7 @@ dependencies = [
     "torch",
     "matplotlib",
     "colorlog",
-    "wetterdienst",
+    "wetterdienst==0.95.1",
     "h5py",
     "seaborn",
     "deepdiff",
@@ -140,4 +140,4 @@ testpaths = [
 ]
 
 [tool.coverage.run]
-omit = []
+omit = ["paint/data/stac_client.py", "paint/data/__init__.py"]
