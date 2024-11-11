@@ -1,6 +1,6 @@
 import logging
 import pathlib
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from typing import Any, Union
 
@@ -154,7 +154,72 @@ class StacClient:
                 file.write(data)
                 downloaded_length += len(data)
 
-    def process_heliostat_items(
+    def _process_single_heliostat_item(
+        self,
+        item: pystac.item.Item,
+        start_date: Union[datetime, None],
+        end_date: Union[datetime, None],
+        filtered_calibration_keys: Union[list[str], None],
+        collection_id: str,
+        heliostat_catalog_id: str,
+        save_folder: str,
+        pbar: tqdm,
+    ) -> None:
+        """
+        Process a single heliostat item.
+
+        Parameters
+        ----------
+        item : pystac.item.Item
+            Item to be processed.
+        start_date : datetime, optional
+            Optional start date to filter the heliostat data. If no start date is provided, data for all time periods
+            is downloaded (Default: ``None``).
+        end_date : datetime, optional
+            Optional end date to filter the heliostat data. If no end date is provided, data for all time periods
+            is downloaded (Default: ``None``).
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
+            ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
+            data is downloaded (Default: ``None``).
+        collection_id : str
+            ID of the collection to download.
+        heliostat_catalog_id : str
+            ID of the considered heliostat catalog.
+        save_folder : str
+            Name of the folder to save the collection items in.
+        pbar : tqdm
+            Progress bar.
+        """
+        item_time = item.properties["datetime"]
+        if start_date and end_date:
+            # If start and end dates are provided, filter based on them.
+            if not (
+                start_date
+                <= datetime.strptime(item_time, mappings.TIME_FORMAT)
+                <= end_date
+            ):
+                log.debug(f"No data found between {start_date} and {end_date}!")
+                pbar.update(1)
+                return
+
+        if (
+            filtered_calibration_keys is not None
+            and mappings.SAVE_CALIBRATION.lower() in collection_id.split("-")
+        ):
+            # Only process the calibration keys if provided.
+            for key, asset in item.assets.items():
+                if key in filtered_calibration_keys:
+                    self._download_heliostat_asset(
+                        asset, heliostat_catalog_id, save_folder
+                    )
+        else:
+            # Process all assets in the item.
+            for asset in item.assets.values():
+                self._download_heliostat_asset(asset, heliostat_catalog_id, save_folder)
+        pbar.update(1)
+
+    def _process_heliostat_items(
         self,
         items: list[pystac.item.Item],
         start_date: Union[datetime, None],
@@ -188,38 +253,34 @@ class StacClient:
         save_folder : str
             Name of the folder to save the collection items in.
         """
-        for item in items:
-            item_time = item.properties["datetime"]
-            if start_date and end_date:
-                # If start and end dates are provided, filter based on them.
-                if not (
-                    start_date
-                    <= datetime.strptime(item_time, mappings.TIME_FORMAT)
-                    <= end_date
-                ):
-                    log.debug(f"No data found between {start_date} and {end_date}!")
-                    continue
-
-            log.info(f"Processing and downloading item {item.id}")
-
-            if (
-                filtered_calibration_keys is not None
-                and mappings.SAVE_CALIBRATION.lower() in collection_id.split("-")
-            ):
-                # Only process the calibration keys if provided.
-                for key, asset in item.assets.items():
-                    if key in filtered_calibration_keys:
-                        self.download_heliostat_asset(
-                            asset, heliostat_catalog_id, save_folder
-                        )
-            else:
-                # Process all assets in the item.
-                for asset in item.assets.values():
-                    self.download_heliostat_asset(
-                        asset, heliostat_catalog_id, save_folder
+        with tqdm(
+            total=len(items),
+            desc=f"Processing Items in Heliostat {heliostat_catalog_id}",
+            unit="Item",
+        ) as pbar:
+            with ThreadPoolExecutor() as executor:
+                futures = [
+                    executor.submit(
+                        self._process_single_heliostat_item,
+                        item,
+                        start_date,
+                        end_date,
+                        filtered_calibration_keys,
+                        collection_id,
+                        heliostat_catalog_id,
+                        save_folder,
+                        pbar,
                     )
+                    for item in items
+                ]
 
-    def download_heliostat_asset(
+            for future in as_completed(futures):
+                try:
+                    future.result()  # Wait for each future to complete
+                except Exception as e:
+                    log.error(f"Error processing heliostat item: {e}")
+
+    def _download_heliostat_asset(
         self, asset: pystac.asset.Asset, heliostat_catalog_id: str, save_folder: str
     ) -> None:
         """
@@ -245,7 +306,7 @@ class StacClient:
         file_name.parent.mkdir(parents=True, exist_ok=True)
         self.download_file(url, file_name)
 
-    def download_heliostat_data(
+    def _download_heliostat_data(
         self,
         heliostat_catalog: pystac.catalog.Catalog,
         collection_id: str,
@@ -292,8 +353,8 @@ class StacClient:
             )
 
         # Call the helper function to process and download items.
-        self.process_heliostat_items(
-            items,
+        self._process_heliostat_items(
+            list(items),
             start_date,
             end_date,
             filtered_calibration_keys,
@@ -301,6 +362,33 @@ class StacClient:
             heliostat_catalog.id,
             save_folder,
         )
+
+    @staticmethod
+    def check_collection_keys(collections: list[str]) -> None:
+        """
+        Check whether provided collection keys are valid.
+
+        Parameters
+        ----------
+        collections : list[str]
+            Collection(s) for which (meta)data should be downloaded.
+
+        Raises
+        ------
+        ValueError
+            When a listed collection value is invalid.
+        """
+        allowed_values = {
+            mappings.SAVE_DEFLECTOMETRY.lower(),
+            mappings.SAVE_CALIBRATION.lower(),
+            mappings.SAVE_PROPERTIES.lower(),
+        }
+        for item in collections:
+            if item not in allowed_values:
+                raise ValueError(
+                    f"The heliostat collection must be one of: `deflectometry`, `calibration`, "
+                    f"`properties`! The key `{item}` is not accepted!"
+                )
 
     def get_heliostat_data(
         self,
@@ -368,17 +456,7 @@ class StacClient:
             get_properties = True
         # Check if collection keys provided are acceptable.
         else:
-            allowed_values = {
-                mappings.SAVE_DEFLECTOMETRY.lower(),
-                mappings.SAVE_CALIBRATION.lower(),
-                mappings.SAVE_PROPERTIES.lower(),
-            }
-            for item in collections:
-                if item not in allowed_values:
-                    raise ValueError(
-                        f"The heliostat collection must be one of: `deflectometry`, `calibration`, "
-                        f"`properties`! The key `{item}` is not accepted!"
-                    )
+            self.check_collection_keys(collections)
             # Set boolean flags based on the presence of each allowed value in collections.
             get_calibration = mappings.SAVE_CALIBRATION.lower() in collections
             get_deflectometry = mappings.SAVE_DEFLECTOMETRY.lower() in collections
@@ -423,7 +501,7 @@ class StacClient:
                     mappings.CALIBRATION_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self.download_heliostat_data(
+                self._download_heliostat_data(
                     heliostat_catalog,
                     calibration_id,
                     mappings.SAVE_CALIBRATION,
@@ -438,7 +516,7 @@ class StacClient:
                     mappings.DEFLECTOMETRY_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self.download_heliostat_data(
+                self._download_heliostat_data(
                     heliostat_catalog,
                     deflectometry_id,
                     mappings.SAVE_DEFLECTOMETRY,
@@ -452,7 +530,7 @@ class StacClient:
                     mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self.download_heliostat_data(
+                self._download_heliostat_data(
                     heliostat_catalog,
                     properties_id,
                     mappings.SAVE_PROPERTIES,
@@ -460,7 +538,7 @@ class StacClient:
                     end_date,
                 )
 
-    def download_weather_assets(
+    def _download_weather_assets(
         self, weather_item: pystac.item.Item, include_juelich: bool, include_dwd: bool
     ) -> None:
         """
@@ -552,7 +630,7 @@ class StacClient:
                     and datetime.strptime(item_end_time, mappings.TIME_FORMAT)
                     <= end_date
                 ):
-                    self.download_weather_assets(
+                    self._download_weather_assets(
                         weather_item, include_juelich, include_dwd
                     )
         # Handle error with start and end date.
@@ -562,7 +640,9 @@ class StacClient:
             log.info(f"{download_message} for all available times!")
             # Download the weather data.
             for weather_item in weather_collection.get_items():
-                self.download_weather_assets(weather_item, include_juelich, include_dwd)
+                self._download_weather_assets(
+                    weather_item, include_juelich, include_dwd
+                )
 
     def get_tower_measurements(self) -> None:
         """Download tower measurements."""
@@ -574,7 +654,7 @@ class StacClient:
             file_name = self.output_dir / file_end
             self.download_file(url=url, file_name=file_name)
 
-    def get_child_metadata(
+    def _process_child_metadata(
         self,
         child: Union[
             pystac.catalog.Catalog, pystac.item.Item, pystac.collection.Collection
@@ -718,17 +798,7 @@ class StacClient:
             ]
         # Check if collection keys provided are acceptable.
         else:
-            allowed_values = {
-                mappings.SAVE_DEFLECTOMETRY.lower(),
-                mappings.SAVE_CALIBRATION.lower(),
-                mappings.SAVE_PROPERTIES.lower(),
-            }
-            for item in collections:
-                if item not in allowed_values:
-                    raise ValueError(
-                        f"The heliostat collection must be one of: `deflectometry`, `calibration`, "
-                        f"`properties`! The key `{item}` is not accepted!"
-                    )
+            self.check_collection_keys(collections)
         if heliostats is None:
             save_description = "all_heliostats"
             root = self.get_catalog(href=mappings.CATALOGUE_URL)
@@ -745,7 +815,8 @@ class StacClient:
                 )
                 for heliostat in heliostats
             ]
-            save_description = f"{len(all_children)}_heliostats"
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            save_description = f"selected_heliostats_{timestamp}"
 
         for collection in collections:
             log.info(f"Downloading metadata for the {collection} collection!")
@@ -781,7 +852,7 @@ class StacClient:
                 # Process children in parallel.
                 with ThreadPoolExecutor() as executor:
                     executor.map(
-                        lambda child: self.get_child_metadata(
+                        lambda child: self._process_child_metadata(
                             child=child,
                             base_id=id_base,
                             data=data,
