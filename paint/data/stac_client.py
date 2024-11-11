@@ -312,7 +312,7 @@ class StacClient:
         Parameters
         ----------
         heliostats : list[str], optional
-            An optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
+            Optional list of heliostats whose data should be downloaded, if `None` data for all heliostats is
             downloaded (Default: ``None``).
         collections : list[str], optional
             List of collections to be downloaded. These collections must be one of: ``calibration``, ``deflectometry``,
@@ -584,9 +584,9 @@ class StacClient:
 
         Parameters
         ----------
-        child: Union[pystac.item.Item, pystac.collection.Collection, pystac.catalog.Catalog]
+        child : Union[pystac.item.Item, pystac.collection.Collection, pystac.catalog.Catalog]
             Child used for metadata extraction.
-        base_id: str
+        base_id : str
             Base ID used to define the heliostat collection being accessed.
         data : list[Any]
             Combined list to save all data.
