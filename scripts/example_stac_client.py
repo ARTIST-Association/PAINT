@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # Create STAC client.
     client = StacClient(output_dir=args.output_dir)
 
-    # Download tower measurements
+    # Download tower measurements.
     client.get_tower_measurements()
 
     # Download weather data between a certain time period.

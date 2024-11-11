@@ -2,7 +2,7 @@
 
 import argparse
 from pathlib import Path
-from typing import Optional, Union
+from typing import Union
 
 import matplotlib.gridspec as gridspec
 import matplotlib.pyplot as plt
@@ -123,7 +123,7 @@ class HistogramMeasurementPlot:
         df: pd.DataFrame,
         column: str,
         bins: int = 20,
-        x_ticks: Optional[list[str]] = None,
+        x_ticks: Union[list[str], None] = None,
     ) -> Axes:
         """
         Generate a histogram plot based on a given axis and data.
@@ -162,7 +162,7 @@ class HistogramMeasurementPlot:
         ax: Axes,
         df: pd.DataFrame,
         time_column: str,
-        x_ticks: Optional[list[str]] = None,
+        x_ticks: Union[list[str], None] = None,
     ) -> Axes:
         """
         Generate a stacked bar chart based on given axis and data.
@@ -205,8 +205,8 @@ class HistogramMeasurementPlot:
         y_column: str,
         width: int,
         height: int,
-        x_lim: Optional[tuple[float, float]] = None,
-        y_lim: Optional[tuple[float, float]] = None,
+        x_lim: Union[tuple[float, float], None] = None,
+        y_lim: Union[tuple[float, float], None] = None,
     ) -> None:
         """
         Generate a joint plot based on two columns in the data.

@@ -43,7 +43,7 @@ class DatasetSolsticeSplit:
     split_data()
         Classify the data according to the solstice split.
     plot_solstice_split()
-        Plot the solstice-splitted data.
+        Plot the solstice-split data.
     """
 
     def __init__(
