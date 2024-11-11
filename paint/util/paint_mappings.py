@@ -27,7 +27,7 @@ JUNE_DISTANCE = "Jun_Distance"
 DECEMBER_DISTANCE = "Dec_Distance"
 DATETIME = "DateTime"
 
-# dataset
+# Dataset
 TOTAL_INDEX = "Total"
 TRAIN_INDEX = "train"
 TEST_INDEX = "test"
