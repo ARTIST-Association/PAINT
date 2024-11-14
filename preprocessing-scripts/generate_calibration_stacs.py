@@ -171,6 +171,8 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]
                 ],
+                mappings.SUN_ELEVATION: heliostat_data[mappings.SUN_ELEVATION],
+                mappings.SUN_AZIMUTH: heliostat_data[mappings.AZIMUTH],
                 mappings.FOCAL_SPOT_KEY: {
                     mappings.HELIOS_KEY: [
                         focal_spot_lat,
@@ -193,6 +195,8 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]
                 ],
+                mappings.SUN_ELEVATION: heliostat_data[mappings.SUN_ELEVATION],
+                mappings.SUN_AZIMUTH: heliostat_data[mappings.AZIMUTH],
                 mappings.FOCAL_SPOT_KEY: {
                     mappings.HELIOS_KEY: [
                         focal_spot_lat,
