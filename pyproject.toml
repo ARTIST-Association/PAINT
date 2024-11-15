@@ -40,6 +40,7 @@ dev = [
     "ruff",
     "pytest",
     "pytest-cov",
+    "coverage<7.6.5",
     "sphinx-autoapi",
     "sphinx-rtd-theme",
     "sphinxcontrib-napoleon",
