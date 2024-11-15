@@ -41,6 +41,8 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple:
         A tuple containing the marker coordinates as torch.Tensors:
         (marker_left_top, marker_left_bottom, marker_right_top, marker_right_bottom)
     """
+    # Select markers based on the target identifier.
+    # These markers are predefined in `paint.util.paint_mappings`.
     if target in {1, 7, mappings.STJ_LOWER}:
         markers = mappings.STJ_LOWER_ENU
     elif target in {4, 5, 6, mappings.STJ_UPPER}:
@@ -48,8 +50,10 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple:
     elif target in {3, mappings.MFT}:
         markers = mappings.MFT_ENU
     else:
+        # Raise an error if the target is not recognized.
         raise ValueError(f"Unsupported target value: {target}")
 
+    # Convert marker coordinates to PyTorch tensors for further computation.
     return tuple(torch.tensor(marker) for marker in markers)
 
 
@@ -69,17 +73,26 @@ def convert_xy_to_ENU(aim_point_image: tuple, target: Union[str, int]) -> torch.
     torch.Tensor
         Aimpoint coordinates in the target image.
     """
+    # Retrieve the marker positions for the given target.
     marker_left_top, marker_left_bottom, marker_right_top, marker_right_bottom = get_marker_coordinates(
         target
     )
 
+    # Compute the horizontal directional vector (dx).
+    # This vector spans the distance between the left and right markers.
     dx = 0.5 * (marker_right_top - marker_left_top) + 0.5 * (
         marker_right_bottom - marker_left_bottom
     )
+
+    # Compute the vertical directional vector (dy).
+    # This vector spans the distance between the top and bottom markers.
     dy = 0.5 * (marker_left_bottom - marker_left_top) + 0.5 * (
         marker_right_bottom - marker_right_top
     )
 
+    # Calculate the aimpoint in global coordinates.
+    # The aimpoint is a combination of the top-left marker position and a weighted
+    # sum of dx and dy based on the relative aim_point_image coordinates.
     return marker_left_top + aim_point_image[0] * dx + aim_point_image[1] * dy
 
 
@@ -106,14 +119,20 @@ def compute_center_of_intensity(
 
     height, width = flux.shape
 
+    # Threshold the flux values. Any values below the threshold are set to zero.
     flux_thresholded = torch.where(flux >= threshold, flux, torch.zeros_like(flux))
     total_intensity = flux_thresholded.sum()
+
+    # If all values are below the threshold, default to the center of the image.
     if total_intensity == 0:
-        return width / 2, height / 2
+        return 0.5, 0.5
 
-    y_coords = torch.arange(height, dtype=torch.float32) / height
-    x_coords = torch.arange(width, dtype=torch.float32) / width
+    # Generate normalized y and x coordinates adjusted for pixel centers.
+    # The "+ 0.5" adjustment ensures coordinates are centered within each pixel.
+    y_coords = (torch.arange(height, dtype=torch.float32) + 0.5) / height
+    x_coords = (torch.arange(width, dtype=torch.float32) + 0.5) / width
 
+    # Compute the center of intensity using weighted sums of the coordinates.
     x_center = (flux_thresholded.sum(dim=0) * x_coords).sum() / total_intensity
     y_center = (flux_thresholded.sum(dim=1) * y_coords).sum() / total_intensity
 
@@ -146,10 +165,18 @@ def detect_focal_spot(
     if utis is None:
         raise ValueError("UTIS model must be provided.")
 
+    # Pass the input image through the UTIS model to generate a flux image.
+    # The input image is unsqueezed to add batch and channel dimensions.
+    # The output flux is extracted from the first channel of the result.
     flux = utis(image.unsqueeze(0).unsqueeze(0))[0, 0]
+
+    # Compute the center of intensity in image coordinates.
     aim_point_image = compute_center_of_intensity(flux)
+
+    # Convert the center of intensity to global ENU coordinates using marker data.
     aimpoint_global = convert_xy_to_ENU(aim_point_image, target)
 
+    # Return a FocalSpot object containing the flux, image coordinates, and global aimpoint.
     return FocalSpot(
         flux=flux,
         aim_point_image=aim_point_image,

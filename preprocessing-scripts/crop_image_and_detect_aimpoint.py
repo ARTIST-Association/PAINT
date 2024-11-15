@@ -1,9 +1,11 @@
 #!/usr/bin/env python
+import logging
+import requests
 import json
 import argparse
 from pathlib import Path
-
 import torch
+import tempfile
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
@@ -11,6 +13,39 @@ from paint.data.stac_client import StacClient
 from paint.preprocessing.focal_spot_extractor import detect_focal_spot
 from paint.preprocessing.target_cropper import crop_image_with_template_matching
 
+# Configure the logger
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+logger = logging.getLogger(__name__)
+
+# Function to download and load the checkpoint
+def load_model_from_url(url):
+    """
+    Downloads the model checkpoint from the given URL and loads it directly without storing it permanently.
+    
+    Args:
+        url (str): The URL of the model checkpoint.
+        
+    Returns:
+        torch.jit.ScriptModule: The loaded PyTorch model.
+    """
+    logger.info(f"Downloading checkpoint from {url}...")
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        logger.info("Checkpoint downloaded successfully. Loading the model...")
+        with tempfile.NamedTemporaryFile(delete=True) as temp_file:
+            for chunk in response.iter_content(chunk_size=8192):
+                temp_file.write(chunk)
+            temp_file.flush()
+            try:
+                model = torch.jit.load(temp_file.name, map_location="cpu")
+                logger.info("Model loaded successfully.")
+                return model
+            except Exception as e:
+                logger.error(f"Failed to load the model: {e}")
+                raise
+    else:
+        logger.error(f"Failed to download the checkpoint. Status code: {response.status_code}")
+        response.raise_for_status()
 
 def main():
     # Parse command-line arguments
@@ -62,13 +97,12 @@ def main():
         filtered_calibration_keys=args.filtered_calibration,
     )
 
-    # Load the UTIS model for target image segmentation
-    model_path = Path(PAINT_ROOT) / "paint/preprocessing/models/utis_model_scripted.pt"
-    loaded_model = torch.jit.load(model_path, map_location="cpu")
+    # Load the UTIS model directly from the URL
+    model_url = "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization/raw/main/trained_models/utis_model_scripted.pt"
+    loaded_model = load_model_from_url(model_url)
 
     # Process each heliostat and its measurements
     for heliostat in args.heliostats:
-        # TODO: Replace hardcoded measurement_ids with dynamic retrieval of available IDs
         measurement_ids = args.measurement_id
 
         for measurement_id in measurement_ids:
@@ -93,9 +127,11 @@ def main():
             focal_spot = detect_focal_spot(cropped_image_tensor, target, loaded_model)
 
             # Print the detected aim point
-            print(
-                f"Heliostat {heliostat}: For Measurement {measurement_id}, "
-                f"Focal Spot detected at {focal_spot.aim_point.tolist()}."
+            logger.info(
+                "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
+                heliostat,
+                measurement_id,
+                focal_spot.aim_point.tolist(),
             )
 
             # TODO: Write results to CSV or database?
