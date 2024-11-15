@@ -30,11 +30,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pytest pytest-cov coverage-badge .
+          pip install --upgrade pip
+          pip install coverage==7.6.4
+          pip install pytest pytest-cov coverage-badge .
 
       - name: Test with pytest and coverage badge
         run: |
+          python --version
+          pip show coverage
           pytest --cov=paint
           coverage report -m --format markdown > cov_report.txt
           coverage xml
