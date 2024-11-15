@@ -174,7 +174,7 @@ def make_calibration_item(
             {
                 "rel": "self",
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
-                f"{image}-stac.json",
+                f"{image}-calibration-item-stac.json",
                 "type": mappings.MIME_GEOJSON,
                 "title": "Reference to this STAC file",
             },

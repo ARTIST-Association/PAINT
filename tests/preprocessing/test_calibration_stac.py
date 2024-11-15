@@ -273,7 +273,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "links": [
                     {
                         "rel": "self",
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-item-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to this STAC file",
                     },
@@ -380,7 +380,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 "links": [
                     {
                         "rel": "self",
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-item-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to this STAC file",
                     },
