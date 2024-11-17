@@ -1,7 +1,8 @@
 from typing import Union
+
 import torch
+
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 
 
 class FocalSpot:
@@ -57,7 +58,7 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple:
     return tuple(torch.tensor(marker) for marker in markers)
 
 
-def convert_xy_to_ENU(aim_point_image: tuple, target: Union[str, int]) -> torch.Tensor:
+def convert_xy_to_enu(aim_point_image: tuple, target: Union[str, int]) -> torch.Tensor:
     """
     Convert x, y coordinates to an aimpoint in the target image based on marker positions.
 
@@ -74,9 +75,12 @@ def convert_xy_to_ENU(aim_point_image: tuple, target: Union[str, int]) -> torch.
         Aimpoint coordinates in the target image.
     """
     # Retrieve the marker positions for the given target.
-    marker_left_top, marker_left_bottom, marker_right_top, marker_right_bottom = get_marker_coordinates(
-        target
-    )
+    (
+        marker_left_top,
+        marker_left_bottom,
+        marker_right_top,
+        marker_right_bottom,
+    ) = get_marker_coordinates(target)
 
     # Compute the horizontal directional vector (dx).
     # This vector spans the distance between the left and right markers.
@@ -174,7 +178,7 @@ def detect_focal_spot(
     aim_point_image = compute_center_of_intensity(flux)
 
     # Convert the center of intensity to global ENU coordinates using marker data.
-    aimpoint_global = convert_xy_to_ENU(aim_point_image, target)
+    aimpoint_global = convert_xy_to_enu(aim_point_image, target)
 
     # Return a FocalSpot object containing the flux, image coordinates, and global aimpoint.
     return FocalSpot(
