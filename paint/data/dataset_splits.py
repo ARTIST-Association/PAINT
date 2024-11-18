@@ -42,6 +42,20 @@ class DatasetSplitter:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def _get_azimuth_splits(training_size: int, validation_size: int) -> None:
+        """
+        Get the splits for the azimuth method.
+
+        Parameters
+        ----------
+        training_size : int
+            Size of the training split.
+        validation_size : int
+            Size of the validation split.
+        """
+        pass
+
     def get_dataset_splits(
         self, split_type: str, training_size: int, validation_size: int
     ) -> None:
