@@ -2,6 +2,10 @@ import argparse
 
 from paint import PAINT_ROOT
 from paint.data.dataset_splits import DatasetSplitter
+from paint.util import set_logger_config
+
+set_logger_config()
+
 
 if __name__ == "__main__":
     # Read in arguments.

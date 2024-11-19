@@ -5,9 +5,7 @@ from typing import Union
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util import set_logger_config
 
-set_logger_config()
 log = logging.getLogger(__name__)  # Logger for the dataset splitter
 
 
