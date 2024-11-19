@@ -1,3 +1,4 @@
+from typing import Union
 from unittest.mock import patch
 
 import pytest
@@ -17,14 +18,14 @@ def test_get_marker_coordinates_valid_targets():
     """Test `get_marker_coordinates` with valid targets."""
     valid_targets = [1, 7, STJ_LOWER, 4, 5, 6, STJ_UPPER, 3, MFT]
 
-    # Define mock marker data for each valid target
+    # Define mock marker data for each valid target.
     marker_data = {
         STJ_LOWER: [(0, 0, 0), (0, 0, 1), (1, 0, 0), (1, 0, 1)],
         STJ_UPPER: [(1, 1, 1), (1, 1, 2), (2, 1, 1), (2, 1, 2)],
         MFT: [(2, 2, 2), (2, 2, 3), (3, 2, 2), (3, 2, 3)],
     }
 
-    # Patch the implementation to return the mock data for the corresponding targets
+    # Patch the implementation to return the mock data for the corresponding targets.
     with patch(
         "paint.preprocessing.focal_spot_extractor.mappings", autospec=True
     ) as mock_mappings:
@@ -55,8 +56,23 @@ def test_get_marker_coordinates_invalid_target():
         ((0.25, 0.75), 3, torch.tensor([0.25, 0.0, 0.75])),  # Skewed point
     ],
 )
-def test_convert_xy_to_enu(aim_point_image, target, expected_output):
-    """Test `convert_xy_to_enu` with mocked marker coordinates."""
+def test_convert_xy_to_enu(
+    aim_point_image: tuple[float, float],
+    target: Union[int, str],
+    expected_output: torch.Tensor,
+):
+    """
+    Test `convert_xy_to_enu` with mocked marker coordinates.
+
+    Parameters
+    ----------
+    aim_point_image : tuple[float, float]
+        Aimpoint image.
+    target : Union[int, str]
+        Calibration target used.
+    expected_output : torch.Tensor
+        Expected result.
+    """
     mock_markers = [
         torch.tensor([0, 0, 0]),  # marker_left_top
         torch.tensor([0, 0, 1]),  # marker_left_bottom
@@ -86,8 +102,21 @@ def test_convert_xy_to_enu(aim_point_image, target, expected_output):
         ),  # NaN values
     ],
 )
-def test_compute_center_of_intensity(flux, threshold, expected_center):
-    """Test `compute_center_of_intensity` for various flux distributions."""
+def test_compute_center_of_intensity(
+    flux: torch.Tensor, threshold: float, expected_center: tuple[float, float]
+):
+    """
+    Test `compute_center_of_intensity` for various flux distributions.
+
+    Parameters
+    ----------
+    flux : torch.Tensor
+        Flux imput image.
+    threshold : float
+        Threshold used to determine center of intensity.
+    expected_center : tuple[float, float]
+        Expected center of intensity.
+    """
     result = compute_center_of_intensity(flux, threshold)
     assert result == pytest.approx(expected_center, rel=1e-2)
 
@@ -116,7 +145,7 @@ def test_detect_focal_spot():
         "paint.preprocessing.focal_spot_extractor.get_marker_coordinates",
         return_value=mock_markers,
     ):
-        focal_spot = detect_focal_spot(image, target, utis=mock_utis)
+        focal_spot = detect_focal_spot(image, target, utis_model=mock_utis)
 
     assert isinstance(focal_spot, FocalSpot)
     assert focal_spot.flux.shape == torch.Size([16, 16])
@@ -131,7 +160,4 @@ def test_detect_focal_spot_invalid_inputs():
     target = 1
 
     with pytest.raises(ValueError, match="Expected a 2D tensor, got 3 dimensions."):
-        detect_focal_spot(invalid_image, target, utis=mock_utis)
-
-    with pytest.raises(ValueError, match="UTIS model must be provided."):
-        detect_focal_spot(torch.ones(16, 16), target, utis=None)
+        detect_focal_spot(invalid_image, target, utis_model=mock_utis)
