@@ -257,6 +257,10 @@ TARGET_NAME_KEY = "target_name"
 FOCAL_SPOT_KEY = "focal_spot"
 UTIS_KEY = "UTIS"
 UTIS_URL = "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization"
+UTIS_MODEL_CHECKPOINT = (
+    "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization/"
+    "raw/main/trained_models/utis_model_scripted.pt"
+)
 HELIOS_KEY = "HeliOS"
 TARGET_OFFSET_E = "TargetOffsetE"
 TARGET_OFFSET_N = "TargetOffsetN"
