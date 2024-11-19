@@ -13,21 +13,36 @@ class FocalSpot:
     ----------
     flux : torch.Tensor
         Intensity image of the detected focal spot.
-    aim_point_image : torch.Tensor
-        The detected center of intensity in image coordinates (height, width).
+    aim_point_image : tuple[float, float]
+        Detected center of intensity in image coordinates (height, width).
     aim_point : torch.Tensor
-        The detected center of intensity in global coordinates (E, N, U).
+        Detected center of intensity in global coordinates (E, N, U).
     """
 
     def __init__(
-        self, flux: torch.Tensor, aim_point_image: torch.Tensor, aim_point: torch.Tensor
-    ):
+        self,
+        flux: torch.Tensor,
+        aim_point_image: tuple[float, float],
+        aim_point: torch.Tensor,
+    ) -> None:
+        """
+        Initialize the focal spot data class.
+
+        Parameters
+        ----------
+        flux : torch.Tensor
+            Intensity image of the detected focal spot.
+        aim_point_image : tuple[float, float]
+            Detected center of intensity in image coordinates (height, width).
+        aim_point : torch.Tensor
+            Detected center of intensity in global coordinates (E, N, U).
+        """
         self.flux = flux
         self.aim_point_image = aim_point_image
         self.aim_point = aim_point
 
 
-def get_marker_coordinates(target: Union[str, int]) -> tuple:
+def get_marker_coordinates(target: Union[str, int]) -> tuple[torch.Tensor, ...]:
     """
     Get the specific marker coordinates based on the target.
 
@@ -38,9 +53,8 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple:
 
     Returns
     -------
-    tuple
-        A tuple containing the marker coordinates as torch.Tensors:
-        (marker_left_top, marker_left_bottom, marker_right_top, marker_right_bottom)
+    tuple[torch.Tensor, ...]
+        Coordinates for the markers from the considered target.
     """
     # Select markers based on the target identifier.
     # These markers are predefined in `paint.util.paint_mappings`.
@@ -58,13 +72,15 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple:
     return tuple(torch.tensor(marker) for marker in markers)
 
 
-def convert_xy_to_enu(aim_point_image: tuple, target: Union[str, int]) -> torch.Tensor:
+def convert_xy_to_enu(
+    aim_point_image: tuple[float, float], target: Union[str, int]
+) -> torch.Tensor:
     """
-    Convert x, y coordinates to an aimpoint in the target image based on marker positions.
+    Convert (x, y) coordinates to an aimpoint in the target image based on marker positions.
 
     Parameters
     ----------
-    aim_point_image : tuple
+    aim_point_image : tuple[float, float]
         Relative aim point coordinates (x, y).
     target : Union[str, int]
         The target object containing marker information.
@@ -111,12 +127,14 @@ def compute_center_of_intensity(
     flux : torch.Tensor
         A 2D tensor representing the flux/intensity image.
     threshold : float, optional
-        Minimum intensity value for pixels to be included in the calculation, by default 0.0.
+        Minimum intensity value for pixels to be included in the calculation (Default: `0.0`).
 
     Returns
     -------
-    tuple[float, float]
-        (x, y) coordinates of the center of intensity.
+    float
+        x coordinate of the center of intensity.
+    float
+        y coordinate of the center of intensity.
     """
     if flux.dim() != 2:
         raise ValueError(f"Expected a 2D tensor, got {flux.dim()} dimensions.")
@@ -131,10 +149,10 @@ def compute_center_of_intensity(
     if total_intensity == 0:
         return 0.5, 0.5
 
-    # Generate normalized y and x coordinates adjusted for pixel centers.
+    # Generate normalized x and y coordinates adjusted for pixel centers.
     # The "+ 0.5" adjustment ensures coordinates are centered within each pixel.
-    y_coords = (torch.arange(height, dtype=torch.float32) + 0.5) / height
     x_coords = (torch.arange(width, dtype=torch.float32) + 0.5) / width
+    y_coords = (torch.arange(height, dtype=torch.float32) + 0.5) / height
 
     # Compute the center of intensity using weighted sums of the coordinates.
     x_center = (flux_thresholded.sum(dim=0) * x_coords).sum() / total_intensity
@@ -144,7 +162,9 @@ def compute_center_of_intensity(
 
 
 def detect_focal_spot(
-    image: torch.Tensor, target: Union[str, int], utis: torch.nn.Module = None
+    image: torch.Tensor,
+    target: Union[str, int],
+    utis_model: torch.nn.Module,
 ) -> FocalSpot:
     """
     Detect a focal spot within an image using UTIS focal spot segmentation.
@@ -155,8 +175,8 @@ def detect_focal_spot(
         Cropped image containing the focal spot to be detected, with the shape (height, width).
     target : Union[str, int]
         Target center and dimensions used for aimpoint calculation.
-    utis : torch.nn.Module, optional
-        UTIS model checkpoint used to compute the flux, by default None.
+    utis_model : torch.nn.Module
+        UTIS model checkpoint used to compute the flux.
 
     Returns
     -------
@@ -166,13 +186,10 @@ def detect_focal_spot(
     if image.dim() != 2:
         raise ValueError(f"Expected a 2D tensor, got {image.dim()} dimensions.")
 
-    if utis is None:
-        raise ValueError("UTIS model must be provided.")
-
     # Pass the input image through the UTIS model to generate a flux image.
     # The input image is unsqueezed to add batch and channel dimensions.
     # The output flux is extracted from the first channel of the result.
-    flux = utis(image.unsqueeze(0).unsqueeze(0))[0, 0]
+    flux = utis_model(image.unsqueeze(0).unsqueeze(0))[0, 0]
 
     # Compute the center of intensity in image coordinates.
     aim_point_image = compute_center_of_intensity(flux)
