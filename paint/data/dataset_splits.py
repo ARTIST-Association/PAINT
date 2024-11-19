@@ -1,9 +1,14 @@
+import logging
 from pathlib import Path
 from typing import Union
 
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
+from paint.util import set_logger_config
+
+set_logger_config()
+log = logging.getLogger(__name__)  # Logger for the dataset splitter
 
 
 class DatasetSplitter:
@@ -78,4 +83,33 @@ class DatasetSplitter:
                 f"selected split type {split_type} is not supported!"
             )
 
-        print("HI")
+        # Calculate the minimum number of possible images as training size + 2 * validation size, since we want at least
+        # as many test images as validation images.
+        minimum_number_of_images = training_size + 2 * validation_size
+
+        # Identify heliostats that do not meet the minimum image requirement.
+        heliostat_image_count = self.metadata.groupby(mappings.HELIOSTAT_ID).size()
+        dropped_heliostats = heliostat_image_count[
+            heliostat_image_count < minimum_number_of_images
+        ].index.tolist()
+
+        # Remove the heliostats not meeting the minimum image requirement.
+        heliostat_split_data = self.metadata.groupby(mappings.HELIOSTAT_ID).filter(
+            lambda x: len(x) >= minimum_number_of_images
+        )
+
+        log.info(
+            f"The following {len(dropped_heliostats)} heliostats have been dropped for not meeting the requirements of {training_size} training "
+            f"images, {validation_size} validation images, and at least {validation_size} test images:"
+        )
+        log.info(dropped_heliostats)
+
+        for heliostat, heliostat_data in heliostat_split_data.groupby(
+            mappings.HELIOSTAT_ID
+        ):
+            if split_type == mappings.AZIMUTH_SPLIT:
+                pass  # TODO: Call azimuth split
+            elif split_type == mappings.SOLSTICE_SPLIT:
+                pass  # TODO: call solstice split
+            else:
+                raise ValueError(f"The split type {split_type} is not supported!")

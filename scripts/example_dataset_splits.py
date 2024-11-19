@@ -21,4 +21,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     splitter = DatasetSplitter(input_file=args.input_file, output_dir=args.output_dir)
+    splitter.get_dataset_splits(
+        split_type="azimuth", training_size=10, validation_size=30
+    )
     print("YUP WE ARE HERE")
