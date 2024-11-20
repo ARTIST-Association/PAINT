@@ -33,14 +33,18 @@ class StacClient:
         Help load a STAC child with correct error handling.
     download_file()
         Download a file given a URL.
-    download_heliostat_data()
-        Download heliostat data for a specified STAC collection.
     get_heliostat_data()
         Get data for one or more heliostats.
-    get_child_metadata()
-        Extract metadata from children in a catalog.
+    get_weather_data()
+        Get weather data for DWD and/or Jülich.
+    get_tower_measurements()
+        Get the tower measurements data.
     get_heliostat_metadata()
         Download metadata for desired heliostats.
+    get_single_calibration_item_by_id()
+        Get a single calibration item given an item ID.
+    get_multiple_calibration_items_by_id()
+        Get multiple calibration items given a dictionary of heliostat IDs and calibration IDs.
     """
 
     def __init__(
@@ -367,7 +371,7 @@ class StacClient:
         )
 
     @staticmethod
-    def check_collection_keys(collections: list[str]) -> None:
+    def _check_collection_keys(collections: list[str]) -> None:
         """
         Check whether provided collection keys are valid.
 
@@ -459,7 +463,7 @@ class StacClient:
             get_properties = True
         # Check if collection keys provided are acceptable.
         else:
-            self.check_collection_keys(collections)
+            self._check_collection_keys(collections)
             # Set boolean flags based on the presence of each allowed value in collections.
             get_calibration = mappings.SAVE_CALIBRATION.lower() in collections
             get_deflectometry = mappings.SAVE_DEFLECTOMETRY.lower() in collections
@@ -801,7 +805,7 @@ class StacClient:
             ]
         # Check if collection keys provided are acceptable.
         else:
-            self.check_collection_keys(collections)
+            self._check_collection_keys(collections)
         if heliostats is None:
             save_description = "all_heliostats"
             root = self.get_catalog(href=mappings.CATALOGUE_URL)
