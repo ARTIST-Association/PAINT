@@ -922,6 +922,7 @@ class StacClient:
         heliostat_id: str,
         item_id: int,
         filtered_calibration_keys: Union[list[str], None] = None,
+        benchmark_split: Union[str, None] = None,
     ) -> None:
         """
         Download a specific calibration item from a specific heliostat given the calibration item ID.
@@ -936,6 +937,9 @@ class StacClient:
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
             ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
             data is downloaded (Default: ``None``).
+        benchmark_split: str, optional
+            Indicates the benchmark split that this item is being downloaded for. If ``None`` then the heliostat
+            will be downloaded according to the ``PAINT`` default structure (Default: ``None``).
         """
         # Include error handling for invalid item ID.
         # This error function does not return a value error, but merely logs the error. This will enable code calling
@@ -961,12 +965,15 @@ class StacClient:
             if key in filtered_calibration_keys:
                 url = asset.href
                 file_end = url.split("/")[-1]
-                file_name = (
-                    self.output_dir
-                    / heliostat_id
-                    / mappings.SAVE_CALIBRATION
-                    / file_end
-                )
+                if benchmark_split is not None:
+                    file_name = self.output_dir / benchmark_split / file_end
+                else:
+                    file_name = (
+                        self.output_dir
+                        / heliostat_id
+                        / mappings.SAVE_CALIBRATION
+                        / file_end
+                    )
                 file_name.parent.mkdir(parents=True, exist_ok=True)
                 self.download_file(url, file_name)
 
