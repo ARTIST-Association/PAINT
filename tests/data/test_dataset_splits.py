@@ -231,3 +231,12 @@ def test_make_dataset_splitter_fail(
                 training_size=training_size,
                 validation_size=validation_size,
             )
+
+
+def test_make_solstice_distance_fail():
+    """Make the solstice ditance calculation fail."""
+    with pytest.raises(ValueError):
+        DatasetSplitter._get_nearest_solstice_distance(
+            timestamp=Timestamp("2023-06-16 09:48:04"),
+            season="bob_marley_is_not_a_season",
+        )
