@@ -923,6 +923,8 @@ class StacClient:
         item_id: int,
         filtered_calibration_keys: Union[list[str], None] = None,
         benchmark_split: Union[str, None] = None,
+        pbar: Union[tqdm, None] = None,
+        verbose: bool = True,
     ) -> None:
         """
         Download a specific calibration item from a specific heliostat given the calibration item ID.
@@ -940,6 +942,10 @@ class StacClient:
         benchmark_split: str, optional
             Indicates the benchmark split that this item is being downloaded for. If ``None`` then the heliostat
             will be downloaded according to the ``PAINT`` default structure (Default: ``None``).
+        pbar : tqdm, optional
+            Progress bar, optional (Default: ``None``).
+        verbose : bool
+            Indicating whether log messages should be printed (Default: ``True``).
         """
         # Include error handling for invalid item ID.
         # This error function does not return a value error, but merely logs the error. This will enable code calling
@@ -951,16 +957,19 @@ class StacClient:
             href = mappings.CALIBRATION_ITEM_URL % (heliostat_id, item_id)
             item = pystac.Item.from_file(href=href)
         except pystac.STACError as e:
-            log.error(f"Failed to load STAC item from {href}. Error: {e}")
-            log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+            if verbose:
+                log.error(f"Failed to load STAC item from {href}. Error: {e}")
+                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
             return
         except Exception as e:
-            log.error(f"Unexpected error while accessing STAC item: {e}")
-            log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+            if verbose:
+                log.error(f"Unexpected error while accessing STAC item: {e}")
+                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
             return
-        log.info(
-            f"Downloading calibration item {item_id} for heliostat {heliostat_id}!"
-        )
+        if verbose:
+            log.info(
+                f"Downloading calibration item {item_id} for heliostat {heliostat_id}!"
+            )
         for key, asset in item.assets.items():
             if key in filtered_calibration_keys:
                 url = asset.href
@@ -976,6 +985,8 @@ class StacClient:
                     )
                 file_name.parent.mkdir(parents=True, exist_ok=True)
                 self.download_file(url, file_name)
+        if pbar is not None:
+            pbar.update(1)
 
     def get_multiple_calibration_items_by_id(
         self,
@@ -1013,14 +1024,33 @@ class StacClient:
                     href=calibration_collection_href
                 )
                 # Find all items in that heliostat and download each item.
-                all_items = calibration_collection.get_items()
-                for item in all_items:
-                    item_id = int(item.id)
-                    self.get_single_calibration_item_by_id(
-                        heliostat_id=heliostat_id,
-                        item_id=item_id,
-                        filtered_calibration_keys=filtered_calibration_keys,
-                    )
+                all_items = list(calibration_collection.get_items())
+                with tqdm(
+                    total=len(all_items),
+                    desc=f"Downloading Calibration Items in {heliostat_id}",
+                    unit="Item",
+                ) as pbar:
+                    with ThreadPoolExecutor() as executor:
+                        # Create a list of future objects.
+                        futures = [
+                            executor.submit(
+                                self.get_single_calibration_item_by_id,
+                                heliostat_id=heliostat_id,
+                                item_id=int(item.id),
+                                filtered_calibration_keys=filtered_calibration_keys,
+                                benchmark_split=None,
+                                pbar=pbar,
+                                verbose=False,
+                            )
+                            for item in all_items
+                        ]
+                        # Wait for all tasks to complete.
+                        for future in as_completed(futures):
+                            try:
+                                future.result()
+                            except Exception as e:
+                                # Handle exceptions from individual tasks.
+                                print(f"Error in thread execution: {e}")
             else:
                 # Only download selected items.
                 for item_id in item_ids:
