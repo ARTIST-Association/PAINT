@@ -15,11 +15,17 @@ class DatasetSplitter:
 
     Attributes
     ----------
-    #TODO Include attributes
+    metadata : pd.DataFrame
+        Metadata used to generate the dataset splits.
+    output_dir : pathlib.Path
+        Output directory for saving the dataset splits.
+    remove_unused_data : bool
+        Indicating whether unused metadata should be removed or not.
 
     Methods
     -------
-    #TODO Include Methods
+    get_dataset_splits()
+        Get the dataset splits and save them to a CSV file.
     """
 
     def __init__(
@@ -253,6 +259,12 @@ class DatasetSplitter:
             f"images, {validation_size} validation images, and at least {validation_size} test images:"
         )
         log.info(dropped_heliostats)
+
+        if len(heliostat_split_data) == 0:
+            raise ValueError(
+                "There are no heliostats left! Your requirements for training and validation size are too"
+                "high. Please retry with a smaller number of required training or validation images!"
+            )
 
         if split_type == mappings.AZIMUTH_SPLIT:
             log.info("Preparing azimuth split...")
