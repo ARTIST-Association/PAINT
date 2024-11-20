@@ -24,8 +24,24 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    splitter = DatasetSplitter(input_file=args.input_file, output_dir=args.output_dir)
-    splitter.get_dataset_splits(
+    splitter = DatasetSplitter(
+        input_file=args.input_file, output_dir=args.output_dir, remove_unused_data=False
+    )
+    # Example for azimuth splits
+    azimuth_splits = splitter.get_dataset_splits(
         split_type="azimuth", training_size=10, validation_size=30
     )
-    print("YUP WE ARE HERE")
+    print(
+        "The returned azimuth split data frame contains additional metadata which may be useful for plots."
+    )
+    print("This data frame has the following structure (first five rows):")
+    print(azimuth_splits.head(5))
+    # Example for solstice splits
+    solstice_splits = splitter.get_dataset_splits(
+        split_type="solstice", training_size=10, validation_size=30
+    )
+    print(
+        "The returned solstice split data frame contains additional metadata which may be useful for plots."
+    )
+    print("This data frame has the following structure (first five rows):")
+    print(solstice_splits.head(5))
