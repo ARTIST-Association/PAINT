@@ -1,7 +1,9 @@
 import argparse
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pandas as pd
+from tqdm import tqdm
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
@@ -46,11 +48,31 @@ if __name__ == "__main__":
     # Read in dataset splits file.
     splits = pd.read_csv(args.input_dataset_splits)
 
-    for _, split_data in splits.groupby(mappings.SPLIT_KEY):
-        for __, item in split_data.iterrows():
-            client.get_single_calibration_item_by_id(
-                heliostat_id=item[mappings.HELIOSTAT_ID],
-                item_id=item[mappings.ID_INDEX],
-                filtered_calibration_keys=args.filtered_calibration,
-                benchmark_split=item[mappings.SPLIT_KEY],
-            )
+    for split_name, split_data in splits.groupby(mappings.SPLIT_KEY):
+        number_items = len(split_data)
+        with tqdm(
+            total=number_items,
+            desc=f"Downloading Benchmark data for the {split_name} split",
+            unit="Item",
+        ) as pbar:
+            with ThreadPoolExecutor() as executor:
+                # Create a list of future objects.
+                futures = [
+                    executor.submit(
+                        client.get_single_calibration_item_by_id,
+                        heliostat_id=item[mappings.HELIOSTAT_ID],
+                        item_id=item[mappings.ID_INDEX],
+                        filtered_calibration_keys=args.filtered_calibration,
+                        benchmark_split=item[mappings.SPLIT_KEY],
+                        verbose=False,
+                        pbar=pbar,
+                    )
+                    for __, item in split_data.iterrows()
+                ]
+                # Wait for all tasks to complete.
+                for future in as_completed(futures):
+                    try:
+                        future.result()
+                    except Exception as e:
+                        # Handle exceptions from individual tasks.
+                        print(f"Error in thread execution: {e}")
