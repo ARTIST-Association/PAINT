@@ -83,16 +83,20 @@ def to_utc(time_series: pd.Series) -> pd.Series:
     )
 
 
-def to_utc_single(datetime_str: str, local_tz: str = "Europe/Berlin") -> str:
+def to_utc_single(
+    datetime_str: str, local_tz: str = "Europe/Berlin", file_name_format: bool = False
+) -> str:
     """
     Parse a single local datetime string and convert to UTC.
 
     Parameters
     ----------
     datetime_str : str
-        The string containing the local datetime.
+        String containing the local datetime.
     local_tz : str
-        The local timezone (Default: 'Europe/Berlin').
+        Local timezone (Default: ``Europe/Berlin``).
+    file_name_format : bool
+        Indicating whether the file name format for the time conversion should be used or not (Default: ``False``).
 
     Returns
     -------
@@ -117,8 +121,13 @@ def to_utc_single(datetime_str: str, local_tz: str = "Europe/Berlin") -> str:
     # Convert the localized datetime to UTC
     utc_time = local_time.astimezone(pytz.utc)
 
-    # Return the UTC datetime as a string.
-    return utc_time.strftime(mappings.TIME_FORMAT)
+    # Convert the time to the appropriate string.
+    if file_name_format:
+        return_string = utc_time.strftime(mappings.TIME_FILE_FORMAT)
+    else:
+        return_string = utc_time.strftime(mappings.TIME_FORMAT)
+
+    return return_string
 
 
 def convert_field_coordinate_to_wgs84(
