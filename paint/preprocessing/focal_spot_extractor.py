@@ -1,5 +1,8 @@
+import json
+from pathlib import Path
 from typing import Union
 
+import h5py
 import torch
 
 import paint.util.paint_mappings as mappings
@@ -25,21 +28,73 @@ class FocalSpot:
         aim_point_image: tuple[float, float],
         aim_point: torch.Tensor,
     ) -> None:
-        """
-        Initialize the focal spot data class.
-
-        Parameters
-        ----------
-        flux : torch.Tensor
-            Intensity image of the detected focal spot.
-        aim_point_image : tuple[float, float]
-            Detected center of intensity in image coordinates (height, width).
-        aim_point : torch.Tensor
-            Detected center of intensity in global coordinates (E, N, U).
-        """
         self.flux = flux
         self.aim_point_image = aim_point_image
         self.aim_point = aim_point
+
+    def save(self, save_path: Path) -> None:
+        """
+        Save the focal spot object to disk.
+
+        Parameters
+        ----------
+        save_path : Path
+            Base path (without extension) to save the focal spot data.
+        """
+        # Save flux to HDF5
+        with h5py.File(f"{save_path}_flux.h5", "w") as h5_file:
+            h5_file.create_dataset("flux", data=self.flux.numpy())
+
+        # Save metadata to JSON
+        metadata = {
+            "aim_point_image": self.aim_point_image,
+            "aim_point": self.aim_point.tolist(),
+        }
+        with open(f"{save_path}_metadata.json", "w") as json_file:
+            json.dump(metadata, json_file, indent=4)
+
+    @staticmethod
+    def load(file_path: Union[str, Path]) -> "FocalSpot":
+        """
+        Load a focal spot from disk.
+
+        Parameters
+        ----------
+        file_path : Union[str, Path]
+            Base path for the focal spot files (without extensions).
+
+        Returns
+        -------
+        FocalSpot
+            Loaded focal spot object.
+        """
+        base_path = Path(file_path)
+        flux_path = base_path.with_name(f"{base_path.name}_flux.h5")
+        metadata_path = base_path.with_name(f"{base_path.name}_metadata.json")
+
+        if not flux_path.exists() or not metadata_path.exists():
+            raise FileNotFoundError(
+                f"Missing required files: {flux_path}, {metadata_path}"
+            )
+
+        # Load flux
+        with h5py.File(flux_path, "r") as h5_file:
+            if "flux" not in h5_file:
+                raise ValueError("HDF5 file does not contain a 'flux'.")
+            flux = torch.tensor(h5_file["flux"][:])
+            if flux.numel() == 0:  # Check for empty flux
+                raise ValueError("Flux data is empty.")
+
+        # Load metadata
+        with open(metadata_path, "r") as json_file:
+            metadata = json.load(json_file)
+
+        aim_point_image = tuple(metadata["aim_point_image"])
+        aim_point = torch.tensor(metadata["aim_point"])
+
+        return FocalSpot(
+            flux=flux, aim_point_image=aim_point_image, aim_point=aim_point
+        )
 
 
 def get_marker_coordinates(target: Union[str, int]) -> tuple[torch.Tensor, ...]:
