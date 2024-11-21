@@ -66,6 +66,7 @@ def extract_data_and_generate_stacs(
         ]
     ]
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
+    metadata[mappings.FILE_CREATED_AT] = converter.deflectometry_created_at_file_name
 
     # STAC contains all deflectometry items, therefore, only create the stac once after the raw conversion
     if converter.raw_data:
@@ -84,7 +85,7 @@ def extract_data_and_generate_stacs(
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_PDF_NAME
-                % (converter.heliostat_id, converter.deflectometry_created_at)
+                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
             )
         )
         input_pdf_file = input_path.parent / pdf_name
@@ -106,7 +107,7 @@ def extract_data_and_generate_stacs(
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
             converter.heliostat_id,
-            converter.deflectometry_created_at,
+            converter.deflectometry_created_at_file_name,
         )
         deflectometry_items.loc[len(deflectometry_items)] = [
             converter.heliostat_id,
@@ -125,7 +126,7 @@ def extract_data_and_generate_stacs(
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_ITEM
-                % (converter.heliostat_id, converter.deflectometry_created_at)
+                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
             )
         )
         save_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)
