@@ -32,6 +32,9 @@ class BinaryExtractor:
         The file path to save the json containing the heliostat properties data.
     deflectometry_created_at : str
         The time stamp for when the deflectometry data was created. Required for properties later.
+    deflectometry_created_at_file_name : str
+        The time stamp in the file name format for when the deflectometry data was created. Required for saving
+        different files later.
     surface_header_name : str
         The name for the surface header in the binary file.
     facet_header_name : str
@@ -80,18 +83,27 @@ class BinaryExtractor:
                 + "-"
                 + name_string[4]
                 + "-"
-                + str(to_utc_single(name_string[-1].split(".")[0]))
+                + str(
+                    to_utc_single(name_string[-1].split(".")[0], file_name_format=True)
+                )
             )
             self.raw_data = False
         else:
             file_name = (
-                name_string[1] + "-" + str(to_utc_single(name_string[-1].split(".")[0]))
+                name_string[1]
+                + "-"
+                + str(
+                    to_utc_single(name_string[-1].split(".")[0], file_name_format=True)
+                )
             )
             self.raw_data = True
         self.heliostat_id = name_string[1]
         self.file_name = file_name + mappings.DEFLECTOMETRY_SUFFIX
         self.json_handle = name_string[1] + mappings.FACET_PROPERTIES_SUFFIX
         self.deflectometry_created_at = to_utc_single(name_string[-1].split(".")[0])
+        self.deflectometry_created_at_file_name = to_utc_single(
+            name_string[-1].split(".")[0], file_name_format=True
+        )
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name
