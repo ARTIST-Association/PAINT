@@ -136,9 +136,6 @@ def compute_center_of_intensity(
     float
         y coordinate of the center of intensity.
     """
-    if flux.dim() != 2:
-        raise ValueError(f"Expected a 2D tensor, got {flux.dim()} dimensions.")
-
     height, width = flux.shape
 
     # Threshold the flux values. Any values below the threshold are set to zero.
