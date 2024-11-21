@@ -5,6 +5,7 @@ HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
 CREATED_AT = "CreatedAt"
+FILE_CREATED_AT = "FileCreatedAt"
 UPDATED_AT = "UpdatedAt"
 YEAR = "Year"
 MONTH = "Month"
@@ -141,6 +142,7 @@ COLLECTION = "Collection"
 FEATURE = "Feature"
 
 TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
+TIME_FILE_FORMAT = "%Y%m%d%H%M%SZ"
 
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
