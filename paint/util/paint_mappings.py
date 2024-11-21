@@ -142,7 +142,7 @@ COLLECTION = "Collection"
 FEATURE = "Feature"
 
 TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
-TIME_FILE_FORMAT = "%Y%m%d%H%M%SZ"
+TIME_FILE_FORMAT = "%Y-%m-%dZ%H-%M-%SZ"
 
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
