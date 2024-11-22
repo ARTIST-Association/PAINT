@@ -67,66 +67,71 @@ def main(args: argparse.Namespace) -> None:
     This function downloads and processes heliostat calibration data before loading the UTIS model from a given URL.
     It then applies UTIS to detect focal spots for specified heliostats and measurement IDs.
     """
-    # Ensure the output directory is a Path object.
+    # Base directory for all outputs
     output_dir = Path(args.output_dir)
 
+    # Subdirectories for specific types of outputs
+    downloaded_data_dir = output_dir / "downloaded_data"
+    extracted_focal_spots_dir = output_dir / "extracted_focal_spots"
+
     # Create STAC client and download heliostat data.
-    client = StacClient(output_dir=output_dir)
-    client.get_heliostat_data(
-        heliostats=args.heliostats,
-        collections=args.collections,
-        filtered_calibration_keys=args.filtered_calibration,
-    )
+    client = StacClient(output_dir=downloaded_data_dir)
 
     # Load the UTIS model directly from the URL.
     loaded_model = load_model_from_url(mappings.UTIS_MODEL_CHECKPOINT)
 
-    # Process each heliostat and its measurements.
-    for heliostat in args.heliostats:
-        measurement_ids = args.measurement_id
+    # Load single measurement
+    client.get_single_calibration_item_by_id(
+        heliostat_id=args.heliostat,
+        item_id=args.measurement_id,
+        filtered_calibration_keys=args.filtered_calibration,
+    )
 
-        for measurement_id in measurement_ids:
-            # Define paths for current measurement.
-            image_path = (
-                output_dir
-                / heliostat
-                / mappings.SAVE_CALIBRATION
-                / f"{measurement_id}_raw.png"
-            )
-            calibration_properties_path = (
-                output_dir
-                / heliostat
-                / mappings.SAVE_CALIBRATION
-                / f"{measurement_id}-calibration-properties.json"
-            )
+    # Define paths for current measurement.
+    image_path = (
+        downloaded_data_dir
+        / args.heliostat
+        / mappings.SAVE_CALIBRATION
+        / f"{args.measurement_id}_raw.png"
+    )
+    calibration_properties_path = (
+        downloaded_data_dir
+        / args.heliostat
+        / mappings.SAVE_CALIBRATION
+        / f"{args.measurement_id}-calibration-properties.json"
+    )
 
-            # Extract target from calibration properties.
-            with open(calibration_properties_path, "r") as file:
-                calibration_data = json.load(file)
-            target = calibration_data[mappings.TARGET_NAME_KEY]
+    # Extract target from calibration properties.
+    with open(calibration_properties_path, "r") as file:
+        calibration_data = json.load(file)
+    target = calibration_data[mappings.TARGET_NAME_KEY]
 
-            # Crop the image using template matching.
-            cropped_image = crop_image_with_template_matching(
-                image_path, target, n_grid=256
-            )
+    # Crop the image using template matching.
+    cropped_image = crop_image_with_template_matching(image_path, target, n_grid=256)
 
-            # Convert to grayscale by using only green color channel and convert to torch tensor.
-            cropped_image_tensor = (
-                torch.tensor(cropped_image[:, :, 1], dtype=torch.float32) / 255.0
-            )
+    # Convert to grayscale by using only green color channel and convert to torch tensor.
+    cropped_image_tensor = (
+        torch.tensor(cropped_image[:, :, 1], dtype=torch.float32) / 255.0
+    )
 
-            # Detect focal spot.
-            focal_spot = detect_focal_spot(cropped_image_tensor, target, loaded_model)
+    # Detect focal spot.
+    focal_spot = detect_focal_spot(cropped_image_tensor, target, loaded_model)
 
-            # Log the detected aim point.
-            logger.info(
-                "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
-                heliostat,
-                measurement_id,
-                focal_spot.aim_point.tolist(),
-            )
+    print(focal_spot.aim_point)
+    # Log the detected aim point.
+    logger.info(
+        "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
+        args.heliostat,
+        args.measurement_id,
+        focal_spot.aim_point.tolist(),
+    )
 
-            # TODO: Write results to CSV or database?
+    # Save focal spot
+    focal_spot_path = (
+        extracted_focal_spots_dir / f"{args.heliostat}_{args.measurement_id}_focal_spot"
+    )
+    focal_spot_path.parent.mkdir(parents=True, exist_ok=True)
+    focal_spot.save(focal_spot_path)
 
 
 if __name__ == "__main__":
@@ -137,15 +142,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir",
         type=str,
-        help="Path to save the downloaded data.",
-        default=f"{PAINT_ROOT}/download_test",
+        help="Base path to save outputs. Downloaded data and extracted focal spots will be saved in separate subdirectories.",
+        default=f"{PAINT_ROOT}/outputs",
     )
     parser.add_argument(
-        "--heliostats",
+        "--heliostat",
         type=str,
-        help="List of heliostats to be downloaded.",
+        help="Heliostat to be downloaded.",
         nargs="+",
-        default=["AA23"],
+        default="AA23",
     )
     parser.add_argument(
         "--collections",
@@ -163,10 +168,10 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--measurement_id",
-        type=str,
-        help="ID(s) of the measurement to apply the algorithm.",
+        type=int,
+        help="ID of the measurement to apply the algorithm.",
         nargs="+",
-        default=["123819"],
+        default=123819,
     )
     arguments = parser.parse_args()
     main(arguments)

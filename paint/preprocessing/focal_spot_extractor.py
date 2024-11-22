@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Union
 
-import h5py
+import cv2
 import torch
 
 import paint.util.paint_mappings as mappings
@@ -22,15 +22,85 @@ class FocalSpot:
         Detected center of intensity in global coordinates (E, N, U).
     """
 
-    def __init__(
-        self,
+    def __init__(self) -> None:
+        """
+        Private initializer to ensure objects are only created using `from_flux` or `load`.
+
+        Initializes attributes with default placeholder values.
+        """
+        self.flux: torch.Tensor = torch.empty(0)  # Default to an empty tensor
+        self.aim_point_image: tuple[float, float] = (0.0, 0.0)  # Default to (0.0, 0.0)
+        self.aim_point: torch.Tensor = torch.empty(3)  # Default to a 3-e
+
+    @classmethod
+    def from_flux(
+        cls,
         flux: torch.Tensor,
         aim_point_image: tuple[float, float],
         aim_point: torch.Tensor,
-    ) -> None:
-        self.flux = flux
-        self.aim_point_image = aim_point_image
-        self.aim_point = aim_point
+    ) -> "FocalSpot":
+        """
+        Create a FocalSpot object from provided data.
+
+        Parameters
+        ----------
+        flux : torch.Tensor
+            Intensity image of the detected focal spot.
+        aim_point_image : tuple[float, float]
+            Detected center of intensity in image coordinates (height, width).
+        aim_point : torch.Tensor
+            Detected center of intensity in global coordinates (E, N, U).
+
+        Returns
+        -------
+        FocalSpot
+            Initialized FocalSpot object.
+        """
+        instance = cls()
+        instance.flux = flux
+        instance.aim_point_image = aim_point_image
+        instance.aim_point = aim_point
+        return instance
+
+    @classmethod
+    def load(cls, file_path: Union[str, Path]) -> "FocalSpot":
+        """
+        Load a FocalSpot object from disk.
+
+        Parameters
+        ----------
+        file_path : Union[str, Path]
+            Base path for the focal spot files (without extensions).
+
+        Returns
+        -------
+        FocalSpot
+            Loaded FocalSpot object.
+        """
+        base_path = Path(file_path)
+        flux_path = base_path.with_name(f"{base_path.name}_flux.png")
+        metadata_path = base_path.with_name(f"{base_path.name}_metadata.json")
+
+        if not flux_path.exists() or not metadata_path.exists():
+            raise FileNotFoundError(
+                f"Missing required files: {flux_path}, {metadata_path}"
+            )
+
+        # Load flux as a grayscale image and convert to tensor
+        flux_image = cv2.imread(str(flux_path), cv2.IMREAD_GRAYSCALE)
+        if flux_image is None:
+            raise ValueError("Flux PNG file is missing or corrupted.")
+        flux = torch.tensor(flux_image, dtype=torch.float32) / 255.0
+
+        # Load metadata
+        with open(metadata_path, "r") as json_file:
+            metadata = json.load(json_file)
+
+        aim_point_image = tuple(metadata["aim_point_image"])
+        aim_point = torch.tensor(metadata["aim_point"])
+
+        # Create the FocalSpot instance
+        return cls.from_flux(flux, aim_point_image, aim_point)
 
     def save(self, save_path: Path) -> None:
         """
@@ -41,9 +111,16 @@ class FocalSpot:
         save_path : Path
             Base path (without extension) to save the focal spot data.
         """
-        # Save flux to HDF5
-        with h5py.File(f"{save_path}_flux.h5", "w") as h5_file:
-            h5_file.create_dataset("flux", data=self.flux.numpy())
+        # Ensure all fields are initialized
+        if self.flux is None or self.aim_point_image is None or self.aim_point is None:
+            raise ValueError("FocalSpot object is not fully initialized.")
+
+        # Normalize flux to the range [0, 255] for saving as PNG
+        normalized_flux = (self.flux / self.flux.max() * 255).clamp(0, 255).byte()
+        flux_image = normalized_flux.numpy()
+
+        # Save flux as a single-channel grayscale PNG
+        cv2.imwrite(f"{save_path}_flux.png", flux_image)
 
         # Save metadata to JSON
         metadata = {
@@ -52,49 +129,6 @@ class FocalSpot:
         }
         with open(f"{save_path}_metadata.json", "w") as json_file:
             json.dump(metadata, json_file, indent=4)
-
-    @staticmethod
-    def load(file_path: Union[str, Path]) -> "FocalSpot":
-        """
-        Load a focal spot from disk.
-
-        Parameters
-        ----------
-        file_path : Union[str, Path]
-            Base path for the focal spot files (without extensions).
-
-        Returns
-        -------
-        FocalSpot
-            Loaded focal spot object.
-        """
-        base_path = Path(file_path)
-        flux_path = base_path.with_name(f"{base_path.name}_flux.h5")
-        metadata_path = base_path.with_name(f"{base_path.name}_metadata.json")
-
-        if not flux_path.exists() or not metadata_path.exists():
-            raise FileNotFoundError(
-                f"Missing required files: {flux_path}, {metadata_path}"
-            )
-
-        # Load flux
-        with h5py.File(flux_path, "r") as h5_file:
-            if "flux" not in h5_file:
-                raise ValueError("HDF5 file does not contain a 'flux'.")
-            flux = torch.tensor(h5_file["flux"][:])
-            if flux.numel() == 0:  # Check for empty flux
-                raise ValueError("Flux data is empty.")
-
-        # Load metadata
-        with open(metadata_path, "r") as json_file:
-            metadata = json.load(json_file)
-
-        aim_point_image = tuple(metadata["aim_point_image"])
-        aim_point = torch.tensor(metadata["aim_point"])
-
-        return FocalSpot(
-            flux=flux, aim_point_image=aim_point_image, aim_point=aim_point
-        )
 
 
 def get_marker_coordinates(target: Union[str, int]) -> tuple[torch.Tensor, ...]:
@@ -241,7 +275,7 @@ def detect_focal_spot(
     # Pass the input image through the UTIS model to generate a flux image.
     # The input image is unsqueezed to add batch and channel dimensions.
     # The output flux is extracted from the first channel of the result.
-    flux = utis_model(image.unsqueeze(0).unsqueeze(0))[0, 0]
+    flux = utis_model(image.unsqueeze(0).unsqueeze(0))[0, 0].detach()
 
     # Compute the center of intensity in image coordinates.
     aim_point_image = compute_center_of_intensity(flux)
@@ -250,7 +284,7 @@ def detect_focal_spot(
     aimpoint_global = convert_xy_to_enu(aim_point_image, target)
 
     # Return a FocalSpot object containing the flux, image coordinates, and global aimpoint.
-    return FocalSpot(
+    return FocalSpot.from_flux(
         flux=flux,
         aim_point_image=aim_point_image,
         aim_point=aimpoint_global,

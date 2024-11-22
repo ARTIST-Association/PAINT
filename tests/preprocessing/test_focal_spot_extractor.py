@@ -1,8 +1,6 @@
-import json
 from pathlib import Path
 
 import cv2
-import h5py
 import pytest
 import torch
 
@@ -21,7 +19,7 @@ def sample_focal_spot():
     flux = torch.ones(256, 256)
     aim_point_image = (0.5, 0.5)
     aim_point = torch.tensor([1.0, 1.0, 1.0])
-    return FocalSpot(flux, aim_point_image, aim_point)
+    return FocalSpot.from_flux(flux, aim_point_image, aim_point)
 
 
 @pytest.fixture(scope="module")
@@ -45,7 +43,7 @@ def test_focal_spot_save_and_load(sample_focal_spot, temp_dir):
     sample_focal_spot.save(save_path)
 
     # Check if files exist
-    assert (save_path.with_name(f"{save_path.name}_flux.h5")).exists()
+    assert (save_path.with_name(f"{save_path.name}_flux.png")).exists()
     assert (save_path.with_name(f"{save_path.name}_metadata.json")).exists()
 
     # Load the focal spot
@@ -55,24 +53,6 @@ def test_focal_spot_save_and_load(sample_focal_spot, temp_dir):
     torch.testing.assert_close(loaded_focal_spot.flux, sample_focal_spot.flux)
     assert loaded_focal_spot.aim_point_image == sample_focal_spot.aim_point_image
     torch.testing.assert_close(loaded_focal_spot.aim_point, sample_focal_spot.aim_point)
-
-
-def test_focal_spot_load_invalid_flux(temp_dir):
-    """Test that loading fails with invalid flux data."""
-    save_path = temp_dir / "test_invalid_flux"
-
-    # Create invalid flux HDF5 file
-    with h5py.File(f"{save_path}_flux.h5", "w") as h5_file:
-        h5_file.create_dataset("flux", data=[])
-
-    # Create valid metadata file
-    metadata = {"aim_point_image": [0.5, 0.5], "aim_point": [1.0, 1.0, 1.0]}
-    with open(f"{save_path}_metadata.json", "w") as json_file:
-        json.dump(metadata, json_file)
-
-    # Attempt to load
-    with pytest.raises(ValueError, match="Flux data is empty."):
-        FocalSpot.load(save_path)
 
 
 @pytest.mark.parametrize(
