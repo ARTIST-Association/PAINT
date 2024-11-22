@@ -33,14 +33,18 @@ class StacClient:
         Help load a STAC child with correct error handling.
     download_file()
         Download a file given a URL.
-    download_heliostat_data()
-        Download heliostat data for a specified STAC collection.
     get_heliostat_data()
         Get data for one or more heliostats.
-    get_child_metadata()
-        Extract metadata from children in a catalog.
+    get_weather_data()
+        Get weather data for DWD and/or Jülich.
+    get_tower_measurements()
+        Get the tower measurements data.
     get_heliostat_metadata()
         Download metadata for desired heliostats.
+    get_single_calibration_item_by_id()
+        Get a single calibration item given an item ID.
+    get_multiple_calibration_items_by_id()
+        Get multiple calibration items given a dictionary of heliostat IDs and calibration IDs.
     """
 
     def __init__(
@@ -141,16 +145,21 @@ class StacClient:
         """
         # Send an HTTP GET request to the specified url to retrieve the file.
         # Download the file in chunks (`stream=True`) instead of loading the entire file into memory.
-        response = requests.get(url, stream=True)
-
-        # Open the file in binary write mode and download the content.
-        with open(file_name, "wb") as file:
-            downloaded_length = 0
-            # Iterate over chunks of data in the response and write each chunk of data to file until the download
-            # is complete.
-            for data in response.iter_content(chunk_size=self.chunk_size):
-                file.write(data)
-                downloaded_length += len(data)
+        try:
+            response = requests.get(url, stream=True)
+            response.raise_for_status()
+            # Open the file in binary write mode and download the content.
+            with open(file_name, "wb") as file:
+                downloaded_length = 0
+                # Iterate over chunks of data in the response and write each chunk of data to file until the download
+                # is complete.
+                for data in response.iter_content(chunk_size=self.chunk_size):
+                    file.write(data)
+                    downloaded_length += len(data)
+        except requests.RequestException as e:
+            log.error(f"Failed to download the file from {url}. Error: {e}")
+        except IOError as e:
+            log.error(f"File operation failed for {file_name}. Error: {e}")
 
     def _process_single_heliostat_item(
         self,
@@ -362,7 +371,7 @@ class StacClient:
         )
 
     @staticmethod
-    def check_collection_keys(collections: list[str]) -> None:
+    def _check_collection_keys(collections: list[str]) -> None:
         """
         Check whether provided collection keys are valid.
 
@@ -454,7 +463,7 @@ class StacClient:
             get_properties = True
         # Check if collection keys provided are acceptable.
         else:
-            self.check_collection_keys(collections)
+            self._check_collection_keys(collections)
             # Set boolean flags based on the presence of each allowed value in collections.
             get_calibration = mappings.SAVE_CALIBRATION.lower() in collections
             get_deflectometry = mappings.SAVE_DEFLECTOMETRY.lower() in collections
@@ -796,7 +805,7 @@ class StacClient:
             ]
         # Check if collection keys provided are acceptable.
         else:
-            self.check_collection_keys(collections)
+            self._check_collection_keys(collections)
         if heliostats is None:
             save_description = "all_heliostats"
             root = self.get_catalog(href=mappings.CATALOGUE_URL)
@@ -870,3 +879,187 @@ class StacClient:
             )
             save_location.parent.mkdir(parents=True, exist_ok=True)
             metadata_df.to_csv(save_location)
+
+    @staticmethod
+    def _check_filtered_calibration_keys(
+        filtered_calibration_keys: Union[list[str], None] = None,
+    ) -> list[str]:
+        """
+        Check that the filtered calibration keys are acceptable.
+
+        Parameters
+        ----------
+        filtered_calibration_keys : list[str], optional
+            List of keys to filter the calibration data.
+
+        Returns
+        -------
+        list[str]
+            The accepted filtered calibration keys.
+
+        Raises
+        ------
+        ValueError
+            When invalid calibration keys are provided.
+        """
+        accepted_keys = [
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+        ]
+        if filtered_calibration_keys is None:
+            filtered_calibration_keys = accepted_keys
+        else:
+            for key in filtered_calibration_keys:
+                if key not in accepted_keys:
+                    raise ValueError(
+                        f"The filtered calibration keys can only be one or more of: `raw_image`, `cropped_image`, "
+                        f"`flux_image`, `flux_centered_image`, `calibration_properties`'! The key `{key}` is not "
+                        f"accepted!"
+                    )
+        return filtered_calibration_keys
+
+    def get_single_calibration_item_by_id(
+        self,
+        heliostat_id: str,
+        item_id: int,
+        filtered_calibration_keys: Union[list[str], None] = None,
+        benchmark_split: Union[str, None] = None,
+        pbar: Union[tqdm, None] = None,
+        verbose: bool = True,
+    ) -> None:
+        """
+        Download a specific calibration item from a specific heliostat given the calibration item ID.
+
+        Parameters
+        ----------
+        heliostat_id: str
+            ID of the considered heliostat.
+        item_id: int
+            ID of the item to be downloaded.
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
+            ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
+            data is downloaded (Default: ``None``).
+        benchmark_split: str, optional
+            Indicates the benchmark split that this item is being downloaded for. If ``None`` then the heliostat
+            will be downloaded according to the ``PAINT`` default structure (Default: ``None``).
+        pbar : tqdm, optional
+            Progress bar, optional (Default: ``None``).
+        verbose : bool
+            Indicating whether log messages should be printed (Default: ``True``).
+        """
+        # Include error handling for invalid item ID.
+        # This error function does not return a value error, but merely logs the error. This will enable code calling
+        # this function mulitiple times to continue running if one incorrect ID is present.
+        filtered_calibration_keys = self._check_filtered_calibration_keys(
+            filtered_calibration_keys
+        )
+        try:
+            href = mappings.CALIBRATION_ITEM_URL % (heliostat_id, item_id)
+            item = pystac.Item.from_file(href=href)
+        except pystac.STACError as e:
+            if verbose:
+                log.error(f"Failed to load STAC item from {href}. Error: {e}")
+                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+            return
+        except Exception as e:
+            if verbose:
+                log.error(f"Unexpected error while accessing STAC item: {e}")
+                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+            return
+        if verbose:
+            log.info(
+                f"Downloading calibration item {item_id} for heliostat {heliostat_id}!"
+            )
+        for key, asset in item.assets.items():
+            if key in filtered_calibration_keys:
+                url = asset.href
+                file_end = url.split("/")[-1]
+                if benchmark_split is not None:
+                    file_name = self.output_dir / benchmark_split / file_end
+                else:
+                    file_name = (
+                        self.output_dir
+                        / heliostat_id
+                        / mappings.SAVE_CALIBRATION
+                        / file_end
+                    )
+                file_name.parent.mkdir(parents=True, exist_ok=True)
+                self.download_file(url, file_name)
+        if pbar is not None:
+            pbar.update(1)
+
+    def get_multiple_calibration_items_by_id(
+        self,
+        heliostat_items_dict: dict[str, Union[list[int], None]],
+        filtered_calibration_keys: Union[list[str], None] = None,
+    ) -> None:
+        """
+        Download multiple calibration items for multiple heliostats.
+
+        Parameters
+        ----------
+        heliostat_items_dict: dict[str, Union[list[int], None]]
+            A dictionary mapping heliostat IDs to lists of item IDs to be downloaded. If the list of item IDs is `None`,
+            all items for that heliostat will be downloaded.
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
+            ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
+            data is downloaded (Default: ``None``).
+        """
+        filtered_calibration_keys = self._check_filtered_calibration_keys(
+            filtered_calibration_keys
+        )
+        for heliostat_id, item_ids in heliostat_items_dict.items():
+            if item_ids is None:
+                log.info(
+                    f"No specific calibration items provided for heliostat {heliostat_id}. Downloading all calibration "
+                    f"items."
+                )
+                # Get the collection for the given heliostat.
+                calibration_collection_href = mappings.CALIBRATION_COLLECTION_URL % (
+                    heliostat_id,
+                    heliostat_id,
+                )
+                calibration_collection = pystac.Collection.from_file(
+                    href=calibration_collection_href
+                )
+                # Find all items in that heliostat and download each item.
+                all_items = list(calibration_collection.get_items())
+                with tqdm(
+                    total=len(all_items),
+                    desc=f"Downloading Calibration Items in {heliostat_id}",
+                    unit="Item",
+                ) as pbar:
+                    with ThreadPoolExecutor() as executor:
+                        # Create a list of future objects.
+                        futures = [
+                            executor.submit(
+                                self.get_single_calibration_item_by_id,
+                                heliostat_id=heliostat_id,
+                                item_id=int(item.id),
+                                filtered_calibration_keys=filtered_calibration_keys,
+                                benchmark_split=None,
+                                pbar=pbar,
+                                verbose=False,
+                            )
+                            for item in all_items
+                        ]
+                        # Wait for all tasks to complete.
+                        for future in as_completed(futures):
+                            try:
+                                future.result()
+                            except Exception as e:
+                                # Handle exceptions from individual tasks.
+                                print(f"Error in thread execution: {e}")
+            else:
+                # Only download selected items.
+                for item_id in item_ids:
+                    self.get_single_calibration_item_by_id(
+                        heliostat_id=heliostat_id,
+                        item_id=item_id,
+                        filtered_calibration_keys=filtered_calibration_keys,
+                    )

@@ -5,6 +5,9 @@ from datetime import datetime
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.stac_client import StacClient
+from paint.util import set_logger_config
+
+set_logger_config()
 
 if __name__ == "__main__":
     # Read in arguments.

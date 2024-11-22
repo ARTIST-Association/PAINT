@@ -401,3 +401,10 @@ MAP_CANTING_TO_READABLE = {"Rec": "receiver canting", "FE": "research level cant
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
 WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
+
+# Keys for dataset splits
+AZIMUTH_SPLIT = "azimuth"
+SOLSTICE_SPLIT = "solstice"
+SPLIT_KEY = "Split"
+DISTANCE_WINTER = "distance_winter"
+DISTANCE_SUMMER = "distance_summer"
