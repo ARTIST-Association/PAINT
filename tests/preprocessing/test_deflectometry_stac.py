@@ -27,6 +27,7 @@ def deflectometry_item_data() -> tuple[str, pd.Series]:
         "Altitude": 88.66962,
         "HeightAboveGround": 1.66962,
         "CreatedAt": "2023-09-18Z11:39:25Z",
+        "FileCreatedAt": "2023-09-18Z11-39-25Z",
     }
     return "AY39", pd.Series(data)
 
@@ -52,9 +53,9 @@ def deflectometry_collection_data() -> pd.DataFrame:
             "Deflectometry measurements for AY39 at 2022-06-26Z07:07:07Z",
         ],
         "url": [
-            "INSERT/SOMETHING/HERE/AY39-2023-09-18Z11:39:25Z-deflectometry-item-stac.json?download=1",
-            "INSERT/SOMETHING/HERE/AY39-2024-09-18Z11:39:25Z-deflectometry-item-stac.json?download=1",
-            "INSERT/SOMETHING/HERE/AY39-2023-06-26Z07:07:07Z-deflectometry-item-stac.json?download=1",
+            "INSERT/SOMETHING/HERE/AY39-2023-09-18Z11-39-25Z-deflectometry-item-stac.json?download=1",
+            "INSERT/SOMETHING/HERE/AY39-2024-09-18Z11-39-25Z-deflectometry-item-stac.json?download=1",
+            "INSERT/SOMETHING/HERE/AY39-2023-06-26Z07-07-07Z-deflectometry-item-stac.json?download=1",
         ],
         "CreatedAt": [
             "2023-09-18Z11:39:25Z",
@@ -158,19 +159,19 @@ def test_make_deflectometry_collection(
                 },
                 {
                     "rel": "item",
-                    "href": "INSERT/SOMETHING/HERE/AY39-2023-09-18Z11:39:25Z-deflectometry-item-stac.json?download=1",
+                    "href": "INSERT/SOMETHING/HERE/AY39-2023-09-18Z11-39-25Z-deflectometry-item-stac.json?download=1",
                     "type": "application/geo+json",
                     "title": "STAC item of Deflectometry measurements for AY39 at 2023-09-18Z11:39:25Z",
                 },
                 {
                     "rel": "item",
-                    "href": "INSERT/SOMETHING/HERE/AY39-2024-09-18Z11:39:25Z-deflectometry-item-stac.json?download=1",
+                    "href": "INSERT/SOMETHING/HERE/AY39-2024-09-18Z11-39-25Z-deflectometry-item-stac.json?download=1",
                     "type": "application/geo+json",
                     "title": "STAC item of Deflectometry measurements for AY39 at 2024-09-18Z11:39:25Z",
                 },
                 {
                     "rel": "item",
-                    "href": "INSERT/SOMETHING/HERE/AY39-2023-06-26Z07:07:07Z-deflectometry-item-stac.json?download=1",
+                    "href": "INSERT/SOMETHING/HERE/AY39-2023-06-26Z07-07-07Z-deflectometry-item-stac.json?download=1",
                     "type": "application/geo+json",
                     "title": "STAC item of Deflectometry measurements for AY39 at 2022-06-26Z07:07:07Z",
                 },
@@ -201,7 +202,7 @@ def test_make_deflectometry_item(
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "AY39-2023-09-18Z11:39:25Z-deflectometry",
+        "id": "AY39-2023-09-18Z11-39-25Z-deflectometry",
         "type": "Feature",
         "title": "Deflectometry measurement of AY39",
         "description": "Measured raw and filled deflectometry data containing point clouds and surface normals for heliosat AY39 and the deflectometry measurement results summary",
@@ -226,7 +227,7 @@ def test_make_deflectometry_item(
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11-39-25Z-deflectometry-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -251,19 +252,19 @@ def test_make_deflectometry_item(
         ],
         "assets": {
             "raw_measurement": {
-                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry.h5",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11-39-25Z-deflectometry.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Raw deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
             "filled_measurement": {
-                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-filled-2023-09-18Z11:39:25Z-deflectometry.h5",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-filled-2023-09-18Z11-39-25Z-deflectometry.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Filled deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
             },
             "results_summary": {
-                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11:39:25Z-deflectometry-result.pdf",
+                "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11-39-25Z-deflectometry-result.pdf",
                 "roles": ["metadata"],
                 "type": "application/pdf",
                 "title": "Summary of deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
