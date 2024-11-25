@@ -92,11 +92,11 @@ def to_utc_single(
     Parameters
     ----------
     datetime_str : str
-        String containing the local datetime.
+        Local datetime.
     local_tz : str
         Local timezone (Default: ``Europe/Berlin``).
     file_name_format : bool
-        Indicating whether the file name format for the time conversion should be used or not (Default: ``False``).
+        Whether the file name format for the time conversion should be used or not (Default: ``False``).
 
     Returns
     -------
@@ -104,21 +104,21 @@ def to_utc_single(
         The corresponding UTC datetime string.
     """
     try:
-        # Try parsing with dateutil.parser for general datetime strings
+        # Try parsing with dateutil.parser for general datetime strings.
         local_time = parser.parse(datetime_str)
     except ValueError:
         try:
-            # Fall back to manual parsing for specific format "%y%m%d%H%M%S"
+            # Fall back to manual parsing for specific format "%y%m%d%H%M%S".
             local_time = datetime.strptime(datetime_str, "%y%m%d%H%M%S")
         except ValueError as e:
             raise ValueError(f"Unable to parse datetime string: {datetime_str}") from e
 
-    # Localize the datetime object to the specified local timezone
+    # Localize the datetime object to the specified local timezone.
     local_tz_obj = pytz.timezone(local_tz)
     if local_time.tzinfo is None:
         local_time = local_tz_obj.localize(local_time, is_dst=None)
 
-    # Convert the localized datetime to UTC
+    # Convert the localized datetime to UTC.
     utc_time = local_time.astimezone(pytz.utc)
 
     # Convert the time to the appropriate string.
@@ -151,28 +151,28 @@ def convert_field_coordinate_to_wgs84(
     float
         The new longitude in degrees.
     """
-    # Convert latitude and longitude to radians
+    # Convert latitude and longitude to radians.
     lat_rad = math.radians(mappings.POWER_PLANT_LAT)
     lon_rad = math.radians(mappings.POWER_PLANT_LON)
 
-    # Calculate meridional radius of curvature
+    # Calculate meridional radius of curvature.
     sin_lat = math.sin(lat_rad)
     rn = mappings.WGS84_A / math.sqrt(1 - mappings.WGS84_E2 * sin_lat**2)
 
-    # Calculate transverse radius of curvature
+    # Calculate transverse radius of curvature.
     rm = (mappings.WGS84_A * (1 - mappings.WGS84_E2)) / (
         (1 - mappings.WGS84_E2 * sin_lat**2) ** 1.5
     )
 
-    # Calculate new latitude
+    # Calculate new latitude.
     dlat = north_coordinate_m / rm
     new_lat_rad = lat_rad + dlat
 
-    # Calculate new longitude using the original meridional radius of curvature
+    # Calculate new longitude using the original meridional radius of curvature.
     dlon = east_coordinate_m / (rn * math.cos(lat_rad))
     new_lon_rad = lon_rad + dlon
 
-    # Convert back to degrees
+    # Convert back to degrees.
     new_lat = math.degrees(new_lat_rad)
     new_lon = math.degrees(new_lon_rad)
 

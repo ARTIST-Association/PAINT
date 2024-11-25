@@ -68,10 +68,10 @@ def extract_data_and_generate_stacs(
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
     metadata[mappings.FILE_CREATED_AT] = converter.deflectometry_created_at_file_name
 
-    # STAC contains all deflectometry items, therefore, only create the stac once after the raw conversion
+    # STAC contains all deflectometry items, therefore, only create the STAC once after the raw conversion.
     if converter.raw_data:
         # find the associated PDF deflectometry results summary and copy it to the correct location with
-        # the correct name
+        # the correct name.
         split_name = input_path.name.split("_")
         pdf_name = (
             "_".join(split_name[0:3])
@@ -119,7 +119,7 @@ def extract_data_and_generate_stacs(
             metadata[mappings.ALTITUDE_KEY],
         ]
 
-        # save the deflectometry measurement stac
+        # Save the deflectometry measurement STAC.
         save_deflectometry_path = (
             Path(arguments.output_path)
             / converter.heliostat_id
