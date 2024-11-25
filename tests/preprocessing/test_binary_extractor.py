@@ -54,7 +54,12 @@ def test_binary_extractor(
         file_name = (
             test_data_path.name.split("_")[1]
             + "-"
-            + str(to_utc_single(test_data_path.name.split("_")[-1].split(".")[0]))
+            + str(
+                to_utc_single(
+                    test_data_path.name.split("_")[-1].split(".")[0],
+                    file_name_format=True,
+                )
+            )
             + mappings.DEFLECTOMETRY_SUFFIX
         )
         converter = BinaryExtractor(

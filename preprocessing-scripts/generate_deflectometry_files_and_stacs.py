@@ -66,11 +66,12 @@ def extract_data_and_generate_stacs(
         ]
     ]
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
+    metadata[mappings.FILE_CREATED_AT] = converter.deflectometry_created_at_file_name
 
-    # STAC contains all deflectometry items, therefore, only create the stac once after the raw conversion
+    # STAC contains all deflectometry items, therefore, only create the STAC once after the raw conversion.
     if converter.raw_data:
         # find the associated PDF deflectometry results summary and copy it to the correct location with
-        # the correct name
+        # the correct name.
         split_name = input_path.name.split("_")
         pdf_name = (
             "_".join(split_name[0:3])
@@ -84,7 +85,7 @@ def extract_data_and_generate_stacs(
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_PDF_NAME
-                % (converter.heliostat_id, converter.deflectometry_created_at)
+                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
             )
         )
         input_pdf_file = input_path.parent / pdf_name
@@ -106,7 +107,7 @@ def extract_data_and_generate_stacs(
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
             converter.heliostat_id,
-            converter.deflectometry_created_at,
+            converter.deflectometry_created_at_file_name,
         )
         deflectometry_items.loc[len(deflectometry_items)] = [
             converter.heliostat_id,
@@ -118,14 +119,14 @@ def extract_data_and_generate_stacs(
             metadata[mappings.ALTITUDE_KEY],
         ]
 
-        # save the deflectometry measurement stac
+        # Save the deflectometry measurement STAC.
         save_deflectometry_path = (
             Path(arguments.output_path)
             / converter.heliostat_id
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_ITEM
-                % (converter.heliostat_id, converter.deflectometry_created_at)
+                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
             )
         )
         save_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)

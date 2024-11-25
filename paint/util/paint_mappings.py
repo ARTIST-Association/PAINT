@@ -5,11 +5,13 @@ HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
 CREATED_AT = "CreatedAt"
+FILE_CREATED_AT = "FileCreatedAt"
 UPDATED_AT = "UpdatedAt"
 YEAR = "Year"
 MONTH = "Month"
 HOUR = "Hour"
 AZIMUTH = "Azimuth"
+SUN_AZIMUTH = "Sun_azimuth"
 ELEVATION = "Elevation"
 ELEVATION_MIN = "Elevation_min"
 ELEVATION_MAX = "Elevation_max"
@@ -58,9 +60,9 @@ KIT = {
     "url": PAINT_URL,
 }
 POWER_PLANT_GPPD_ID = "WRI1030197"
-POWER_PLANT_LAT = 50.913296351383806
-POWER_PLANT_LON = 6.387514846666862
-POWER_PLANT_ALT = 87
+POWER_PLANT_LAT = 50.91342112259258
+POWER_PLANT_LON = 6.387824755874856
+POWER_PLANT_ALT = 87.0
 POWER_PLANT_KEY = "power_plant_properties"
 ID_KEY = "ID"
 GK_HEIGHT_BASE = 5642086.619 - 0.063
@@ -140,6 +142,7 @@ COLLECTION = "Collection"
 FEATURE = "Feature"
 
 TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
+TIME_FILE_FORMAT = "%Y-%m-%dZ%H-%M-%SZ"
 
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
