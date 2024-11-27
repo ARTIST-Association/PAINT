@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -297,22 +298,14 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    # lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    # input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
-    # output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    # input_position = (
-    #     Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
-    # )
-    # input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
-    # input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
-
-    input_axis = Path(PAINT_ROOT) / "ExampleDataKIT" / "axis_data.csv"
-    output_folder = Path(PAINT_ROOT) / "AAA_ARGH"
+    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
     input_position = (
-        Path(PAINT_ROOT) / "ExampleDataKIT" / "Heliostatpositionen_xyz.xlsx"
+        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
     )
-    input_renovations = Path(PAINT_ROOT) / "ExampleDataKIT" / "renovation_data.csv"
-    input_facets = Path(PAINT_ROOT) / "ExampleDataKIT" / "facet_data.npy"
+    input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
+    input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
