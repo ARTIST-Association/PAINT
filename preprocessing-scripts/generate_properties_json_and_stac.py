@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Any
 
@@ -87,6 +86,35 @@ def extract_properties_data_and_generate_stac_item(
         mappings.HEIGHT_ABOVE_GROUND,
     ]:
         kinematic_data.pop(key_to_remove, None)
+
+    # Include additional kinematic properties that are identical for all heliostats change.
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_E_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_E
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_N_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_N
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_U_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_U
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_E_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_E
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_N_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_N
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_U_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_U
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_E_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_E
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_N_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_N
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_U_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_U
 
     # Extract renovation date.
     renovation_date = renovations.renovation_number_to_date[
@@ -269,14 +297,22 @@ def main(arguments: argparse.Namespace):
 
 
 if __name__ == "__main__":
-    lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
-    output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    # lsdf_root = str(os.environ.get("LSDFPROJECTS"))
+    # input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
+    # output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
+    # input_position = (
+    #     Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+    # )
+    # input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
+    # input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
+
+    input_axis = Path(PAINT_ROOT) / "ExampleDataKIT" / "axis_data.csv"
+    output_folder = Path(PAINT_ROOT) / "AAA_ARGH"
     input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
+        Path(PAINT_ROOT) / "ExampleDataKIT" / "Heliostatpositionen_xyz.xlsx"
     )
-    input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
-    input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
+    input_renovations = Path(PAINT_ROOT) / "ExampleDataKIT" / "renovation_data.csv"
+    input_facets = Path(PAINT_ROOT) / "ExampleDataKIT" / "facet_data.npy"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
