@@ -1,6 +1,6 @@
 import argparse
+import pathlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
 
 import pandas as pd
 from tqdm import tqdm
@@ -18,15 +18,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_dataset_splits",
-        type=str,
+        type=pathlib.Path,
         help="File containing the information on the dataset splits.",
         default=f"{PAINT_ROOT}/benchmark_test/Benchmark_split-azimuth_train-10_validation-30.csv",
     )
     parser.add_argument(
         "--output_dir",
-        type=str,
+        type=pathlib.Path,
         help="Path to save the extracted dataset splits.",
-        default=f"{PAINT_ROOT}/Benchmark_Datasets",
+        default=f"{PAINT_ROOT}/benchmark_datasets",
     )
     parser.add_argument(
         "--filtered_calibration",
@@ -38,8 +38,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Determine the name of the benchmark split being determined.
-    benchmark_name = Path(args.input_dataset_splits).name.split(".")[0]
-    base_output_dir = Path(args.output_dir)
+    benchmark_name = args.input_dataset_splits.name.split(".")[0]
+    base_output_dir = args.output_dir
     full_output_dir = base_output_dir / benchmark_name
 
     # Create STAC client.
@@ -52,7 +52,7 @@ if __name__ == "__main__":
         number_items = len(split_data)
         with tqdm(
             total=number_items,
-            desc=f"Downloading Benchmark data for the {split_name} split",
+            desc=f"Downloading benchmark data for the {split_name} split",
             unit="Item",
         ) as pbar:
             with ThreadPoolExecutor() as executor:
@@ -67,7 +67,7 @@ if __name__ == "__main__":
                         verbose=False,
                         pbar=pbar,
                     )
-                    for __, item in split_data.iterrows()
+                    for _, item in split_data.iterrows()
                 ]
                 # Wait for all tasks to complete.
                 for future in as_completed(futures):
