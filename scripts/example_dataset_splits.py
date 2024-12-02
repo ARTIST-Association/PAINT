@@ -35,8 +35,10 @@ if __name__ == "__main__":
     print(
         "The returned azimuth split data frame contains additional metadata which may be useful for plots."
     )
-    print("This data frame has the following structure (first five rows):")
-    print(azimuth_splits.head(5))
+    print(
+        "This data frame has the following structure (first five rows):\n",
+        azimuth_splits.head(5)
+    )
     # Example for solstice splits
     solstice_splits = splitter.get_dataset_splits(
         split_type="solstice", training_size=10, validation_size=30
