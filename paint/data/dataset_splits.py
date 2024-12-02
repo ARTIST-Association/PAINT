@@ -88,7 +88,7 @@ class DatasetSplitter:
         split. The remaining indices are assigned to the test split.
 
         This ensures that indices with very different azimuth values are considered in the train and validation samples,
-        i.e. the train and validation splits should contain very different samples. This difference leads to a high
+        i.e., the train and validation splits should contain very different samples. This difference leads to a high
         level of difficulty and should guarantee that the trained calibration method is robust.
 
         Parameters
