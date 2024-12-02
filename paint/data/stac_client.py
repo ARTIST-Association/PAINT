@@ -36,7 +36,7 @@ class StacClient:
     get_heliostat_data()
         Get data for one or more heliostats.
     get_weather_data()
-        Get weather data for DWD and/or Jülich.
+        Get weather data from DWD and/or Jülich.
     get_tower_measurements()
         Get the tower measurements data.
     get_heliostat_metadata()
@@ -935,21 +935,21 @@ class StacClient:
 
         Parameters
         ----------
-        heliostat_id: str
+        heliostat_id : str
             ID of the considered heliostat.
-        item_id: int
+        item_id : int
             ID of the item to be downloaded.
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
             ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
             data is downloaded (Default: ``None``).
-        benchmark_split: str, optional
-            Indicates the benchmark split that this item is being downloaded for. If ``None`` then the heliostat
+        benchmark_split : str, optional
+            Benchmark split that this item is being downloaded for. If ``None``, the heliostat
             will be downloaded according to the ``PAINT`` default structure (Default: ``None``).
         pbar : tqdm, optional
             Progress bar, optional (Default: ``None``).
         verbose : bool
-            Indicating whether log messages should be printed (Default: ``True``).
+            Whether log messages should be printed (Default: ``True``).
         """
         # Include error handling for invalid item ID.
         # This error function does not return a value error, but merely logs the error. This will enable code calling
@@ -962,13 +962,17 @@ class StacClient:
             item = pystac.Item.from_file(href=href)
         except pystac.STACError as e:
             if verbose:
-                log.error(f"Failed to load STAC item from {href}. Error: {e}")
-                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+                log.error(
+                    f"Failed to load STAC item from {href}. Error: {e}\n"
+                    "No data downloaded for item {item_id} from {heliostat_id}!"
+                )
             return
         except Exception as e:
             if verbose:
-                log.error(f"Unexpected error while accessing STAC item: {e}")
-                log.error(f"No data downloaded for item {item_id} from {heliostat_id}!")
+                log.error(
+                    f"Unexpected error while accessing STAC item: {e}\n"
+                    f"No data downloaded for item {item_id} from {heliostat_id}!"
+                )
             return
         if verbose:
             log.info(
@@ -1002,8 +1006,8 @@ class StacClient:
 
         Parameters
         ----------
-        heliostat_items_dict: dict[str, Union[list[int], None]]
-            A dictionary mapping heliostat IDs to lists of item IDs to be downloaded. If the list of item IDs is `None`,
+        heliostat_items_dict : dict[str, Union[list[int], None]]
+            A dictionary mapping heliostat IDs to lists of item IDs to be downloaded. If the list of item IDs is ``None``,
             all items for that heliostat will be downloaded.
         filtered_calibration_keys : list[str]
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
@@ -1054,7 +1058,7 @@ class StacClient:
                                 future.result()
                             except Exception as e:
                                 # Handle exceptions from individual tasks.
-                                print(f"Error in thread execution: {e}")
+                                log.error(f"Error in thread execution: {e}")
             else:
                 # Only download selected items.
                 for item_id in item_ids:
