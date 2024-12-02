@@ -88,6 +88,35 @@ def extract_properties_data_and_generate_stac_item(
     ]:
         kinematic_data.pop(key_to_remove, None)
 
+    # Include additional kinematic properties that are identical for all heliostats change.
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_E_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_E
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_N_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_N
+    kinematic_data[
+        mappings.FIRST_JOINT_TRANSLATION_U_KEY
+    ] = mappings.FIRST_JOINT_TRANSLATION_U
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_E_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_E
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_N_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_N
+    kinematic_data[
+        mappings.SECOND_JOINT_TRANSLATION_U_KEY
+    ] = mappings.SECOND_JOINT_TRANSLATION_U
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_E_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_E
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_N_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_N
+    kinematic_data[
+        mappings.CONCENTRATOR_TRANSLATION_U_KEY
+    ] = mappings.CONCENTRATOR_TRANSLATION_U
+
     # Extract renovation date.
     renovation_date = renovations.renovation_number_to_date[
         renovation_data[mappings.RENOVATION_ID]
