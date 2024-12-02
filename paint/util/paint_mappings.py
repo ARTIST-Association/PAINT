@@ -383,6 +383,26 @@ WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
 WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
 
+# Extra Kinematic Properties
+FIRST_JOINT_TRANSLATION_E_KEY = "first_joint_translation_e"
+FIRST_JOINT_TRANSLATION_N_KEY = "first_joint_translation_n"
+FIRST_JOINT_TRANSLATION_U_KEY = "first_joint_translation_u"
+SECOND_JOINT_TRANSLATION_E_KEY = "second_joint_translation_e"
+SECOND_JOINT_TRANSLATION_N_KEY = "second_joint_translation_n"
+SECOND_JOINT_TRANSLATION_U_KEY = "second_joint_translation_u"
+CONCENTRATOR_TRANSLATION_E_KEY = "concentrator_translation_e"
+CONCENTRATOR_TRANSLATION_N_KEY = "concentrator_translation_n"
+CONCENTRATOR_TRANSLATION_U_KEY = "concentrator_translation_u"
+FIRST_JOINT_TRANSLATION_E = 0.0
+FIRST_JOINT_TRANSLATION_N = 0.0
+FIRST_JOINT_TRANSLATION_U = 0.0
+SECOND_JOINT_TRANSLATION_E = 0.0
+SECOND_JOINT_TRANSLATION_N = 0.0
+SECOND_JOINT_TRANSLATION_U = 0.3149999976158142
+CONCENTRATOR_TRANSLATION_E = 0.0
+CONCENTRATOR_TRANSLATION_N = -0.40450000762939453
+CONCENTRATOR_TRANSLATION_U = -0.17755000293254852
+
 # Keys for dataset splits
 AZIMUTH_SPLIT = "azimuth"
 SOLSTICE_SPLIT = "solstice"
