@@ -171,7 +171,7 @@ class DatasetSplitter:
         validation split. The remaining indices are assigned to the test split.
 
         This ensures that indices from very different seasons, i.e. different conditions, are considered in training and
-        validation, i.e. the train and validation splits should contain very different samples. This difference leads to
+        validation, i.e., the train and validation splits should contain very different samples. This difference leads to
         a high level of difficulty and should guarantee that the trained calibration method is robust.
 
         Parameters
