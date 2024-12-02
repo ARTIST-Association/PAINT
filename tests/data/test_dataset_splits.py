@@ -163,9 +163,9 @@ def test_dataset_splits(
         Indicating whether unused metadata should be removed.
     split_type : str
         Type of split to be performed.
-    training_size
+    training_size : int
         Size of the training set.
-    validation_size
+    validation_size : int
         Size of the validation set.
     expected_splits : dict[str, Any]
         Dictionary of expected splits.
@@ -233,8 +233,8 @@ def test_make_dataset_splitter_fail(
             )
 
 
-def test_make_solstice_distance_fail():
-    """Make the solstice ditance calculation fail."""
+def test_make_solstice_distance_fail() -> None:
+    """Make the solstice distance calculation fail."""
     with pytest.raises(ValueError):
         DatasetSplitter._get_nearest_solstice_distance(
             timestamp=Timestamp("2023-06-16 09:48:04"),
