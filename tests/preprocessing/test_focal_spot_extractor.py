@@ -14,8 +14,15 @@ from paint.util.paint_mappings import MFT, STJ_LOWER, STJ_UPPER
 
 
 @pytest.fixture(scope="module")
-def sample_focal_spot():
-    """Create a sample FocalSpot object for testing."""
+def sample_focal_spot() -> FocalSpot:
+    """
+    Create a sample ``FocalSpot`` object for testing purposes.
+
+    Returns
+    -------
+    FocalSpot
+        Sample ``FocalSpot`` object.
+    """
     flux = torch.ones(256, 256)
     aim_point_image = (0.5, 0.5)
     aim_point = torch.tensor([1.0, 1.0, 1.0])
@@ -23,33 +30,58 @@ def sample_focal_spot():
 
 
 @pytest.fixture(scope="module")
-def temp_dir(tmp_path_factory):
-    """Create a temporary directory for testing file I/O."""
+def temp_dir(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    """
+    Create a temporary directory for testing file I/O.
+
+    Returns
+    -------
+    Path
+        Temporary directory for testing purposes.
+    """
     return tmp_path_factory.mktemp("temp_dir")
 
 
 @pytest.fixture(scope="module")
-def utis_model():
-    """Load the UTIS model once for all test cases."""
-    utis_model_path = Path("tests/preprocessing/test_data/utis_model_scripted.pt")
-    return torch.jit.load(str(utis_model_path), map_location="cpu")
+def utis_model() -> torch.jit.ScriptModule:
+    """
+    Load the UTIS model once for all test cases.
+
+    Returns
+    -------
+    torch.jit.ScriptModule
+        The loaded UTIS model.
+    -------
+    """
+    return torch.jit.load(
+        "tests/preprocessing/test_data/utis_model_scripted.pt", map_location="cpu"
+    )
 
 
-def test_focal_spot_save_and_load(sample_focal_spot, temp_dir):
-    """Test saving and loading the FocalSpot object."""
+def test_focal_spot_save_and_load(sample_focal_spot: FocalSpot, temp_dir: Path) -> None:
+    """
+    Test saving and loading the ``FocalSpot`` object.
+
+    Parameters
+    ----------
+    sample_focal_spot : FocalSpot
+        Sample ``FocalSpot`` object.
+    temp_dir : Path
+        Temporary directory for testing purposes.
+    """
     save_path = temp_dir / "test_focal_spot"
 
-    # Save the focal spot
+    # Save the focal spot.
     sample_focal_spot.save(save_path)
 
-    # Check if files exist
+    # Check if files exist.
     assert (save_path.with_name(f"{save_path.name}_flux.png")).exists()
     assert (save_path.with_name(f"{save_path.name}_metadata.json")).exists()
 
-    # Load the focal spot
+    # Load the focal spot.
     loaded_focal_spot = FocalSpot.load(save_path)
 
-    # Validate loaded data
+    # Validate loaded data.
     torch.testing.assert_close(loaded_focal_spot.flux, sample_focal_spot.flux)
     assert loaded_focal_spot.aim_point_image == sample_focal_spot.aim_point_image
     torch.testing.assert_close(loaded_focal_spot.aim_point, sample_focal_spot.aim_point)
@@ -61,13 +93,27 @@ def test_focal_spot_save_and_load(sample_focal_spot, temp_dir):
         (torch.zeros(10, 10), 0.0, (0.5, 0.5)),  # No intensity defaults to center
     ],
 )
-def test_compute_center_of_intensity(flux, threshold, expected_center):
-    """Test compute_center_of_intensity for various flux distributions."""
-    result = compute_center_of_intensity(flux, threshold)
-    assert result == pytest.approx(expected_center, rel=1e-2)
+def test_compute_center_of_intensity(
+    flux: torch.Tensor, threshold: float, expected_center: tuple[float, float]
+) -> None:
+    """
+    Test ``compute_center_of_intensity`` for various flux distributions.
+
+    Parameters
+    ----------
+    flux : torch.Tensor
+        A 2D tensor representing the flux/intensity image.
+    threshold : float, optional
+        Minimum intensity value for pixels to be included in the calculation (Default: `0.0`).
+    expected_center : tuple[float, float]
+        Expected center of intensity.
+    """
+    assert compute_center_of_intensity(flux, threshold) == pytest.approx(
+        expected_center, rel=1e-2
+    )
 
 
-def test_get_marker_coordinates_invalid_target():
+def test_get_marker_coordinates_invalid_target() -> None:
     """Test get_marker_coordinates raises ValueError for invalid targets."""
     with pytest.raises(ValueError, match="Unsupported target value: INVALID_TARGET"):
         get_marker_coordinates("INVALID_TARGET")
@@ -93,23 +139,38 @@ def test_get_marker_coordinates_invalid_target():
         ),
     ],
 )
-def test_detect_focal_spot(image_path, target, expected_aimpoint, utis_model):
-    """Test detect_focal_spot end-to-end using a loaded UTIS model and test images."""
-    # Load the image
+def test_detect_focal_spot(
+    image_path: Path, target, expected_aimpoint, utis_model
+) -> None:
+    """
+    Test ``detect_focal_spot`` end-to-end using a loaded UTIS model and test images.
+
+    Parameters
+    ----------
+    image_path : Path
+        Path to test image to load.
+    target : str
+        Target to consider.
+    expected_aimpoint : torch.Tensor
+        Expected aimpoint.
+    utis_model : torch.jit.ScriptModule
+        Loaded UTIS model.
+    """
+    # Load the image.
     image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
     assert image is not None, f"Image not found at {image_path}"
     image_tensor = torch.tensor(image, dtype=torch.float32) / 255.0
 
-    # Perform focal spot detection
+    # Perform focal spot detection.
     focal_spot = detect_focal_spot(image_tensor, target, utis_model=utis_model)
 
-    # Validate the focal spot
+    # Validate the focal spot.
     assert isinstance(focal_spot, FocalSpot)
     assert focal_spot.flux.shape == image_tensor.shape
     assert isinstance(focal_spot.aim_point_image, tuple)
     assert isinstance(focal_spot.aim_point, torch.Tensor)
 
-    # Check if the detected aimpoint matches the expected aimpoint
+    # Check if the detected aimpoint matches the expected aimpoint.
     torch.testing.assert_close(
         focal_spot.aim_point, expected_aimpoint, atol=1e-3, rtol=1e-3
     )
