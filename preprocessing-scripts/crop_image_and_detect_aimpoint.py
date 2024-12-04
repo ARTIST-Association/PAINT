@@ -73,7 +73,7 @@ def main(args: argparse.Namespace) -> None:
     # Load the UTIS model directly from the URL.
     loaded_model = load_model_from_url(mappings.UTIS_MODEL_CHECKPOINT)
 
-    # Load single measurement
+    # Load single measurement.
     client.get_single_calibration_item_by_id(
         heliostat_id=args.heliostat,
         item_id=args.measurement_id,
@@ -127,7 +127,7 @@ def main(args: argparse.Namespace) -> None:
 
 
 if __name__ == "__main__":
-    # Parse command-line arguments
+    # Parse command-line arguments.
     parser = argparse.ArgumentParser(
         description="Process calibration data for heliostats."
     )
