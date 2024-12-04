@@ -24,7 +24,7 @@ class FocalSpot:
 
     def __init__(self) -> None:
         """
-        Private initializer to ensure objects are only created using `from_flux` or `load`.
+        Private initializer to ensure objects are only created using ``from_flux()`` or ``load()``.
 
         Initializes attributes with default placeholder values.
         """
