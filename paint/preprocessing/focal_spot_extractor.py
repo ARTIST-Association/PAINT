@@ -65,7 +65,7 @@ class FocalSpot:
     @classmethod
     def load(cls, file_path: Union[str, Path]) -> "FocalSpot":
         """
-        Load a FocalSpot object from disk.
+        Load a ``FocalSpot`` object from disk.
 
         Parameters
         ----------
@@ -75,7 +75,7 @@ class FocalSpot:
         Returns
         -------
         FocalSpot
-            Loaded FocalSpot object.
+            Loaded ``FocalSpot`` object.
         """
         base_path = Path(file_path)
         flux_path = base_path.with_name(f"{base_path.name}_flux.png")
