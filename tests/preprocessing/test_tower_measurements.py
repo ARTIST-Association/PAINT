@@ -19,7 +19,7 @@ from paint.preprocessing.tower_measurements import get_tower_measurements
             {
                 "power_plant_properties": {
                     "ID": "WRI1030197",
-                    "coordinates": (50.913296351383806, 6.387514846666862, 87),
+                    "coordinates": (50.91342112259258, 6.387824755874856, 87.0),
                 },
                 "solar_tower_juelich_upper": {
                     "type": "planar",

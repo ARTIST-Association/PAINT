@@ -20,7 +20,7 @@ class DatasetSplitter:
     output_dir : pathlib.Path
         Output directory for saving the dataset splits.
     remove_unused_data : bool
-        Indicating whether unused metadata should be removed or not.
+        Whether unused metadata should be removed or not.
 
     Methods
     -------
@@ -44,12 +44,13 @@ class DatasetSplitter:
         output_dir : Union[Path, str]
             Path to the output directory where the dataset splits will be saved.
         remove_unused_data : bool
-            Indicating whether extra metadata should be removed from the resulting dataset splits (Default: `True`).
+            Whether extra metadata should be removed from the resulting dataset splits (Default: `True`).
         """
         input_file = Path(input_file)
-        assert (
-            input_file.exists()
-        ), f"Input file containing metadata does not exist at {input_file}"
+        if not input_file.exists():
+            raise FileNotFoundError(
+                f"Input file containing metadata does not exist at {input_file}"
+            )
         self.metadata = pd.read_csv(input_file, index_col=mappings.ID_INDEX)
         self.metadata[mappings.DATETIME] = pd.to_datetime(
             self.metadata[mappings.DATETIME]
@@ -80,7 +81,15 @@ class DatasetSplitter:
         heliostat_data: pd.DataFrame, training_size: int, validation_size: int
     ) -> pd.DataFrame:
         """
-        Get the splits for the azimuth method.
+        Get the splits for the azimuth-based splitting method.
+
+        For a single heliostat, the ``training_size`` indices with the smallest azimuth values are selected for the
+        training split, while the ``validation_size`` indices with the largest values are selected for the validation
+        split. The remaining indices are assigned to the test split.
+
+        This ensures that indices with very different azimuth values are considered in the train and validation samples,
+        i.e., the train and validation splits should contain very different samples. This difference leads to a high
+        level of difficulty and should guarantee that the trained calibration method is robust.
 
         Parameters
         ----------
@@ -155,7 +164,15 @@ class DatasetSplitter:
         self, heliostat_data: pd.DataFrame, training_size: int, validation_size: int
     ) -> pd.DataFrame:
         """
-        Get the splits for the solstice method.
+        Get the splits for the solstice-based splitting method.
+
+        For a single heliostat, the ``training_size`` indices closest to the winter solstice are selected for the
+        training split, while the ``validation_size`` indices closest to the summer solstice are selected for the
+        validation split. The remaining indices are assigned to the test split.
+
+        This ensures that indices from very different seasons, i.e. different conditions, are considered in training and
+        validation, i.e., the train and validation splits should contain very different samples. This difference leads to
+        a high level of difficulty and should guarantee that the trained calibration method is robust.
 
         Parameters
         ----------
@@ -219,14 +236,22 @@ class DatasetSplitter:
         """
         Get dataset splits and save splits as a CSV file.
 
-        This function determines the dataset splits and creates a data frame containing information about these splits.
+        This function determines the dataset splits and creates a dataframe containing information about these splits.
         This data frame is returned, optionally with extra metadata. Additionally, the splits without metadata are
         saved as a CSV file.
+
+        This function supports the following split types:
+        - ``azimuth``: The azimuth of the sun is used to calculate the splits. Specifically, the images with the
+        smallest azimuth values are used for training, the images with the largest azimuth values are used for
+        validation, and the remaining images for testing.
+        - ``solstice``: The distance from the winter and summer solstice is used to calculate the splits. Specifically,
+        the images closest to the winter solstice are used for training, the images closest to the summer solstice for
+        validation, and the remaining images for testing.
 
         Parameters
         ----------
         split_type : str
-            Type of split to be performed.
+            Type of split to be performed. Currently, ``azimuth`` and ``solstice`` split types are available.
         training_size : int
             Size of the training split.
         validation_size : int
@@ -239,8 +264,8 @@ class DatasetSplitter:
                 f"selected split type {split_type} is not supported!"
             )
 
-        # Calculate the minimum number of possible images as training size + 2 * validation size, since we want at least
-        # as many test images as validation images.
+        # Calculate the minimum number of possible images as `training_size` + 2 * `validation_size`, since we want at
+        # least as many test images as validation images.
         minimum_number_of_images = training_size + 2 * validation_size
 
         # Identify heliostats that do not meet the minimum image requirement.
@@ -256,7 +281,7 @@ class DatasetSplitter:
 
         log.info(
             f"The following {len(dropped_heliostats)} heliostats have been dropped for not meeting the requirements of {training_size} training "
-            f"images, {validation_size} validation images, and at least {validation_size} test images:"
+            f"images, {validation_size} validation images, and at least {validation_size} test images:\n{dropped_heliostats}"
         )
         log.info(dropped_heliostats)
 
@@ -267,9 +292,9 @@ class DatasetSplitter:
             )
 
         if split_type == mappings.AZIMUTH_SPLIT:
-            log.info("Preparing azimuth split...")
             log.info(
-                f"Training Size: {training_size}, Validation Size: {validation_size}, and Test Size > {validation_size}"
+                "Preparing azimuth split...\n"
+                f"Training size: {training_size}, validation size: {validation_size}, and test size > {validation_size}"
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
@@ -282,9 +307,9 @@ class DatasetSplitter:
             )
             log.info("Azimuth split complete!")
         elif split_type == mappings.SOLSTICE_SPLIT:
-            log.info("Preparing solstice split...")
             log.info(
-                f"Training Size: {training_size}, Validation Size: {validation_size}, and Test Size > {validation_size}"
+                "Preparing solstice split...\n"
+                f"Training size: {training_size}, validation size: {validation_size}, and test size > {validation_size}"
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
@@ -296,8 +321,6 @@ class DatasetSplitter:
                 )
             )
             log.info("Solstice split complete!")
-        else:
-            raise ValueError(f"The split type {split_type} is not supported!")
 
         # Never save the extra metadata in the CSV (this extra data is only needed for plots).
         splits_to_save = heliostat_split_data
@@ -306,7 +329,7 @@ class DatasetSplitter:
         )
         file_name = (
             self.output_dir
-            / f"Benchmark_split-{split_type}_train-{training_size}_validation-{validation_size}.csv"
+            / f"benchmark_split-{split_type}_train-{training_size}_validation-{validation_size}.csv"
         )
         splits_to_save.to_csv(file_name, index=True)
 

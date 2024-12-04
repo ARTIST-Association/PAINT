@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import pathlib
 
 from paint import PAINT_ROOT
 from paint.data.stac_client import StacClient
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--output_dir",
-        type=str,
+        type=pathlib.Path,
         help="Path to save the downloaded data.",
         default=f"{PAINT_ROOT}/download_calibration_test",
     )
@@ -25,7 +26,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Parameters for demonstration purposes.
+    # Parameters for demonstration purposes:
     single_heliostat = "AA23"
     single_id = 123819
 
@@ -39,7 +40,7 @@ if __name__ == "__main__":
         filtered_calibration_keys=args.filtered_calibration,
     )
 
-    # Parameters for downloading multiple calibration items or all items for heliostats.
+    # Parameters for downloading multiple calibration items or all items for heliostats:
     heliostat_items_dict = {"AA27": [100750, 101103, 102950], "AA39": None}
     client.get_multiple_calibration_items_by_id(
         heliostat_items_dict=heliostat_items_dict,

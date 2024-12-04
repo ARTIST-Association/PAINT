@@ -5,11 +5,13 @@ HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
 CREATED_AT = "CreatedAt"
+FILE_CREATED_AT = "FileCreatedAt"
 UPDATED_AT = "UpdatedAt"
 YEAR = "Year"
 MONTH = "Month"
 HOUR = "Hour"
 AZIMUTH = "Azimuth"
+SUN_AZIMUTH = "Sun_azimuth"
 ELEVATION = "Elevation"
 ELEVATION_MIN = "Elevation_min"
 ELEVATION_MAX = "Elevation_max"
@@ -58,9 +60,9 @@ KIT = {
     "url": PAINT_URL,
 }
 POWER_PLANT_GPPD_ID = "WRI1030197"
-POWER_PLANT_LAT = 50.913296351383806
-POWER_PLANT_LON = 6.387514846666862
-POWER_PLANT_ALT = 87
+POWER_PLANT_LAT = 50.91342112259258
+POWER_PLANT_LON = 6.387824755874856
+POWER_PLANT_ALT = 87.0
 POWER_PLANT_KEY = "power_plant_properties"
 ID_KEY = "ID"
 GK_HEIGHT_BASE = 5642086.619 - 0.063
@@ -158,6 +160,7 @@ COLLECTION = "Collection"
 FEATURE = "Feature"
 
 TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
+TIME_FILE_FORMAT = "%Y-%m-%dZ%H-%M-%SZ"
 
 MIME_PNG = "image/png"
 MIME_GEOJSON = "application/geo+json"
@@ -401,6 +404,26 @@ MAP_CANTING_TO_READABLE = {"Rec": "receiver canting", "FE": "research level cant
 WGS84_A = 6378137.0  # Major axis in meters
 WGS84_B = 6356752.314245  # Minor axis in meters
 WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
+
+# Extra Kinematic Properties
+FIRST_JOINT_TRANSLATION_E_KEY = "first_joint_translation_e"
+FIRST_JOINT_TRANSLATION_N_KEY = "first_joint_translation_n"
+FIRST_JOINT_TRANSLATION_U_KEY = "first_joint_translation_u"
+SECOND_JOINT_TRANSLATION_E_KEY = "second_joint_translation_e"
+SECOND_JOINT_TRANSLATION_N_KEY = "second_joint_translation_n"
+SECOND_JOINT_TRANSLATION_U_KEY = "second_joint_translation_u"
+CONCENTRATOR_TRANSLATION_E_KEY = "concentrator_translation_e"
+CONCENTRATOR_TRANSLATION_N_KEY = "concentrator_translation_n"
+CONCENTRATOR_TRANSLATION_U_KEY = "concentrator_translation_u"
+FIRST_JOINT_TRANSLATION_E = 0.0
+FIRST_JOINT_TRANSLATION_N = 0.0
+FIRST_JOINT_TRANSLATION_U = 0.0
+SECOND_JOINT_TRANSLATION_E = 0.0
+SECOND_JOINT_TRANSLATION_N = 0.0
+SECOND_JOINT_TRANSLATION_U = 0.3149999976158142
+CONCENTRATOR_TRANSLATION_E = 0.0
+CONCENTRATOR_TRANSLATION_N = -0.40450000762939453
+CONCENTRATOR_TRANSLATION_U = -0.17755000293254852
 
 # Keys for dataset splits
 AZIMUTH_SPLIT = "azimuth"

@@ -14,9 +14,9 @@ from paint.preprocessing.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
-from paint.util import convert_gk_to_lat_long
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
+    convert_field_coordinate_to_wgs84,
     heliostat_id_to_name,
     to_utc,
 )
@@ -154,14 +154,17 @@ def main(arguments: argparse.Namespace) -> None:
             json.dump(stac_item, handle)
 
         # Save associated calibration properties.
-        focal_spot_lat, focal_spot_lon = convert_gk_to_lat_long(
-            right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_E],
-            height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_N],
+        (
+            focal_spot_lat,
+            focal_spot_lon,
+        ) = convert_field_coordinate_to_wgs84(
+            east_coordinate_m=heliostat_data[mappings.TARGET_OFFSET_E],
+            north_coordinate_m=heliostat_data[mappings.TARGET_OFFSET_N],
         )
         if processed_available:
-            utis_lat, utis_long = convert_gk_to_lat_long(
-                right=mappings.GK_RIGHT_BASE + utis_data.loc[image][mappings.UTIS_X],
-                height=mappings.GK_HEIGHT_BASE + utis_data.loc[image][mappings.UTIS_Y],
+            utis_lat, utis_long = convert_field_coordinate_to_wgs84(
+                east_coordinate_m=utis_data.loc[image][mappings.UTIS_X],
+                north_coordinate_m=utis_data.loc[image][mappings.UTIS_Y],
             )
             calibration_properties_data = {
                 mappings.MOTOR_POS_KEY: {
@@ -171,6 +174,8 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]
                 ],
+                mappings.SUN_ELEVATION: heliostat_data[mappings.SUN_ELEVATION],
+                mappings.SUN_AZIMUTH: heliostat_data[mappings.AZIMUTH],
                 mappings.FOCAL_SPOT_KEY: {
                     mappings.HELIOS_KEY: [
                         focal_spot_lat,
@@ -193,6 +198,8 @@ def main(arguments: argparse.Namespace) -> None:
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]
                 ],
+                mappings.SUN_ELEVATION: heliostat_data[mappings.SUN_ELEVATION],
+                mappings.SUN_AZIMUTH: heliostat_data[mappings.AZIMUTH],
                 mappings.FOCAL_SPOT_KEY: {
                     mappings.HELIOS_KEY: [
                         focal_spot_lat,

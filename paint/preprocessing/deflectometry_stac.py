@@ -124,7 +124,10 @@ def make_deflectometry_item(
         The STAC item data as dictionary.
     """
     resource = (
-        heliostat_key + "-" + heliostat_data[mappings.CREATED_AT] + "-deflectometry"
+        heliostat_key
+        + "-"
+        + heliostat_data[mappings.FILE_CREATED_AT]
+        + "-deflectometry"
     )
     lat_lon = convert_gk_to_lat_long(
         right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.EAST_KEY],
@@ -190,14 +193,14 @@ def make_deflectometry_item(
         ],
         "assets": {
             mappings.DEFLECTOMETRY_RAW_KEY: {
-                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.FILE_CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Raw deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
             },
             mappings.DEFLECTOMETRY_FILLED_KEY: {
-                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-filled-{heliostat_data[mappings.CREATED_AT]}-deflectometry.h5",
+                "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-filled-{heliostat_data[mappings.FILE_CREATED_AT]}-deflectometry.h5",
                 "roles": ["data"],
                 "type": mappings.MIME_HDF5,
                 "title": f"Filled deflectometry measurement of {heliostat_key} at "
@@ -206,7 +209,7 @@ def make_deflectometry_item(
             **(
                 {
                     mappings.DEFLECTOMETRY_RESULTS_KEY: {
-                        "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.CREATED_AT]}-deflectometry-result.pdf",
+                        "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-{heliostat_data[mappings.FILE_CREATED_AT]}-deflectometry-result.pdf",
                         "roles": ["metadata"],
                         "type": mappings.MIME_PDF,
                         "title": f"Summary of deflectometry measurement of {heliostat_key} at "

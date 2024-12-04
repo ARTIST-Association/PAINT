@@ -1,4 +1,5 @@
 import argparse
+import pathlib
 
 from paint import PAINT_ROOT
 from paint.data.dataset_splits import DatasetSplitter
@@ -12,13 +13,13 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_file",
-        type=str,
+        type=pathlib.Path,
         help="File containing the metadata required to generate the dataset splits.",
         default=f"{PAINT_ROOT}/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--output_dir",
-        type=str,
+        type=pathlib.Path,
         help="Path to save the extracted dataset splits.",
         default=f"{PAINT_ROOT}/benchmark_test",
     )
@@ -34,14 +35,16 @@ if __name__ == "__main__":
     print(
         "The returned azimuth split data frame contains additional metadata which may be useful for plots."
     )
-    print("This data frame has the following structure (first five rows):")
-    print(azimuth_splits.head(5))
+    print(
+        "This data frame has the following structure (first five rows):\n",
+        azimuth_splits.head(5)
+    )
     # Example for solstice splits
     solstice_splits = splitter.get_dataset_splits(
         split_type="solstice", training_size=10, validation_size=30
     )
     print(
-        "The returned solstice split data frame contains additional metadata which may be useful for plots."
+        "The returned solstice split data frame contains additional metadata which may be useful for plots.\n"
+        "This data frame has the following structure (first five rows):\n",
+        solstice_splits.head(5),
     )
-    print("This data frame has the following structure (first five rows):")
-    print(solstice_splits.head(5))
