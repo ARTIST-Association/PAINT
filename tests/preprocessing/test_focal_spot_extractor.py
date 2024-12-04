@@ -140,7 +140,10 @@ def test_get_marker_coordinates_invalid_target() -> None:
     ],
 )
 def test_detect_focal_spot(
-    image_path: Path, target, expected_aimpoint, utis_model
+    image_path: Path,
+    target: str,
+    expected_aimpoint: torch.Tensor,
+    utis_model: torch.jit.ScriptModule,
 ) -> None:
     """
     Test ``detect_focal_spot`` end-to-end using a loaded UTIS model and test images.
