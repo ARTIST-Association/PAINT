@@ -40,7 +40,7 @@ class FocalSpot:
         aim_point: torch.Tensor,
     ) -> "FocalSpot":
         """
-        Create a FocalSpot object from provided data.
+        Create a ``FocalSpot`` object from provided data.
 
         Parameters
         ----------
