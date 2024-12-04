@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import argparse
 import json
-import logging
 import tempfile
 from pathlib import Path
 
@@ -13,10 +12,6 @@ from paint import PAINT_ROOT
 from paint.data.stac_client import StacClient
 from paint.preprocessing.focal_spot_extractor import detect_focal_spot
 from paint.preprocessing.target_cropper import crop_image_with_template_matching
-from paint.util import set_logger_config
-
-set_logger_config()
-logger = logging.getLogger(__name__)
 
 
 def load_model_from_url(url: str) -> torch.jit.ScriptModule:
@@ -38,25 +33,23 @@ def load_model_from_url(url: str) -> torch.jit.ScriptModule:
     Exception
         If the model cannot be loaded or the download fails.
     """
-    logger.info(f"Downloading checkpoint from {url}...")
+    print(f"Downloading checkpoint from {url}...")
     response = requests.get(url, stream=True)
     if response.status_code == 200:
-        logger.info("Checkpoint downloaded successfully. Loading the model...")
+        print("Checkpoint downloaded successfully. Loading the model...")
         with tempfile.NamedTemporaryFile(delete=True) as temp_file:
             for chunk in response.iter_content(chunk_size=8192):
                 temp_file.write(chunk)
             temp_file.flush()
             try:
                 model = torch.jit.load(temp_file.name, map_location="cpu")
-                logger.info("Model loaded successfully.")
+                print("Model loaded successfully.")
                 return model
             except Exception as e:
-                logger.error(f"Failed to load the model: {e}")
+                print(f"Failed to load the model: {e}")
                 raise
     else:
-        logger.error(
-            f"Failed to download the checkpoint. Status code: {response.status_code}"
-        )
+        print(f"Failed to download the checkpoint. Status code: {response.status_code}")
         response.raise_for_status()
 
 
@@ -117,16 +110,15 @@ def main(args: argparse.Namespace) -> None:
     # Detect focal spot.
     focal_spot = detect_focal_spot(cropped_image_tensor, target, loaded_model)
 
-    print(focal_spot.aim_point)
     # Log the detected aim point.
-    logger.info(
+    print(
         "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
         args.heliostat,
         args.measurement_id,
         focal_spot.aim_point.tolist(),
     )
 
-    # Save focal spot
+    # Save focal spot.
     focal_spot_path = (
         extracted_focal_spots_dir / f"{args.heliostat}_{args.measurement_id}_focal_spot"
     )
