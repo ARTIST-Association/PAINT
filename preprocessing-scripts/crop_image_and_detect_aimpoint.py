@@ -112,7 +112,7 @@ def main(args: argparse.Namespace) -> None:
 
     # Log the detected aim point.
     print(
-        "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
+        "Heliostat %s: For measurement %s, focal spot detected at %s.",
         args.heliostat,
         args.measurement_id,
         focal_spot.aim_point.tolist(),
