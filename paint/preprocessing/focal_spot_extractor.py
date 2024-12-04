@@ -24,13 +24,13 @@ class FocalSpot:
 
     def __init__(self) -> None:
         """
-        Private initializer to ensure objects are only created using `from_flux` or `load`.
+        Private initializer to ensure objects are only created using ``from_flux()`` or ``load()``.
 
         Initializes attributes with default placeholder values.
         """
         self.flux: torch.Tensor = torch.empty(0)  # Default to an empty tensor
         self.aim_point_image: tuple[float, float] = (0.0, 0.0)  # Default to (0.0, 0.0)
-        self.aim_point: torch.Tensor = torch.empty(3)  # Default to a 3-e
+        self.aim_point: torch.Tensor = torch.empty(3)  # Default to an empty tensor of required shape
 
     @classmethod
     def from_flux(
@@ -40,7 +40,7 @@ class FocalSpot:
         aim_point: torch.Tensor,
     ) -> "FocalSpot":
         """
-        Create a FocalSpot object from provided data.
+        Create a ``FocalSpot`` object from provided data.
 
         Parameters
         ----------
@@ -54,7 +54,7 @@ class FocalSpot:
         Returns
         -------
         FocalSpot
-            Initialized FocalSpot object.
+            Initialized ``FocalSpot`` object.
         """
         instance = cls()
         instance.flux = flux
@@ -65,7 +65,7 @@ class FocalSpot:
     @classmethod
     def load(cls, file_path: Union[str, Path]) -> "FocalSpot":
         """
-        Load a FocalSpot object from disk.
+        Load a ``FocalSpot`` object from disk.
 
         Parameters
         ----------
@@ -75,7 +75,7 @@ class FocalSpot:
         Returns
         -------
         FocalSpot
-            Loaded FocalSpot object.
+            Loaded ``FocalSpot`` object.
         """
         base_path = Path(file_path)
         flux_path = base_path.with_name(f"{base_path.name}_flux.png")
