@@ -117,7 +117,6 @@ def main(args: argparse.Namespace) -> None:
     # Detect focal spot.
     focal_spot = detect_focal_spot(cropped_image_tensor, target, loaded_model)
 
-    print(focal_spot.aim_point)
     # Log the detected aim point.
     logger.info(
         "Heliostat %s: For Measurement %s, Focal Spot detected at %s.",
