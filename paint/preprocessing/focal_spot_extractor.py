@@ -54,7 +54,7 @@ class FocalSpot:
         Returns
         -------
         FocalSpot
-            Initialized FocalSpot object.
+            Initialized ``FocalSpot`` object.
         """
         instance = cls()
         instance.flux = flux
