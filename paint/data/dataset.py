@@ -67,6 +67,18 @@ class PaintCalibrationDataset(Dataset):
                 f"{mappings.CALIBRATION_FLUX_IMAGE_KEY}, {mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY}, or "
                 f"{mappings.CALIBRATION_PROPERTIES_KEY,}"
             )
+        log.info(f"Initializing a data set for {item_type} calibration items...")
+        if item_type in [
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+        ]:
+            log.info("Note that this is a dataset containing images!")
+        else:
+            log.info(
+                "Note that this is a dataset containing dictionaries of calibration properties!"
+            )
         self.file_identifier = self._map_to_file_identifier(item_type)
         self.item_ids = item_ids
         self.root_dir = Path(root_dir)
