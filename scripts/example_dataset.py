@@ -1,5 +1,4 @@
 import argparse
-import pathlib
 
 from paint import PAINT_ROOT
 from paint.data.dataset import PaintCalibrationDataset
@@ -12,19 +11,6 @@ if __name__ == "__main__":
     # Read in arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--root_dir",
-        type=pathlib.Path,
-        help="Root directory containing data.",
-        default=f"{PAINT_ROOT}/benchmark_datasets/Benchmark_testy_test/test",
-    )
-    parser.add_argument(
-        "--item_ids",
-        type=int,
-        help="List of calibration item IDs to load.",
-        nargs="+",
-        default=[60445, 60935, 61864, 62302],
-    )
-    parser.add_argument(
         "--item_type",
         type=str,
         help="The type of item to be loaded -- i.e. raw image, cropped image, flux image, or flux centered image",
@@ -33,5 +19,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     dataset = PaintCalibrationDataset(
-        root_dir=args.root_dir, item_ids=args.item_ids, item_type=args.item_type
+        root_dir=f"{PAINT_ROOT}/benchmark_datasets/Benchmark_testy_test/test",
+        item_ids=None,
+        item_type=args.item_type,
+    )
+
+    train, test, val = PaintCalibrationDataset.from_benchmark(
+        benchmark_file=f"{PAINT_ROOT}/benchmark_test/benchmark_testy_test.csv",
+        root_dir=f"{PAINT_ROOT}/AAA_test",
+        item_type=args.item_type,
+        download=True,
     )
