@@ -84,6 +84,12 @@ STJ_UPPER_BOUNDING_BOX = [
     6.387886052532388,
     133.719,
 ]
+STJ_UPPER_ENU = [
+    [4.32, -3.23, 46.70],
+    [4.32, -3.23, 39.48],
+    [-4.30, -3.23, 46.70],
+    [-4.30, -3.23, 39.48],
+]
 STJ_LOWER_COORDINATES = [
     [50.913391839040266, 6.38788603808917, 119.268],
     [50.91339186595943, 6.387886052532388, 126.47],
@@ -99,6 +105,12 @@ STJ_LOWER_BOUNDING_BOX = [
     6.387886052532388,
     126.506,
 ]
+STJ_LOWER_ENU = [
+    [4.33, -3.23, 39.49],
+    [4.33, -3.23, 32.27],
+    [-4.29, -3.23, 39.49],
+    [-4.29, -3.23, 32.27],
+]
 MFT_COORDINATES = [
     [50.91339634341573, 6.387612841591359, 135.789],
     [50.91339628900999, 6.387612983329584, 142.175],
@@ -113,6 +125,12 @@ MFT_BOUNDING_BOX = [
     50.913396616772935,
     6.387612983329584,
     142.175,
+]
+MFT_ENU = [
+    [-14.88, -2.83, 55.17],
+    [-14.88, -2.83, 48.78],
+    [-20.29, -2.83, 55.17],
+    [-20.29, -2.83, 48.78],
 ]
 RECEIVER_COORDINATES = [
     [50.913406544144294, 6.387853925842858, 139.86],
@@ -242,6 +260,10 @@ TARGET_NAME_KEY = "target_name"
 FOCAL_SPOT_KEY = "focal_spot"
 UTIS_KEY = "UTIS"
 UTIS_URL = "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization"
+UTIS_MODEL_CHECKPOINT = (
+    "https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization/"
+    "raw/main/trained_models/utis_model_scripted.pt"
+)
 HELIOS_KEY = "HeliOS"
 TARGET_OFFSET_E = "TargetOffsetE"
 TARGET_OFFSET_N = "TargetOffsetN"
