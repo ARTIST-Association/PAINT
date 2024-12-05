@@ -431,3 +431,11 @@ SOLSTICE_SPLIT = "solstice"
 SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
+
+
+# Keys for Dataset file identifiers.
+CALIBRATION_RAW_IMAGE_IDENTIFIER = "_raw.png"
+CALIBRATION_CROPPED_IMAGE_IDENTIFIER = "_cropped.png"
+CALIBRATION_FLUX_IMAGE_IDENTIFIER = "_flux.png"
+CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER = "_flux_centered.png"
+CALIBRATION_PROPERTIES_IDENTIFIER = "-calibration-properties.json"
