@@ -36,6 +36,8 @@ class PaintCalibrationDataset(Dataset):
     -------
     from_benchmark()
         Class method to initialize dataset from a benchmark file.
+    from_heliostats()
+        Class method to initialize dataset from one or more heliostats.
     """
 
     def __init__(
@@ -77,7 +79,7 @@ class PaintCalibrationDataset(Dataset):
         self.root_dir = Path(root_dir)
         if not self.root_dir.exists():
             raise FileNotFoundError(
-                "The root directory does not exist - you should download the dataset first!"
+                f"The root directory {self.root_dir} does not exist - you should download the dataset first!"
             )
 
         if item_ids is None:
@@ -306,6 +308,90 @@ class PaintCalibrationDataset(Dataset):
                             # Handle exceptions from individual tasks.
                             print(f"Error in thread execution: {e}")
         return ids_dict
+
+    @classmethod
+    def from_heliostats(
+        cls,
+        root_dir: Union[str, Path],
+        item_type: str,
+        heliostats: Union[list[str], None] = None,
+        download: bool = False,
+    ) -> Self:
+        """
+        Initialize calibration data set based on heliostats.
+
+        This class method initializes a calibration data set based on specific heliostats from the `PAINT` database.
+
+        Parameters
+        ----------
+        root_dir : Union[str, Path]
+            Directory where the dataset will be stored.
+        item_type : str
+            Type of item being loaded, i.e. raw image, cropped image, flux image, or calibration properties.
+        heliostats : Union[list[str], None]
+            List of heliostats for which calibration data should be downloaded. If no list is provided the data for all
+            heliostats will be downloaded (Default: ``None``).
+        download : bool
+            Whether to download the data (Default: ``False``).
+
+        Returns
+        -------
+        PaintCalibrationDataset
+            Calibration dataset based on one or more heliostats.
+        """
+        root_dir = Path(root_dir)
+        if heliostats is None:
+            log.info(
+                "Initializing a dataset based on heliostats. This dataset includes ALL heliostats!"
+            )
+        else:
+            log.info(
+                f"Initializing a dataset based on heliostats. The heliostats included are:\n {heliostats}"
+            )
+        if download:
+            log.info("Beginning to download the data...")
+            cls._download_heliostat_data(
+                root_dir=root_dir, item_type=item_type, heliostats=heliostats
+            )
+        else:
+            # Check if the folder exists, if not the data must be downloaded.
+            if not root_dir.is_dir():
+                log.warning(
+                    "The root directory does not exist, the data has not yet been downloaded!\n"
+                    "The data will now be downloaded..."
+                )
+        return cls(
+            root_dir=Path(root_dir),
+            item_type=item_type,
+        )
+
+    @staticmethod
+    def _download_heliostat_data(
+        root_dir: Union[str, Path],
+        item_type: str,
+        heliostats: Union[list[str], None] = None,
+    ):
+        """
+        Download the heliostat calibration data for the dataset based on heliostats.
+
+        Parameters
+        ----------
+        root_dir : Union[str, Path]
+            Directory where the data will be stored.
+        item_type : str
+            Type of item being downloaded, i.e. raw image, cropped image, flux image, or calibration properties.
+        heliostats : Union[list[str], None]
+            List of heliostats for which calibration data should be downloaded. If no list is provided the data for all
+            heliostats will be downloaded (Default: ``None``).
+        """
+        # Create STAC client.
+        client = StacClient(output_dir=root_dir)
+        client.get_heliostat_data(
+            heliostats=heliostats,
+            collections=[mappings.SAVE_CALIBRATION.lower()],
+            filtered_calibration_keys=[item_type],
+            for_dataset=True,
+        )
 
     def __len__(self) -> int:
         """
