@@ -171,6 +171,7 @@ class StacClient:
         heliostat_catalog_id: str,
         save_folder: str,
         pbar: tqdm,
+        for_dataset: bool = False,
     ) -> None:
         """
         Process a single heliostat item.
@@ -197,6 +198,8 @@ class StacClient:
             Name of the folder to save the collection items in.
         pbar : tqdm
             Progress bar.
+        for_dataset : bool
+            Whether to save all items in one folder for a dataset (Default: ``False``).
         """
         item_time = item.properties["datetime"]
         if start_date and end_date:
@@ -218,12 +221,14 @@ class StacClient:
             for key, asset in item.assets.items():
                 if key in filtered_calibration_keys:
                     self._download_heliostat_asset(
-                        asset, heliostat_catalog_id, save_folder
+                        asset, heliostat_catalog_id, save_folder, for_dataset
                     )
         else:
             # Process all assets in the item.
             for asset in item.assets.values():
-                self._download_heliostat_asset(asset, heliostat_catalog_id, save_folder)
+                self._download_heliostat_asset(
+                    asset, heliostat_catalog_id, save_folder, for_dataset
+                )
         pbar.update(1)
 
     def _process_heliostat_items(
@@ -235,6 +240,7 @@ class StacClient:
         collection_id: str,
         heliostat_catalog_id: str,
         save_folder: str,
+        for_dataset: bool = False,
     ) -> None:
         """
         Process and download items, either with or without date filtering and calibration key filtering.
@@ -259,6 +265,8 @@ class StacClient:
             ID of the considered heliostat catalog.
         save_folder : str
             Name of the folder to save the collection items in.
+        for_dataset : bool
+            Whether to save all items in one folder for a dataset (Default: ``False``).
         """
         with tqdm(
             total=len(items),
@@ -277,6 +285,7 @@ class StacClient:
                         heliostat_catalog_id,
                         save_folder,
                         pbar,
+                        for_dataset,
                     )
                     for item in items
                 ]
@@ -288,7 +297,11 @@ class StacClient:
                     log.error(f"Error processing heliostat item: {e}")
 
     def _download_heliostat_asset(
-        self, asset: pystac.asset.Asset, heliostat_catalog_id: str, save_folder: str
+        self,
+        asset: pystac.asset.Asset,
+        heliostat_catalog_id: str,
+        save_folder: str,
+        for_dataset: bool = False,
     ) -> None:
         """
         Download the asset from the provided URL and save it to the selected location.
@@ -301,15 +314,20 @@ class StacClient:
             ID of the considered heliostat catalog.
         save_folder : str
             Name of the folder to save the asset in.
+        for_dataset : bool
+            Whether to save all items in one folder for a dataset (Default: ``False``).
         """
         url = asset.href
         file_end = url.split("/")[-1]
-        file_name = (
-            self.output_dir
-            / heliostat_catalog_id.split("-")[0]
-            / save_folder
-            / file_end
-        )
+        if for_dataset:
+            file_name = self.output_dir / file_end
+        else:
+            file_name = (
+                self.output_dir
+                / heliostat_catalog_id.split("-")[0]
+                / save_folder
+                / file_end
+            )
         file_name.parent.mkdir(parents=True, exist_ok=True)
         self.download_file(url, file_name)
 
@@ -321,6 +339,7 @@ class StacClient:
         start_date: Union[datetime, None] = None,
         end_date: Union[datetime, None] = None,
         filtered_calibration_keys: Union[list[str], None] = None,
+        for_dataset: bool = False,
     ) -> None:
         """
         Download items from a specified collection from a heliostat and save them to a designated path.
@@ -343,6 +362,8 @@ class StacClient:
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
             ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
             data is downloaded (Default: ``None``).
+        for_dataset : bool
+            Whether to save all items in one folder for a dataset (Default: ``False``).
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
@@ -368,6 +389,7 @@ class StacClient:
             collection_id,
             heliostat_catalog.id,
             save_folder,
+            for_dataset,
         )
 
     @staticmethod
@@ -404,6 +426,7 @@ class StacClient:
         start_date: Union[datetime, None] = None,
         end_date: Union[datetime, None] = None,
         filtered_calibration_keys: Union[list[str], None] = None,
+        for_dataset: bool = False,
     ) -> None:
         """
         Download data for one or more heliostats.
@@ -426,6 +449,8 @@ class StacClient:
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
             ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
             data is downloaded (Default: ``None``).
+        for_dataset : bool
+            Whether to save all items in one folder for a dataset (Default: ``False``).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable.
         if heliostats is None:
@@ -515,6 +540,7 @@ class StacClient:
                     start_date,
                     end_date,
                     filtered_calibration_keys,
+                    for_dataset,
                 )
 
             # Download deflectometry data.
@@ -1067,26 +1093,3 @@ class StacClient:
                         item_id=item_id,
                         filtered_calibration_keys=filtered_calibration_keys,
                     )
-
-    def get_calibration_items_for_dataset(
-        self,
-        heliostats: Union[list[int], None],
-        filtered_calibration_keys: Union[list[str], None] = None,
-    ) -> None:
-        """
-        Download multiple calibration items for multiple heliostats.
-
-        Parameters
-        ----------
-        heliostats : Union[list[int], None]
-            A list of item IDs to be downloaded. If the list of item IDs is ``None``,
-            all items for that heliostat will be downloaded.
-        filtered_calibration_keys : list[str]
-            List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
-            ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
-            data is downloaded (Default: ``None``).
-        """
-        filtered_calibration_keys = self._check_filtered_calibration_keys(
-            filtered_calibration_keys
-        )
-        # TODO: FINISH THIS FUNCTION
