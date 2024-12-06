@@ -188,7 +188,10 @@ class PaintCalibrationDataset(Dataset):
             Validation dataset.
         """
         root_dir = Path(root_dir)
-
+        log.info(
+            f"Begining the process of generating benchmark datasets. The file used to generate the benchmarks is:\n"
+            f" {benchmark_file}!"
+        )
         # Load the splits data.
         splits = pd.read_csv(benchmark_file)
 
