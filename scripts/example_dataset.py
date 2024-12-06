@@ -26,7 +26,14 @@ if __name__ == "__main__":
 
     train, test, val = PaintCalibrationDataset.from_benchmark(
         benchmark_file=f"{PAINT_ROOT}/benchmark_test/benchmark_testy_test.csv",
-        root_dir=f"{PAINT_ROOT}/AAA_test",
+        root_dir=f"{PAINT_ROOT}/dataset_benchmark_test",
+        item_type=args.item_type,
+        download=True,
+    )
+
+    heliostat_dataset = PaintCalibrationDataset.from_heliostats(
+        heliostats=["AA39", "AA23"],
+        root_dir=f"{PAINT_ROOT}/dataset_heliostat_test",
         item_type=args.item_type,
         download=True,
     )
