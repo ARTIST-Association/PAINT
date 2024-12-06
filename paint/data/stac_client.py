@@ -1067,3 +1067,26 @@ class StacClient:
                         item_id=item_id,
                         filtered_calibration_keys=filtered_calibration_keys,
                     )
+
+    def get_calibration_items_for_dataset(
+        self,
+        heliostats: Union[list[int], None],
+        filtered_calibration_keys: Union[list[str], None] = None,
+    ) -> None:
+        """
+        Download multiple calibration items for multiple heliostats.
+
+        Parameters
+        ----------
+        heliostats : Union[list[int], None]
+            A list of item IDs to be downloaded. If the list of item IDs is ``None``,
+            all items for that heliostat will be downloaded.
+        filtered_calibration_keys : list[str]
+            List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
+            ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
+            data is downloaded (Default: ``None``).
+        """
+        filtered_calibration_keys = self._check_filtered_calibration_keys(
+            filtered_calibration_keys
+        )
+        # TODO: FINISH THIS FUNCTION
