@@ -94,7 +94,9 @@ def extract_properties_data_and_generate_stac_item(
     }
     # Map to appropriate names.
     actuator_1_data = {
-        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: value
+        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: (
+            value.lower() if isinstance(value, str) else value
+        )
         for key, value in actuator_1_data.items()
         if key.rsplit("_", 1)[0]
         in mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP  # Ensure the base key exists in the mapping
@@ -106,7 +108,9 @@ def extract_properties_data_and_generate_stac_item(
     }
     # Also map to the appropriate names here.
     actuator_2_data = {
-        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: value
+        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: (
+            value.lower() if isinstance(value, str) else value
+        )
         for key, value in actuator_2_data.items()
         if key.rsplit("_", 1)[0]
         in mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP  # Ensure the base key exists in the mapping
