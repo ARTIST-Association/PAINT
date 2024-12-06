@@ -176,7 +176,7 @@ class PaintCalibrationDataset(Dataset):
         item_type : str
             Type of item being loaded, i.e. raw image, cropped image, flux image, or calibration properties.
         download : bool
-            Whether to download the data (Default is ``False``).
+            Whether to download the data (Default: ``False``).
 
         Returns
         -------
