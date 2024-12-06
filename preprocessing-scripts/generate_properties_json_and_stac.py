@@ -211,6 +211,7 @@ def extract_properties_data_and_generate_stac_item(
         ],
         mappings.HELIOSTAT_HEIGHT_KEY: mappings.HELIOSTAT_HEIGHT,
         mappings.HELIOSTAT_WIDTH_KEY: mappings.HELIOSTAT_WIDTH,
+        mappings.INITIAL_ORIENTATION_KEY: mappings.INITIAL_ORIENTATION_VALUE,
         mappings.KINEMATIC_PROPERTIES_KEY: kinematic_data,
         mappings.FACET_PROPERTIES_KEY: facets_dict,
         mappings.RENOVATION_PROPERTIES_KEY: renovation_date,
