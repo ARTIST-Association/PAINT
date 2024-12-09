@@ -2,7 +2,7 @@ import json
 import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Self, Union
+from typing import Any, Union
 
 import cv2
 import pandas as pd
@@ -10,6 +10,7 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 from tqdm import tqdm
+from typing_extensions import Self
 
 import paint.util.paint_mappings as mappings
 from paint.data import StacClient
