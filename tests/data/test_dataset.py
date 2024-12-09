@@ -267,3 +267,18 @@ def test_dataset_with_invalid_root() -> None:
             item_ids=None,
             item_type="calibration_properties",
         )
+
+
+def test_str_method() -> None:
+    """Test the string representation of the dataset."""
+    dataset = PaintCalibrationDataset(
+        root_dir=pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "data"
+        / "test_data"
+        / "dataset"
+        / "test",
+        item_ids=None,
+        item_type="calibration_properties",
+    )
+    print(dataset)
