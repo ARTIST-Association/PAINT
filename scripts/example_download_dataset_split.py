@@ -14,6 +14,13 @@ set_logger_config()
 
 
 if __name__ == "__main__":
+    """
+    This is an example script demonstrating how the STAC client can be used to download all the data contained within
+    a dataset split file.
+
+    NOTE: This functionality is also included within the `torch.Dataset` and is therefore only required if the data is
+    required without generating a dataset.
+    """
     # Read in arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument(

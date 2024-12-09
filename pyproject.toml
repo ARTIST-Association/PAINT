@@ -20,6 +20,7 @@ dependencies = [
     "numpy",
     "pandas",
     "torch",
+    "torchvision",
     "matplotlib",
     "colorlog",
     "wetterdienst==0.95.1",

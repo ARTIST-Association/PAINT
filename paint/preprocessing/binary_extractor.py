@@ -140,11 +140,11 @@ class BinaryExtractor:
                 _unused_facet_translation_vectors[f] = torch.tensor(
                     facet_header_data[1:4], dtype=torch.float
                 )
-                _unused_canting_n[f] = torch.tensor(
+                _unused_canting_e[f] = torch.tensor(
                     facet_header_data[4:7],
                     dtype=torch.float,
                 )
-                _unused_canting_e[f] = torch.tensor(
+                _unused_canting_n[f] = torch.tensor(
                     facet_header_data[7:10],
                     dtype=torch.float,
                 )

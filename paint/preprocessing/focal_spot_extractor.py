@@ -30,7 +30,9 @@ class FocalSpot:
         """
         self.flux: torch.Tensor = torch.empty(0)  # Default to an empty tensor
         self.aim_point_image: tuple[float, float] = (0.0, 0.0)  # Default to (0.0, 0.0)
-        self.aim_point: torch.Tensor = torch.empty(3)  # Default to an empty tensor of required shape
+        self.aim_point: torch.Tensor = torch.empty(
+            3
+        )  # Default to an empty tensor of required shape
 
     @classmethod
     def from_flux(

@@ -1,0 +1,11 @@
+id,HeliostatId,Split
+216331,AA23,train
+240796,AA23,train
+137608,AA23,train
+152144,AA23,test
+203718,AA23,test
+215701,AA23,test
+194228,AA23,test
+106293,AA23,validation
+99927,AA23,validation
+213508,AA23,validation
