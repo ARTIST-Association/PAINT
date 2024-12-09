@@ -77,7 +77,7 @@ def extract_properties_data_and_generate_stac_item(
         json.dump(properties_stac, handle)
 
     # Convert kinematic data to dict and remove metadata.
-    kinematic_data = heliostat_data.to_dict()
+    kinematic_helper_data = heliostat_data.to_dict()
     for key_to_remove in [
         mappings.CREATED_AT,
         mappings.EAST_KEY,
@@ -86,36 +86,49 @@ def extract_properties_data_and_generate_stac_item(
         mappings.FIELD_ID,
         mappings.HEIGHT_ABOVE_GROUND,
     ]:
-        kinematic_data.pop(key_to_remove, None)
+        kinematic_helper_data.pop(key_to_remove, None)
 
-    # Include additional kinematic properties that are identical for all heliostats change.
-    kinematic_data[
-        mappings.FIRST_JOINT_TRANSLATION_E_KEY
-    ] = mappings.FIRST_JOINT_TRANSLATION_E
-    kinematic_data[
-        mappings.FIRST_JOINT_TRANSLATION_N_KEY
-    ] = mappings.FIRST_JOINT_TRANSLATION_N
-    kinematic_data[
-        mappings.FIRST_JOINT_TRANSLATION_U_KEY
-    ] = mappings.FIRST_JOINT_TRANSLATION_U
-    kinematic_data[
-        mappings.SECOND_JOINT_TRANSLATION_E_KEY
-    ] = mappings.SECOND_JOINT_TRANSLATION_E
-    kinematic_data[
-        mappings.SECOND_JOINT_TRANSLATION_N_KEY
-    ] = mappings.SECOND_JOINT_TRANSLATION_N
-    kinematic_data[
-        mappings.SECOND_JOINT_TRANSLATION_U_KEY
-    ] = mappings.SECOND_JOINT_TRANSLATION_U
-    kinematic_data[
-        mappings.CONCENTRATOR_TRANSLATION_E_KEY
-    ] = mappings.CONCENTRATOR_TRANSLATION_E
-    kinematic_data[
-        mappings.CONCENTRATOR_TRANSLATION_N_KEY
-    ] = mappings.CONCENTRATOR_TRANSLATION_N
-    kinematic_data[
-        mappings.CONCENTRATOR_TRANSLATION_U_KEY
-    ] = mappings.CONCENTRATOR_TRANSLATION_U
+    # Only consider data for the first actuator.
+    actuator_1_data = {
+        key: value for key, value in kinematic_helper_data.items() if key.endswith("_1")
+    }
+    # Map to appropriate names.
+    actuator_1_data = {
+        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: (
+            value.lower() if isinstance(value, str) else value
+        )
+        for key, value in actuator_1_data.items()
+        if key.rsplit("_", 1)[0]
+        in mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP  # Ensure the base key exists in the mapping
+    }
+
+    # Now consider data for the second actuator.
+    actuator_2_data = {
+        key: value for key, value in kinematic_helper_data.items() if key.endswith("_2")
+    }
+    # Also map to the appropriate names here.
+    actuator_2_data = {
+        mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP[key.rsplit("_", 1)[0]]: (
+            value.lower() if isinstance(value, str) else value
+        )
+        for key, value in actuator_2_data.items()
+        if key.rsplit("_", 1)[0]
+        in mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP  # Ensure the base key exists in the mapping
+    }
+
+    # Include all kinematic data.
+    kinematic_data = {
+        mappings.ACTUATOR_KEY: [actuator_1_data, actuator_2_data],
+        mappings.FIRST_JOINT_TRANSLATION_E_KEY: mappings.FIRST_JOINT_TRANSLATION_E,
+        mappings.FIRST_JOINT_TRANSLATION_N_KEY: mappings.FIRST_JOINT_TRANSLATION_N,
+        mappings.FIRST_JOINT_TRANSLATION_U_KEY: mappings.FIRST_JOINT_TRANSLATION_U,
+        mappings.SECOND_JOINT_TRANSLATION_E_KEY: mappings.SECOND_JOINT_TRANSLATION_E,
+        mappings.SECOND_JOINT_TRANSLATION_N_KEY: mappings.SECOND_JOINT_TRANSLATION_N,
+        mappings.SECOND_JOINT_TRANSLATION_U_KEY: mappings.SECOND_JOINT_TRANSLATION_U,
+        mappings.CONCENTRATOR_TRANSLATION_E_KEY: mappings.CONCENTRATOR_TRANSLATION_E,
+        mappings.CONCENTRATOR_TRANSLATION_N_KEY: mappings.CONCENTRATOR_TRANSLATION_N,
+        mappings.CONCENTRATOR_TRANSLATION_U_KEY: mappings.CONCENTRATOR_TRANSLATION_U,
+    }
 
     # Extract renovation date.
     renovation_date = renovations.renovation_number_to_date[
@@ -202,6 +215,7 @@ def extract_properties_data_and_generate_stac_item(
         ],
         mappings.HELIOSTAT_HEIGHT_KEY: mappings.HELIOSTAT_HEIGHT,
         mappings.HELIOSTAT_WIDTH_KEY: mappings.HELIOSTAT_WIDTH,
+        mappings.INITIAL_ORIENTATION_KEY: mappings.INITIAL_ORIENTATION_VALUE,
         mappings.KINEMATIC_PROPERTIES_KEY: kinematic_data,
         mappings.FACET_PROPERTIES_KEY: facets_dict,
         mappings.RENOVATION_PROPERTIES_KEY: renovation_date,
