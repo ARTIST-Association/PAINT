@@ -10,6 +10,9 @@ from paint.util import set_logger_config
 set_logger_config()
 
 if __name__ == "__main__":
+    """
+    This is an example script demonstrating different functions of the STAC client.
+    """
     # Read in arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument(
