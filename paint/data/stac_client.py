@@ -897,7 +897,7 @@ class StacClient:
 
             # Create DataFrame from collected data.
             metadata_df = pd.DataFrame(data).set_index("item_id")
-            metadata_df.index.name = mappings.ID_INDEX
+            metadata_df.index.name = mappings.SAVE_ID_INDEX
             save_location = (
                 self.output_dir
                 / "metadata"

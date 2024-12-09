@@ -28,6 +28,7 @@ DATA_SET_AZIMUTH = "DataSet_Azimuth"
 JUNE_DISTANCE = "Jun_Distance"
 DECEMBER_DISTANCE = "Dec_Distance"
 DATETIME = "DateTime"
+SAVE_ID_INDEX = "Id"
 
 # Dataset
 TOTAL_INDEX = "Total"
