@@ -406,12 +406,12 @@ WGS84_B = 6356752.314245  # Minor axis in meters
 WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
 
 # Extra Kinematic Properties
-FIRST_JOINT_TRANSLATION_E_KEY = "first_joint_translation_e"
-FIRST_JOINT_TRANSLATION_N_KEY = "first_joint_translation_n"
-FIRST_JOINT_TRANSLATION_U_KEY = "first_joint_translation_u"
-SECOND_JOINT_TRANSLATION_E_KEY = "second_joint_translation_e"
-SECOND_JOINT_TRANSLATION_N_KEY = "second_joint_translation_n"
-SECOND_JOINT_TRANSLATION_U_KEY = "second_joint_translation_u"
+FIRST_JOINT_TRANSLATION_E_KEY = "joint_translation_e_1"
+FIRST_JOINT_TRANSLATION_N_KEY = "joint_translation_n_1"
+FIRST_JOINT_TRANSLATION_U_KEY = "joint_translation_u_1"
+SECOND_JOINT_TRANSLATION_E_KEY = "joint_translation_e_2"
+SECOND_JOINT_TRANSLATION_N_KEY = "joint_translation_n_2"
+SECOND_JOINT_TRANSLATION_U_KEY = "joint_translation_u_2"
 CONCENTRATOR_TRANSLATION_E_KEY = "concentrator_translation_e"
 CONCENTRATOR_TRANSLATION_N_KEY = "concentrator_translation_n"
 CONCENTRATOR_TRANSLATION_U_KEY = "concentrator_translation_u"
@@ -422,8 +422,29 @@ SECOND_JOINT_TRANSLATION_E = 0.0
 SECOND_JOINT_TRANSLATION_N = 0.0
 SECOND_JOINT_TRANSLATION_U = 0.3149999976158142
 CONCENTRATOR_TRANSLATION_E = 0.0
-CONCENTRATOR_TRANSLATION_N = -0.40450000762939453
-CONCENTRATOR_TRANSLATION_U = -0.17755000293254852
+CONCENTRATOR_TRANSLATION_N = -0.17755000293254852
+CONCENTRATOR_TRANSLATION_U = -0.40450000762939453
+INITIAL_ORIENTATION_KEY = "initial_orientation"
+INITIAL_ORIENTATION_VALUE = [0.0, 0, 0, 1.0]
+
+ACTUATOR_KEY = "actuators"
+# Name mapping conversion for Heliostat properties
+HELIOSTAT_PROPERTIES_CONVERSION_MAP = {
+    "Type_axis": "type_axis",
+    "MinCounts_axis": "min_increment",
+    "MaxCounts_axis": "max_increment",
+    "PulseRatio_axis": "increment",
+    "A_axis": "offset_shift",
+    "B_axis": "initial_stroke_length",
+    "C_axis": "offset",
+    "D_axis": "pivot_radius",
+    "E_axis": "radius_shift",
+    "Reversed_axis": "clockwise_axis_movement",
+    "AngleK_axis": "initial_angle",
+    "AngleMin_axis": "min_movement_angle",
+    "AngleMax_axis": "max_movement_angle",
+    "AngleW_axis": "movement_speed",
+}
 
 # Keys for dataset splits
 AZIMUTH_SPLIT = "azimuth"
