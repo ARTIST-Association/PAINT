@@ -215,30 +215,28 @@ class PaintCalibrationDataset(Dataset):
                 )
             # If the data is present, we can load it directly.
             else:
-                split_ids = (
-                    splits.groupby(mappings.SPLIT_KEY)
-                    .apply(lambda x: list(x[mappings.ID_INDEX]))
-                    .to_dict()
-                )
+                split_ids = None
 
         # Initialize a train dataset.
         train_dataset = cls(
             root_dir=Path(root_dir) / mappings.TRAIN_INDEX,
-            item_ids=split_ids[mappings.TRAIN_INDEX],
+            item_ids=split_ids[mappings.TRAIN_INDEX] if split_ids is not None else None,
             item_type=item_type,
         )
 
         # Initialize a test dataset.
         test_dataset = cls(
             root_dir=Path(root_dir) / mappings.TEST_INDEX,
-            item_ids=split_ids[mappings.TEST_INDEX],
+            item_ids=split_ids[mappings.TEST_INDEX] if split_ids is not None else None,
             item_type=item_type,
         )
 
         # Initialize a validation dataset.
         validation_dataset = cls(
             root_dir=Path(root_dir) / mappings.VALIDATION_INDEX,
-            item_ids=split_ids[mappings.VALIDATION_INDEX],
+            item_ids=(
+                split_ids[mappings.VALIDATION_INDEX] if split_ids is not None else None
+            ),
             item_type=item_type,
         )
 
@@ -359,6 +357,9 @@ class PaintCalibrationDataset(Dataset):
                 log.warning(
                     "The root directory does not exist, the data has not yet been downloaded!\n"
                     "The data will now be downloaded..."
+                )
+                cls._download_heliostat_data(
+                    root_dir=root_dir, item_type=item_type, heliostats=heliostats
                 )
         return cls(
             root_dir=Path(root_dir),
