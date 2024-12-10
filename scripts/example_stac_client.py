@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import argparse
-from datetime import datetime
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
@@ -26,6 +25,7 @@ if __name__ == "__main__":
         type=str,
         help="List of data sources to use for weather data.",
         nargs="+",
+        choices=["Jülich", "DWD"],
         default=["Jülich", "DWD"],
     )
     parser.add_argument(
@@ -52,6 +52,11 @@ if __name__ == "__main__":
         type=str,
         help="List of collections to be downloaded.",
         nargs="+",
+        choices=[
+            mappings.SAVE_DEFLECTOMETRY.lower(),
+            mappings.SAVE_CALIBRATION.lower(),
+            mappings.SAVE_PROPERTIES.lower(),
+        ],
         default=["properties", "calibration"],
     )
     parser.add_argument(
@@ -59,6 +64,13 @@ if __name__ == "__main__":
         type=str,
         help="List of calibration items to download.",
         nargs="+",
+        choices=[
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+        ],
         default=["cropped_image", "calibration_properties"],
     )
     args = parser.parse_args()
@@ -67,14 +79,14 @@ if __name__ == "__main__":
     client = StacClient(output_dir=args.output_dir)
 
     # Download tower measurements.
-    client.get_tower_measurements()
-
-    # Download weather data between a certain time period.
-    client.get_weather_data(
-        data_sources=args.weather_data_sources,
-        start_date=datetime.strptime(args.start_date, mappings.TIME_FORMAT),
-        end_date=datetime.strptime(args.end_date, mappings.TIME_FORMAT),
-    )
+    # client.get_tower_measurements()
+    #
+    # # Download weather data between a certain time period.
+    # client.get_weather_data(
+    #     data_sources=args.weather_data_sources,
+    #     start_date=datetime.strptime(args.start_date, mappings.TIME_FORMAT),
+    #     end_date=datetime.strptime(args.end_date, mappings.TIME_FORMAT),
+    # )
 
     # Download heliostat data.
     client.get_heliostat_data(
@@ -85,4 +97,4 @@ if __name__ == "__main__":
 
     # Download metadata for all heliostats.
     # WARNING: Running the following line with `heliostats=None` will take a very long time!
-    client.get_heliostat_metadata(heliostats=None)
+    # client.get_heliostat_metadata(heliostats=None)
