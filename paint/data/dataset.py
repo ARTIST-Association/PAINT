@@ -1,5 +1,6 @@
 import json
 import logging
+import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Union
@@ -10,7 +11,11 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 from tqdm import tqdm
-from typing_extensions import Self
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 import paint.util.paint_mappings as mappings
 from paint.data import StacClient
@@ -24,6 +29,8 @@ class PaintCalibrationDataset(Dataset):
 
     Attributes
     ----------
+    mapper : dict[str, str]
+        Mapper to convert a calibration item type to a calibration file identifier
     file_identifier : str
         Identifies what type of file to be loaded.
     root_dir : Union[str, Path]
@@ -40,6 +47,14 @@ class PaintCalibrationDataset(Dataset):
     from_heliostats()
         Class method to initialize dataset from one or more heliostats.
     """
+
+    mapper = {
+        mappings.CALIBRATION_RAW_IMAGE_KEY: mappings.CALIBRATION_RAW_IMAGE_IDENTIFIER,
+        mappings.CALIBRATION_CROPPED_IMAGE_KEY: mappings.CALIBRATION_CROPPED_IMAGE_IDENTIFIER,
+        mappings.CALIBRATION_FLUX_IMAGE_KEY: mappings.CALIBRATION_FLUX_IMAGE_IDENTIFIER,
+        mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY: mappings.CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER,
+        mappings.CALIBRATION_PROPERTIES_KEY: mappings.CALIBRATION_PROPERTIES_IDENTIFIER,
+    }
 
     def __init__(
         self,
@@ -76,7 +91,7 @@ class PaintCalibrationDataset(Dataset):
             log.info(
                 "Note that this is a dataset containing dictionaries of calibration properties!"
             )
-        self.file_identifier = self._map_to_file_identifier(item_type)
+        self.file_identifier = self.mapper[item_type]
         self.root_dir = Path(root_dir)
         if not self.root_dir.exists():
             raise FileNotFoundError(
@@ -87,15 +102,7 @@ class PaintCalibrationDataset(Dataset):
             item_ids = []
             for item in self.root_dir.iterdir():
                 if item.is_file() and self.file_identifier in item.name:
-                    if self.file_identifier in [
-                        mappings.CALIBRATION_RAW_IMAGE_IDENTIFIER,
-                        mappings.CALIBRATION_CROPPED_IMAGE_IDENTIFIER,
-                        mappings.CALIBRATION_FLUX_IMAGE_IDENTIFIER,
-                        mappings.CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER,
-                    ]:
-                        item_ids.append(int(item.name.split("_")[0]))
-                    else:
-                        item_ids.append(int(item.name.split("-")[0]))
+                    item_ids.append(int(item.name.split("-")[0]))
         self.item_ids = item_ids
         self.to_tensor = transforms.ToTensor()
 
@@ -127,35 +134,9 @@ class PaintCalibrationDataset(Dataset):
         ]
         if key not in accepted_items:
             raise ValueError(
-                f"The calibration type {key} is not accepted. Please select one of "
-                f"{mappings.CALIBRATION_RAW_IMAGE_KEY}, {mappings.CALIBRATION_CROPPED_IMAGE_KEY}, "
-                f"{mappings.CALIBRATION_FLUX_IMAGE_KEY}, {mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY}, or "
-                f"{mappings.CALIBRATION_PROPERTIES_KEY,}"
+                f"The calibration type {key} is not accepted. Please select one of: \n "
+                f"{accepted_items}"
             )
-
-    @staticmethod
-    def _map_to_file_identifier(key: str) -> str:
-        """
-        Convert a calibration item type to a calibration file identifier.
-
-        Parameters
-        ----------
-        key : str
-            Key to be mapped.
-
-        Returns
-        -------
-        str
-            Mapped key to the file identifier.
-        """
-        mapper = {
-            mappings.CALIBRATION_RAW_IMAGE_KEY: mappings.CALIBRATION_RAW_IMAGE_IDENTIFIER,
-            mappings.CALIBRATION_CROPPED_IMAGE_KEY: mappings.CALIBRATION_CROPPED_IMAGE_IDENTIFIER,
-            mappings.CALIBRATION_FLUX_IMAGE_KEY: mappings.CALIBRATION_FLUX_IMAGE_IDENTIFIER,
-            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY: mappings.CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER,
-            mappings.CALIBRATION_PROPERTIES_KEY: mappings.CALIBRATION_PROPERTIES_IDENTIFIER,
-        }
-        return mapper[key]
 
     @classmethod
     def from_benchmark(
@@ -199,42 +180,47 @@ class PaintCalibrationDataset(Dataset):
         splits = pd.read_csv(benchmark_file)
 
         # Check whether to download the data or not.
-        if download:
+        if download:  # pragma: no cover
             log.info("Downloading the benchmark items...")
             split_ids = cls._download_benchmark_splits(
-                splits=splits, root_dir=root_dir, item_type=item_type
+                splits=splits,
+                root_dir=root_dir,
+                item_type=item_type,
             )
         else:
             # Check if the folder exists, if not the data must be downloaded.
-            if not root_dir.is_dir():
+            if not root_dir.is_dir():  # pragma: no cover
                 log.warning(
                     "The root directory does not exist, the data has not yet been downloaded!\n"
                     "The data will now be downloaded..."
                 )
                 split_ids = cls._download_benchmark_splits(
-                    splits=splits, root_dir=root_dir, item_type=item_type
+                    splits=splits,
+                    root_dir=root_dir,
+                    item_type=item_type,
                 )
             # If the data is present, we can load it directly.
             else:
                 split_ids = None
 
+        root_dir = Path(root_dir)
         # Initialize a train dataset.
         train_dataset = cls(
-            root_dir=Path(root_dir) / mappings.TRAIN_INDEX,
+            root_dir=root_dir / mappings.TRAIN_INDEX,
             item_ids=split_ids[mappings.TRAIN_INDEX] if split_ids is not None else None,
             item_type=item_type,
         )
 
         # Initialize a test dataset.
         test_dataset = cls(
-            root_dir=Path(root_dir) / mappings.TEST_INDEX,
+            root_dir=root_dir / mappings.TEST_INDEX,
             item_ids=split_ids[mappings.TEST_INDEX] if split_ids is not None else None,
             item_type=item_type,
         )
 
         # Initialize a validation dataset.
         validation_dataset = cls(
-            root_dir=Path(root_dir) / mappings.VALIDATION_INDEX,
+            root_dir=root_dir / mappings.VALIDATION_INDEX,
             item_ids=(
                 split_ids[mappings.VALIDATION_INDEX] if split_ids is not None else None
             ),
@@ -252,7 +238,7 @@ class PaintCalibrationDataset(Dataset):
         splits: pd.DataFrame,
         root_dir: Union[str, Path],
         item_type: str,
-    ) -> dict[str, Any]:
+    ) -> dict[str, Any]:  # pragma: no cover
         """
         Download the benchmark splits.
 
@@ -347,20 +333,24 @@ class PaintCalibrationDataset(Dataset):
             log.info(
                 f"Initializing a dataset based on heliostats. The heliostats included are:\n {heliostats}"
             )
-        if download:
+        if download:  # pragma: no cover
             log.info("Beginning to download the data...")
             cls._download_heliostat_data(
-                root_dir=root_dir, item_type=item_type, heliostats=heliostats
+                root_dir=root_dir,
+                item_type=item_type,
+                heliostats=heliostats,
             )
         else:
             # Check if the folder exists, if not the data must be downloaded.
-            if not root_dir.is_dir():
+            if not root_dir.is_dir():  # pragma: no cover
                 log.warning(
                     "The root directory does not exist, the data has not yet been downloaded!\n"
                     "The data will now be downloaded..."
                 )
                 cls._download_heliostat_data(
-                    root_dir=root_dir, item_type=item_type, heliostats=heliostats
+                    root_dir=root_dir,
+                    item_type=item_type,
+                    heliostats=heliostats,
                 )
         return cls(
             root_dir=Path(root_dir),
@@ -372,7 +362,7 @@ class PaintCalibrationDataset(Dataset):
         root_dir: Union[str, Path],
         item_type: str,
         heliostats: Union[list[str], None] = None,
-    ):
+    ) -> None:  # pragma: no cover
         """
         Download the heliostat calibration data for the dataset based on heliostats.
 
@@ -429,8 +419,7 @@ class PaintCalibrationDataset(Dataset):
             mappings.CALIBRATION_FLUX_IMAGE_IDENTIFIER,
             mappings.CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER,
         ]:
-            item = cv2.imread(str(file_name))
-            item = self.to_tensor(item)
+            item = self.to_tensor(cv2.imread(str(file_name)))
         else:
             with open(file_name, "r") as file:
                 item = json.load(file)
