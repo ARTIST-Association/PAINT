@@ -10,6 +10,9 @@ from paint.util import set_logger_config
 set_logger_config()
 
 if __name__ == "__main__":
+    """
+    This is an example script demonstrating different functions of the STAC client.
+    """
     # Read in arguments.
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -23,6 +26,7 @@ if __name__ == "__main__":
         type=str,
         help="List of data sources to use for weather data.",
         nargs="+",
+        choices=["Jülich", "DWD"],
         default=["Jülich", "DWD"],
     )
     parser.add_argument(
@@ -49,6 +53,11 @@ if __name__ == "__main__":
         type=str,
         help="List of collections to be downloaded.",
         nargs="+",
+        choices=[
+            mappings.SAVE_DEFLECTOMETRY.lower(),
+            mappings.SAVE_CALIBRATION.lower(),
+            mappings.SAVE_PROPERTIES.lower(),
+        ],
         default=["properties", "calibration"],
     )
     parser.add_argument(
@@ -56,6 +65,13 @@ if __name__ == "__main__":
         type=str,
         help="List of calibration items to download.",
         nargs="+",
+        choices=[
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+        ],
         default=["cropped_image", "calibration_properties"],
     )
     args = parser.parse_args()

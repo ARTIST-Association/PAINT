@@ -208,7 +208,7 @@ def make_calibration_item(
         "assets": {
             mappings.CALIBRATION_RAW_IMAGE_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
-                f"{image}_raw.png",
+                f"{image}-raw.png",
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Raw calibration image with id {image}",
@@ -226,7 +226,7 @@ def make_calibration_item(
                 {
                     mappings.CALIBRATION_CROPPED_IMAGE_KEY: {
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
-                        f"{image}_cropped.png",
+                        f"{image}-cropped.png",
                         "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped calibration image with id {image}",
@@ -235,7 +235,7 @@ def make_calibration_item(
                     },
                     mappings.CALIBRATION_FLUX_IMAGE_KEY: {
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
-                        f"{image}_flux.png",
+                        f"{image}-flux.png",
                         "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped and segmented calibration image with id {image}",
@@ -246,7 +246,7 @@ def make_calibration_item(
                     mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY: {
                         "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/"
                         f"{mappings.SAVE_CALIBRATION}/"
-                        f"{image}_flux_centered.png",
+                        f"{image}-flux-centered.png",
                         "roles": ["data"],
                         "type": mappings.MIME_PNG,
                         "title": f"Cropped, segmented, and centered calibration image with id {image}",

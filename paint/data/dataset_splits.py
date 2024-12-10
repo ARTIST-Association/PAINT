@@ -51,7 +51,7 @@ class DatasetSplitter:
             raise FileNotFoundError(
                 f"Input file containing metadata does not exist at {input_file}"
             )
-        self.metadata = pd.read_csv(input_file, index_col=mappings.ID_INDEX)
+        self.metadata = pd.read_csv(input_file, index_col=mappings.SAVE_ID_INDEX)
         self.metadata[mappings.DATETIME] = pd.to_datetime(
             self.metadata[mappings.DATETIME]
         ).dt.tz_localize(None)

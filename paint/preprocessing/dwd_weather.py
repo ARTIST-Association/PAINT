@@ -109,7 +109,9 @@ class DWDWeatherData:
 
     def _get_raw_data(
         self,
-    ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    ) -> tuple[
+        pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame
+    ]:  # pragma: no cover
         """
         Download the raw data using the DWD Wetterdienst pacakge.
 
