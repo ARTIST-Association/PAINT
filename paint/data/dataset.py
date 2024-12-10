@@ -248,7 +248,7 @@ class PaintCalibrationDataset(Dataset):
         Parameters
         ----------
         splits : pd.DataFrame
-            Information on the splits to be downlaoded.
+            Information on the splits to be downloaded.
         root_dir : Union[str, Path]
             Directory where the data will be stored.
         item_type : str
