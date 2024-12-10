@@ -1,5 +1,6 @@
 import argparse
 
+import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.dataset import PaintCalibrationDataset
 from paint.util import set_logger_config
@@ -23,6 +24,13 @@ if __name__ == "__main__":
         "--item_type",
         type=str,
         help="The type of item to be loaded -- i.e. raw image, cropped image, flux image, or flux centered image",
+        choices=[
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+        ],
         default="calibration_properties",
     )
     args = parser.parse_args()
