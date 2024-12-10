@@ -298,7 +298,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 ],
                 "assets": {
                     "raw_image": {
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-raw.png",
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
@@ -312,7 +312,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
                     },
                     "cropped_image": {
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_cropped.png",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-cropped.png",
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Cropped calibration image with id 115399",
@@ -320,7 +320,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT)",
                     },
                     "flux_image": {
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux.png",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-flux.png",
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Cropped and segmented calibration image with id 115399",
@@ -328,7 +328,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "processing:software": "PAINT target cropper (https://github.com/ARTIST-Association/PAINT), UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
                     },
                     "flux_centered_image": {
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_flux_centered.png",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-flux-centered.png",
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Cropped, segmented, and centered calibration image with id 115399",
@@ -405,7 +405,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                 ],
                 "assets": {
                     "raw_image": {
-                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399_raw.png",
+                        "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-raw.png",
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
