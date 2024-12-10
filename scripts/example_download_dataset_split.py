@@ -40,6 +40,13 @@ if __name__ == "__main__":
         type=str,
         help="List of calibration items to download.",
         nargs="+",
+        choices=[
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+        ],
         default=["calibration_properties"],
     )
     args = parser.parse_args()
