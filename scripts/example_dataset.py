@@ -13,9 +13,9 @@ if __name__ == "__main__":
     This is an example script demonstrating how the ``PaintCalibrationDataset`` can be used. This script shows the three
     ways of creating a ``PaintCalibrationDataset``:
     1.) Directly, when the data is already downloaded and a ``root_dir`` containing the data is available.
-    2.) From a benchmark file, containing information on variaous calibration IDs and what split they belong to. In this
+    2.) From a benchmark file, containing information on various calibration IDs and what split they belong to. In this
      case, both a ``benchmark_file`` and a ``root_dir`` for saving the data are required.
-    3.) From a single heliostats or list of heliostats. In this case, all calibration items for the provided heliostats
+    3.) From a single heliostat or list of heliostats. In this case, all calibration items for the provided heliostats
     will be used to create a dataset. Here, a list of heliostats is required.
     """
     # Read in arguments.
