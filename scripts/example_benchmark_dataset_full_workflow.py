@@ -1,6 +1,7 @@
 import argparse
 import pathlib
 
+import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data import StacClient
 from paint.data.dataset import PaintCalibrationDataset
@@ -36,30 +37,41 @@ if __name__ == "__main__":
         "--split_type",
         type=str,
         help="The split type to apply.",
-        default="azimuth",
+        choices=[mappings.AZIMUTH_SPLIT, mappings.SOLSTICE_SPLIT],
+        default=mappings.AZIMUTH_SPLIT,
     )
     parser.add_argument(
         "--train_size",
         type=int,
-        help="The size of the training split.",
+        help="The number of training samples required per heliostat - the total training size depends on the number of"
+        "heliostats.",
         default=10,
     )
     parser.add_argument(
         "--val_size",
         type=int,
-        help="The size of the validation split.",
+        help="The number of validation samples per heliostat - the total validation size depends on the number of"
+        "heliostats.",
         default=30,
     )
     parser.add_argument(
         "--remove_unused_data",
         type=bool,
-        help="Whether to remove unused data or not.",
+        help="Whether to remove metadata that is not required to load benchmark splits, but may be useful for plots or "
+        "data inspection.",
         default=True,
     )
     parser.add_argument(
         "--item_type",
         type=str,
         help="The type of item to be loaded -- i.e. raw image, cropped image, flux image, or flux centered image",
+        choices=[
+            mappings.CALIBRATION_RAW_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_IMAGE_KEY,
+            mappings.CALIBRATION_FLUX_CENTERED_IMAGE_KEY,
+            mappings.CALIBRATION_PROPERTIES_KEY,
+            mappings.CALIBRATION_CROPPED_IMAGE_KEY,
+        ],
         default="calibration_properties",
     )
     args = parser.parse_args()
@@ -104,10 +116,7 @@ if __name__ == "__main__":
 
     # Determine whether to download the data or not:
     # The first time this script is executed locally, the data must be downloaded, afterward no longer.
-    if dataset_output_dir.exists():
-        dataset_download = False
-    else:
-        dataset_download = True
+    dataset_download = not dataset_output_dir.exists()
 
     # Initialize dataset from benchmark splits.
     train, test, val = PaintCalibrationDataset.from_benchmark(
