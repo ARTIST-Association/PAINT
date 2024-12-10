@@ -52,10 +52,10 @@ def mock_benchmark_data() -> dict[str, Any]:
                 },
             },
         ],
-        ["raw_image", "152144_raw.png"],
-        ["cropped_image", "152144_cropped.png"],
-        ["flux_image", "152144_flux.png"],
-        ["flux_centered_image", "152144_flux_centered.png"],
+        ["raw_image", "152144-raw.png"],
+        ["cropped_image", "152144-cropped.png"],
+        ["flux_image", "152144-flux.png"],
+        ["flux_centered_image", "152144-flux-centered.png"],
     ],
 )
 def test_initialize_dataset(
@@ -281,4 +281,9 @@ def test_str_method() -> None:
         item_ids=None,
         item_type="calibration_properties",
     )
-    print(dataset)
+    expected = (
+        f"This is a dataset containing calibration items from the PAINT database:\n-The root directory is "
+        f"{PAINT_ROOT}/tests/data/test_data/dataset/test\n-The file identifier is -calibration-properties.json\n"
+        f"-The dataset contains 4 items\n"
+    )
+    assert dataset.__str__() == expected
