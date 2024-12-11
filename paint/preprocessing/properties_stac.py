@@ -124,7 +124,7 @@ def make_properties_item(
     dict[str, Any]
         The STAC item data as dictionary.
     """
-    resource = heliostat_key + "-heliostat_properties"
+    resource = heliostat_key + "-heliostat-properties"
     lat_lon = convert_gk_to_lat_long(
         right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.EAST_KEY],
         height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.NORTH_KEY],

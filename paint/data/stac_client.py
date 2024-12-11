@@ -783,7 +783,7 @@ class StacClient:
             elif (
                 heliostat_collection.id.split("-")[1]
                 == mappings.SAVE_DEFLECTOMETRY.lower()
-                or heliostat_collection.id.split("-")[1].split("_")[1]
+                or heliostat_collection.id.split("-")[2]
                 == mappings.SAVE_PROPERTIES.lower()
             ):
                 data.append(

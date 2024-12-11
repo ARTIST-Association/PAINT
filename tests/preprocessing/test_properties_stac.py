@@ -54,7 +54,7 @@ def test_make_properties_collection(
         expected = {
             "stac_version": "1.0.0",
             "stac_extensions": [],
-            "id": "AY39-heliostat_properties-collection",
+            "id": "AY39-heliostat-properties-collection",
             "type": "Collection",
             "title": "Heliostat properties data for AY39",
             "description": "All heliostat properties for heliostat AY39",
@@ -113,7 +113,7 @@ def test_make_properties_collection(
                 },
                 {
                     "rel": "self",
-                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
+                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat-properties-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
@@ -125,7 +125,7 @@ def test_make_properties_collection(
                 },
                 {
                     "rel": "collection",
-                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat_properties-collection-stac.json",
+                    "href": "https://paint-database.org/WRI1030197/AY39/Properties/AY39-heliostat-properties-collection-stac.json",
                     "type": "application/geo+json",
                     "title": "Reference to this STAC collection file",
                 },
@@ -215,11 +215,11 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "AA23-heliostat_properties",
+        "id": "AA23-heliostat-properties",
         "type": "Feature",
         "title": "Heliostat properties of AA23",
         "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematic applied, the facet properties, and, if applicable, the renovation date.",
-        "collection": "AA23-heliostat_properties-collection",
+        "collection": "AA23-heliostat-properties-collection",
         "geometry": {
             "type": "Point",
             "coordinates": [50.9136480567095, 6.386990188439183, 88.711],
@@ -239,7 +239,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat-properties-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -251,20 +251,20 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
             },
             {
                 "rel": "parent",
-                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat-properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
             {
                 "rel": "collection",
-                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat-properties-collection-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to the collection STAC file",
             },
         ],
         "assets": {
-            "heliostat_properties": {
-                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties.json",
+            "heliostat-properties": {
+                "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat-properties.json",
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Heliostat properties for heliostat AA23",

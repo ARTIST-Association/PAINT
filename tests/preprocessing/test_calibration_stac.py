@@ -55,7 +55,7 @@ def calibration_item_data() -> tuple[int, pd.Series]:
         "ApZ": 0.0,
         "OvrExp": 5.34028589409332,
         "Azimuth": -42.06579562155874,
-        "Sun_elevation": 55.621162346471515,
+        "sun_elevation": 55.621162346471515,
     }
     return 115399, pd.Series(data)
 

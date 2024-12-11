@@ -11,14 +11,16 @@ YEAR = "Year"
 MONTH = "Month"
 HOUR = "Hour"
 AZIMUTH = "Azimuth"
-SUN_AZIMUTH = "Sun_azimuth"
+SUN_AZIMUTH = "sun_azimuth"
 ELEVATION = "Elevation"
 ELEVATION_MIN = "Elevation_min"
 ELEVATION_MAX = "Elevation_max"
-SUN_ELEVATION = "Sun_elevation"
+SUN_ELEVATION = "sun_elevation"
 SYSTEM = "System"
 CALIBRATION_TARGET = "CalibrationTargetId"
+AXIS1_MOTOR_SAVE = "axis_1_motor_position"
 AXIS1_MOTOR = "Axis1MotorPosition"
+AXIS2_MOTOR_SAVE = "axis_2_motor_position"
 AXIS2_MOTOR = "Axis2MotorPosition"
 MEASURED_SURFACE = "MeasuredSurface"
 SUN_POSITION_EAST = "SunPosE"
@@ -218,16 +220,16 @@ DEFLECTOMETRY_ITEM_URL = f"{URL_BASE}/%s/{SAVE_DEFLECTOMETRY}/{DEFLECTOMETRY_ITE
 DEFLECTOMETRY_PDF_NAME = "%s-%s-deflectometry-result.pdf"
 DEFLECTOMETRY_INSTRUMENTS = "QDec_2014-101"
 
-HELIOSTAT_PROPERTIES_COLLECTION_ID = "%s-heliostat_properties-collection"
-HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat_properties-collection-stac.json"
+HELIOSTAT_PROPERTIES_COLLECTION_ID = "%s-heliostat-properties-collection"
+HELIOSTAT_PROPERTIES_COLLECTION_FILE = "%s-heliostat-properties-collection-stac.json"
 HELIOSTAT_PROPERTIES_COLLECTION_URL = (
     f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{HELIOSTAT_PROPERTIES_COLLECTION_FILE}"
 )
-HELIOSTAT_PROPERTIES_ITEM = "%s-heliostat_properties-item-stac.json"
+HELIOSTAT_PROPERTIES_ITEM = "%s-heliostat-properties-item-stac.json"
 HELIOSTAT_PROPERTIES_ITEM_URL = (
     f"{URL_BASE}/%s/{SAVE_PROPERTIES}/{HELIOSTAT_PROPERTIES_ITEM}"
 )
-HELIOSTAT_PROPERTIES_SAVE_NAME = "%s-heliostat_properties.json"
+HELIOSTAT_PROPERTIES_SAVE_NAME = "%s-heliostat-properties.json"
 
 WEATHER_COLLECTION_ID = "weather-collection"
 WEATHER_COLLECTION_FILE = "weather-collection-stac.json"
@@ -303,8 +305,8 @@ DWD_STAC_URL = f"{URL_BASE}/{SAVE_WEATHER}/{DWD_STAC_NAME}"
 # Juelich weather keys
 JUELICH_START = "start"
 JUELICH_END = "end"
-JUELICH_FILE_NAME = "%s-juelich_weather"
-JUELICH_STAC_NAME = "%s-juelich_weather-item-stac"
+JUELICH_FILE_NAME = "%s-juelich-weather"
+JUELICH_STAC_NAME = "%s-juelich-weather-item-stac"
 JUELICH_STAC_URL = f"{URL_BASE}/{SAVE_WEATHER}/{JUELICH_STAC_NAME}"
 JUELICH_WEATHER_LAT = 50.916518
 JUELICH_WEATHER_LON = 6.387409
@@ -370,7 +372,7 @@ RENOVATION_ID = "Retrofit_mechanische_Umrüstung"
 
 # Properties mappings
 HELIOSTAT_POSITION_KEY = "heliostat_position"
-HELIOSTAT_PROPERTIES_KEY = "heliostat_properties"
+HELIOSTAT_PROPERTIES_KEY = "heliostat-properties"
 HELIOSTAT_WIDTH_KEY = "width"
 HELIOSTAT_HEIGHT_KEY = "height"
 HELIOSTAT_WIDTH = 3.2200000286102295
