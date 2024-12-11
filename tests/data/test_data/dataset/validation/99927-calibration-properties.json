@@ -1,0 +1,21 @@
+{
+  "motor_position": {
+    "Axis1MotorPosition": 24932,
+    "Axis2MotorPosition": 10723
+  },
+  "target_name": "solar_tower_juelich_upper",
+  "Sun_elevation": 48.63581471219701,
+  "Sun_azimuth": 36.04211082531993,
+  "focal_spot": {
+    "HeliOS": [
+      50.91339202686411,
+      6.387827742011003,
+      129.2833633575732
+    ],
+    "UTIS": [
+      50.91339204305797,
+      6.387828453533465,
+      129.31096649169922
+    ]
+  }
+}

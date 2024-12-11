@@ -28,6 +28,7 @@ DATA_SET_AZIMUTH = "DataSet_Azimuth"
 JUNE_DISTANCE = "Jun_Distance"
 DECEMBER_DISTANCE = "Dec_Distance"
 DATETIME = "DateTime"
+SAVE_ID_INDEX = "Id"
 
 # Dataset
 TOTAL_INDEX = "Total"
@@ -425,7 +426,7 @@ CONCENTRATOR_TRANSLATION_E = 0.0
 CONCENTRATOR_TRANSLATION_N = -0.17755000293254852
 CONCENTRATOR_TRANSLATION_U = -0.40450000762939453
 INITIAL_ORIENTATION_KEY = "initial_orientation"
-INITIAL_ORIENTATION_VALUE = [0.0, 0, 0, 1.0]
+INITIAL_ORIENTATION_VALUE = [0.0, 0.0, 1.0]
 
 ACTUATOR_KEY = "actuators"
 # Name mapping conversion for Heliostat properties
@@ -452,3 +453,11 @@ SOLSTICE_SPLIT = "solstice"
 SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
+
+
+# Keys for Dataset file identifiers.
+CALIBRATION_RAW_IMAGE_IDENTIFIER = "-raw.png"
+CALIBRATION_CROPPED_IMAGE_IDENTIFIER = "-cropped.png"
+CALIBRATION_FLUX_IMAGE_IDENTIFIER = "-flux.png"
+CALIBRATION_FLUX_CENTERED_IMAGE_IDENTIFIER = "-flux-centered.png"
+CALIBRATION_PROPERTIES_IDENTIFIER = "-calibration-properties.json"
