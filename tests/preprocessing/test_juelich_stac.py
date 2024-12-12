@@ -40,7 +40,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
     expected = {
         "stac_version": "1.0.0",
         "stac_extensions": [],
-        "id": "2020-12-juelich_weather",
+        "id": "2020-12-juelich-weather",
         "type": "Feature",
         "title": "Weather data from Juelich for 2020-12",
         "description": "Weather data from the Juelich weather station for 2020-12",
@@ -55,7 +55,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
         "links": [
             {
                 "rel": "self",
-                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather-item-stac.json",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich-weather-item-stac.json",
                 "type": "application/geo+json",
                 "title": "Reference to this STAC file",
             },
@@ -80,7 +80,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
         ],
         "assets": {
             "weather_data": {
-                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich_weather.h5",
+                "href": "https://paint-database.org/WRI1030197/Weather/2020-12-juelich-weather.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Weather data from the Juelich weather station for 2020-12",

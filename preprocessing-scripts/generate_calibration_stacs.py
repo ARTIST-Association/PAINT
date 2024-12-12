@@ -168,8 +168,8 @@ def main(arguments: argparse.Namespace) -> None:
             )
             calibration_properties_data = {
                 mappings.MOTOR_POS_KEY: {
-                    mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
-                    mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+                    mappings.AXIS1_MOTOR_SAVE: heliostat_data[mappings.AXIS1_MOTOR],
+                    mappings.AXIS2_MOTOR_SAVE: heliostat_data[mappings.AXIS2_MOTOR],
                 },
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]
@@ -192,8 +192,8 @@ def main(arguments: argparse.Namespace) -> None:
         else:
             calibration_properties_data = {
                 mappings.MOTOR_POS_KEY: {
-                    mappings.AXIS1_MOTOR: heliostat_data[mappings.AXIS1_MOTOR],
-                    mappings.AXIS2_MOTOR: heliostat_data[mappings.AXIS2_MOTOR],
+                    mappings.AXIS1_MOTOR_SAVE: heliostat_data[mappings.AXIS1_MOTOR],
+                    mappings.AXIS2_MOTOR_SAVE: heliostat_data[mappings.AXIS2_MOTOR],
                 },
                 mappings.TARGET_NAME_KEY: mappings.CALIBRATION_TARGET_TO_NAME[
                     heliostat_data[mappings.CALIBRATION_TARGET]

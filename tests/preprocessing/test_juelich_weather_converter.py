@@ -19,12 +19,12 @@ def test_juelich_weather_convertor():
     """
     # Load the expected HDF5 file.
     expected_hdf5_file = (
-        f"{PAINT_ROOT}/tests/preprocessing/test_data/2021-01-juelich_weather.h5"
+        f"{PAINT_ROOT}/tests/preprocessing/test_data/2021-01-juelich-weather.h5"
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
-        file_name = "2021-01-juelich_weather.h5"
+        file_name = "2021-01-juelich-weather.h5"
 
         # Define and run weather converter.
         weather_converter = JuelichWeatherConverter(

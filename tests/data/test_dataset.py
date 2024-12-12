@@ -36,12 +36,10 @@ def mock_benchmark_data() -> dict[str, Any]:
             "calibration_properties",
             {
                 "motor_position": {
-                    "Axis1MotorPosition": 24102,
-                    "Axis2MotorPosition": 45672,
+                    "axis_1_motor_position": 24102,
+                    "axis_2_motor_position": 45672,
                 },
                 "target_name": "solar_tower_juelich_lower",
-                "Sun_elevation": 24.739052879329904,
-                "Sun_azimuth": -85.60212008930688,
                 "focal_spot": {
                     "HeliOS": [
                         50.91339202853194,
@@ -50,6 +48,8 @@ def mock_benchmark_data() -> dict[str, Any]:
                     ],
                     "UTIS": [50.91339204305797, 6.38782606406048, 122.96865463256836],
                 },
+                "sun_elevation": 24.739052879329904,
+                "sun_azimuth": -85.60212008930688,
             },
         ],
         ["raw_image", "152144-raw.png"],

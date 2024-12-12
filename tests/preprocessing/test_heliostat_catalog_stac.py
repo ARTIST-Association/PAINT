@@ -48,7 +48,7 @@ from paint.preprocessing.heliostat_catalog_stac import make_heliostat_catalog
                     },
                     {
                         "rel": "child",
-                        "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat_properties-collection-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/AA23/Properties/AA23-heliostat-properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },
@@ -88,7 +88,7 @@ from paint.preprocessing.heliostat_catalog_stac import make_heliostat_catalog
                     },
                     {
                         "rel": "child",
-                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat_properties-collection-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat-properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },
@@ -122,7 +122,7 @@ from paint.preprocessing.heliostat_catalog_stac import make_heliostat_catalog
                     },
                     {
                         "rel": "child",
-                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat_properties-collection-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat-properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },
@@ -196,7 +196,7 @@ from paint.preprocessing.heliostat_catalog_stac import make_heliostat_catalog
                     },
                     {
                         "rel": "child",
-                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat_properties-collection-stac.json",
+                        "href": "https://paint-database.org/WRI1030197/AA41/Properties/AA41-heliostat-properties-collection-stac.json",
                         "type": "application/geo+json",
                         "title": "Reference to the STAC collection containing the heliostat properties",
                     },
