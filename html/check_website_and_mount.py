@@ -11,18 +11,41 @@ VM_HOST = "141.52.215.85"
 LOCK_FILE = "/tmp/monitor.lock"
 
 # Initialize email content
-email_subject = "PAINT has an issue - ATTENTION REQUIRED"
+email_subject = "🚨 PAINT ALERT - There is a Problem with the PAINT Database 🚨"
 email_body = []
 
 
-# Functions for each test
-def is_mount_available(mount_point: str):
-    """Check if the mount point is available."""
+def is_mount_available(mount_point: str) -> bool:
+    """
+    Check if the mount point is available.
+
+    Parameters
+    ----------
+    mount_point : str
+        Mount point being checked.
+
+    Returns
+    -------
+    bool
+        Whether mount point is available.
+    """
     return os.path.ismount(mount_point)
 
 
-def is_website_reachable(url: str):
-    """Check if the website is reachable by sending a request."""
+def is_website_reachable(url: str) -> bool:
+    """
+    Check if the website is reachable by sending a request.
+
+    Parameters
+    ----------
+    url : str
+        URL of the website to be checked.
+
+    Returns
+    -------
+    bool
+        Whether the website is reachable by sending a request.
+    """
     try:
         response = requests.get(url, timeout=5)
         return response.status_code == 200
@@ -30,8 +53,20 @@ def is_website_reachable(url: str):
         return False
 
 
-def is_vm_reachable(host):
-    """Check if the VM is reachable using the 'ping' command."""
+def is_vm_reachable(host: str) -> bool:
+    """
+    Check if the VM is reachable using the 'ping' command.
+
+    Parameters
+    ----------
+    host : str
+        The IP address of the VM to be checked.
+
+    Returns
+    -------
+    bool
+        Whether the VM is reachable via ping.
+    """
     try:
         result = subprocess.run(
             ["ping", "-c", "1", "-W", "2", host],
@@ -43,54 +78,53 @@ def is_vm_reachable(host):
         return False
 
 
-def add_error(message):
-    """Add an error message to the email body."""
+def add_error(message: str) -> None:
+    """
+    Add an error message to the email body.
+
+    Parameters
+    ----------
+    message : str
+        The error message to add to the body.
+    """
     email_body.append(message)
 
 
-# Main function
 if __name__ == "__main__":
-    # Check if the lock file exists
+    # Check if the lock file exists.
     if os.path.exists(LOCK_FILE):
+        # If it exists, exit without performing any checks.
         sys.exit(0)
 
-    # Check each service and record errors
+    # Check if the mount point is available.
     if not is_mount_available(MOUNT_POINT):
         add_error(
-            f"❌ Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working."
+            f"❌ The LSDF Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working!"
+        )
+    # Check if the website is reachable.
+    if not is_website_reachable(WEBSITE_URL):
+        add_error(f"❌ Website Check Failed: {WEBSITE_URL} is not reachable!")
+    # Check if the VM is reachable.
+    if not is_vm_reachable(VM_HOST):
+        add_error(f"❌ VM Check Failed: Unable to ping the VM at {VM_HOST}!")
+
+    # If there are any errors, send an email and create a lock file.
+    if email_body:
+        # Add header to email body.
+        email_body.insert(0, "The following issues have been detected with PAINT:\n")
+        email_body.append(
+            "\nPlease address these issues immediately - until they are addressed, PAINT is down!"
         )
 
-    if not is_website_reachable(WEBSITE_URL):
-        add_error(f"❌ Website Check Failed: {WEBSITE_URL} is not reachable.")
-
-    if not is_vm_reachable(VM_HOST):
-        add_error(f"❌ VM Check Failed: Unable to ping the VM at {VM_HOST}.")
-
-    # If there are any errors, send an email and create a lock file
-    if email_body:
-        # Add header to email body
-        email_body.insert(0, "🚨 System Monitoring Alert 🚨\n")
-        email_body.insert(1, "The following issues have been detected:\n")
-        email_body.append("\nPlease address these issues immediately.")
-
-        # Print email content for cron to send as an email
-        print(f"Subject: {email_subject}\n")
+        # Print email content for cron to send as an email.
+        print(f"{email_subject}\n")
         print("\n".join(email_body))
 
         # Create a lock file to prevent repeated alerts
         with open(LOCK_FILE, "w") as f:
             f.write("\n".join(email_body))
 
-        sys.exit(1)  # Exit with an error status to indicate a problem
+        sys.exit(1)  # Exit with an error status to indicate a problem.
 
-    # Silent exit if no errors
-    add_error(
-        f"❌ Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working."
-    )
-    email_body.insert(0, "EVERYTHING IS ACTUALLY OK")
-    email_body.insert(1, "🚨 System Monitoring Alert 🚨\n")
-    email_body.insert(2, "The following issues have been detected:\n")
-    # Print email content for cron to send as an email
-    print(f"Subject: {email_subject}\n")
-    print("\n".join(email_body))
+    # Silent exit if no errors.
     sys.exit(0)
