@@ -895,16 +895,22 @@ class StacClient:
                         chunksize=100,
                     )
 
-            # Create DataFrame from collected data.
-            metadata_df = pd.DataFrame(data).set_index("item_id")
-            metadata_df.index.name = mappings.SAVE_ID_INDEX
-            save_location = (
-                self.output_dir
-                / "metadata"
-                / f"{collection}_metadata_{save_description}.csv"
-            )
-            save_location.parent.mkdir(parents=True, exist_ok=True)
-            metadata_df.to_csv(save_location)
+            # Check that some data has been downloaded:
+            if data:
+                # Create DataFrame from collected data.
+                metadata_df = pd.DataFrame(data).set_index("item_id")
+                metadata_df.index.name = mappings.SAVE_ID_INDEX
+                save_location = (
+                    self.output_dir
+                    / "metadata"
+                    / f"{collection}_metadata_{save_description}.csv"
+                )
+                save_location.parent.mkdir(parents=True, exist_ok=True)
+                metadata_df.to_csv(save_location)
+            else:
+                log.error(
+                    f"There was no metadata available for {collection=} and heliostats \n {heliostats=}"
+                )
 
     @staticmethod
     def _check_filtered_calibration_keys(
