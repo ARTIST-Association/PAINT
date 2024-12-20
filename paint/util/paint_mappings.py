@@ -1,9 +1,10 @@
 # CSV columns
-INTERNAL_NAME_INDEX = "InternalName"
-ID_INDEX = "id"
+INTERNAL_NAME_INDEX = "InternalName" #Not used anymore?
+ID_INDEX = "Id"
 HELIOSTAT_ID = "HeliostatId"
-X_Y_Z_POSITIONS = ["x", "y", "z"]
-DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
+X_Y_Z_POSITIONS = ["x", "y", "z"] #Not used anymore?
+HELIOSTAT_POSITIONS = ["latitude", "longitude", "Elevation"] #shouldn't this be "latitude", "longitude", "altitude"?
+DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable" #Not used anymore?
 CREATED_AT = "CreatedAt"
 FILE_CREATED_AT = "FileCreatedAt"
 UPDATED_AT = "UpdatedAt"
@@ -22,7 +23,7 @@ AXIS1_MOTOR_SAVE = "axis_1_motor_position"
 AXIS1_MOTOR = "Axis1MotorPosition"
 AXIS2_MOTOR_SAVE = "axis_2_motor_position"
 AXIS2_MOTOR = "Axis2MotorPosition"
-MEASURED_SURFACE = "MeasuredSurface"
+MEASURED_SURFACE = "MeasuredSurface" #Not used anymore?
 SUN_POSITION_EAST = "SunPosE"
 SUN_POSITION_NORTH = "SunPosN"
 SUN_POSITION_UP = "SunPosU"
