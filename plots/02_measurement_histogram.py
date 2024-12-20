@@ -312,7 +312,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--path_to_measurements",
         type=str,
-        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
+        default=r"/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--output_path", type=str, default=f"{PAINT_ROOT}/plots/saved_plots"
