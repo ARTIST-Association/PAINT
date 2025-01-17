@@ -10,10 +10,6 @@ WEBSITE_URL = "https://paint-database.org"
 VM_HOST = "141.52.215.85"
 LOCK_FILE = "/tmp/monitor.lock"
 
-# Initialize email content
-email_subject = "🚨 PAINT ALERT - There is a Problem with the PAINT Database 🚨"
-email_body = []
-
 
 def is_mount_available(mount_point: str) -> bool:
     """
@@ -78,38 +74,24 @@ def is_vm_reachable(host: str) -> bool:
         return False
 
 
-def add_error(message: str) -> None:
-    """
-    Add an error message to the email body.
-
-    Parameters
-    ----------
-    message : str
-        The error message to add to the body.
-    """
-    email_body.append(message)
-
-
 if __name__ == "__main__":
-    # Check if the lock file exists.
-    if os.path.exists(LOCK_FILE):
-        # If it exists, exit without performing any checks.
-        sys.exit(0)
+    # Initialize email body
+    email_body = []
 
     # Check if the mount point is available.
     if not is_mount_available(MOUNT_POINT):
-        add_error(
-            f"❌ The LSDF Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working!"
+        email_body.append(
+            "❌ The LSDF Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working!",
         )
     # Check if the website is reachable.
     if not is_website_reachable(WEBSITE_URL):
-        add_error(f"❌ Website Check Failed: {WEBSITE_URL} is not reachable!")
+        email_body.append("❌ Website Check Failed: {WEBSITE_URL} is not reachable!")
     # Check if the VM is reachable.
     if not is_vm_reachable(VM_HOST):
-        add_error(f"❌ VM Check Failed: Unable to ping the VM at {VM_HOST}!")
+        email_body.append(f"❌ VM Check Failed: Unable to ping the VM at {VM_HOST}!")
 
-    # If there are any errors, send an email and create a lock file.
-    if email_body:
+    # First time an error is found, the error should be reported and lock file created
+    if email_body and not os.path.exists(LOCK_FILE):
         # Add header to email body.
         email_body.insert(0, "The following issues have been detected with PAINT:\n")
         email_body.append(
@@ -117,14 +99,20 @@ if __name__ == "__main__":
         )
 
         # Print email content for cron to send as an email.
-        print(f"{email_subject}\n")
+        print("🚨 PAINT ALERT - There is a Problem with the PAINT Database 🚨\n")
         print("\n".join(email_body))
 
         # Create a lock file to prevent repeated alerts
         with open(LOCK_FILE, "w") as f:
             f.write("\n".join(email_body))
 
-        sys.exit(1)  # Exit with an error status to indicate a problem.
-
-    # Silent exit if no errors.
-    sys.exit(0)
+    # For all future occurrences nothing should be printed, to avoid receiving multiple emails for the same error!
+    elif email_body and os.path.exists(LOCK_FILE):
+        # Exit without print.
+        sys.exit(0)
+    elif not email_body and os.path.exists(LOCK_FILE):
+        print("🚨 PAINT ALERT - The PAINT Error Detection System is Locked 🚨\n")
+        print(
+            "It looks like PAINT is running fine, but the lock file has not yet been deleted!\n Please delete the"
+            f"lock file located at {LOCK_FILE} so the error detection system can run as desired!"
+        )
