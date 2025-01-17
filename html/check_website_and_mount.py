@@ -114,5 +114,5 @@ if __name__ == "__main__":
         print("🚨 PAINT ALERT - The PAINT Error Detection System is Locked 🚨\n")
         print(
             "It looks like PAINT is running fine, but the lock file has not yet been deleted!\n Please delete the"
-            f"lock file located at {LOCK_FILE} so the error detection system can run as desired!"
+            f"lock file located at ``{LOCK_FILE}`` so the error detection system can run as desired!"
         )
