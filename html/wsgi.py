@@ -139,8 +139,8 @@ def maintenance() -> str:
                 message += "<br>".join(f"- {error}." for error in lsdf_messages)
             else:
                 message = (
-                    f"According to the website providing information on current errors ({scc_website}), there are no"
-                    f"current issues. We are sorry we cannot automatically provide you with further information - we"
+                    f"According to the website providing information on current errors ({scc_website}), there are no "
+                    f"current issues. We are sorry we cannot automatically provide you with further information - we "
                     f"are working to fix this issue as soon as possible."
                 )
         except Exception:
