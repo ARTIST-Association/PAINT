@@ -42,6 +42,7 @@ sudo a2enmod proxy
 sudo a2enmod proxy_http
 sudo a2enmod alias
 sudo a2enmod cache
+sudo a2enmod rewrite
 
 # Enable headers running.
 sudo a2enmod headers
