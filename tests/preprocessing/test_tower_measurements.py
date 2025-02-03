@@ -66,7 +66,7 @@ from paint.preprocessing.tower_measurements import get_tower_measurements
                 },
                 "receiver": {
                     "type": "convex_cylinder",
-                    "normal_vector": (0, 1, 0),
+                    "normal_vector": (0.0, 0.90630779, -0.42261826),
                     "coordinates": {
                         "center": (
                             50.91341660151,
