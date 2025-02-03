@@ -4,7 +4,7 @@ repos:
     rev: v1.14.1 # Use the sha / tag you want to point at
     hooks:
       - id: mypy
-        additional_dependencies: [types-pytz, types-python-dateutil]
+        additional_dependencies: [types-pytz, types-python-dateutil, types-requests ]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
