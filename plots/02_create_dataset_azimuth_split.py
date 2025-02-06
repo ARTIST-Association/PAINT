@@ -181,7 +181,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--plot_output",
         type=str,
-        default="plots/saved_plots/03_dataset_split_azimuth.pdf",
+        default="plots/saved_plots/02_dataset_split_azimuth.pdf",
         help="File path to save the output plot.",
     )
     parser.add_argument(

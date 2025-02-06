@@ -267,7 +267,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--plot_output",
         type=str,
-        default="plots/saved_plots/04_solstice_split.pdf",
+        default="plots/saved_plots/03_solstice_split.pdf",
         help="File path to save the output plot.",
     )
     parser.add_argument(
