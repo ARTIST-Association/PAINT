@@ -144,7 +144,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--calibration_data_file",
         type=str,
-        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
+        default="PATH/TO/calibration_metadata_all_heliostats.csv",
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
