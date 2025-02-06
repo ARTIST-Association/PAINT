@@ -101,19 +101,14 @@ class HistogramMeasurementPlot:
             The loaded data with additional time features.
         """
         measurements_df = pd.read_csv(path_to_measurements).set_index(mappings.ID_INDEX)
-        measurements_df[mappings.CREATED_AT] = pd.to_datetime(
-            measurements_df[mappings.CREATED_AT]
+        measurements_df[mappings.DATE_TIME] = pd.to_datetime(
+            measurements_df[mappings.DATE_TIME]
         )
-        measurements_df[mappings.YEAR] = measurements_df[mappings.CREATED_AT].dt.year
+        measurements_df[mappings.YEAR] = measurements_df[mappings.DATE_TIME].dt.year
         measurements_df[mappings.MONTH], measurements_df[mappings.HOUR] = (
-            measurements_df[mappings.CREATED_AT].dt.month,
-            measurements_df[mappings.CREATED_AT].dt.hour,
+            measurements_df[mappings.DATE_TIME].dt.month,
+            measurements_df[mappings.DATE_TIME].dt.hour,
         )
-        # Calculate Azimuth and Elevation
-        (
-            measurements_df[mappings.AZIMUTH],
-            measurements_df[mappings.ELEVATION],
-        ) = calculate_azimuth_and_elevation(measurements_df)
 
         return measurements_df
 
