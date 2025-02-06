@@ -1,118 +1,20 @@
-#!/usr/bin/env python
-
 import argparse
-from pathlib import Path
-from typing import Union
-
+import os
 import pandas as pd
-from general_plotting_functions import (
-    mark_insufficient_data_as_nan,
-    plot_stacked_bar_chart_with_inset,
-)
-from matplotlib import pyplot as plt
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+import matplotlib.patches as mpatches
 
-import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
-from paint.util.utils import calculate_azimuth_and_elevation
+# Define mapping constants for our splitting.
+CREATED_AT = "CreatedAt"          # must match the timestamp column in your CSV
+DECEMBER_DISTANCE = "DecemberDistance"
+JUNE_DISTANCE = "JuneDistance"
+TRAIN_INDEX = "train"
+VALIDATION_INDEX = "validation"
+TEST_INDEX = "test"
 
-
-class DatasetSolsticeSplit:
-    """
-    Create solstice-based splits of the dataset.
-
-    This split focuses on the distance to the solstices. The training data is collected near the winter solstice, while
-    the test data is gathered near the summer solstice.
-
-    Attributes
-    ----------
-    measurements_df : pd.DataFrame
-        The measured data.
-    output_path : Union[Path, str]
-        The path to the output directory to save the plots.
-    number_of_train_samples : list[int]
-        The number of samples used for training.
-    number_of_validation_samples : int
-        The number of samples used for validation.
-    file_name : str
-        The file name to save the plot.
-
-    Methods
-    -------
-    load_data()
-        Load the data and include additional features.
-    split_data()
-        Classify the data according to the solstice split.
-    plot_solstice_split()
-        Plot the solstice-split data.
-    """
-
-    def __init__(
-        self,
-        path_to_measurements: Union[Path, str],
-        output_path: Union[str, Path],
-        number_of_train_samples: list[int],
-        number_of_validation_samples: int,
-        default_example_heliostat: int = 11447,
-        file_name: str = "03_combined_plots",
-        save_as_pdf: bool = True,
-    ) -> None:
-        """
-        Initialize the solstice dataset splitter.
-
-        Parameters
-        ----------
-        path_to_measurements : Union[Path, str]
-            The path to the measured data.
-        output_path : Union[Path, str]
-            The path to the output directory to save the plots.
-        number_of_train_samples : list[int]
-            The number of samples used for training.
-        number_of_validation_samples : int
-            The number of samples used for validation.
-        file_name : str
-            The file name to save the plot.
-        save_as_pdf : bool
-            If the output should be saved as PDF (Default: True).
-        """
-        self.measurements_df = self.load_data(
-            Path(path_to_measurements)
-        )  # Data to split
-        self.number_of_train_samples = (
-            number_of_train_samples  # Numbers of train samples to consider
-        )
-        self.number_of_validation_samples = (
-            number_of_validation_samples  # Number of validation samples to use
-        )
-        self.default_example_heliostat = default_example_heliostat
-        self.output_path = Path(output_path)  # Output path to save plotted figure to
-        if not self.output_path.is_dir():
-            self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = file_name + ".pdf" if save_as_pdf else file_name + ".png"
-
-    @staticmethod
-    def load_data(path_to_measurements: Path) -> pd.DataFrame:
-        """
-        Load the data and include additional features.
-
-        Parameters
-        ----------
-        path_to_measurements : Path
-            The path to the measurement data.
-
-        Returns
-        -------
-        pd.DataFrame
-            The loaded data with additional time features.
-        """
-        df = pd.read_csv(path_to_measurements).set_index(
-            mappings.ID_INDEX
-        )  # Set heliostat ID as dataframe index.
-        df[mappings.CREATED_AT] = pd.to_datetime(df[mappings.CREATED_AT])
-        df[mappings.AZIMUTH], df[mappings.ELEVATION] = calculate_azimuth_and_elevation(
-            df
-        )  # Calculate azimuth and elevation from sun vector.
-        return df
-
+class SolsticeDatasetSplitter:
     @staticmethod
     def get_nearest_solstice_distance(timestamp: pd.Timestamp, season: str) -> float:
         """
@@ -121,9 +23,9 @@ class DatasetSolsticeSplit:
         Parameters
         ----------
         timestamp : pd.Timestamp
-            The current time stamp considered.
+            The current timestamp considered.
         season : str
-            Whether to consider summer or winter solstice. Must be either "summer" or "winter".
+            Which solstice to consider: "summer" or "winter".
 
         Returns
         -------
@@ -137,7 +39,7 @@ class DatasetSolsticeSplit:
             month = 12  # Winter solstice month
         else:
             raise ValueError(f"Season {season} must be either summer or winter.")
-        year = timestamp.year  # Considered year
+        year = timestamp.year
         current_solstice = pd.Timestamp(year=year, month=month, day=day, hour=12)
         next_solstice = pd.Timestamp(year=year + 1, month=month, day=day, hour=12)
         previous_solstice = pd.Timestamp(year=year - 1, month=month, day=day, hour=12)
@@ -148,117 +50,240 @@ class DatasetSolsticeSplit:
             abs((timestamp - previous_solstice).total_seconds()),
         )
 
-    def split_data(
-        self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int
-    ) -> pd.DataFrame:
+    def split_data(self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int) -> pd.Series:
         """
-        Split the data according to the date and return the requested fraction.
+        Split the data according to the solstice distance and return a column of split labels.
 
         Parameters
         ----------
         df : pd.DataFrame
-            The dataframe to classify.
+            The dataframe to split.
         split_name : str
-            The name of the split.
+            The name of the new column that will store split labels.
         train_head : int
-            The number of head values to consider in the training dataset.
-        validation_head:
-            The number of head values to consider in the validation dataset.
+            The number of entries (starting at the top after sorting by winter distance)
+            to mark as training.
+        validation_head : int
+            The number of entries (starting at the top after sorting by summer distance)
+            to mark as validation.
 
         Returns
         -------
-        pd.DataFrame
-            The data split according to the date.
+        pd.Series
+            A series with the split label for each row.
         """
-        # Calculate distances to nearest winter and summer solstice.
-        df[mappings.DECEMBER_DISTANCE] = df[mappings.CREATED_AT].apply(
+        # Ensure that the created-at column is a datetime.
+        df[CREATED_AT] = pd.to_datetime(df[CREATED_AT])
+
+        # Calculate distances to the winter and summer solstices.
+        df[DECEMBER_DISTANCE] = df[CREATED_AT].apply(
             lambda x: self.get_nearest_solstice_distance(timestamp=x, season="winter")
-        )  # Winter solstice
-        df[mappings.JUNE_DISTANCE] = df[mappings.CREATED_AT].apply(
+        )
+        df[JUNE_DISTANCE] = df[CREATED_AT].apply(
             lambda x: self.get_nearest_solstice_distance(timestamp=x, season="summer")
-        )  # Summer solstice
+        )
 
-        # Training data is collected near winter solstice.
-        # Sort data by distance to winter solstice and include the `train_head` first time stamps in the training set.
-        df = df.sort_values(by=[mappings.DECEMBER_DISTANCE, mappings.CREATED_AT])
-        train_indices = df.head(train_head).index
-        # Test data is collected near summer solstice.
-        # Sort data by distance to summer solstice and include the `validation_head` first time stamps in the validation
-        # set.
-        df = df.sort_values(by=[mappings.JUNE_DISTANCE, mappings.CREATED_AT])
-        validation_indices = df.head(validation_head).index
+        # Initialize all rows as 'test'.
+        df[split_name] = TEST_INDEX
 
-        # Assign split labels.
-        df[split_name] = mappings.TEST_INDEX
-        df.loc[train_indices, split_name] = mappings.TRAIN_INDEX
-        df.loc[validation_indices, split_name] = mappings.VALIDATION_INDEX
+        # For training, sort by distance to winter solstice (and then by timestamp)
+        df_sorted_winter = df.sort_values(by=[DECEMBER_DISTANCE, CREATED_AT])
+        train_indices = df_sorted_winter.head(train_head).index
+
+        # For validation, sort by distance to summer solstice (and then by timestamp)
+        df_sorted_summer = df.sort_values(by=[JUNE_DISTANCE, CREATED_AT])
+        validation_indices = df_sorted_summer.head(validation_head).index
+
+        # Assign the split labels.
+        df.loc[train_indices, split_name] = TRAIN_INDEX
+        df.loc[validation_indices, split_name] = VALIDATION_INDEX
 
         return df[split_name]
 
-    def plot_solstice_split(self) -> None:
-        """Plot the solstice split."""
-        for i, n in enumerate(self.number_of_train_samples):
-            self.measurements_df[
-                f"{mappings.DATA_SET_AZIMUTH}_{n}"
-            ] = self.measurements_df.groupby(
-                mappings.HELIOSTAT_ID, group_keys=False
-            ).apply(
-                lambda x: self.split_data(
-                    x,
-                    f"{mappings.DATA_SET_AZIMUTH}_{n}",
-                    n,
-                    self.number_of_validation_samples,
-                )
-            )
-            df = mark_insufficient_data_as_nan(
-                self.measurements_df,
-                f"{mappings.DATA_SET_AZIMUTH}_{n}",
-                n,
-                self.number_of_validation_samples,
-            )
-            split_counts_by_heliostat = (
-                df.dropna(subset=[f"{mappings.DATA_SET_AZIMUTH}_{n}"])
-                .groupby([mappings.HELIOSTAT_ID, f"{mappings.DATA_SET_AZIMUTH}_{n}"])
-                .size()
-                .unstack(fill_value=0)
-            )
-            example_heliostat_df = df[
-                df[mappings.HELIOSTAT_ID] == self.default_example_heliostat
-            ]  # chosen arbitrary heliostat but with good distribution
-            plot_stacked_bar_chart_with_inset(
-                split_counts_by_heliostat,
-                example_heliostat_df,
-                f"{mappings.DATA_SET_AZIMUTH}_{n}",
-            )
-        plt.tight_layout()
-        plt.savefig(self.output_path / self.file_name, dpi=300)
+def main(
+    calibration_data_file,
+    training_sizes,
+    validation_sizes,
+    create_new_datasets,
+    output_dir,
+    plot_output,
+    example_heliostat_id,
+):
+    # Ensure the output directory exists.
+    os.makedirs(output_dir, exist_ok=True)
 
+    splitter = SolsticeDatasetSplitter()
+
+    # (Optional) Create new solstice-based split datasets.
+    if create_new_datasets:
+        # Load the full calibration data.
+        calibration_data = pd.read_csv(calibration_data_file)
+        # For each combination of training and validation sizes,
+        # create a split and save a CSV with just the Id and split label.
+        for train_head in training_sizes:
+            for validation_head in validation_sizes:
+                split_series = splitter.split_data(
+                    calibration_data.copy(),
+                    split_name="Split",
+                    train_head=train_head,
+                    validation_head=validation_head,
+                )
+                split_df = pd.DataFrame({
+                    "Id": calibration_data["Id"],
+                    "Split": split_series
+                })
+                file_name = f"{output_dir}/benchmark_split-solstice_train-{train_head}_validation-{validation_head}.csv"
+                split_df.to_csv(file_name, index=False)
+                print(f"Saved split dataset to {file_name}")
+
+    # Build a list of file paths for plotting.
+    file_paths = []
+    for train_head in training_sizes:
+        for validation_head in validation_sizes:
+            file_name = f"{output_dir}/benchmark_split-solstice_train-{train_head}_validation-{validation_head}.csv"
+            file_paths.append(file_name)
+
+    # Define shared colors for each split.
+    colors = {"train": "blue", "test": "red", "validation": "green"}
+
+    # Create a subplot for each dataset.
+    num_files = len(file_paths)
+    fig, axes = plt.subplots(1, num_files, figsize=(18, 6), sharey=True)
+    if num_files == 1:
+        axes = [axes]
+
+    for i, file_path in enumerate(file_paths):
+        # Load the split information.
+        split_data = pd.read_csv(file_path, usecols=["Id", "Split"])
+
+        # Load the full calibration data and merge the split info by Id.
+        calibration_data = pd.read_csv(calibration_data_file)
+        calibration_data["Split"] = calibration_data["Id"].map(
+            split_data.set_index("Id")["Split"]
+        )
+
+        # Group by HeliostatId and Split to count the number of entries.
+        split_counts = (
+            calibration_data.groupby(["HeliostatId", "Split"])
+            .size()
+            .unstack(fill_value=0)
+        )
+        split_counts["Total"] = split_counts.sum(axis=1)
+        split_counts = split_counts.sort_values(by="Total", ascending=False).drop(columns=["Total"])
+
+        # Reorder columns so that train, test, then validation are shown.
+        split_counts = split_counts.reindex(columns=["train", "test", "validation"], fill_value=0)
+
+        # Replace HeliostatId with sequential numbers.
+        num_heliostats = len(split_counts)
+        split_counts.index = range(num_heliostats)
+
+        # Plot as a stacked bar plot.
+        bar_colors = [colors.get(split, "gray") for split in split_counts.columns]
+        split_counts.plot(kind="bar", stacked=True, ax=axes[i], legend=False, color=bar_colors)
+
+        axes[i].set_xlabel("ID", fontsize=12)
+        if i == 0:
+            axes[i].set_ylabel("Count", fontsize=12)
+        axes[i].tick_params(axis="x", rotation=45)
+        ticks = list(range(0, num_heliostats, 200))
+        axes[i].set_xticks(ticks)
+
+        # Extract training and validation info from the file name.
+        try:
+            parts = file_path.split("_")
+            train_indicator = parts[2]  # e.g., "train-10"
+            val_indicator = parts[3]    # e.g., "validation-30.csv"
+            val_indicator = val_indicator.split('.')[0]
+        except IndexError:
+            train_indicator = file_path
+            val_indicator = ""
+        axes[i].set_title(f"Solstice Split: {train_indicator}, {val_indicator}", fontsize=14)
+
+        # --- Add an inset plot for the example heliostat ---
+        example_heliostat_df = calibration_data[calibration_data["HeliostatId"] == example_heliostat_id]
+        inset_ax = inset_axes(
+            axes[i],
+            width="50%",
+            height="50%",
+            loc="upper right",
+            bbox_to_anchor=(0, -0.05, 1, 1),
+            bbox_transform=axes[i].transAxes,
+        )
+        for split, color in colors.items():
+            subset = example_heliostat_df[example_heliostat_df["Split"] == split]
+            if not subset.empty:
+                inset_ax.scatter(subset["Azimuth"], subset["Elevation"], color=color, alpha=0.5)
+        inset_ax.set_title(f"Heliostat {example_heliostat_id}", fontsize=10, pad=-5)
+        inset_ax.set_xlabel("Azimuth", fontsize=8)
+        inset_ax.set_ylabel("Elevation", fontsize=8)
+        inset_ax.tick_params(axis="both", labelsize=8)
+
+    # Create a single legend on the first subplot.
+    legend_handles = [mpatches.Patch(color=colors[split], label=split.capitalize()) for split in colors]
+    axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
+
+    plt.tight_layout()
+    plt.savefig(plot_output, dpi=300)
+    plt.close()
+    print(f"Plot saved to {plot_output}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
+    parser = argparse.ArgumentParser(
+        description="Plot dataset split distributions with insets for an example heliostat "
+                    "using solstice-based splitting."
+    )
     parser.add_argument(
-        "--path_to_measurements",
+        "--calibration_data_file",
         type=str,
-        default=f"{PAINT_ROOT}/ExampleDataKIT/dataframe.csv",
+        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
+        help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
-        "--output_path", type=str, default=f"{PAINT_ROOT}/plots/saved_plots"
+        "--training_sizes",
+        type=int,
+        nargs="+",
+        default=[10, 50, 100],
+        help="List of training head sizes to use.",
     )
-    parser.add_argument("--number_of_train_samples", default=[10, 50, 100])
-    parser.add_argument("--number_of_validation_samples", default=30)
-    parser.add_argument("--default_example_heliostat", type=int, default=11447)
-    parser.add_argument("--file_name", type=str, default="04_combined_plots")
-    parser.add_argument("--save_as_pdf", action="store_true", default=True)
+    parser.add_argument(
+        "--validation_sizes",
+        type=int,
+        nargs="+",
+        default=[30],
+        help="List of validation head sizes to use.",
+    )
+    parser.add_argument(
+        "--create_new_datasets",
+        action="store_true",
+        help="Flag to create new solstice-based split datasets if needed.",
+    )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default="data",
+        help="Directory to store the generated datasets.",
+    )
+    parser.add_argument(
+        "--plot_output",
+        type=str,
+        default="plots/saved_plots/04_solstice_split.pdf",
+        help="File path to save the output plot.",
+    )
+    parser.add_argument(
+        "--example_heliostat_id",
+        type=str,
+        default="AA23",
+        help="Heliostat ID to show in every inset.",
+    )
     args = parser.parse_args()
 
-    plotter = DatasetSolsticeSplit(
-        path_to_measurements=args.path_to_measurements,
-        output_path=args.output_path,
-        number_of_train_samples=args.number_of_train_samples,
-        number_of_validation_samples=args.number_of_validation_samples,
-        default_example_heliostat=args.default_example_heliostat,
-        file_name=args.file_name,
-        save_as_pdf=args.save_as_pdf,
+    main(
+        calibration_data_file=args.calibration_data_file,
+        training_sizes=args.training_sizes,
+        validation_sizes=args.validation_sizes,
+        create_new_datasets=args.create_new_datasets,
+        output_dir=args.output_dir,
+        plot_output=args.plot_output,
+        example_heliostat_id=args.example_heliostat_id,
     )
-    plotter.plot_solstice_split()
