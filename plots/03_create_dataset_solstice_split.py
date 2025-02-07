@@ -5,15 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.patches as mpatches
-
+import paint.util.paint_mappings as mappings
 # Define mapping constants for our splitting.
-CREATED_AT = "CreatedAt"  # must match the timestamp column in your CSV
-DECEMBER_DISTANCE = "DecemberDistance"
-JUNE_DISTANCE = "JuneDistance"
-TRAIN_INDEX = "train"
-VALIDATION_INDEX = "validation"
-TEST_INDEX = "test"
-
 
 class SolsticeDatasetSplitter:
     @staticmethod
@@ -51,9 +44,7 @@ class SolsticeDatasetSplitter:
             abs((timestamp - previous_solstice).total_seconds()),
         )
 
-    def split_data(
-        self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int
-    ) -> pd.Series:
+    def split_data(self, df: pd.DataFrame, split_name: str, train_head: int, validation_head: int) -> pd.Series:
         """
         Split the data according to the solstice distance and return a column of split labels.
 
@@ -76,33 +67,32 @@ class SolsticeDatasetSplitter:
             A series with the split label for each row.
         """
         # Ensure that the created-at column is a datetime.
-        df[CREATED_AT] = pd.to_datetime(df[CREATED_AT])
+        df[mappings.CREATED_AT] = pd.to_datetime(df[mappings.CREATED_AT])
 
         # Calculate distances to the winter and summer solstices.
-        df[DECEMBER_DISTANCE] = df[CREATED_AT].apply(
-            lambda x: self.get_nearest_solstice_distance(timestamp=x, season="winter")
+        df[mappings.DECEMBER_DISTANCE] = df[mappings.CREATED_AT].apply(
+            lambda x: self.get_nearest_solstice_distance(timestamp=x, season=mappings.WINTER_SEASON)
         )
-        df[JUNE_DISTANCE] = df[CREATED_AT].apply(
-            lambda x: self.get_nearest_solstice_distance(timestamp=x, season="summer")
+        df[mappings.JUNE_DISTANCE] = df[mappings.CREATED_AT].apply(
+            lambda x: self.get_nearest_solstice_distance(timestamp=x, season=mappings.SUMMER_SEASON)
         )
 
         # Initialize all rows as 'test'.
-        df[split_name] = TEST_INDEX
+        df[split_name] = mappings.TEST_INDEX
 
         # For training, sort by distance to winter solstice (and then by timestamp)
-        df_sorted_winter = df.sort_values(by=[DECEMBER_DISTANCE, CREATED_AT])
+        df_sorted_winter = df.sort_values(by=[mappings.DECEMBER_DISTANCE, mappings.CREATED_AT])
         train_indices = df_sorted_winter.head(train_head).index
 
         # For validation, sort by distance to summer solstice (and then by timestamp)
-        df_sorted_summer = df.sort_values(by=[JUNE_DISTANCE, CREATED_AT])
+        df_sorted_summer = df.sort_values(by=[mappings.JUNE_DISTANCE, mappings.CREATED_AT])
         validation_indices = df_sorted_summer.head(validation_head).index
 
         # Assign the split labels.
-        df.loc[train_indices, split_name] = TRAIN_INDEX
-        df.loc[validation_indices, split_name] = VALIDATION_INDEX
+        df.loc[train_indices, split_name] = mappings.TRAIN_INDEX
+        df.loc[validation_indices, split_name] = mappings.VALIDATION_INDEX
 
         return df[split_name]
-
 
 def main(
     calibration_data_file,
@@ -128,13 +118,14 @@ def main(
             for validation_head in validation_sizes:
                 split_series = splitter.split_data(
                     calibration_data.copy(),
-                    split_name="Split",
+                    split_name=mappings.SPLIT_KEY,
                     train_head=train_head,
                     validation_head=validation_head,
                 )
-                split_df = pd.DataFrame(
-                    {"Id": calibration_data["Id"], "Split": split_series}
-                )
+                split_df = pd.DataFrame({
+                    "Id": calibration_data["Id"],
+                    "Split": split_series
+                })
                 file_name = f"{output_dir}/benchmark_split-solstice_train-{train_head}_validation-{validation_head}.csv"
                 split_df.to_csv(file_name, index=False)
                 print(f"Saved split dataset to {file_name}")
@@ -147,7 +138,8 @@ def main(
             file_paths.append(file_name)
 
     # Define shared colors for each split.
-    colors = {"train": "blue", "test": "red", "validation": "green"}
+    colors = mappings.TRAIN_TEST_VAL_COLORS
+
 
     # Create a subplot for each dataset.
     num_files = len(file_paths)
@@ -156,30 +148,28 @@ def main(
         axes = [axes]
 
     for i, file_path in enumerate(file_paths):
-        # Load the split information.
-        split_data = pd.read_csv(file_path, usecols=["Id", "Split"])
-
+        
         # Load the full calibration data and merge the split info by Id.
         calibration_data = pd.read_csv(calibration_data_file)
-        calibration_data["Split"] = calibration_data["Id"].map(
-            split_data.set_index("Id")["Split"]
+        # Load the split information.
+        split_data = pd.read_csv(file_path, usecols=[mappings.ID_INDEX, mappings.SPLIT_KEY])
+        calibration_data[mappings.SPLIT_KEY] = calibration_data[mappings.ID_INDEX].map(
+            split_data.set_index(mappings.ID_INDEX)[mappings.SPLIT_KEY]
         )
+
+
 
         # Group by HeliostatId and Split to count the number of entries.
         split_counts = (
-            calibration_data.groupby(["HeliostatId", "Split"])
+            calibration_data.groupby([mappings.HELIOSTAT_ID, mappings.SPLIT_KEY])
             .size()
             .unstack(fill_value=0)
         )
         split_counts["Total"] = split_counts.sum(axis=1)
-        split_counts = split_counts.sort_values(by="Total", ascending=False).drop(
-            columns=["Total"]
-        )
+        split_counts = split_counts.sort_values(by="Total", ascending=False).drop(columns=["Total"])
 
         # Reorder columns so that train, test, then validation are shown.
-        split_counts = split_counts.reindex(
-            columns=["train", "test", "validation"], fill_value=0
-        )
+        split_counts = split_counts.reindex(columns=[mappings.TRAIN_INDEX, mappings.TEST_INDEX, mappings.VALIDATION_INDEX], fill_value=0)
 
         # Replace HeliostatId with sequential numbers.
         num_heliostats = len(split_counts)
@@ -187,9 +177,7 @@ def main(
 
         # Plot as a stacked bar plot.
         bar_colors = [colors.get(split, "gray") for split in split_counts.columns]
-        split_counts.plot(
-            kind="bar", stacked=True, ax=axes[i], legend=False, color=bar_colors
-        )
+        split_counts.plot(kind="bar", stacked=True, ax=axes[i], legend=False, color=bar_colors)
 
         axes[i].set_xlabel("ID", fontsize=12)
         if i == 0:
@@ -199,22 +187,17 @@ def main(
         axes[i].set_xticks(ticks)
 
         # Extract training and validation info from the file name.
+        parts = file_path.split("_")
         try:
-            parts = file_path.split("_")
-            train_indicator = parts[2]  # e.g., "train-10"
-            val_indicator = parts[3]  # e.g., "validation-30.csv"
-            val_indicator = val_indicator.split(".")[0]
-        except IndexError:
+            train_indicator = next(part for part in parts if part.startswith("train"))
+            val_indicator = next(part for part in parts if part.startswith("validation")).split(".")[0]
+        except (IndexError, StopIteration):
             train_indicator = file_path
             val_indicator = ""
-        axes[i].set_title(
-            f"Solstice Split: {train_indicator}, {val_indicator}", fontsize=14
-        )
+        axes[i].set_title(f"Solstice Split: {train_indicator}, {val_indicator}", fontsize=14)
 
         # --- Add an inset plot for the example heliostat ---
-        example_heliostat_df = calibration_data[
-            calibration_data["HeliostatId"] == example_heliostat_id
-        ]
+        example_heliostat_df = calibration_data[calibration_data[mappings.HELIOSTAT_ID] == example_heliostat_id]
         inset_ax = inset_axes(
             axes[i],
             width="50%",
@@ -224,21 +207,16 @@ def main(
             bbox_transform=axes[i].transAxes,
         )
         for split, color in colors.items():
-            subset = example_heliostat_df[example_heliostat_df["Split"] == split]
+            subset = example_heliostat_df[example_heliostat_df[mappings.SPLIT_KEY] == split]
             if not subset.empty:
-                inset_ax.scatter(
-                    subset["Azimuth"], subset["Elevation"], color=color, alpha=0.5
-                )
+                inset_ax.scatter(subset[mappings.AZIMUTH], subset[mappings.ELEVATION], color=color, alpha=0.5)
         inset_ax.set_title(f"Heliostat {example_heliostat_id}", fontsize=10, pad=-5)
         inset_ax.set_xlabel("Azimuth", fontsize=8)
         inset_ax.set_ylabel("Elevation", fontsize=8)
         inset_ax.tick_params(axis="both", labelsize=8)
 
     # Create a single legend on the first subplot.
-    legend_handles = [
-        mpatches.Patch(color=colors[split], label=split.capitalize())
-        for split in colors
-    ]
+    legend_handles = [mpatches.Patch(color=colors[split], label=split.capitalize()) for split in colors]
     axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
 
     plt.tight_layout()
@@ -246,11 +224,10 @@ def main(
     plt.close()
     print(f"Plot saved to {plot_output}")
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Plot dataset split distributions with insets for an example heliostat "
-        "using solstice-based splitting."
+                    "using solstice-based splitting."
     )
     parser.add_argument(
         "--calibration_data_file",
