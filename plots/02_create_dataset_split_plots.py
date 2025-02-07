@@ -12,6 +12,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from paint.data.dataset_splits import DatasetSplitter
 import paint.util.paint_mappings as mappings  # Import the mapping file
 
+
 def main(
     calibration_metadata_file: str,
     split_types: list[str],
@@ -60,12 +61,14 @@ def main(
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     if not os.path.exists(calibration_metadata_file):
-        raise FileNotFoundError(f"Calibration metadata file '{calibration_metadata_file}' not found.")
+        raise FileNotFoundError(
+            f"Calibration metadata file '{calibration_metadata_file}' not found."
+        )
 
     splitter = DatasetSplitter(
         input_file=calibration_metadata_file,
         output_dir=output_dir,
-        remove_unused_data=False
+        remove_unused_data=False,
     )
 
     # Optionally create/recreate the dataset splits.
@@ -76,7 +79,9 @@ def main(
                     splitter.get_dataset_splits(
                         split_type=split_type,
                         training_size=training_size,
-                        validation_size=validation_sizes[0],  # each call must satisfy the minimum images per heliostat.
+                        validation_size=validation_sizes[
+                            0
+                        ],  # each call must satisfy the minimum images per heliostat.
                     )
 
     # Read the full calibration metadata once.
@@ -106,9 +111,9 @@ def main(
         nrows = len(validation_sizes)
         num_plots = ncols * nrows
 
-        fig, axes = plt.subplots(nrows=nrows, ncols=ncols,
-                                 figsize=(6 * ncols, 5 * nrows),
-                                 sharey=True)
+        fig, axes = plt.subplots(
+            nrows=nrows, ncols=ncols, figsize=(6 * ncols, 5 * nrows), sharey=True
+        )
 
         # Flatten axes so that we can iterate uniformly.
         if num_plots == 1:
@@ -117,9 +122,13 @@ def main(
             axes = np.array(axes).flatten()
 
         # For each combination, create a subplot.
-        for ax, ((training_size, validation_size), split_df) in zip(axes, current_split_data.items()):
+        for ax, ((training_size, validation_size), split_df) in zip(
+            axes, current_split_data.items()
+        ):
             # Merge the split info into the full calibration data.
-            split_df_reset = split_df.reset_index()  # bring the ID (index) back as a column
+            split_df_reset = (
+                split_df.reset_index()
+            )  # bring the ID (index) back as a column
             merged_data = pd.merge(
                 calibration_data,
                 split_df_reset[[mappings.ID_INDEX, mappings.SPLIT_KEY]],
@@ -135,13 +144,17 @@ def main(
             )
             # Add total counts for sorting and then drop the helper column.
             split_counts[mappings.TOTAL_INDEX] = split_counts.sum(axis=1)
-            split_counts = split_counts.sort_values(by=mappings.TOTAL_INDEX, ascending=False).drop(
-                columns=[mappings.TOTAL_INDEX]
-            )
+            split_counts = split_counts.sort_values(
+                by=mappings.TOTAL_INDEX, ascending=False
+            ).drop(columns=[mappings.TOTAL_INDEX])
             # Reorder columns: train, then test, then validation.
             split_counts = split_counts.reindex(
-                columns=[mappings.TRAIN_INDEX, mappings.TEST_INDEX, mappings.VALIDATION_INDEX],
-                fill_value=0
+                columns=[
+                    mappings.TRAIN_INDEX,
+                    mappings.TEST_INDEX,
+                    mappings.VALIDATION_INDEX,
+                ],
+                fill_value=0,
             )
 
             # Replace the heliostat IDs with sequential numbers (for plotting purposes).
@@ -153,7 +166,9 @@ def main(
             bar_colors = [colors.get(split, "gray") for split in split_counts.columns]
 
             # Plot the stacked bar plot.
-            split_counts.plot(kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors)
+            split_counts.plot(
+                kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors
+            )
             ax.set_xlabel(mappings.ID_KEY, fontsize=10)
             ax.set_ylabel("Count", fontsize=10)
             ax.tick_params(axis="x", rotation=45)
@@ -176,12 +191,16 @@ def main(
                 bbox_transform=ax.transAxes,
             )
             for split, color in colors.items():
-                subset = example_heliostat_df[example_heliostat_df[mappings.SPLIT_KEY] == split]
+                subset = example_heliostat_df[
+                    example_heliostat_df[mappings.SPLIT_KEY] == split
+                ]
                 if not subset.empty:
-                    inset_ax.scatter(subset[mappings.AZIMUTH],
-                                     subset[mappings.ELEVATION],
-                                     color=color,
-                                     alpha=0.5)
+                    inset_ax.scatter(
+                        subset[mappings.AZIMUTH],
+                        subset[mappings.ELEVATION],
+                        color=color,
+                        alpha=0.5,
+                    )
             inset_ax.set_title(f"Heliostat {example_heliostat_id}", fontsize=8, pad=-5)
             inset_ax.set_xlabel("Azimuth", fontsize=8)
             inset_ax.set_ylabel("Elevation", fontsize=8)
@@ -189,7 +208,8 @@ def main(
 
         # Create a common legend (placed in the upper left of the first subplot).
         legend_handles = [
-            mpatches.Patch(color=colors[split], label=split.capitalize()) for split in colors
+            mpatches.Patch(color=colors[split], label=split.capitalize())
+            for split in colors
         ]
         axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
 
@@ -199,6 +219,7 @@ def main(
         plt.savefig(file_name, dpi=300)
         plt.close(fig)
         print(f"Saved plot for split type '{split_type}' to {file_name}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
