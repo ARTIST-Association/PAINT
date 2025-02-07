@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import matplotlib.patches as mpatches
-import paint.util.paint_mappings as mappings
-# Define mapping constants for our splitting.
+import paint.util.paint_mappings as mappings # List all available attributes
+import inspect
 
 
 class SolsticeDatasetSplitter:
@@ -105,6 +105,7 @@ def main(
     plot_output,
     example_heliostat_id,
 ):
+# Define mapping constants for our splitting.
     # Ensure the output directory exists.
     os.makedirs(output_dir, exist_ok=True)
 
@@ -236,7 +237,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--calibration_data_file",
         type=str,
-        default="PATH/TO/calibration_metadata_all_heliostats.csv",
+        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
