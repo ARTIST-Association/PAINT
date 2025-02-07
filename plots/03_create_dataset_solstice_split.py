@@ -8,6 +8,7 @@ import matplotlib.patches as mpatches
 import paint.util.paint_mappings as mappings
 # Define mapping constants for our splitting.
 
+
 class SolsticeDatasetSplitter:
     @staticmethod
     def get_nearest_solstice_distance(timestamp: pd.Timestamp, season: str) -> float:
@@ -92,6 +93,7 @@ class SolsticeDatasetSplitter:
         df.loc[train_indices, split_name] = mappings.TRAIN_INDEX
         df.loc[validation_indices, split_name] = mappings.VALIDATION_INDEX
 
+
         return df[split_name]
 
 def main(
@@ -119,6 +121,7 @@ def main(
                 split_series = splitter.split_data(
                     calibration_data.copy(),
                     split_name=mappings.SPLIT_KEY,
+
                     train_head=train_head,
                     validation_head=validation_head,
                 )
@@ -148,7 +151,6 @@ def main(
         axes = [axes]
 
     for i, file_path in enumerate(file_paths):
-        
         # Load the full calibration data and merge the split info by Id.
         calibration_data = pd.read_csv(calibration_data_file)
         # Load the split information.
@@ -170,6 +172,7 @@ def main(
 
         # Reorder columns so that train, test, then validation are shown.
         split_counts = split_counts.reindex(columns=[mappings.TRAIN_INDEX, mappings.TEST_INDEX, mappings.VALIDATION_INDEX], fill_value=0)
+
 
         # Replace HeliostatId with sequential numbers.
         num_heliostats = len(split_counts)
@@ -198,6 +201,7 @@ def main(
 
         # --- Add an inset plot for the example heliostat ---
         example_heliostat_df = calibration_data[calibration_data[mappings.HELIOSTAT_ID] == example_heliostat_id]
+
         inset_ax = inset_axes(
             axes[i],
             width="50%",
