@@ -453,7 +453,7 @@ HELIOSTAT_PROPERTIES_CONVERSION_MAP = {
     "AngleW_axis": "movement_speed",
 }
 
-# Keys for dataset splits
+# Keys for dataset splits used in 02_create_dataset_azimuth_split.py and 03_create_dataset_solstice_split.py
 AZIMUTH_SPLIT = "azimuth"
 SOLSTICE_SPLIT = "solstice"
 SPLIT_KEY = "Split"
@@ -462,7 +462,8 @@ DISTANCE_SUMMER = "distance_summer"
 WINTER_SEASON = "winter"
 SUMMER_SEASON = "summer"
 TRAIN_TEST_VAL_COLORS = {TRAIN_INDEX: "blue", TEST_INDEX: "red", VALIDATION_INDEX: "green"}
-
+PLOT_SAVE_PATH = "plots/saved_plots/"
+AZIMUTH_SPLIT_PLOT = "02_dataset_split_azimuth.pdf"
 
 
 # Keys for Dataset file identifiers.

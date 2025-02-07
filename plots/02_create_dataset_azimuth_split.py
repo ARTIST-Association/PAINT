@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from paint.data.dataset_splits import DatasetSplitter
 import matplotlib.patches as mpatches
+import paint.util.paint_mappings as mappings  # Import the mapping file
 
 
 def main(
@@ -32,18 +33,15 @@ def main(
                     )
 
     # Build a list of dataset file paths based on provided parameters.
-    file_paths = []
-    for training_size in training_sizes:
-        for validation_size in validation_sizes:
-            for split_type in split_types:
-                file_name = (
-                    f"{output_dir}/benchmark_split-{split_type}_train-{training_size}_"
-                    f"validation-{validation_size}.csv"
-                )
-                file_paths.append(file_name)
+    file_paths = [
+        f"{output_dir}/benchmark_split-{split_type}_train-{training_size}_validation-{validation_size}.csv"
+        for training_size in training_sizes
+        for validation_size in validation_sizes
+        for split_type in split_types
+    ]
 
     # Shared color mapping for splits (used in both the main plot and the inset)
-    colors = {"train": "blue", "test": "red", "validation": "green"}
+    colors = mappings.TRAIN_TEST_VAL_COLORS
 
     # Initialize subplots for each dataset file.
     num_files = len(file_paths)
@@ -53,27 +51,33 @@ def main(
 
     for i, file_path in enumerate(file_paths):
         # Load split information for the current file.
-        split_data = pd.read_csv(file_path, usecols=["Id", "Split"])
+        try:
+            split_data = pd.read_csv(file_path, usecols=[mappings.ID_INDEX, mappings.SPLIT_KEY])
+        except FileNotFoundError:
+            print(f"Warning: File not found - {file_path}")
+            continue
 
         # Load the full calibration data and merge the split info by matching on 'Id'.
         calibration_data = pd.read_csv(calibration_data_file)
-        calibration_data["Split"] = calibration_data["Id"].map(
-            split_data.set_index("Id")["Split"]
+        calibration_data[mappings.SPLIT_KEY] = calibration_data[mappings.ID_INDEX].map(
+            split_data.set_index(mappings.ID_INDEX)[mappings.SPLIT_KEY]
         )
 
         # Group by HeliostatId and Split to count occurrences.
         split_counts = (
-            calibration_data.groupby(["HeliostatId", "Split"])
+            calibration_data.groupby([mappings.HELIOSTAT_ID, mappings.SPLIT_KEY])
             .size()
             .unstack(fill_value=0)
         )
-        split_counts["Total"] = split_counts.sum(axis=1)
-        split_counts = split_counts.sort_values(by="Total", ascending=False).drop(
-            columns=["Total"]
+        split_counts[mappings.TOTAL_INDEX] = split_counts.sum(axis=1)
+        split_counts = split_counts.sort_values(by=mappings.TOTAL_INDEX, ascending=False).drop(
+            columns=[mappings.TOTAL_INDEX]
         )
 
         # Reorder the columns so that 'train' is first, then 'test', then 'validation'.
-        split_counts = split_counts.reindex(columns=["train", "test", "validation"], fill_value=0)
+        split_counts = split_counts.reindex(
+            columns=[mappings.TRAIN_INDEX, mappings.TEST_INDEX, mappings.VALIDATION_INDEX], fill_value=0
+        )
 
         # Replace the HeliostatId with sequential numbers starting at 0.
         num_heliostats = len(split_counts)
@@ -86,9 +90,9 @@ def main(
         split_counts.plot(kind="bar", stacked=True, ax=axes[i], legend=False, color=bar_colors)
 
         # Set the x-axis label to "ID" and the y-axis label on the first subplot.
-        axes[i].set_xlabel("ID", fontsize=12)
+        axes[i].set_xlabel(mappings.ID_KEY, fontsize=12)
         if i == 0:
-            axes[i].set_ylabel("Count", fontsize=12)
+            axes[i].set_ylabel(mappings.TOTAL_INDEX, fontsize=12)
 
         # Rotate x tick labels and show only every 200th tick.
         axes[i].tick_params(axis="x", rotation=45)
@@ -96,15 +100,18 @@ def main(
         axes[i].set_xticks(ticks)
 
         # Extract a training-size indicator from the file name (e.g. 'train-10').
+        parts = file_path.split("_")
         try:
-            train_indicator = file_path.split("_")[2]
-        except IndexError:
+            train_indicator = next(part for part in parts if part.startswith(mappings.TRAIN_INDEX)).split(".")[0]
+            val_indicator = next(part for part in parts if part.startswith(mappings.VALIDATION_INDEX)).split(".")[0]
+        except (IndexError, StopIteration):
             train_indicator = file_path
-        axes[i].set_title(f"Distribution for {train_indicator}", fontsize=14)
+            val_indicator = ""
+        axes[i].set_title(f"Distribution: {train_indicator}, {val_indicator}", fontsize=14)
 
         # ---- Add an inset in the current subplot for the example heliostat ----
         example_heliostat_df = calibration_data[
-            calibration_data["HeliostatId"] == example_heliostat_id
+            calibration_data[mappings.HELIOSTAT_ID] == example_heliostat_id
         ]
 
         inset_ax = inset_axes(
@@ -117,9 +124,9 @@ def main(
         )
 
         for split, color in colors.items():
-            subset = example_heliostat_df[example_heliostat_df["Split"] == split]
+            subset = example_heliostat_df[example_heliostat_df[mappings.SPLIT_KEY] == split]
             if not subset.empty:
-                inset_ax.scatter(subset["Azimuth"], subset["Elevation"], color=color, alpha=0.5)
+                inset_ax.scatter(subset[mappings.AZIMUTH], subset[mappings.ELEVATION], color=color, alpha=0.5)
 
         inset_ax.set_title(f"Heliostat {example_heliostat_id}", fontsize=10, pad=-5)
         inset_ax.set_xlabel("Azimuth", fontsize=8)
@@ -144,13 +151,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--calibration_data_file",
         type=str,
-        default="PATH/TO/calibration_metadata_all_heliostats.csv",
+        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
         "--split_types",
         nargs="+",
-        default=["azimuth"],
+        default=[mappings.AZIMUTH_SPLIT],
         help="List of split types to use (e.g., azimuth).",
     )
     parser.add_argument(
@@ -181,8 +188,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--plot_output",
         type=str,
-        default="plots/saved_plots/02_dataset_split_azimuth.pdf",
-        help="File path to save the output plot.",
+        default=f"{mappings.PLOT_SAVE_PATH}/{mappings.AZIMUTH_SPLIT_PLOT}",
     )
     parser.add_argument(
         "--example_heliostat_id",
@@ -192,13 +198,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    main(
-        calibration_data_file=args.calibration_data_file,
-        split_types=args.split_types,
-        training_sizes=args.training_sizes,
-        validation_sizes=args.validation_sizes,
-        create_new_datasets=args.create_new_datasets,
-        output_dir=args.output_dir,
-        plot_output=args.plot_output,
-        example_heliostat_id=args.example_heliostat_id,
-    )
+    main(**vars(args))
