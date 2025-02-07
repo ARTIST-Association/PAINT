@@ -13,19 +13,57 @@ from paint.data.dataset_splits import DatasetSplitter
 import paint.util.paint_mappings as mappings  # Import the mapping file
 
 def main(
-    calibration_data_file,
-    split_types,
-    training_sizes,
-    validation_sizes,
-    create_new_datasets,
-    output_dir,
-    plot_output,
-    example_heliostat_id,
-):
+    calibration_metadata_file: str,
+    split_types: list[str],
+    training_sizes: list[int],
+    validation_sizes: list[int],
+    create_new_datasets: bool,
+    output_dir: str,
+    plot_output: str,
+    example_heliostat_id: str,
+) -> None:
+    """
+    Plot dataset split distributions using calibration metadata.
+
+    Parameters
+    ----------
+    calibration_metadata_file : str
+        Path to the calibration metadata CSV file containing the calibration information.
+    split_types : list of str
+        List of split types to use (e.g. 'azimuth', 'solstice').
+    training_sizes : list of int
+        List of training sizes to use.
+    validation_sizes : list of int
+        List of validation sizes to use.
+    create_new_datasets : bool
+        Flag indicating whether to (re)create the dataset splits.
+    output_dir : str
+        Directory to store the generated datasets.
+    plot_output : str
+        Directory to save the plot files (one file per split type).
+    example_heliostat_id : str
+        Heliostat ID to highlight in the inset plots.
+
+    Returns
+    -------
+    None
+        The function generates and saves plots, but does not return any value.
+
+    Raises
+    ------
+    FileNotFoundError
+        If the calibration metadata file does not exist.
+    ValueError
+        If training/validation sizes are inconsistent with dataset constraints.
+    """
+
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
+    if not os.path.exists(calibration_metadata_file):
+        raise FileNotFoundError(f"Calibration metadata file '{calibration_metadata_file}' not found.")
+
     splitter = DatasetSplitter(
-        input_file=calibration_data_file,
+        input_file=calibration_metadata_file,
         output_dir=output_dir,
         remove_unused_data=False
     )
@@ -38,16 +76,15 @@ def main(
                     splitter.get_dataset_splits(
                         split_type=split_type,
                         training_size=training_size,
-                        validation_size=validation_sizes[0],  # Note: each call must satisfy the minimum images per heliostat.
+                        validation_size=validation_sizes[0],  # each call must satisfy the minimum images per heliostat.
                     )
 
-    # Read the full calibration data (with all metadata) once.
-    calibration_data = pd.read_csv(calibration_data_file)
+    # Read the full calibration metadata once.
+    calibration_data = pd.read_csv(calibration_metadata_file)
 
     # Ensure that the plot_output directory exists.
     plot_output_path = Path(plot_output)
-    if not plot_output_path.exists():
-        plot_output_path.mkdir(parents=True, exist_ok=True)
+    plot_output_path.mkdir(parents=True, exist_ok=True)
 
     # For each split type, create a separate plot file.
     for split_type in split_types:
