@@ -1,6 +1,6 @@
 # CSV columns
-       # must match the timestamp column in your CSV
-INTERNAL_NAME_INDEX = "InternalName" 
+# must match the timestamp column in your CSV
+INTERNAL_NAME_INDEX = "InternalName"
 ID_INDEX = "Id"
 HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
@@ -30,8 +30,8 @@ SUN_POSITION_EAST = "SunPosE"
 SUN_POSITION_NORTH = "SunPosN"
 SUN_POSITION_UP = "SunPosU"
 DATA_SET_AZIMUTH = "DataSet_Azimuth"
-JUNE_DISTANCE = "Jun_Distance" #"JuneDistance"
-DECEMBER_DISTANCE = "Dec_Distance" #"DecemberDistance"
+JUNE_DISTANCE = "Jun_Distance"  # "JuneDistance"
+DECEMBER_DISTANCE = "Dec_Distance"  # "DecemberDistance"
 DATETIME = "DateTime"
 SAVE_ID_INDEX = "Id"
 
@@ -456,12 +456,18 @@ HELIOSTAT_PROPERTIES_CONVERSION_MAP = {
 # Keys for dataset splits used in 02_create_dataset_azimuth_split.py and 03_create_dataset_solstice_split.py
 AZIMUTH_SPLIT = "azimuth"
 SOLSTICE_SPLIT = "solstice"
+KMEANS_SPLIT = "kmeans"
+KNN_SPLIT = "knn"
 SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
 WINTER_SEASON = "winter"
 SUMMER_SEASON = "summer"
-TRAIN_TEST_VAL_COLORS = {TRAIN_INDEX: "blue", TEST_INDEX: "red", VALIDATION_INDEX: "green"}
+TRAIN_TEST_VAL_COLORS = {
+    TRAIN_INDEX: "blue",
+    TEST_INDEX: "red",
+    VALIDATION_INDEX: "green",
+}
 PLOT_SAVE_PATH = "plots/saved_plots/"
 AZIMUTH_SPLIT_PLOT = "02_dataset_split_azimuth.pdf"
 

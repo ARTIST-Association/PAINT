@@ -2,15 +2,16 @@ import argparse
 import os
 from pathlib import Path
 
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+import paint.util.paint_mappings as mappings  # Import the mapping file
 
 # Reuse the DatasetSplitter (Code A) and the mappings
 from paint.data.dataset_splits import DatasetSplitter
-import paint.util.paint_mappings as mappings  # Import the mapping file
 
 
 def main(
@@ -57,7 +58,6 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
-
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     if not os.path.exists(calibration_metadata_file):
@@ -226,16 +226,21 @@ if __name__ == "__main__":
         description="Plot dataset split distributions with insets for an example heliostat."
     )
     parser.add_argument(
-        "--calibration_data_file",
+        "--calibration_metadata_file",
         type=str,
-        default="PATH/TO/calibration_metadata_all_heliostats.csv",
+        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
         "--split_types",
         type=str,
         nargs="+",
-        default=[mappings.AZIMUTH_SPLIT, mappings.SOLSTICE_SPLIT],
+        default=[
+            mappings.AZIMUTH_SPLIT,
+            mappings.SOLSTICE_SPLIT,
+            mappings.KMEANS_SPLIT,
+            mappings.KNN_SPLIT,
+        ],
         help="List of split types to use (e.g. azimuth, solstice).",
     )
     parser.add_argument(

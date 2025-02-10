@@ -230,6 +230,232 @@ class DatasetSplitter:
 
         return heliostat_data
 
+    def _get_kmeans_splits(
+        self, heliostat_data: pd.DataFrame, training_size: int, validation_size: int
+    ) -> pd.DataFrame:
+        """
+        Get splits using a KMeans clustering based method.
+
+          - validation_size samples for validation,
+          - validation_size samples for testing, and
+          - training_size samples for training.
+
+        The clustering is used for stratification. For validation, one candidate is drawn from
+        each cluster. For test, we attempt to select one candidate per cluster that is different from
+        the validation candidate; if a cluster has only one sample, then the missing test candidate is
+        filled from the overall pool.
+        All remaining data points (i.e. those not used for validation or test) are candidates for training.
+
+        Parameters
+        ----------
+        heliostat_data : pd.DataFrame
+            Data for a single heliostat.
+        training_size : int
+            Desired number of training samples.
+        validation_size : int
+            Desired number of validation samples (and also test samples).
+
+        Returns
+        -------
+        pd.DataFrame
+            DataFrame with splits assigned in the column specified by `mappings.SPLIT_KEY`.
+            The returned DataFrame contains exactly training_size + 2*validation_size rows.
+
+        Raises
+        ------
+        ValueError
+            If the overall number of data points is insufficient.
+        """
+        # Require at least (training_size + 2*validation_size) points.
+        required_min = training_size + 2 * validation_size
+        if len(heliostat_data) < required_min:
+            raise ValueError(
+                f"Not enough data: required {required_min}, got {len(heliostat_data)}"
+            )
+
+        from sklearn.cluster import KMeans
+
+        # Use the chosen features.
+        features = heliostat_data[[mappings.AZIMUTH, mappings.ELEVATION]].to_numpy()
+        # Cluster into exactly validation_size clusters.
+        kmeans = KMeans(n_clusters=validation_size, random_state=42)
+        cluster_labels = kmeans.fit_predict(features)
+        heliostat_data = heliostat_data.copy()
+        heliostat_data["cluster_label"] = cluster_labels
+
+        import random
+
+        random.seed(42)
+
+        # For each cluster, choose one candidate for validation.
+        validation_candidates = {}
+        # For test, try to choose one candidate per cluster that is not the validation candidate.
+        test_candidates = {}
+
+        for label, group in heliostat_data.groupby("cluster_label"):
+            group_indices = list(group.index)
+            # For validation, if possible, choose one candidate.
+            if group_indices:
+                val_candidate = random.choice(group_indices)
+                validation_candidates[label] = val_candidate
+            # For test, if the cluster has at least 2 samples, choose one candidate different from the validation one.
+            if len(group_indices) >= 2:
+                available = [
+                    idx for idx in group_indices if idx != validation_candidates[label]
+                ]
+                test_candidate = random.choice(available)
+                test_candidates[label] = test_candidate
+
+        # If some cluster did not yield a test candidate (because it had only one point),
+        # fill the missing test candidate(s) from the overall pool (excluding any already used for validation or test).
+        all_indices = set(heliostat_data.index)
+        already_used = set(validation_candidates.values()) | set(
+            test_candidates.values()
+        )
+        missing_count = validation_size - len(test_candidates)
+        if missing_count > 0:
+            candidate_pool = list(all_indices - already_used)
+            if len(candidate_pool) < missing_count:
+                raise ValueError("Not enough data to fill test candidates.")
+            random.shuffle(candidate_pool)
+            for i in range(missing_count):
+                # Use a pseudo-cluster label "extra_i" for these extra assignments.
+                test_candidates[f"extra_{i}"] = candidate_pool[i]
+
+        # At this point, we have exactly validation_size validation candidates and exactly validation_size test candidates.
+        final_validation_indices = list(validation_candidates.values())
+        final_test_indices = list(test_candidates.values())
+
+        # Training candidates are all points not used in validation or test.
+        used_for_val_test = set(final_validation_indices) | set(final_test_indices)
+        training_pool = list(all_indices - used_for_val_test)
+        if len(training_pool) < training_size:
+            raise ValueError("Not enough training candidates.")
+        random.shuffle(training_pool)
+        final_training_indices = training_pool[:training_size]
+
+        # Compile final indices.
+        final_indices = (
+            final_validation_indices + final_test_indices + final_training_indices
+        )
+
+        # Assign splits using the mappings.
+        heliostat_data[mappings.SPLIT_KEY] = ""
+        heliostat_data.loc[
+            final_validation_indices, mappings.SPLIT_KEY
+        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[final_test_indices, mappings.SPLIT_KEY] = mappings.TEST_INDEX
+        heliostat_data.loc[
+            final_training_indices, mappings.SPLIT_KEY
+        ] = mappings.TRAIN_INDEX
+
+        # Return only the selected rows and drop the helper column.
+        result = heliostat_data.loc[final_indices].copy()
+        result = result.drop(columns=["cluster_label"])
+        return result
+
+    def _get_knn_splits(
+        self,
+        heliostat_data: pd.DataFrame,
+        validation_size: int,
+        training_size: int,
+        n_neighbors: int = 3,
+    ) -> pd.DataFrame:
+        """
+        Get splits using a k-nearest neighbors (KNN) based method.
+
+        For each data point in the given heliostat's data, the average distance to its n_neighbors
+        closest points (excluding itself) is computed. Then, the splits are assigned as follows:
+
+        - **Validation:** The first `validation_size` data points from the sorted order (by descending average distance)
+          are assigned to validation.
+        - **Test:** The next `validation_size` data points in the sorted order are assigned to test.
+        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to training.
+        - All other data points are discarded.
+
+        This requires that the total number of data points is at least:
+
+            total_required = training_size + 2 * validation_size
+
+        Parameters
+        ----------
+        heliostat_data : pd.DataFrame
+            Data for a single heliostat.
+        validation_size : int
+            Number of data points to assign to the validation set.
+        training_size : int
+            Number of data points to assign to the training set.
+        n_neighbors : int, optional
+            Number of nearest neighbors to consider when computing the average distance (default is 3).
+
+        Returns
+        -------
+        pd.DataFrame
+            A dataframe containing only the selected data points with their assigned split in the
+            column specified by `mappings.SPLIT_KEY`.
+
+        Raises
+        ------
+        ValueError
+            If there are not enough data points to compute the KNN metric or to assign the requested
+            number of samples.
+        """
+        total_required = training_size + 2 * validation_size
+        if len(heliostat_data) < total_required:
+            raise ValueError(
+                f"Insufficient data points for heliostat {heliostat_data[mappings.HELIOSTAT_ID].iloc[0]}. "
+                f"Required: {total_required}, available: {len(heliostat_data)}."
+            )
+
+        # Ensure there are enough points to compute KNN distances.
+        if len(heliostat_data) < n_neighbors + 1:
+            raise ValueError(
+                f"Insufficient data points to compute KNN distances with n_neighbors={n_neighbors} for heliostat "
+                f"{heliostat_data[mappings.HELIOSTAT_ID].iloc[0]}."
+            )
+
+        from sklearn.neighbors import NearestNeighbors
+
+        # Use azimuth and elevation as features.
+        features = heliostat_data[[mappings.AZIMUTH, mappings.ELEVATION]].to_numpy()
+        nbrs = NearestNeighbors(n_neighbors=n_neighbors + 1).fit(features)
+        distances, _ = nbrs.kneighbors(features)
+        # Exclude the zero self-distance and compute the average over the n_neighbors.
+        avg_distance = distances[:, 1:].mean(axis=1)
+
+        heliostat_data = heliostat_data.copy()
+        heliostat_data["knn_avg_distance"] = avg_distance
+
+        # Sort data by average distance in descending order.
+        sorted_df = heliostat_data.sort_values(by="knn_avg_distance", ascending=False)
+
+        # Select splits:
+        # 1. Validation: first validation_size rows.
+        validation_indices = sorted_df.iloc[:validation_size].index
+        # 2. Test: next validation_size rows.
+        test_indices = sorted_df.iloc[validation_size : 2 * validation_size].index
+        # 3. Training: last training_size rows (lowest average distances).
+        training_indices = sorted_df.iloc[2 * validation_size : total_required].index
+
+        # Assign split labels.
+        heliostat_data[mappings.SPLIT_KEY] = ""
+        heliostat_data.loc[
+            validation_indices, mappings.SPLIT_KEY
+        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[test_indices, mappings.SPLIT_KEY] = mappings.TEST_INDEX
+        heliostat_data.loc[training_indices, mappings.SPLIT_KEY] = mappings.TRAIN_INDEX
+
+        # Gather only the selected data points.
+        selected_indices = (
+            list(validation_indices) + list(test_indices) + list(training_indices)
+        )
+        selected_data = heliostat_data.loc[selected_indices].copy()
+
+        # Remove the helper column.
+        selected_data = selected_data.drop(columns=["knn_avg_distance"])
+
+        return selected_data
+
     def get_dataset_splits(
         self, split_type: str, training_size: int, validation_size: int
     ) -> pd.DataFrame:
@@ -257,7 +483,12 @@ class DatasetSplitter:
         validation_size : int
             Size of the validation split.
         """
-        allowed_split_types = [mappings.AZIMUTH_SPLIT, mappings.SOLSTICE_SPLIT]
+        allowed_split_types = [
+            mappings.AZIMUTH_SPLIT,
+            mappings.SOLSTICE_SPLIT,
+            mappings.KMEANS_SPLIT,
+            mappings.KNN_SPLIT,
+        ]
         if split_type not in allowed_split_types:
             raise ValueError(
                 f"The split type must be one of `{mappings.AZIMUTH_SPLIT}, {mappings.SOLSTICE_SPLIT}`. The"
@@ -321,6 +552,36 @@ class DatasetSplitter:
                 )
             )
             log.info("Solstice split complete!")
+        elif split_type == mappings.KMEANS_SPLIT:
+            log.info(
+                "Preparing KMeans split...\n"
+                f"Training size: {training_size}, validation size: {validation_size}"
+            )
+            heliostat_split_data = heliostat_split_data.groupby(
+                mappings.HELIOSTAT_ID, group_keys=False
+            ).apply(
+                lambda heliostat_data: self._get_kmeans_splits(
+                    heliostat_data=heliostat_data,
+                    training_size=training_size,
+                    validation_size=validation_size,
+                )
+            )
+            log.info("KMeans split complete!")
+        elif split_type == mappings.KNN_SPLIT:
+            log.info(
+                "Preparing KNN split...\n"
+                f"Training size: {training_size}, validation size: {validation_size}"
+            )
+            heliostat_split_data = heliostat_split_data.groupby(
+                mappings.HELIOSTAT_ID, group_keys=False
+            ).apply(
+                lambda heliostat_data: self._get_knn_splits(
+                    heliostat_data=heliostat_data,
+                    validation_size=validation_size,
+                    training_size=training_size,
+                )
+            )
+            log.info("KNN split complete!")
 
         # Never save the extra metadata in the CSV (this extra data is only needed for plots).
         splits_to_save = heliostat_split_data
