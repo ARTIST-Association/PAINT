@@ -2,15 +2,16 @@ import argparse
 import os
 from pathlib import Path
 
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+
+import paint.util.paint_mappings as mappings  # Import the mapping file
 
 # Reuse the DatasetSplitter (Code A) and the mappings
 from paint.data.dataset_splits import DatasetSplitter
-import paint.util.paint_mappings as mappings  # Import the mapping file
 
 
 def main(
@@ -57,7 +58,6 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
-
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     if not os.path.exists(calibration_metadata_file):

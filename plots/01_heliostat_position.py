@@ -5,12 +5,11 @@ from pathlib import Path
 from typing import Dict
 
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
 import pandas as pd
 from matplotlib.patches import Rectangle
+from plot_utils import decimal_to_dms
 
 import paint.util.paint_mappings as mappings
-from plot_utils import decimal_to_dms
 
 
 class HeliostatPositionPlot:
@@ -32,7 +31,6 @@ class HeliostatPositionPlot:
         Plots the heliostat positions with overlays for deflectometry and towers.
     """
 
-
     def __init__(
         self,
         path_to_positions: str | Path,
@@ -43,9 +41,7 @@ class HeliostatPositionPlot:
         file_name: str = "heliostat_positions",
         save_as_pdf: bool = True,
     ) -> None:
-        """
-        Initialize the heliostat position plot object.
-        """
+        """Initialize the heliostat position plot object."""
         self.load_data(
             path_to_positions=Path(path_to_positions),
             path_to_measurements=Path(path_to_measurements),
@@ -63,9 +59,7 @@ class HeliostatPositionPlot:
         path_to_deflectometry: Path,
         path_to_tower_properties: Path,
     ) -> None:
-        """
-        Load the data and save as instance attributes.
-        """
+        """Load the data and save as instance attributes."""
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(path_to_positions, header=0)
@@ -115,10 +109,10 @@ class HeliostatPositionPlot:
         self.lon_ref_main = " ".join(self.lon_ref.split()[:3]) + " E"
 
     @staticmethod
-    def _calculate_tower_dimensions(coordinates: Dict[str, list[float]]) -> Dict[str, float]:
-        """
-        Calculate the width, height, and position for a tower.
-        """
+    def _calculate_tower_dimensions(
+        coordinates: Dict[str, list[float]],
+    ) -> Dict[str, list[float]]:
+        """Calculate the width, height, and position for a tower."""
         center = coordinates["center"]
         upper_left = coordinates["upper_left"]
         upper_right = coordinates["upper_right"]
@@ -130,14 +124,12 @@ class HeliostatPositionPlot:
             "center": center,
             "upper_left": upper_left,
             "upper_right": upper_right,
-            "width": width,
-            "height": height,
+            "width": [width],
+            "height": [height],
         }
 
     def plot_heliostat_positions(self) -> None:
-        """
-        Generate the heliostat position plot.
-        """
+        """Generate the heliostat position plot."""
         fig, ax = plt.subplots(figsize=(10, 6))
 
         # Plot heliostat positions using the longitude and latitude keys from the mappings.
@@ -158,9 +150,12 @@ class HeliostatPositionPlot:
         ]:
             ax.add_patch(
                 Rectangle(
-                    (tower["upper_left"][1], tower["center"][0] - tower["height"] / 2),
-                    tower["width"],
-                    tower["height"],
+                    (
+                        tower["upper_left"][1],
+                        tower["center"][0] - tower["height"][0] / 2,
+                    ),
+                    tower["width"][0],
+                    tower["height"][0],
                     linewidth=8,
                     edgecolor=color,
                     facecolor="none",

@@ -1,6 +1,5 @@
 # CSV columns
-       # must match the timestamp column in your CSV
-INTERNAL_NAME_INDEX = "InternalName" 
+INTERNAL_NAME_INDEX = "InternalName"
 ID_INDEX = "Id"
 HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
@@ -30,8 +29,8 @@ SUN_POSITION_EAST = "SunPosE"
 SUN_POSITION_NORTH = "SunPosN"
 SUN_POSITION_UP = "SunPosU"
 DATA_SET_AZIMUTH = "DataSet_Azimuth"
-JUNE_DISTANCE = "Jun_Distance" #"JuneDistance"
-DECEMBER_DISTANCE = "Dec_Distance" #"DecemberDistance"
+JUNE_DISTANCE = "Jun_Distance"
+DECEMBER_DISTANCE = "Dec_Distance"
 DATETIME = "DateTime"
 SAVE_ID_INDEX = "Id"
 
@@ -461,7 +460,11 @@ DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
 WINTER_SEASON = "winter"
 SUMMER_SEASON = "summer"
-TRAIN_TEST_VAL_COLORS = {TRAIN_INDEX: "blue", TEST_INDEX: "red", VALIDATION_INDEX: "green"}
+TRAIN_TEST_VAL_COLORS = {
+    TRAIN_INDEX: "blue",
+    TEST_INDEX: "red",
+    VALIDATION_INDEX: "green",
+}
 PLOT_SAVE_PATH = "plots/saved_plots/"
 AZIMUTH_SPLIT_PLOT = "02_dataset_split_azimuth.pdf"
 

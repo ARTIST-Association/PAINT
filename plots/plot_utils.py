@@ -14,9 +14,15 @@ def decimal_to_dms(value, is_latitude=True):
     str
         The coordinate in DMS format as a string.
     """
-    direction = "N" if (value >= 0 and is_latitude) else \
-                "S" if is_latitude else \
-                "E" if value >= 0 else "W"
+    direction = (
+        "N"
+        if (value >= 0 and is_latitude)
+        else "S"
+        if is_latitude
+        else "E"
+        if value >= 0
+        else "W"
+    )
     abs_value = abs(value)
     degrees = int(abs_value)
     minutes = int((abs_value - degrees) * 60)
