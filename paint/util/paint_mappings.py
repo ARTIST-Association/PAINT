@@ -1,5 +1,4 @@
 # CSV columns
-# must match the timestamp column in your CSV
 INTERNAL_NAME_INDEX = "InternalName"
 ID_INDEX = "Id"
 HELIOSTAT_ID = "HeliostatId"
@@ -30,8 +29,8 @@ SUN_POSITION_EAST = "SunPosE"
 SUN_POSITION_NORTH = "SunPosN"
 SUN_POSITION_UP = "SunPosU"
 DATA_SET_AZIMUTH = "DataSet_Azimuth"
-JUNE_DISTANCE = "Jun_Distance"  # "JuneDistance"
-DECEMBER_DISTANCE = "Dec_Distance"  # "DecemberDistance"
+JUNE_DISTANCE = "Jun_Distance"
+DECEMBER_DISTANCE = "Dec_Distance"
 DATETIME = "DateTime"
 SAVE_ID_INDEX = "Id"
 
