@@ -266,13 +266,6 @@ class DatasetSplitter:
         ValueError
             If the overall number of data points is insufficient.
         """
-        # Require at least (training_size + 2*validation_size) points.
-        required_min = training_size + 2 * validation_size
-        if len(heliostat_data) < required_min:
-            raise ValueError(
-                f"Not enough data: required {required_min}, got {len(heliostat_data)}"
-            )
-
         from sklearn.cluster import KMeans
 
         # Use the chosen features.
@@ -315,8 +308,6 @@ class DatasetSplitter:
         missing_count = validation_size - len(test_candidates)
         if missing_count > 0:
             candidate_pool = list(all_indices - already_used)
-            if len(candidate_pool) < missing_count:
-                raise ValueError("Not enough data to fill test candidates.")
             random.shuffle(candidate_pool)
             for i in range(missing_count):
                 # Use a pseudo-cluster label "extra_i" for these extra assignments.
@@ -329,8 +320,6 @@ class DatasetSplitter:
         # Training candidates are all points not used in validation or test.
         used_for_val_test = set(final_validation_indices) | set(final_test_indices)
         training_pool = list(all_indices - used_for_val_test)
-        if len(training_pool) < training_size:
-            raise ValueError("Not enough training candidates.")
         random.shuffle(training_pool)
         final_training_indices = training_pool[:training_size]
 
@@ -400,20 +389,6 @@ class DatasetSplitter:
             If there are not enough data points to compute the KNN metric or to assign the requested
             number of samples.
         """
-        total_required = training_size + 2 * validation_size
-        if len(heliostat_data) < total_required:
-            raise ValueError(
-                f"Insufficient data points for heliostat {heliostat_data[mappings.HELIOSTAT_ID].iloc[0]}. "
-                f"Required: {total_required}, available: {len(heliostat_data)}."
-            )
-
-        # Ensure there are enough points to compute KNN distances.
-        if len(heliostat_data) < n_neighbors + 1:
-            raise ValueError(
-                f"Insufficient data points to compute KNN distances with n_neighbors={n_neighbors} for heliostat "
-                f"{heliostat_data[mappings.HELIOSTAT_ID].iloc[0]}."
-            )
-
         from sklearn.neighbors import NearestNeighbors
 
         # Use azimuth and elevation as features.
@@ -435,7 +410,7 @@ class DatasetSplitter:
         # 2. Test: next validation_size rows.
         test_indices = sorted_df.iloc[validation_size : 2 * validation_size].index
         # 3. Training: last training_size rows (lowest average distances).
-        training_indices = sorted_df.iloc[2 * validation_size : total_required].index
+        training_indices = sorted_df.iloc[2 * validation_size : training_size + 2 * validation_size].index
 
         # Assign split labels.
         heliostat_data[mappings.SPLIT_KEY] = ""
@@ -491,10 +466,10 @@ class DatasetSplitter:
         ]
         if split_type not in allowed_split_types:
             raise ValueError(
-                f"The split type must be one of `{mappings.AZIMUTH_SPLIT}, {mappings.SOLSTICE_SPLIT}`. The"
-                f"selected split type {split_type} is not supported!"
+                f"The split type must be one of {', '.join(allowed_split_types)}."
+                f"The selected split type {split_type} is not supported!"
             )
-
+            
         # Calculate the minimum number of possible images as `training_size` + 2 * `validation_size`, since we want at
         # least as many test images as validation images.
         minimum_number_of_images = training_size + 2 * validation_size
