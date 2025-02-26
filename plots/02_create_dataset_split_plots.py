@@ -1,9 +1,10 @@
+import logging
 import argparse
-import os
 from pathlib import Path
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+import json
 import numpy as np
 import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
@@ -12,6 +13,7 @@ import paint.util.paint_mappings as mappings  # Import the mapping file
 
 # Reuse the DatasetSplitter (Code A) and the mappings
 from paint.data.dataset_splits import DatasetSplitter
+log = logging.getLogger(__name__)  # Logger for the dataset splitter
 
 
 def main(
@@ -46,11 +48,6 @@ def main(
     example_heliostat_id : str
         Heliostat ID to highlight in the inset plots.
 
-    Returns
-    -------
-    None
-        The function generates and saves plots, but does not return any value.
-
     Raises
     ------
     FileNotFoundError
@@ -60,7 +57,8 @@ def main(
     """
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
-    if not os.path.exists(calibration_metadata_file):
+    calibration_metadata_path = Path(calibration_metadata_file)
+    if not calibration_metadata_path.exists():
         raise FileNotFoundError(
             f"Calibration metadata file '{calibration_metadata_file}' not found."
         )
@@ -79,9 +77,7 @@ def main(
                     splitter.get_dataset_splits(
                         split_type=split_type,
                         training_size=training_size,
-                        validation_size=validation_sizes[
-                            0
-                        ],  # each call must satisfy the minimum images per heliostat.
+                        validation_size=validation_sizes[0],  # each call must satisfy the minimum images per heliostat.
                     )
 
     # Read the full calibration metadata once.
@@ -126,9 +122,7 @@ def main(
             axes, current_split_data.items()
         ):
             # Merge the split info into the full calibration data.
-            split_df_reset = (
-                split_df.reset_index()
-            )  # bring the ID (index) back as a column
+            split_df_reset = split_df.reset_index()  # bring the ID (index) back as a column
             merged_data = pd.merge(
                 calibration_data,
                 split_df_reset[[mappings.ID_INDEX, mappings.SPLIT_KEY]],
@@ -169,11 +163,16 @@ def main(
             split_counts.plot(
                 kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors
             )
-            ax.set_xlabel(mappings.ID_KEY, fontsize=10)
+            # Change the x-axis label as requested.
+            ax.set_xlabel("Heliostats sorted by # measurements", fontsize=10)
             ax.set_ylabel("Count", fontsize=10)
             ax.tick_params(axis="x", rotation=45)
             ticks = list(range(0, num_heliostats, 200))
             ax.set_xticks(ticks)
+
+            # Set y-axis limits for KNN and KMEANS split types.
+            if split_type in [mappings.KMEANS_SPLIT, mappings.KNN_SPLIT]:
+                ax.set_ylim(0, 500)
 
             # Set subplot title indicating the training and validation sizes.
             ax.set_title(f"Train {training_size} / Val {validation_size}", fontsize=12)
@@ -221,14 +220,30 @@ def main(
         print(f"Saved plot for split type '{split_type}' to {file_name}")
 
 
+def load_config(json_path):
+    if json_path.exists():
+        with json_path.open() as f:
+            return json.load(f)
+    return {}
+
 if __name__ == "__main__":
+    # Check if the config file exists and load it.
+    config_file = Path("plots/plot_paths.json")
+    config = load_config(config_file)
+
+    # Set defaults using values from the JSON if available.
+    default_calibration_file = config.get(
+        "path_to_measurements", "PATH/TO/calibration_metadata_all_heliostats.csv"
+    )
+    default_plot_output = config.get("output_path", "PATH/TO/OUTPUT/PLOTS")
+
     parser = argparse.ArgumentParser(
         description="Plot dataset split distributions with insets for an example heliostat."
     )
     parser.add_argument(
         "--calibration_metadata_file",
         type=str,
-        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
+        default=default_calibration_file,
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
@@ -271,7 +286,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--plot_output",
         type=str,
-        default=mappings.PLOT_SAVE_PATH,
+        default=default_plot_output,
         help="Directory to save the plot files (one file per split type).",
     )
     parser.add_argument(

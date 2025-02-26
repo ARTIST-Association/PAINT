@@ -20,17 +20,31 @@ class HeliostatPositionPlot:
     ----------
     position_df : pandas.DataFrame
         The heliostats' positions.
-    count_df : pandas.DataFrame
-        The heliostats' counts.
-
-    Methods
-    -------
-    load_data(path_to_positions, path_to_measurements, ...)
-        Loads the required CSV files and extracts necessary data.
-    plot_heliostat_positions()
-        Plots the heliostat positions with overlays for deflectometry and towers.
+    count_df : pandas.Series
+        The count of measurements per heliostat.
+    deflectometry_df : pandas.DataFrame
+        The deflectometry data for heliostats.
+    deflectometry_heliostats : pandas.Index
+        The index of heliostats with deflectometry data.
+    tower_data : dict
+        The tower properties data loaded from JSON.
+    juelich_tower : dict
+        The calculated dimensions and positions for the Jülich tower.
+    multi_focus_tower : dict
+        The calculated dimensions and positions for the Multi-Focus tower.
+    lat_ref : str
+        The reference latitude in DMS format.
+    lon_ref : str
+        The reference longitude in DMS format.
+    lat_ref_main : str
+        The main reference latitude in DMS format with 'N' suffix.
+    lon_ref_main : str
+        The main reference longitude in DMS format with 'E' suffix.
+    output_path : pathlib.Path
+        The path where the plot will be saved.
+    file_name : str
+        The name of the output file.
     """
-
     def __init__(
         self,
         path_to_positions: str | Path,
@@ -42,27 +56,9 @@ class HeliostatPositionPlot:
         save_as_pdf: bool = True,
     ) -> None:
         """Initialize the heliostat position plot object."""
-        self.load_data(
-            path_to_positions=Path(path_to_positions),
-            path_to_measurements=Path(path_to_measurements),
-            path_to_deflectometry=Path(path_to_deflectometry),
-            path_to_tower_properties=Path(path_to_tower_properties),
-        )
-        self.output_path = Path(output_path)
-        self.output_path.mkdir(parents=True, exist_ok=True)
-        self.file_name = file_name + (".pdf" if save_as_pdf else ".png")
-
-    def load_data(
-        self,
-        path_to_positions: Path,
-        path_to_measurements: Path,
-        path_to_deflectometry: Path,
-        path_to_tower_properties: Path,
-    ) -> None:
-        """Load the data and save as instance attributes."""
         # Load heliostat positions and set the index using the mapping constant.
         try:
-            df_positions = pd.read_csv(path_to_positions, header=0)
+            df_positions = pd.read_csv(Path(path_to_positions), header=0)
         except FileNotFoundError:
             raise FileNotFoundError(f"CSV file not found: {path_to_positions}")
         except pd.errors.EmptyDataError:
@@ -72,26 +68,26 @@ class HeliostatPositionPlot:
         self.position_df = df_positions[mappings.HELIOSTAT_POSITIONS].copy()
 
         # Load measurements, set the index, and count the number of measurements per heliostat.
-        df_measurements = pd.read_csv(path_to_measurements)
+        df_measurements = pd.read_csv(Path(path_to_measurements))
         df_measurements.set_index(mappings.ID_INDEX, inplace=True)
         self.count_df = df_measurements[mappings.HELIOSTAT_ID].value_counts()
 
         # Load deflectometry data and set its index.
-        df_deflectometry = pd.read_csv(path_to_deflectometry)
+        df_deflectometry = pd.read_csv(Path(path_to_deflectometry))
         df_deflectometry.set_index(mappings.HELIOSTAT_ID, inplace=True)
         self.deflectometry_df = df_deflectometry
         self.deflectometry_heliostats = df_deflectometry.index.unique()
 
         # Load tower properties JSON.
-        with path_to_tower_properties.open("r", encoding="utf-8") as f:
+        with Path(path_to_tower_properties).open("r", encoding="utf-8") as f:
             self.tower_data = json.load(f)
 
         # Use the mapping constants for tower keys:
         self.juelich_tower = self._calculate_tower_dimensions(
-            self.tower_data[mappings.STJ_UPPER]["coordinates"]
+            self.tower_data[mappings.STJ_UPPER][mappings.TOWER_COORDINATES_KEY]
         )
         self.multi_focus_tower = self._calculate_tower_dimensions(
-            self.tower_data[mappings.MFT]["coordinates"]
+            self.tower_data[mappings.MFT][mappings.TOWER_COORDINATES_KEY]
         )
 
         # Add the measurement count as a new column.
@@ -107,6 +103,10 @@ class HeliostatPositionPlot:
         )
         self.lat_ref_main = " ".join(self.lat_ref.split()[:3]) + " N"
         self.lon_ref_main = " ".join(self.lon_ref.split()[:3]) + " E"
+
+        self.output_path = Path(output_path)
+        self.output_path.mkdir(parents=True, exist_ok=True)
+        self.file_name = file_name + (".pdf" if save_as_pdf else ".png")
 
     @staticmethod
     def _calculate_tower_dimensions(
@@ -182,34 +182,41 @@ class HeliostatPositionPlot:
         fig.tight_layout()
         fig.savefig(self.output_path / self.file_name, dpi=300)
 
+def load_json_config(json_path: Path):
+    with json_path.open("r") as f:
+        return json.load(f)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument(
-        "--path_to_positions",
-        type=str,
-        default="PATH/TO/properties_metadata_all_heliostats.csv",
-    )
-    parser.add_argument(
-        "--path_to_measurements",
-        type=str,
-        default="PATH/TO/calibration_metadata_all_heliostats.csv",
-    )
-    parser.add_argument(
-        "--path_to_deflectometry",
-        type=str,
-        default="PATH/TO/deflectometry_metadata_all_heliostats.csv",
-    )
-    parser.add_argument(
-        "--path_to_tower_properties",
-        type=str,
-        default="PATH/TO/WRI1030197-tower-measurements.json",
-    )
-    parser.add_argument("--output_path", type=str, default="plots/saved_plots")
-    parser.add_argument("--file_name", type=str, default="01_heliostat_positions")
-    parser.add_argument("--save_as_pdf", action="store_true")
-    args = parser.parse_args()
-
-    plotter = HeliostatPositionPlot(**vars(args))
+    json_file = Path("plots/plot_paths.json")
+    if json_file.exists():
+        config = load_json_config(json_file)
+    else:
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--path_to_positions",
+            type=str,
+            default="PATH/TO/properties_metadata_all_heliostats.csv",
+        )
+        parser.add_argument(
+            "--path_to_measurements",
+            type=str,
+            default="PATH/TO/calibration_metadata_all_heliostats.csv",
+        )
+        parser.add_argument(
+            "--path_to_deflectometry",
+            type=str,
+            default="PATH/TO/deflectometry_metadata_all_heliostats.csv",
+        )
+        parser.add_argument(
+            "--path_to_tower_properties",
+            type=str,
+            default="PATH/TO/WRI1030197-tower-measurements.json",
+        )
+        parser.add_argument("--output_path", type=str, default="plots/saved_plots")
+        parser.add_argument("--file_name", type=str, default="01_heliostat_positions")
+        parser.add_argument("--save_as_pdf", action="store_true")
+        args = parser.parse_args()
+        config = vars(args)
+    
+    plotter = HeliostatPositionPlot(**config)
     plotter.plot_heliostat_positions()

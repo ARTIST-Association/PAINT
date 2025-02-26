@@ -1,4 +1,4 @@
-def decimal_to_dms(value, is_latitude=True):
+def decimal_to_dms(value: float, is_latitude: bool = True) -> str:
     """
     Convert decimal degrees to degrees, minutes, and seconds (DMS).
 
@@ -7,7 +7,7 @@ def decimal_to_dms(value, is_latitude=True):
     value : float
         The decimal degree value to convert.
     is_latitude : bool, optional
-        If True, assumes the value is latitude (N/S); otherwise, longitude (E/W).
+        Whether the value provided is latitude (N/S), otherwise longitude (E/W) (Default: True).
 
     Returns
     -------
