@@ -1,9 +1,11 @@
 # CSV columns
 INTERNAL_NAME_INDEX = "InternalName"
-ID_INDEX = "id"
+ID_INDEX = "Id"
 HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
+HELIOSTAT_POSITIONS = ["latitude", "longitude", "Elevation"]
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
+DATE_TIME = "DateTime"
 CREATED_AT = "CreatedAt"
 FILE_CREATED_AT = "FileCreatedAt"
 UPDATED_AT = "UpdatedAt"
@@ -450,13 +452,20 @@ HELIOSTAT_PROPERTIES_CONVERSION_MAP = {
     "AngleW_axis": "movement_speed",
 }
 
-# Keys for dataset splits
+# Keys for dataset splits used in 02_create_dataset_azimuth_split.py and 03_create_dataset_solstice_split.py
 AZIMUTH_SPLIT = "azimuth"
 SOLSTICE_SPLIT = "solstice"
+KMEANS_SPLIT = "kmeans"
+KNN_SPLIT = "knn"
 SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
-
+WINTER_SEASON = "winter"
+TRAIN_TEST_VAL_COLORS = {
+    TRAIN_INDEX: "blue",
+    TEST_INDEX: "red",
+    VALIDATION_INDEX: "green",
+}
 
 # Keys for Dataset file identifiers.
 CALIBRATION_RAW_IMAGE_IDENTIFIER = "-raw.png"

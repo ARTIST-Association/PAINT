@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 from pandas import Timestamp
 
+import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
 from paint.data.dataset_splits import DatasetSplitter
 
@@ -240,3 +241,97 @@ def test_make_solstice_distance_fail() -> None:
             timestamp=Timestamp("2023-06-16 09:48:04"),
             season="bob_marley_is_not_a_season",
         )
+
+
+@pytest.mark.parametrize("split_type", ["kmeans", "knn"])
+def test_dataset_splits_kmeans_and_knn(split_type: str) -> None:
+    """Test the new splits (kmeans and knn)."""
+    test_data_path = (
+        Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "test_metadata.csv"
+    )
+    training_size = 3
+    validation_size = (
+        3  # This number will be used both for the validation and for test samples.
+    )
+    expected_total = training_size + 2 * validation_size  # 3 + 2*3 = 9 rows
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        splitter = DatasetSplitter(
+            input_file=test_data_path,
+            output_dir=temp_dir,
+            remove_unused_data=True,
+        )
+        split = splitter.get_dataset_splits(
+            split_type=split_type,
+            training_size=training_size,
+            validation_size=validation_size,
+        )
+
+        # Check that the total number of rows is as expected.
+        assert (
+            len(split) == expected_total
+        ), f"For {split_type} split, expected {expected_total} rows, got {len(split)}."
+
+        # Check that the split labels are distributed correctly.
+        counts = split[mappings.SPLIT_KEY].value_counts().to_dict()
+        assert (
+            counts.get(mappings.TRAIN_INDEX, 0) == training_size
+        ), f"For {split_type} split, expected {training_size} training rows, got {counts.get(mappings.TRAIN_INDEX, 0)}."
+        assert (
+            counts.get(mappings.TEST_INDEX, 0) == validation_size
+        ), f"For {split_type} split, expected {validation_size} test rows, got {counts.get(mappings.TEST_INDEX, 0)}."
+        assert (
+            counts.get(mappings.VALIDATION_INDEX, 0) == validation_size
+        ), f"For {split_type} split, expected {validation_size} validation rows, got {counts.get(mappings.VALIDATION_INDEX, 0)}."
+
+def test_invalid_split_type() -> None:
+    """Test failure when an invalid split type is provided."""
+    test_data_path = Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "test_metadata.csv"
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        splitter = DatasetSplitter(input_file=test_data_path, output_dir=temp_dir, remove_unused_data=True)
+
+        with pytest.raises(ValueError, match=r"The split type must be one of *"):
+            splitter.get_dataset_splits(split_type="invalid_split", training_size=3, validation_size=3)
+        
+@pytest.mark.parametrize("split_type", ["kmeans"])
+def test_not_small_clusters(split_type: str) -> None:
+    """Test small cluster (kmeans and knn)."""
+    test_data_path = (
+        Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "test_metadata.csv"
+    )
+    training_size = 2
+    validation_size = (
+        4  # This number will be used both for the validation and for test samples.
+    )
+    expected_total = training_size + 2 * validation_size  
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        splitter = DatasetSplitter(
+            input_file=test_data_path,
+            output_dir=temp_dir,
+            remove_unused_data=True,
+        )
+        split = splitter.get_dataset_splits(
+            split_type=split_type,
+            training_size=training_size,
+            validation_size=validation_size,
+        )
+
+        # Check that the total number of rows is as expected.
+        assert (
+            len(split) == expected_total
+        ), f"For {split_type} split, expected {expected_total} rows, got {len(split)}."
+
+        # Check that the split labels are distributed correctly.
+        counts = split[mappings.SPLIT_KEY].value_counts().to_dict()
+        assert (
+            counts.get(mappings.TRAIN_INDEX, 0) == training_size
+        ), f"For {split_type} split, expected {training_size} training rows, got {counts.get(mappings.TRAIN_INDEX, 0)}."
+        assert (
+            counts.get(mappings.TEST_INDEX, 0) == validation_size
+        ), f"For {split_type} split, expected {validation_size} test rows, got {counts.get(mappings.TEST_INDEX, 0)}."
+        assert (
+            counts.get(mappings.VALIDATION_INDEX, 0) == validation_size
+        ), f"For {split_type} split, expected {validation_size} validation rows, got {counts.get(mappings.VALIDATION_INDEX, 0)}."
+            
