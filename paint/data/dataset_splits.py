@@ -115,9 +115,9 @@ class DatasetSplitter:
 
         # Select the indices with the largest azimuth values for the validation split.
         validation_indices = heliostat_data.tail(validation_size).index
-        heliostat_data.loc[
-            validation_indices, mappings.SPLIT_KEY
-        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[validation_indices, mappings.SPLIT_KEY] = (
+            mappings.VALIDATION_INDEX
+        )
 
         # Select the remaining indices for the test split.
         used_indices = training_indices.append(validation_indices)
@@ -214,9 +214,9 @@ class DatasetSplitter:
             by=[mappings.DISTANCE_SUMMER, mappings.DATETIME]
         )
         validation_indices = heliostat_data.head(validation_size).index
-        heliostat_data.loc[
-            validation_indices, mappings.SPLIT_KEY
-        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[validation_indices, mappings.SPLIT_KEY] = (
+            mappings.VALIDATION_INDEX
+        )
 
         # Select the remaining indices for the test split.
         used_indices = training_indices.append(validation_indices)
@@ -230,21 +230,19 @@ class DatasetSplitter:
 
         return heliostat_data
 
+    @staticmethod
     def _get_kmeans_splits(
-        self, heliostat_data: pd.DataFrame, training_size: int, validation_size: int
+        heliostat_data: pd.DataFrame, training_size: int, validation_size: int
     ) -> pd.DataFrame:
         """
         Get splits using a KMeans clustering based method.
-
-          - validation_size samples for validation,
-          - validation_size samples for testing, and
-          - training_size samples for training.
 
         The clustering is used for stratification. For validation, one candidate is drawn from
         each cluster. For test, we attempt to select one candidate per cluster that is different from
         the validation candidate; if a cluster has only one sample, then the missing test candidate is
         filled from the overall pool.
         All remaining data points (i.e. those not used for validation or test) are candidates for training.
+        As a result, the size of the validation and test set is identical (``validation_size``).
 
         Parameters
         ----------
@@ -330,21 +328,21 @@ class DatasetSplitter:
 
         # Assign splits using the mappings.
         heliostat_data[mappings.SPLIT_KEY] = ""
-        heliostat_data.loc[
-            final_validation_indices, mappings.SPLIT_KEY
-        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[final_validation_indices, mappings.SPLIT_KEY] = (
+            mappings.VALIDATION_INDEX
+        )
         heliostat_data.loc[final_test_indices, mappings.SPLIT_KEY] = mappings.TEST_INDEX
-        heliostat_data.loc[
-            final_training_indices, mappings.SPLIT_KEY
-        ] = mappings.TRAIN_INDEX
+        heliostat_data.loc[final_training_indices, mappings.SPLIT_KEY] = (
+            mappings.TRAIN_INDEX
+        )
 
         # Return only the selected rows and drop the helper column.
         result = heliostat_data.loc[final_indices].copy()
         result = result.drop(columns=["cluster_label"])
         return result
 
+    @staticmethod
     def _get_knn_splits(
-        self,
         heliostat_data: pd.DataFrame,
         validation_size: int,
         training_size: int,
@@ -359,7 +357,8 @@ class DatasetSplitter:
         - **Validation:** The first `validation_size` data points from the sorted order (by descending average distance)
           are assigned to validation.
         - **Test:** The next `validation_size` data points in the sorted order are assigned to test.
-        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to training.
+        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to
+        training.
         - All other data points are discarded.
 
         This requires that the total number of data points is at least:
@@ -375,7 +374,7 @@ class DatasetSplitter:
         training_size : int
             Number of data points to assign to the training set.
         n_neighbors : int, optional
-            Number of nearest neighbors to consider when computing the average distance (default is 3).
+            Number of nearest neighbors to consider when computing the average distance (Default: 3).
 
         Returns
         -------
@@ -410,13 +409,15 @@ class DatasetSplitter:
         # 2. Test: next validation_size rows.
         test_indices = sorted_df.iloc[validation_size : 2 * validation_size].index
         # 3. Training: last training_size rows (lowest average distances).
-        training_indices = sorted_df.iloc[2 * validation_size : training_size + 2 * validation_size].index
+        training_indices = sorted_df.iloc[
+            2 * validation_size : training_size + 2 * validation_size
+        ].index
 
         # Assign split labels.
         heliostat_data[mappings.SPLIT_KEY] = ""
-        heliostat_data.loc[
-            validation_indices, mappings.SPLIT_KEY
-        ] = mappings.VALIDATION_INDEX
+        heliostat_data.loc[validation_indices, mappings.SPLIT_KEY] = (
+            mappings.VALIDATION_INDEX
+        )
         heliostat_data.loc[test_indices, mappings.SPLIT_KEY] = mappings.TEST_INDEX
         heliostat_data.loc[training_indices, mappings.SPLIT_KEY] = mappings.TRAIN_INDEX
 
@@ -469,7 +470,7 @@ class DatasetSplitter:
                 f"The split type must be one of {', '.join(allowed_split_types)}."
                 f"The selected split type {split_type} is not supported!"
             )
-            
+
         # Calculate the minimum number of possible images as `training_size` + 2 * `validation_size`, since we want at
         # least as many test images as validation images.
         minimum_number_of_images = training_size + 2 * validation_size
@@ -504,7 +505,7 @@ class DatasetSplitter:
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
-            ).apply(
+            )[heliostat_split_data.columns].apply(
                 lambda heliostat_data: self._get_azimuth_splits(
                     heliostat_data=heliostat_data,
                     training_size=training_size,
@@ -519,7 +520,7 @@ class DatasetSplitter:
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
-            ).apply(
+            )[heliostat_split_data.columns].apply(
                 lambda heliostat_data: self._get_solstice_splits(
                     heliostat_data=heliostat_data,
                     training_size=training_size,
@@ -534,7 +535,7 @@ class DatasetSplitter:
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
-            ).apply(
+            )[heliostat_split_data.columns].apply(
                 lambda heliostat_data: self._get_kmeans_splits(
                     heliostat_data=heliostat_data,
                     training_size=training_size,
@@ -549,7 +550,7 @@ class DatasetSplitter:
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
-            ).apply(
+            )[heliostat_split_data.columns].apply(
                 lambda heliostat_data: self._get_knn_splits(
                     heliostat_data=heliostat_data,
                     validation_size=validation_size,
