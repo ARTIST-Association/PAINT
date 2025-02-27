@@ -1,19 +1,20 @@
-import logging
 import argparse
+import json
 from pathlib import Path
+from typing import Any, Dict, Union
 
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import json
 import numpy as np
 import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-import paint.util.paint_mappings as mappings  # Import the mapping file
-
-# Reuse the DatasetSplitter (Code A) and the mappings
+import paint.util.paint_mappings as mappings
 from paint.data.dataset_splits import DatasetSplitter
-log = logging.getLogger(__name__)  # Logger for the dataset splitter
+from paint.util import set_logger_config
+
+# Logger for the dataset splitter
+set_logger_config()
 
 
 def main(
@@ -22,8 +23,8 @@ def main(
     training_sizes: list[int],
     validation_sizes: list[int],
     create_new_datasets: bool,
-    output_dir: str,
-    plot_output: str,
+    output_dir: Union[str, Path],
+    plot_output: Union[str, Path],
     example_heliostat_id: str,
 ) -> None:
     """
@@ -33,14 +34,14 @@ def main(
     ----------
     calibration_metadata_file : str
         Path to the calibration metadata CSV file containing the calibration information.
-    split_types : list of str
+    split_types : list[str]
         List of split types to use (e.g. 'azimuth', 'solstice').
-    training_sizes : list of int
+    training_sizes : list[int]
         List of training sizes to use.
-    validation_sizes : list of int
+    validation_sizes : list[int]
         List of validation sizes to use.
     create_new_datasets : bool
-        Flag indicating whether to (re)create the dataset splits.
+        Whether to (re)create the dataset splits.
     output_dir : str
         Directory to store the generated datasets.
     plot_output : str
@@ -72,12 +73,14 @@ def main(
     # Optionally create/recreate the dataset splits.
     if create_new_datasets:
         for training_size in training_sizes:
-            for validation_size in validation_sizes:
+            for _ in validation_sizes:
                 for split_type in split_types:
                     splitter.get_dataset_splits(
                         split_type=split_type,
                         training_size=training_size,
-                        validation_size=validation_sizes[0],  # each call must satisfy the minimum images per heliostat.
+                        validation_size=validation_sizes[
+                            0
+                        ],  # each call must satisfy the minimum images per heliostat.
                     )
 
     # Read the full calibration metadata once.
@@ -122,7 +125,9 @@ def main(
             axes, current_split_data.items()
         ):
             # Merge the split info into the full calibration data.
-            split_df_reset = split_df.reset_index()  # bring the ID (index) back as a column
+            split_df_reset = (
+                split_df.reset_index()
+            )  # bring the ID (index) back as a column
             merged_data = pd.merge(
                 calibration_data,
                 split_df_reset[[mappings.ID_INDEX, mappings.SPLIT_KEY]],
@@ -220,11 +225,25 @@ def main(
         print(f"Saved plot for split type '{split_type}' to {file_name}")
 
 
-def load_config(json_path):
+def load_config(json_path: Path) -> Dict[str, Any]:
+    """
+    Load a Json config.
+
+    Parameters
+    ----------
+    json_path : pathlib.Path
+        Path to the JSON config file to load.
+
+    Returns
+    -------
+    Dict[str, Any]
+        A python object containing the loaded JSON config.
+    """
     if json_path.exists():
         with json_path.open() as f:
             return json.load(f)
     return {}
+
 
 if __name__ == "__main__":
     # Check if the config file exists and load it.
