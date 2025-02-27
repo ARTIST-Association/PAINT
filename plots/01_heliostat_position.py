@@ -2,7 +2,7 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict, Union
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -45,17 +45,35 @@ class HeliostatPositionPlot:
     file_name : str
         The name of the output file.
     """
+
     def __init__(
         self,
-        path_to_positions: str | Path,
-        path_to_measurements: str | Path,
-        path_to_deflectometry: str | Path,
-        path_to_tower_properties: str | Path,
-        output_path: str | Path,
+        path_to_positions: Union[str, Path],
+        path_to_measurements: Union[str, Path],
+        path_to_deflectometry: Union[str, Path],
+        path_to_tower_properties: Union[str, Path],
+        output_path: Union[str, Path],
         file_name: str = "heliostat_positions",
         save_as_pdf: bool = True,
     ) -> None:
-        """Initialize the heliostat position plot object."""
+        """
+        Initialize the heliostat position plot object.
+
+        Parameters
+        ----------
+        path_to_positions : Union[str, Path]
+            The path to load the heliostat position data.
+        path_to_measurements : Union[str, Path]
+            The path to load the heliostat measurement data.
+        path_to_deflectometry : Union[str, Path]
+            The path to load the deflectometry data.
+        output_path : Union[str, Path]
+            The output path indicating where to save the plot.
+        file_name : str
+            The file name used to save the plot (Default: "heliostat_positions").
+        save_as_pdf : bool
+            Whether to save the plot as a PDF or not (Default: True).
+        """
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(Path(path_to_positions), header=0)
@@ -113,17 +131,17 @@ class HeliostatPositionPlot:
         coordinates: Dict[str, list[float]],
     ) -> Dict[str, list[float]]:
         """Calculate the width, height, and position for a tower."""
-        center = coordinates["center"]
-        upper_left = coordinates["upper_left"]
-        upper_right = coordinates["upper_right"]
+        center = coordinates[mappings.CENTER]
+        upper_left = coordinates[mappings.UPPER_LEFT]
+        upper_right = coordinates[mappings.UPPER_RIGHT]
 
         width = abs(upper_right[1] - upper_left[1])
         height = 2 * abs(center[0] - upper_left[0])
 
         return {
-            "center": center,
-            "upper_left": upper_left,
-            "upper_right": upper_right,
+            mappings.CENTER: center,
+            mappings.UPPER_LEFT: upper_left,
+            mappings.UPPER_RIGHT: upper_right,
             "width": [width],
             "height": [height],
         }
@@ -151,8 +169,8 @@ class HeliostatPositionPlot:
             ax.add_patch(
                 Rectangle(
                     (
-                        tower["upper_left"][1],
-                        tower["center"][0] - tower["height"][0] / 2,
+                        tower[mappings.UPPER_LEFT][1],
+                        tower[mappings.CENTER][0] - tower["height"][0] / 2,
                     ),
                     tower["width"][0],
                     tower["height"][0],
@@ -182,9 +200,24 @@ class HeliostatPositionPlot:
         fig.tight_layout()
         fig.savefig(self.output_path / self.file_name, dpi=300)
 
-def load_json_config(json_path: Path):
+
+def load_json_config(json_path: Path) -> Dict[str, Any]:
+    """
+    Load a Json config.
+
+    Parameters
+    ----------
+    json_path : pathlib.Path
+        Path to the JSON config file to load.
+
+    Returns
+    -------
+    Dict[str, Any]
+        A python object containing the loaded JSON config.
+    """
     with json_path.open("r") as f:
         return json.load(f)
+
 
 if __name__ == "__main__":
     json_file = Path("plots/plot_paths.json")
@@ -217,6 +250,6 @@ if __name__ == "__main__":
         parser.add_argument("--save_as_pdf", action="store_true")
         args = parser.parse_args()
         config = vars(args)
-    
+
     plotter = HeliostatPositionPlot(**config)
     plotter.plot_heliostat_positions()
