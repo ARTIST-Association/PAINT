@@ -461,15 +461,11 @@ SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
 WINTER_SEASON = "winter"
-SUMMER_SEASON = "summer"
 TRAIN_TEST_VAL_COLORS = {
     TRAIN_INDEX: "blue",
     TEST_INDEX: "red",
     VALIDATION_INDEX: "green",
 }
-PLOT_SAVE_PATH = "plots/saved_plots/"
-AZIMUTH_SPLIT_PLOT = "02_dataset_split_azimuth.pdf"
-
 
 # Keys for Dataset file identifiers.
 CALIBRATION_RAW_IMAGE_IDENTIFIER = "-raw.png"
