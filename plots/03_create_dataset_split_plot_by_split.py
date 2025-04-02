@@ -56,6 +56,16 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
+    plt.rcParams.update({
+        "text.usetex": True,
+        "font.family": "serif",
+        "font.size": 16,
+        "axes.titlesize": 16,
+        "axes.labelsize": 16,
+        "xtick.labelsize": 16,
+        "ytick.labelsize": 16,
+        "legend.fontsize": 14,
+    })
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     calibration_metadata_path = Path(calibration_metadata_file)
@@ -169,8 +179,8 @@ def main(
                 kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors
             )
             # Change the x-axis label as requested.
-            ax.set_xlabel("Heliostats sorted by # measurements", fontsize=10)
-            ax.set_ylabel("Count", fontsize=10)
+            ax.set_xlabel("Heliostats sorted by \# measurements available")
+            ax.set_ylabel("Count")
             ax.tick_params(axis="x", rotation=45)
             ticks = list(range(0, num_heliostats, 200))
             ax.set_xticks(ticks)
@@ -180,7 +190,7 @@ def main(
                 ax.set_ylim(0, 500)
 
             # Set subplot title indicating the training and validation sizes.
-            ax.set_title(f"Train {training_size} / Val {validation_size}", fontsize=12)
+            ax.set_title(f"Train {training_size} / Val {validation_size}")
 
             # ---- Add an inset for the example heliostat ----
             example_heliostat_df = merged_data[
@@ -205,17 +215,18 @@ def main(
                         color=color,
                         alpha=0.5,
                     )
-            inset_ax.set_title(f"Heliostat {example_heliostat_id}", fontsize=8, pad=-5)
-            inset_ax.set_xlabel("Azimuth", fontsize=8)
-            inset_ax.set_ylabel("Elevation", fontsize=8)
-            inset_ax.tick_params(axis="both", labelsize=8)
+            inset_ax.set_title(f"Heliostat {example_heliostat_id}", pad=-5)
+            inset_ax.set_xlabel("Azimuth")
+            inset_ax.set_ylabel("Elevation")
+            inset_ax.tick_params(axis="both", labelsize=plt.rcParams["xtick.labelsize"])
 
         # Create a common legend (placed in the upper left of the first subplot).
         legend_handles = [
             mpatches.Patch(color=colors[split], label=split.capitalize())
             for split in colors
         ]
-        axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
+        axes[0].legend(handles=legend_handles, loc="upper left")
+        plt.setp(ax.get_xticklabels(), rotation=45, rotation_mode="anchor", ha="right")
 
         plt.tight_layout()
         # Save the figure as "02_<split_type>_split.pdf"
@@ -281,7 +292,7 @@ if __name__ == "__main__":
         "--training_sizes",
         type=int,
         nargs="+",
-        default=[10, 50, 100],
+        default=[50],
         help="List of training sizes to use.",
     )
     parser.add_argument(
