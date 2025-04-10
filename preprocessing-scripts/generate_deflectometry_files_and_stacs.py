@@ -56,6 +56,11 @@ def extract_data_and_generate_stacs(
         facet_header_name=arguments.facet_header_name,
         points_on_facet_struct_name=arguments.points_on_facet_struct_name,
     )
+    if converter.heliostat_id not in df_heliostat_positions.index:
+        print(
+            f"ID {converter.heliostat_id} not found in heliostat positions — this data will be skipped."
+        )
+        return deflectometry_items
     converter.convert_to_h5()
     metadata = df_heliostat_positions.loc[converter.heliostat_id][
         [
