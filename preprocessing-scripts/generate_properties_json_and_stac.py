@@ -84,7 +84,6 @@ def extract_properties_data_and_generate_stac_item(
         mappings.NORTH_KEY,
         mappings.ALTITUDE_KEY,
         mappings.FIELD_ID,
-        mappings.HEIGHT_ABOVE_GROUND,
     ]:
         kinematic_helper_data.pop(key_to_remove, None)
 
@@ -315,9 +314,7 @@ if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_axis = Path(lsdf_root) / "paint" / "PAINT" / "axis_data.csv"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
-    )
+    input_position = Path(lsdf_root) / "paint" / "PAINT" / "heliostat_positions.csv"
     input_renovations = Path(lsdf_root) / "paint" / "PAINT" / "renovation_data.csv"
     input_facets = Path(lsdf_root) / "paint" / "PAINT" / "facet_data.npy"
 
