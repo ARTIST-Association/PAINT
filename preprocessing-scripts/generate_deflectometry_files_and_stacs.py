@@ -62,7 +62,6 @@ def extract_data_and_generate_stacs(
             mappings.EAST_KEY,
             mappings.NORTH_KEY,
             mappings.ALTITUDE_KEY,
-            mappings.HEIGHT_ABOVE_GROUND,
         ]
     ]
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
@@ -218,9 +217,7 @@ if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / "DeflecDaten"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
-    )
+    input_position = Path(lsdf_root) / "paint" / "PAINT" / "heliostat_positions.csv"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
