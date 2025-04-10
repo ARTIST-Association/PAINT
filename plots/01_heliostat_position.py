@@ -4,7 +4,9 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Union
 
+import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from matplotlib.patches import Rectangle
 from plot_utils import decimal_to_dms
@@ -150,12 +152,19 @@ class HeliostatPositionPlot:
         """Generate the heliostat position plot."""
         fig, ax = plt.subplots(figsize=(10, 6))
 
+        # Create a custom cmap.
+        blues = plt.get_cmap("Blues")
+        darker_blues = blues(np.linspace(0.3, 1, 256))
+        custom_cmap = mcolors.LinearSegmentedColormap.from_list(
+            "ModifiedBlues", darker_blues
+        )
+
         # Plot heliostat positions using the longitude and latitude keys from the mappings.
         scatter = ax.scatter(
             self.position_df[mappings.LONGITUDE_KEY],
             self.position_df[mappings.LATITUDE_KEY],
             c=self.position_df["count"],
-            cmap="coolwarm",
+            cmap=custom_cmap,
             alpha=0.7,
         )
         fig.colorbar(scatter, label="# Measurements")
@@ -247,7 +256,7 @@ if __name__ == "__main__":
         )
         parser.add_argument("--output_path", type=str, default="plots/saved_plots")
         parser.add_argument("--file_name", type=str, default="01_heliostat_positions")
-        parser.add_argument("--save_as_pdf", action="store_true")
+        parser.add_argument("--save_as_pdf", action="store_true", default=True)
         args = parser.parse_args()
         config = vars(args)
 
