@@ -20,12 +20,7 @@ def load_and_format_heliostat_axis_data(arguments: argparse.Namespace) -> pd.Dat
     pd.DataFrame
         The processed axis dataframe.
     """
-    df_axis = pd.read_csv(
-        arguments.input_axis,
-        header=0,
-        decimal=",",
-        sep=";",
-    )
+    df_axis = pd.read_csv(arguments.input_axis)
     pivoted_df = df_axis.pivot(index=mappings.HELIOSTAT_ID, columns="Number")
     # Flatten the multi-index columns
     pivoted_df.columns = [
@@ -60,6 +55,11 @@ def load_and_format_heliostat_axis_data(arguments: argparse.Namespace) -> pd.Dat
     ]
     pivoted_df.set_index(mappings.HELIOSTAT_ID, inplace=True)
     pivoted_df.index = pivoted_df.index.map(heliostat_id_to_name)
+
+    # Fix date time format
+    pivoted_df[mappings.CREATED_AT] = pd.to_datetime(
+        pivoted_df[mappings.CREATED_AT], dayfirst=True
+    ).dt.strftime("%Y-%m-%d %H:%M:%S")
     return pivoted_df
 
 
@@ -79,25 +79,20 @@ def load_and_format_heliostat_positions(
     pd.DataFrame
         The processed heliostat positions dataframe.
     """
-    df_heliostat_positions = pd.read_excel(arguments.input_position, header=0)
-    df_heliostat_positions.set_index(mappings.INTERNAL_NAME_INDEX, inplace=True)
-    df_heliostat_positions.rename_axis(mappings.HELIOSTAT_ID, inplace=True)
-    # Drop the specified columns
-    df_heliostat_positions.drop(
-        columns=["RowName", "Number", "ColumnName"], inplace=True
-    )
-
-    # Rename the columns
+    df_heliostat_positions = pd.read_csv(arguments.input_position)
+    df_heliostat_positions.set_index(mappings.HELIOSTAT_ID, inplace=True)
+    df_heliostat_positions.drop(columns=["id", "FieldId"], inplace=True)
     df_heliostat_positions.rename(
         columns={
             "x": mappings.EAST_KEY,
             "y": mappings.NORTH_KEY,
             "z": mappings.ALTITUDE_KEY,
-            "Spalte1": mappings.HEIGHT_ABOVE_GROUND,
         },
         inplace=True,
     )
-
+    df_heliostat_positions.index = df_heliostat_positions.index.map(
+        heliostat_id_to_name
+    )
     return df_heliostat_positions
 
 

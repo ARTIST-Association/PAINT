@@ -24,7 +24,7 @@ def extract_data_and_generate_stacs(
     input_path: Path,
     df_heliostat_positions: pd.DataFrame,
     deflectometry_items: pd.DataFrame,
-) -> pd.DataFrame:
+) -> tuple[pd.DataFrame, bool]:
     """
     Extract the binary data and generate STACs.
 
@@ -47,6 +47,8 @@ def extract_data_and_generate_stacs(
     -------
     pd.DataFrame
         A dataframe containing the metadata for all items in the deflectometry collection.
+    bool
+        Indicating whether the file was copied or not.
     """
     # Extract binary data.
     converter = BinaryExtractor(
@@ -56,13 +58,17 @@ def extract_data_and_generate_stacs(
         facet_header_name=arguments.facet_header_name,
         points_on_facet_struct_name=arguments.points_on_facet_struct_name,
     )
+    if converter.heliostat_id not in df_heliostat_positions.index:
+        print(
+            f"ID {converter.heliostat_id} not found in heliostat positions — this data will be skipped."
+        )
+        return deflectometry_items, False
     converter.convert_to_h5()
     metadata = df_heliostat_positions.loc[converter.heliostat_id][
         [
             mappings.EAST_KEY,
             mappings.NORTH_KEY,
             mappings.ALTITUDE_KEY,
-            mappings.HEIGHT_ABOVE_GROUND,
         ]
     ]
     metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
@@ -133,7 +139,7 @@ def extract_data_and_generate_stacs(
         with open(save_deflectometry_path, mode="w") as handle:
             json.dump(stac_item, handle)
 
-    return deflectometry_items
+    return deflectometry_items, True
 
 
 def main(arguments: argparse.Namespace):
@@ -187,12 +193,15 @@ def main(arguments: argparse.Namespace):
         if str(input_path) in already_copied_list:
             print(f"Skipping {input_path} since already copied!")
         else:
-            deflectometry_items = extract_data_and_generate_stacs(
+            deflectometry_items, is_copied = extract_data_and_generate_stacs(
                 arguments=arguments,
                 input_path=input_path,
                 df_heliostat_positions=df_heliostat_positions,
                 deflectometry_items=deflectometry_items,
             )
+            if not is_copied:
+                continue
+
             deflectometry_items.to_csv(deflectometry_items_path)
             already_copied_list.append(input_path)
             np.savetxt(
@@ -218,9 +227,7 @@ if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
     input_folder = Path(lsdf_root) / "paint" / "DeflecDaten"
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_position = (
-        Path(lsdf_root) / "paint" / "PAINT" / "Heliostatpositionen_xyz.xlsx"
-    )
+    input_position = Path(lsdf_root) / "paint" / "PAINT" / "heliostat_positions.csv"
 
     parser = argparse.ArgumentParser()
     parser.add_argument(

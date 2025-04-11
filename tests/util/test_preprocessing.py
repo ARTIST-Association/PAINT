@@ -22,7 +22,7 @@ def preprocessing_arguments() -> argparse.Namespace:
         The simulated command line arguments as a test fixture.
     """
     args = argparse.Namespace(
-        input_position=f"{PAINT_ROOT}/tests/util/test_data/test_positions.xlsx",
+        input_position=f"{PAINT_ROOT}/tests/util/test_data/test_positions.csv",
         input_axis=f"{PAINT_ROOT}/tests/util/test_data/test_axis_data.csv",
     )
     return args
@@ -43,7 +43,6 @@ def test_preprocessing(preprocessing_arguments: argparse.Namespace) -> None:
         "East": [-57.2],
         "North": [25],
         "Altitude": [88.711],
-        "HeightAboveGround": [1.7109999999999985],
         "FieldId": [1],
         "Type_axis_1": ["LINEAR"],
         "MinCounts_axis_1": [0],
