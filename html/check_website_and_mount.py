@@ -80,9 +80,21 @@ if __name__ == "__main__":
 
     # Check if the mount point is available.
     if not is_mount_available(MOUNT_POINT):
-        email_body.append(
-            "❌ The LSDF Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working!",
-        )
+        # If mount is not available, attempt to remount
+        cmd = [
+            "sudo",
+            "sshfs",
+            "-o",
+            "umask=0,uid=0,gid=0,allow_other",
+            "scc-paint-0001@os-login.lsdf.kit.edu:/lsdf/kit/scc/projects/paint",
+            MOUNT_POINT,
+        ]
+        attempt_remount = subprocess.run(cmd)
+        # If remount unsuccessful include error messsage
+        if not attempt_remount.returncode == 0:
+            email_body.append(
+                "❌ The LSDF Mount Check Failed: The SSHFS mount at {MOUNT_POINT} is not working!",
+            )
     # Check if the website is reachable.
     if not is_website_reachable(WEBSITE_URL):
         email_body.append("❌ Website Check Failed: {WEBSITE_URL} is not reachable!")
