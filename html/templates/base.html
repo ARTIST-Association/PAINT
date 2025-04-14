@@ -51,13 +51,33 @@
                 </li>
                 <li class="nav-item">
                     {% if active == "repository" %}
-                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
+                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page" onclick="checkLink(event, '/WRI1030197', '/maintenance')">
                     {% else %}
-                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center">
+                    <a href="/WRI1030197" id="dataNavItem" class="nav-link text-black p-3 d-flex align-items-center" onclick="checkLink(event, '/WRI1030197', '/maintenance')">
                     {% endif %}
                         <i class="bi bi-database-fill me-2"></i> Data
                     </a>
                 </li>
+                <script>
+                    function checkLink(event, primaryUrl, alternativeUrl) {
+                        event.preventDefault();  // Prevent the default link behavior.
+
+                        fetch(primaryUrl, { method: 'HEAD' })  // Use a HEAD request to check if the URL is available.
+                            .then(response => {
+                                if (response.ok) {
+                                    // If the URL is valid (status 200), navigate to it.
+                                    window.location.href = primaryUrl;
+                                } else {
+                                    // If the URL is not valid (status 403 or 404), navigate to the alternative URL.
+                                    window.location.href = alternativeUrl;
+                                }
+                            })
+                            .catch(() => {
+                                // In case of network errors, redirect to alternative.
+                                window.location.href = alternativeUrl;
+                            });
+                    }
+                </script>
                 <li class="nav-item">
                     {% if active == "resources" %}
                     <a href="/resources" class="nav-link text-black p-3 d-flex align-items-center active" aria-current="page">
