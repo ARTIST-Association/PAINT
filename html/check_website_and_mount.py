@@ -85,7 +85,7 @@ if __name__ == "__main__":
             "sudo",
             "sshfs",
             "-o",
-            "umask=0,uid=0,gid=0,allow_other",
+            "umask=0,uid=0,gid=0,allow_other,IdentityFile=/home/paint/.ssh/id_rsa",
             "scc-paint-0001@os-login.lsdf.kit.edu:/lsdf/kit/scc/projects/paint",
             MOUNT_POINT,
         ]
