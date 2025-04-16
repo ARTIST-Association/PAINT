@@ -57,7 +57,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     # Read in the data from CSV.
     data = pd.read_csv(arguments.input)
-    data.set_index(mappings.ID_INDEX, inplace=True)
+    data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Load list of available images.
     data_available = pd.read_csv(arguments.input_available)
@@ -69,7 +69,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     # Load UTIS focal spot data.
     utis_data = pd.read_csv(arguments.input_utis)
-    utis_data.set_index(mappings.ID_INDEX, inplace=True)
+    utis_data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
@@ -220,7 +220,7 @@ def main(arguments: argparse.Namespace) -> None:
         count = count + 1
         if count % 1000 == 0:
             print(
-                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count/num_images)*100:.2f}%."
+                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count / num_images) * 100:.2f}%."
             )
 
     # Create the STAC collections.
