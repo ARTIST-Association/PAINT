@@ -267,9 +267,9 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     "created": "2022-06-01Z11:08:45Z",
                     "updated": "2022-10-27Z07:05:55Z",
                     "instruments": ["HeliOS.FDM"],
+                    "view:sun_azimuth": -42.06579562155874,
+                    "view:sun_elevation": 55.621162346471515,
                 },
-                "view:sun_azimuth": -42.06579562155874,
-                "view:sun_elevation": 55.621162346471515,
                 "links": [
                     {
                         "rel": "self",
@@ -374,9 +374,9 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     "created": "2022-06-01Z11:08:45Z",
                     "updated": "2022-10-27Z07:05:55Z",
                     "instruments": ["HeliOS.FDM"],
+                    "view:sun_azimuth": -42.06579562155874,
+                    "view:sun_elevation": 55.621162346471515,
                 },
-                "view:sun_azimuth": -42.06579562155874,
-                "view:sun_elevation": 55.621162346471515,
                 "links": [
                     {
                         "rel": "self",
