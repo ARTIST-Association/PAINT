@@ -27,7 +27,7 @@ def main(arguments: argparse.Namespace) -> None:
     """
     # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration)
-    data.set_index(mappings.ID_INDEX, inplace=True)
+    data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Convert all timestamps to UTC.
     data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])

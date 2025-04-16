@@ -167,9 +167,9 @@ def make_calibration_item(
                 mappings.TIME_FORMAT
             ),
             "instruments": [heliostat_data[mappings.SYSTEM]],
+            "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
+            "view:sun_elevation": heliostat_data[mappings.SUN_ELEVATION],
         },
-        "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
-        "view:sun_elevation": heliostat_data[mappings.SUN_ELEVATION],
         "links": [
             {
                 "rel": "self",

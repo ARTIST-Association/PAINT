@@ -737,8 +737,8 @@ class StacClient:
                 data.append(
                     {
                         mappings.HELIOSTAT_ID: child.id.split("-")[0],
-                        mappings.AZIMUTH: item.extra_fields.get("view:sun_azimuth"),
-                        mappings.ELEVATION: item.extra_fields.get("view:sun_elevation"),
+                        mappings.AZIMUTH: item.properties.get("view:sun_azimuth"),
+                        mappings.ELEVATION: item.properties.get("view:sun_elevation"),
                         f"{mappings.LOWER_LEFT}_{mappings.LATITUDE_KEY}": item.geometry.get(
                             "coordinates"
                         )[0][0],

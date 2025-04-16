@@ -1,6 +1,7 @@
 # CSV columns
 INTERNAL_NAME_INDEX = "InternalName"
 ID_INDEX = "Id"
+CALIBRATION_ID_INDEX = "id"
 HELIOSTAT_ID = "HeliostatId"
 X_Y_Z_POSITIONS = ["x", "y", "z"]
 HELIOSTAT_POSITIONS = ["latitude", "longitude", "Elevation"]
