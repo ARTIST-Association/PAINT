@@ -76,16 +76,18 @@ class HeliostatPositionPlot:
         save_as_pdf : bool
             Whether to save the plot as a PDF or not (Default: True).
         """
-        plt.rcParams.update({
-        "text.usetex": True,
-        "font.family": "serif",
-        "font.size": 14,
-        "axes.titlesize": 14,
-        "axes.labelsize": 14,
-        "xtick.labelsize": 14,
-        "ytick.labelsize": 14,
-        "legend.fontsize": 11,
-        })
+        plt.rcParams.update(
+            {
+                "text.usetex": True,
+                "font.family": "serif",
+                "font.size": 14,
+                "axes.titlesize": 14,
+                "axes.labelsize": 14,
+                "xtick.labelsize": 14,
+                "ytick.labelsize": 14,
+                "legend.fontsize": 11,
+            }
+        )
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(Path(path_to_positions), header=0)
@@ -100,7 +102,8 @@ class HeliostatPositionPlot:
         # Load measurements, set the index, and count the number of measurements per heliostat.
         df_measurements = pd.read_csv(Path(path_to_measurements))
         df_measurements.set_index(mappings.ID_INDEX, inplace=True)
-        self.count_df = df_measurements[mappings.HELIOSTAT_ID].value_counts()
+        count_df_temp = df_measurements[mappings.HELIOSTAT_ID].value_counts()
+        self.count_df = count_df_temp.reindex(self.position_df.index, fill_value=0)
 
         # Load deflectometry data and set its index.
         df_deflectometry = pd.read_csv(Path(path_to_deflectometry))
