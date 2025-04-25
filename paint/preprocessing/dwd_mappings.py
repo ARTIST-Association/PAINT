@@ -10,3 +10,32 @@ dwd_parameter_mapping = {
     "weather": "weather_type",
 }
 """Dictionary to map DWD names to simpler names for saving the data."""
+
+DWD_10_MIN_DESCRIPTION = {
+    "radiation_sky_short_wave_diffuse": "10min-sum of diffuse solar radiation.",
+    "radiation_global": "10min-sum of solar incoming radiation.",
+    "sunshine_duration": "10min-sum of sunshine duration.",
+    "radiation_sky_long_wave": "10min-sum of longwave downward radiation.",
+}
+DWD_10_MIN_UNIT = {
+    "radiation_sky_short_wave_diffuse": "J/cm²",
+    "radiation_global": "J/cm²",
+    "sunshine_duration": "h",
+    "radiation_sky_long_wave": "J/cm²",
+}
+DWD_1H_DESCRIPTION = {
+    "cloud_cover_total": "The total cloud cover.",
+    "humidity": "The humidity.",
+    "pressure_vapor": "The vapor pressure.",
+    "visibility_range": "The range of visibility.",
+    "weather": "The weather code of the current condition.",
+}
+DWD_1H_UNIT = {
+    "cloud_cover_total": "fraction, 1/8",
+    "humidity": "%",
+    "pressure_vapor": "hPa",
+    "visibility_range": "m",
+    "weather": "-",
+}
+DESCRIPTION = "description"
+UNITS = "units"

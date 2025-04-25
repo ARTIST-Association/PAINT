@@ -5,6 +5,7 @@ import pandas as pd
 from wetterdienst import Settings
 from wetterdienst.provider.dwd.observation import DwdObservationRequest
 
+import paint.preprocessing.dwd_mappings as dwd_mappings
 from paint.preprocessing.dwd_mappings import dwd_parameter_mapping
 
 
@@ -208,6 +209,14 @@ class DWDWeatherData:
                     **self.compression_opts,
                 )
 
+                # Include attributes with description and units.
+                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_10min"].attrs[
+                    dwd_mappings.DESCRIPTION
+                ] = dwd_mappings.DWD_10_MIN_DESCRIPTION[parameter]
+                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_10min"].attrs[
+                    dwd_mappings.UNITS
+                ] = dwd_mappings.DWD_10_MIN_UNIT[parameter]
+
             # Include parameters at a 1h temporal resolution.
             grouped_1h = df_1h.groupby(["station_id", "parameter"])
             for (station_id, parameter), group in grouped_1h:
@@ -226,4 +235,12 @@ class DWDWeatherData:
                     data=group.value.to_numpy(),
                     **self.compression_opts,
                 )
+
+                # Include attributes with description and units.
+                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_1h"].attrs[
+                    dwd_mappings.DESCRIPTION
+                ] = dwd_mappings.DWD_1H_DESCRIPTION[parameter]
+                file[f"{station_id}/{dwd_parameter_mapping[parameter]}_1h"].attrs[
+                    dwd_mappings.UNITS
+                ] = dwd_mappings.DWD_1H_UNIT[parameter]
         return metadata_to_save
