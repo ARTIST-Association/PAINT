@@ -456,8 +456,8 @@ HELIOSTAT_PROPERTIES_CONVERSION_MAP = {
 # Keys for dataset splits used in 02_create_dataset_azimuth_split.py and 03_create_dataset_solstice_split.py
 AZIMUTH_SPLIT = "azimuth"
 SOLSTICE_SPLIT = "solstice"
-KMEANS_SPLIT = "kmeans"
-KNN_SPLIT = "knn"
+BALANCED_SPLIT = "balanced"
+HIGH_VARIANCE_SPLIT = "high_variance"
 SPLIT_KEY = "Split"
 DISTANCE_WINTER = "distance_winter"
 DISTANCE_SUMMER = "distance_summer"
