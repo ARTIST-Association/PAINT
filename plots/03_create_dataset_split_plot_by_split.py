@@ -10,7 +10,6 @@ import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 import paint.util.paint_mappings as mappings
-from paint import PAINT_ROOT
 from paint.data.dataset_splits import DatasetSplitter
 from paint.util import set_logger_config
 
@@ -267,9 +266,9 @@ if __name__ == "__main__":
     # Set defaults using values from the JSON if available.
     default_calibration_file = config.get(
         "path_to_measurements",
-        f"{PAINT_ROOT}/metadata/calibration_metadata_all_heliostats.csv",
+        "PATH/TO/calibration_metadata_all_heliostats.csv",
     )
-    default_plot_output = config.get("output_path", f"{PAINT_ROOT}/plots/new_plots")
+    default_plot_output = config.get("output_path", "PATH/TO/plots")
 
     parser = argparse.ArgumentParser(
         description="Plot dataset split distributions with insets for an example heliostat."
