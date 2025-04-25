@@ -10,6 +10,7 @@ import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
 import paint.util.paint_mappings as mappings
+from paint import PAINT_ROOT
 from paint.data.dataset_splits import DatasetSplitter
 from paint.util import set_logger_config
 
@@ -56,16 +57,18 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
-    plt.rcParams.update({
-        "text.usetex": True,
-        "font.family": "serif",
-        "font.size": 16,
-        "axes.titlesize": 16,
-        "axes.labelsize": 16,
-        "xtick.labelsize": 16,
-        "ytick.labelsize": 16,
-        "legend.fontsize": 14,
-    })
+    plt.rcParams.update(
+        {
+            "text.usetex": True,
+            "font.family": "serif",
+            "font.size": 16,
+            "axes.titlesize": 16,
+            "axes.labelsize": 16,
+            "xtick.labelsize": 16,
+            "ytick.labelsize": 16,
+            "legend.fontsize": 14,
+        }
+    )
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     calibration_metadata_path = Path(calibration_metadata_file)
@@ -185,8 +188,8 @@ def main(
             ticks = list(range(0, num_heliostats, 200))
             ax.set_xticks(ticks)
 
-            # Set y-axis limits for KNN and KMEANS split types.
-            if split_type in [mappings.KMEANS_SPLIT, mappings.KNN_SPLIT]:
+            # Set y-axis limits for Balanced and High-Variance split types.
+            if split_type in [mappings.BALANCED_SPLIT, mappings.HIGH_VARIANCE_SPLIT]:
                 ax.set_ylim(0, 500)
 
             # Set subplot title indicating the training and validation sizes.
@@ -263,9 +266,10 @@ if __name__ == "__main__":
 
     # Set defaults using values from the JSON if available.
     default_calibration_file = config.get(
-        "path_to_measurements", "PATH/TO/calibration_metadata_all_heliostats.csv"
+        "path_to_measurements",
+        f"{PAINT_ROOT}/metadata/calibration_metadata_all_heliostats.csv",
     )
-    default_plot_output = config.get("output_path", "PATH/TO/OUTPUT/PLOTS")
+    default_plot_output = config.get("output_path", f"{PAINT_ROOT}/plots/new_plots")
 
     parser = argparse.ArgumentParser(
         description="Plot dataset split distributions with insets for an example heliostat."
@@ -283,8 +287,8 @@ if __name__ == "__main__":
         default=[
             mappings.AZIMUTH_SPLIT,
             mappings.SOLSTICE_SPLIT,
-            mappings.KMEANS_SPLIT,
-            mappings.KNN_SPLIT,
+            mappings.BALANCED_SPLIT,
+            mappings.HIGH_VARIANCE_SPLIT,
         ],
         help="List of split types to use (e.g. azimuth, solstice).",
     )

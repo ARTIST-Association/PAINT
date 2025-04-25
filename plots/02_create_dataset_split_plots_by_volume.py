@@ -175,8 +175,8 @@ def main(
             ticks = list(range(0, num_heliostats, 200))
             ax.set_xticks(ticks)
 
-            # Set y-axis limits for KNN and KMEANS split types.
-            if split_type in [mappings.KMEANS_SPLIT, mappings.KNN_SPLIT]:
+            # Set y-axis limits for Balanced and High-Variance types.
+            if split_type in [mappings.BALANCED_SPLIT, mappings.HIGH_VARIANCE_SPLIT]:
                 ax.set_ylim(0, 500)
 
             # Set subplot title indicating the training and validation sizes.
@@ -218,7 +218,7 @@ def main(
         axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
 
         plt.tight_layout()
-        
+
         # Save the figure as "02_<split_type>_split.pdf"
         file_name = plot_output_path / f"02_{split_type}_split.pdf"
         plt.savefig(file_name, dpi=300)
@@ -273,8 +273,8 @@ if __name__ == "__main__":
         default=[
             mappings.AZIMUTH_SPLIT,
             mappings.SOLSTICE_SPLIT,
-            mappings.KMEANS_SPLIT,
-            mappings.KNN_SPLIT,
+            mappings.BALANCED_SPLIT,
+            mappings.HIGH_VARIANCE_SPLIT,
         ],
         help="List of split types to use (e.g. azimuth, solstice).",
     )
