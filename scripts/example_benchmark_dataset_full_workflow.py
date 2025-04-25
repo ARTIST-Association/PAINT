@@ -37,7 +37,12 @@ if __name__ == "__main__":
         "--split_type",
         type=str,
         help="The split type to apply.",
-        choices=[mappings.AZIMUTH_SPLIT, mappings.SOLSTICE_SPLIT],
+        choices=[
+            mappings.AZIMUTH_SPLIT,
+            mappings.SOLSTICE_SPLIT,
+            mappings.BALANCED_SPLIT,
+            mappings.HIGH_VARIANCE_SPLIT,
+        ],
         default=mappings.AZIMUTH_SPLIT,
     )
     parser.add_argument(
