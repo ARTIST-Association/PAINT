@@ -22,7 +22,6 @@ extensions = [
 ]
 
 autoapi_dirs = ["../paint"]
-autoapi_ignore = ["*/paint_mappings.py", "*/dwd_mappings.py"]
 autoapi_python_class_content = "init"
 
 templates_path = ["_templates"]
