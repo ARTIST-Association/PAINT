@@ -242,7 +242,7 @@ class DatasetSplitter:
         the validation candidate; if a cluster has only one sample, then the missing test candidate is
         filled from the overall pool.
         All remaining data points (i.e. those not used for validation or test) are candidates for training.
-        As a result, the size of the validation and test set is identical (``validation_size``).
+        As a result, the size of the validation and test set is identical.
 
         Parameters
         ----------
@@ -357,8 +357,7 @@ class DatasetSplitter:
         - **Validation:** The first `validation_size` data points from the sorted order (by descending average distance)
           are assigned to validation.
         - **Test:** The next `validation_size` data points in the sorted order are assigned to test.
-        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to
-        training.
+        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to training.
         - All other data points are discarded.
 
         This requires that the total number of data points is at least:
