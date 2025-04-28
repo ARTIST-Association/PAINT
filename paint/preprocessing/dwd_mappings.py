@@ -17,12 +17,14 @@ DWD_10_MIN_DESCRIPTION = {
     "sunshine_duration": "10min-sum of sunshine duration.",
     "radiation_sky_long_wave": "10min-sum of longwave downward radiation.",
 }
+"""Dictionary to include a description for the 10 min resolution weather parameters in the DWD weather HDF5 file."""
 DWD_10_MIN_UNIT = {
     "radiation_sky_short_wave_diffuse": "J/cm²",
     "radiation_global": "J/cm²",
     "sunshine_duration": "h",
     "radiation_sky_long_wave": "J/cm²",
 }
+"""Dictionary to include units for the 10 min resolution weather parameters in the DWD weather HDF5 file."""
 DWD_1H_DESCRIPTION = {
     "cloud_cover_total": "The total cloud cover.",
     "humidity": "The humidity.",
@@ -30,6 +32,7 @@ DWD_1H_DESCRIPTION = {
     "visibility_range": "The range of visibility.",
     "weather": "The weather code of the current condition.",
 }
+"""Dictionary to include a description for the 1h resolution weather parameters in the DWD weather HDF5 file."""
 DWD_1H_UNIT = {
     "cloud_cover_total": "fraction, 1/8",
     "humidity": "%",
@@ -37,5 +40,8 @@ DWD_1H_UNIT = {
     "visibility_range": "m",
     "weather": "-",
 }
+"""Dictionary to include units for the 1h resolution weather parameters in the DWD weather HDF5 file."""
 DESCRIPTION = "description"
+"""Key to access the description attribute for the DWD weather HDF5 file."""
 UNITS = "units"
+"""Key to access the units attribute for the DWD weather HDF5 file."""

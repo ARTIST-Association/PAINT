@@ -1,3 +1,5 @@
+"""Contains mappings for the renovations carried out on heliostats."""
+
 import paint.util.paint_mappings as mappings
 
 renovation_number_to_date = {
@@ -42,3 +44,4 @@ renovation_number_to_date = {
     70: mappings.NO_RENOVATION,
     80: mappings.NO_RENOVATION,
 }
+"""Mapping of renovation code to renovation date."""
