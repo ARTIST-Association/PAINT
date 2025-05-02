@@ -7,6 +7,7 @@ import pandas as pd
 import paint.util.paint_mappings as mappings
 
 log = logging.getLogger(__name__)  # Logger for the dataset splitter
+"""A logger for the dataset splitter."""
 
 
 class DatasetSplitter:

@@ -20,7 +20,8 @@ else:
 import paint.util.paint_mappings as mappings
 from paint.data import StacClient
 
-log = logging.getLogger(__name__)  # Logger for the STAC client
+log = logging.getLogger(__name__)  # Logger for the dataset
+"""A logger for the calibration dataset."""
 
 
 class PaintCalibrationDataset(Dataset):

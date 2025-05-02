@@ -12,6 +12,7 @@ from tqdm import tqdm
 import paint.util.paint_mappings as mappings
 
 log = logging.getLogger(__name__)  # Logger for the STAC client
+"""A logger for the STAC client."""
 
 
 class StacClient:
