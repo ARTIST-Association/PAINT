@@ -14,7 +14,7 @@ This tutorial demonstrates how to use the ``StacClient`` to browse and download 
 Basic Usage
 -----------
 
-The ``StacClient`` provides convenient methods to access various datasets. An example script demonstrating its use can be found at: ``scripts/example_stac_client.py``.
+The ``StacClient`` provides convenient methods to access various datasets.
 
 First, initialize the client with a path where downloaded data will be stored:
 
