@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "paint"
-version = "0.0.1"
+version = "1.0.0"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]
