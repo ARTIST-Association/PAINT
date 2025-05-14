@@ -146,6 +146,9 @@ class PaintCalibrationDataset(Dataset):
         root_dir: Union[str, Path],
         item_type: str,
         download: bool = False,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> tuple[Self, Self, Self]:
         """
         Initialize calibration dataset from a benchmark file.
@@ -162,6 +165,12 @@ class PaintCalibrationDataset(Dataset):
             Type of item being loaded, i.e. raw image, cropped image, flux image, or calibration properties.
         download : bool
             Whether to download the data (Default: ``False``).
+        timeout : int
+            Timeout for downloading the data (Default: 60 seconds).
+        num_parallel_workers : int
+            Number of parallel workers for downloading data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
 
         Returns
         -------
@@ -187,6 +196,9 @@ class PaintCalibrationDataset(Dataset):
                 splits=splits,
                 root_dir=root_dir,
                 item_type=item_type,
+                timeout=timeout,
+                num_parallel_workers=num_parallel_workers,
+                results_timeout=results_timeout,
             )
         else:
             # Check if the folder exists, if not the data must be downloaded.
@@ -199,6 +211,9 @@ class PaintCalibrationDataset(Dataset):
                     splits=splits,
                     root_dir=root_dir,
                     item_type=item_type,
+                    timeout=timeout,
+                    num_parallel_workers=num_parallel_workers,
+                    results_timeout=results_timeout,
                 )
             # If the data is present, we can load it directly.
             else:
@@ -239,6 +254,9 @@ class PaintCalibrationDataset(Dataset):
         splits: pd.DataFrame,
         root_dir: Union[str, Path],
         item_type: str,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> dict[str, Any]:  # pragma: no cover
         """
         Download the benchmark splits.
@@ -254,6 +272,12 @@ class PaintCalibrationDataset(Dataset):
             Directory where the data will be stored.
         item_type : str
             Type of item being downloaded, i.e. raw image, cropped image, flux image, or calibration properties.
+        timeout : int
+            Timeout for downloading individual items in a split.
+        num_parallel_workers : int
+            Number of parallel workers for downloading data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
 
         Returns
         -------
@@ -272,7 +296,7 @@ class PaintCalibrationDataset(Dataset):
                 desc=f"Downloading benchmark data for the {split_name} split",
                 unit="Item",
             ) as pbar:
-                with ThreadPoolExecutor() as executor:
+                with ThreadPoolExecutor(max_workers=num_parallel_workers) as executor:
                     # Create a list of future objects.
                     futures = [
                         executor.submit(
@@ -283,13 +307,14 @@ class PaintCalibrationDataset(Dataset):
                             benchmark_split=item[mappings.SPLIT_KEY],
                             verbose=False,
                             pbar=pbar,
+                            timeout=timeout,
                         )
                         for _, item in split_data.iterrows()
                     ]
                     # Wait for all tasks to complete.
                     for future in as_completed(futures):
                         try:
-                            future.result()
+                            future.result(timeout=results_timeout)
                         except Exception as e:
                             # Handle exceptions from individual tasks.
                             print(f"Error in thread execution: {e}")
@@ -363,6 +388,9 @@ class PaintCalibrationDataset(Dataset):
         root_dir: Union[str, Path],
         item_type: str,
         heliostats: Union[list[str], None] = None,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> None:  # pragma: no cover
         """
         Download the heliostat calibration data for the dataset based on heliostats.
@@ -376,6 +404,12 @@ class PaintCalibrationDataset(Dataset):
         heliostats : Union[list[str], None]
             List of heliostats for which calibration data should be downloaded. If no list is provided the data for all
             heliostats will be downloaded (Default: ``None``).
+        timeout : int
+            Timeout for downloading heliostat data (Default: 60 seconds).
+        num_parallel_workers : int
+            Number of parallel workers for downloading heliostat data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
         """
         # Create STAC client.
         client = StacClient(output_dir=root_dir)
@@ -384,6 +418,9 @@ class PaintCalibrationDataset(Dataset):
             collections=[mappings.SAVE_CALIBRATION.lower()],
             filtered_calibration_keys=[item_type],
             for_dataset=True,
+            timeout=timeout,
+            num_parallel_workers=num_parallel_workers,
+            results_timeout=results_timeout,
         )
 
     def __len__(self) -> int:

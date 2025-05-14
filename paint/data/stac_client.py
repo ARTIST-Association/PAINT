@@ -133,7 +133,9 @@ class StacClient:
             )
         return child
 
-    def download_file(self, url: str, file_name: Union[str, pathlib.Path]) -> None:
+    def download_file(
+        self, url: str, file_name: Union[str, pathlib.Path], timeout: int = 60
+    ) -> None:
         """
         Download a file.
 
@@ -143,11 +145,13 @@ class StacClient:
             URL of the file to download.
         file_name : Union[str, pathlib.Path]
             File name to be saved.
+        timeout : int
+            Timeout for downloading the file (Default: 60 seconds).
         """
         # Send an HTTP GET request to the specified url to retrieve the file.
         # Download the file in chunks (`stream=True`) instead of loading the entire file into memory.
         try:
-            response = requests.get(url, stream=True)
+            response = requests.get(url, stream=True, timeout=timeout)
             response.raise_for_status()
             # Open the file in binary write mode and download the content.
             with open(file_name, "wb") as file:
@@ -173,6 +177,7 @@ class StacClient:
         save_folder: str,
         pbar: tqdm,
         for_dataset: bool = False,
+        timeout: int = 60,
     ) -> None:
         """
         Process a single heliostat item.
@@ -201,6 +206,8 @@ class StacClient:
             Progress bar.
         for_dataset : bool
             Whether to save all items in one folder for a dataset (Default: ``False``).
+        timeout : int
+            Timeout for downloading the heliostat item (Default: 60 seconds).
         """
         item_time = item.properties["datetime"]
         if start_date and end_date:
@@ -222,13 +229,21 @@ class StacClient:
             for key, asset in item.assets.items():
                 if key in filtered_calibration_keys:
                     self._download_heliostat_asset(
-                        asset, heliostat_catalog_id, save_folder, for_dataset
+                        asset,
+                        heliostat_catalog_id,
+                        save_folder,
+                        for_dataset,
+                        timeout=timeout,
                     )
         else:
             # Process all assets in the item.
             for asset in item.assets.values():
                 self._download_heliostat_asset(
-                    asset, heliostat_catalog_id, save_folder, for_dataset
+                    asset,
+                    heliostat_catalog_id,
+                    save_folder,
+                    for_dataset,
+                    timeout=timeout,
                 )
         pbar.update(1)
 
@@ -242,6 +257,9 @@ class StacClient:
         heliostat_catalog_id: str,
         save_folder: str,
         for_dataset: bool = False,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> None:
         """
         Process and download items, either with or without date filtering and calibration key filtering.
@@ -268,13 +286,19 @@ class StacClient:
             Name of the folder to save the collection items in.
         for_dataset : bool
             Whether to save all items in one folder for a dataset (Default: ``False``).
+        timeout : int
+            Timeout for downloading the heliostat item (Default: 60 seconds).
+        num_parallel_workers : int
+            Number of parallel workers for downloading heliostat data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
         """
         with tqdm(
             total=len(items),
             desc=f"Processing Items in Heliostat {heliostat_catalog_id}",
             unit="Item",
         ) as pbar:
-            with ThreadPoolExecutor() as executor:
+            with ThreadPoolExecutor(max_workers=num_parallel_workers) as executor:
                 futures = [
                     executor.submit(
                         self._process_single_heliostat_item,
@@ -287,13 +311,16 @@ class StacClient:
                         save_folder,
                         pbar,
                         for_dataset,
+                        timeout,
                     )
                     for item in items
                 ]
 
             for future in as_completed(futures):
                 try:
-                    future.result()  # Wait for each future to complete
+                    future.result(
+                        timeout=results_timeout
+                    )  # Wait for each future to complete
                 except Exception as e:
                     log.error(f"Error processing heliostat item: {e}")
 
@@ -303,6 +330,7 @@ class StacClient:
         heliostat_catalog_id: str,
         save_folder: str,
         for_dataset: bool = False,
+        timeout: int = 60,
     ) -> None:
         """
         Download the asset from the provided URL and save it to the selected location.
@@ -317,6 +345,8 @@ class StacClient:
             Name of the folder to save the asset in.
         for_dataset : bool
             Whether to save all items in one folder for a dataset (Default: ``False``).
+        timeout : int
+            Timeout for downloading assets (Default: 60 seconds).
         """
         url = asset.href
         file_end = url.split("/")[-1]
@@ -330,7 +360,7 @@ class StacClient:
                 / file_end
             )
         file_name.parent.mkdir(parents=True, exist_ok=True)
-        self.download_file(url, file_name)
+        self.download_file(url, file_name, timeout)
 
     def _download_heliostat_data(
         self,
@@ -341,6 +371,9 @@ class StacClient:
         end_date: Union[datetime, None] = None,
         filtered_calibration_keys: Union[list[str], None] = None,
         for_dataset: bool = False,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> None:
         """
         Download items from a specified collection from a heliostat and save them to a designated path.
@@ -365,6 +398,12 @@ class StacClient:
             data is downloaded (Default: ``None``).
         for_dataset : bool
             Whether to save all items in one folder for a dataset (Default: ``False``).
+        timeout : int
+            Timeout for downloading heliostat data (Default: 60 seconds).
+        num_parallel_workers : int
+            Number of parallel workers for downloading heliostat data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
@@ -391,6 +430,7 @@ class StacClient:
             heliostat_catalog.id,
             save_folder,
             for_dataset,
+            timeout,
         )
 
     @staticmethod
@@ -428,6 +468,9 @@ class StacClient:
         end_date: Union[datetime, None] = None,
         filtered_calibration_keys: Union[list[str], None] = None,
         for_dataset: bool = False,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> None:
         """
         Download data for one or more heliostats.
@@ -452,6 +495,12 @@ class StacClient:
             data is downloaded (Default: ``None``).
         for_dataset : bool
             Whether to save all items in one folder for a dataset (Default: ``False``).
+        timeout : int
+            Timeout for downloading heliostat data (Default: 60 seconds).
+        num_parallel_workers : int
+            Number of parallel workers for downloading heliostat data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
         """
         # Check if keys provided to the filtered_calibration_key dictionary are acceptable.
         if heliostats is None:
@@ -542,6 +591,9 @@ class StacClient:
                     end_date,
                     filtered_calibration_keys,
                     for_dataset,
+                    timeout=timeout,
+                    num_parallel_workers=num_parallel_workers,
+                    results_timeout=results_timeout,
                 )
 
             # Download deflectometry data.
@@ -556,6 +608,9 @@ class StacClient:
                     mappings.SAVE_DEFLECTOMETRY,
                     start_date,
                     end_date,
+                    timeout=timeout,
+                    num_parallel_workers=num_parallel_workers,
+                    results_timeout=results_timeout,
                 )
 
             # Download properties data.
@@ -570,10 +625,17 @@ class StacClient:
                     mappings.SAVE_PROPERTIES,
                     start_date,
                     end_date,
+                    timeout=timeout,
+                    num_parallel_workers=num_parallel_workers,
+                    results_timeout=results_timeout,
                 )
 
     def _download_weather_assets(
-        self, weather_item: pystac.item.Item, include_juelich: bool, include_dwd: bool
+        self,
+        weather_item: pystac.item.Item,
+        include_juelich: bool,
+        include_dwd: bool,
+        timeout: int = 60,
     ) -> None:
         """
         Download weather assets for Jülich and/or DWD depending on flags.
@@ -586,6 +648,8 @@ class StacClient:
             Whether to include Jülich data.
         include_dwd : bool
             Whether to include DWD data.
+        timeout : int
+            Timeout for downloading assets (Default: 60 seconds).
         """
         if "juelich" in weather_item.id and include_juelich:
             log.info(
@@ -604,13 +668,14 @@ class StacClient:
             file_end = asset.href.split("/")[-1]
             file_name = self.output_dir / mappings.SAVE_WEATHER / file_end
             file_name.parent.mkdir(parents=True, exist_ok=True)
-            self.download_file(url=url, file_name=file_name)
+            self.download_file(url=url, file_name=file_name, timeout=timeout)
 
     def get_weather_data(
         self,
         data_sources: Union[list[str], None] = None,
         start_date: Union[datetime, None] = None,
         end_date: Union[datetime, None] = None,
+        timeout: int = 60,
     ) -> None:
         """
         Get weather data.
@@ -624,6 +689,8 @@ class StacClient:
             Optional start date to filter the weather data.
         end_date : datetime, optional
             Optional end date to filter the weather data.
+        timeout : int
+            Timeout for downloading data (Default: 60 seconds).
         """
         if data_sources is None:
             include_juelich = True
@@ -665,7 +732,10 @@ class StacClient:
                     <= end_date
                 ):
                     self._download_weather_assets(
-                        weather_item, include_juelich, include_dwd
+                        weather_item,
+                        include_juelich,
+                        include_dwd,
+                        timeout=timeout,
                     )
         # Handle error with start and end date.
         elif start_date or end_date:
@@ -675,18 +745,28 @@ class StacClient:
             # Download the weather data.
             for weather_item in weather_collection.get_items():
                 self._download_weather_assets(
-                    weather_item, include_juelich, include_dwd
+                    weather_item,
+                    include_juelich,
+                    include_dwd,
+                    timeout=timeout,
                 )
 
-    def get_tower_measurements(self) -> None:
-        """Download tower measurements."""
+    def get_tower_measurements(self, timeout: int = 60) -> None:
+        """
+        Download tower measurements.
+
+        Parameters
+        ----------
+        timeout : int
+            Timeout for downloading measurements.
+        """
         log.info("Downloading the tower measurements!")
         item = pystac.Item.from_file(href=mappings.TOWER_STAC_URL)
         for asset in item.get_assets().values():
             url = asset.href
             file_end = asset.href.split("/")[-1]
             file_name = self.output_dir / file_end
-            self.download_file(url=url, file_name=file_name)
+            self.download_file(url=url, file_name=file_name, timeout=timeout)
 
     def _process_child_metadata(
         self,
@@ -962,6 +1042,7 @@ class StacClient:
         benchmark_split: Union[str, None] = None,
         pbar: Union[tqdm, None] = None,
         verbose: bool = True,
+        timeout: int = 60,
     ) -> None:
         """
         Download a specific calibration item from a specific heliostat given the calibration item ID.
@@ -983,6 +1064,8 @@ class StacClient:
             Progress bar, optional (Default: ``None``).
         verbose : bool
             Whether log messages should be printed (Default: ``True``).
+        timeout : int
+            Timeout for downloading calibration item (Default: 60 seconds).
         """
         # Include error handling for invalid item ID.
         # This error function does not return a value error, but merely logs the error. This will enable code calling
@@ -1025,7 +1108,7 @@ class StacClient:
                         / file_end
                     )
                 file_name.parent.mkdir(parents=True, exist_ok=True)
-                self.download_file(url, file_name)
+                self.download_file(url, file_name, timeout=timeout)
         if pbar is not None:
             pbar.update(1)
 
@@ -1033,6 +1116,9 @@ class StacClient:
         self,
         heliostat_items_dict: dict[str, Union[list[int], None]],
         filtered_calibration_keys: Union[list[str], None] = None,
+        timeout: int = 60,
+        num_parallel_workers: int = 10,
+        results_timeout: int = 300,
     ) -> None:
         """
         Download multiple calibration items for multiple heliostats.
@@ -1046,6 +1132,12 @@ class StacClient:
             List of keys to filter the calibration data. These keys must be one of: ``raw_image``, ``cropped_image``,
             ``flux_image``, ``flux_centered_image``, ``calibration_properties``. If no list is provided, all calibration
             data is downloaded (Default: ``None``).
+        timeout : int
+            Timeout for downloading individual items in a split.
+        num_parallel_workers : int
+            Number of parallel workers for downloading data (Default: 10).
+        results_timeout : int
+            Timeout for collecting results from multiple threads (Default: 300 seconds).
         """
         filtered_calibration_keys = self._check_filtered_calibration_keys(
             filtered_calibration_keys
@@ -1071,7 +1163,9 @@ class StacClient:
                     desc=f"Downloading Calibration Items in {heliostat_id}",
                     unit="Item",
                 ) as pbar:
-                    with ThreadPoolExecutor() as executor:
+                    with ThreadPoolExecutor(
+                        max_workers=num_parallel_workers
+                    ) as executor:
                         # Create a list of future objects.
                         futures = [
                             executor.submit(
@@ -1082,13 +1176,14 @@ class StacClient:
                                 benchmark_split=None,
                                 pbar=pbar,
                                 verbose=False,
+                                timeout=timeout,
                             )
                             for item in all_items
                         ]
                         # Wait for all tasks to complete.
                         for future in as_completed(futures):
                             try:
-                                future.result()
+                                future.result(timeout=results_timeout)
                             except Exception as e:
                                 # Handle exceptions from individual tasks.
                                 log.error(f"Error in thread execution: {e}")
@@ -1099,4 +1194,5 @@ class StacClient:
                         heliostat_id=heliostat_id,
                         item_id=item_id,
                         filtered_calibration_keys=filtered_calibration_keys,
+                        timeout=timeout,
                     )
