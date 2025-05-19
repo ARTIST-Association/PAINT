@@ -2,7 +2,7 @@
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Flask, redirect, render_template, url_for
+from flask import Flask, render_template
 from waitress import serve
 
 app = Flask(__name__)
@@ -150,18 +150,6 @@ def maintenance() -> str:
                 "issue as soon as possible."
             )
     return render_template("maintenance.html", message=message)
-
-
-@app.errorhandler(403)
-def handle_403(e):
-    """Redirect 403 errors to maintenance page."""
-    return redirect(url_for("maintenance"))
-
-
-@app.errorhandler(404)
-def handle_404(e):
-    """Redirect 404 errors to maintenance page."""
-    return redirect(url_for("maintenance"))
 
 
 if __name__ == "__main__":
