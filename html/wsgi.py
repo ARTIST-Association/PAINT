@@ -8,6 +8,12 @@ from waitress import serve
 app = Flask(__name__)
 
 
+@app.errorhandler(403)
+def forbidden():
+    """Redirect errors to maintenance page."""
+    return maintenance()
+
+
 @app.route("/")
 def home() -> str:
     """
