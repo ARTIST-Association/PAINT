@@ -89,7 +89,10 @@ if __name__ == "__main__":
             "scc-paint-0001@os-login.lsdf.kit.edu:/lsdf/kit/scc/projects/paint",
             MOUNT_POINT,
         ]
-        attempt_remount = subprocess.run(cmd)
+        # Suppress printing outputs or errors to avoid extra error emails.
+        attempt_remount = subprocess.run(
+            cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+        )
         # If remount unsuccessful include error messsage
         if not attempt_remount.returncode == 0:
             email_body.append(
