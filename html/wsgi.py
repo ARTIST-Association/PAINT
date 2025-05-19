@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from flask import Flask, render_template
 from waitress import serve
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static", static_folder="static")
 
 
 @app.route("/")
