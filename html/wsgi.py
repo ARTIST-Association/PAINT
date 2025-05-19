@@ -154,7 +154,13 @@ def maintenance() -> str:
 
 @app.errorhandler(403)
 def handle_403(e):
-    """Redirect 403 errors to maintenace page."""
+    """Redirect 403 errors to maintenance page."""
+    return redirect(url_for("maintenance"))
+
+
+@app.errorhandler(404)
+def handle_404(e):
+    """Redirect 404 errors to maintenance page."""
     return redirect(url_for("maintenance"))
 
 
