@@ -66,7 +66,7 @@ def main(arguments: argparse.Namespace) -> None:
     """
     # Read in the data from CSV.
     data = pd.read_csv(arguments.input_calibration)
-    data.set_index(mappings.ID_INDEX, inplace=True)
+    data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Load list of available images.
     data_available = pd.read_csv(arguments.input_available)
