@@ -2,34 +2,52 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import List, Union
 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import torch
-
-import paint.util.paint_mappings as mappings
-from paint.util.paint_mappings import (
-    CALIBRATION_PROPERTIES_IDENTIFIER,
-    POWER_PLANT_LAT,
-    POWER_PLANT_LON,
-    POWER_PLANT_ALT,
-)
-from paint.util import set_logger_config
 from plot_utils import convert_wgs84_coordinates_to_local_enu
 
-# Set logger
-set_logger_config()
+import paint.util.paint_mappings as mappings
+
+# Global plot settings
+mpl.rcParams["font.family"] = "sans-serif"
+mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+mpl.rcParams["font.size"] = 12
+mpl.rcParams["axes.titlesize"] = 14
+mpl.rcParams["axes.labelsize"] = 12
+mpl.rcParams["axes.labelweight"] = "bold"
+mpl.rcParams["xtick.labelsize"] = 10
+mpl.rcParams["ytick.labelsize"] = 10
 
 # Power plant position as tensor
-power_plant_position = torch.tensor([POWER_PLANT_LAT, POWER_PLANT_LON, POWER_PLANT_ALT])
+power_plant_position = torch.tensor(
+    [mappings.POWER_PLANT_LAT, mappings.POWER_PLANT_LON, mappings.POWER_PLANT_ALT]
+)
 
 
 class ConditionDistributionPlot:
     """
     Plot the sun azimuth/elevation and aim point distributions.
+
+    Attributes
+    ----------
+    path_to_data_directory : pathlib.Path
+        Path to the data directory.
+    path_to_metadata : pathlib.Path
+        Path to the metadata JSON file.
+    output_path : pathlib.Path
+        Path where plots will be saved.
+    figure_size : tuple[float]
+        Size of the figures used for plotting.
+    data : pandas.DataFrame
+        Loaded condition data for plotting.
+    receiver_coordinates : list[torch.Tensor]
+        Receiver corner coordinates transformed to local ENU coordinates.
     """
 
     # Class constants for styling and layout
@@ -46,13 +64,27 @@ class ConditionDistributionPlot:
         path_to_metadata: Union[str, Path],
         output_path: Union[str, Path],
     ) -> None:
+        """
+        Initialize the ConditionDistributionPlot instance by setting paths.
+
+        Parameters
+        ----------
+        path_to_data_directory : Union[str,Path]
+            Path to the directory containing the condition data files.
+
+        path_to_metadata : Union[str,Path]
+            Path to the JSON metadata file with calibration information.
+
+        output_path : Union[str,Path]
+            Directory where plots will be saved.
+        """
         self.path_to_metadata = Path(path_to_metadata)
         self.path_to_data_directory = Path(path_to_data_directory)
         self.output_path = Path(output_path)
 
         self.output_path.mkdir(parents=True, exist_ok=True)
 
-        self.figsize = (4, 4)
+        self.figure_size = (4, 4)
         self.data = self._load_data()
 
         # Precompute receiver corners once
@@ -64,10 +96,7 @@ class ConditionDistributionPlot:
         ]
 
     def _load_data(self) -> pd.DataFrame:
-        """
-        Load calibration data and extract focal spot centers
-        in local ENU coordinates for plotting.
-        """
+        """Load calibration data and extract focal spot centers in local ENU coordinates for plotting."""
         calibration_data = pd.read_csv(self.path_to_metadata)
 
         # Create empty columns for extracted centers
@@ -76,22 +105,28 @@ class ConditionDistributionPlot:
         calibration_data["FocalSpotCenterU"] = np.nan
 
         # Prepare a fast lookup for ID to row index
-        id_to_index = {id_: idx for idx, id_ in calibration_data["Id"].items()}
+        id_to_index = {
+            id_: idx for idx, id_ in calibration_data[mappings.ID_INDEX].items()
+        }
 
-        for row in calibration_data[["Id", "HeliostatId"]].itertuples(index=False):
+        for row in calibration_data[
+            [mappings.ID_INDEX, mappings.HELIOSTAT_ID]
+        ].itertuples(index=False):
             heliostat_id = row.HeliostatId
             id_ = row.Id
             path = (
                 self.path_to_data_directory
                 / heliostat_id
-                / "Calibration"
-                / f"{id_}{CALIBRATION_PROPERTIES_IDENTIFIER}"
+                / mappings.SAVE_CALIBRATION
+                / f"{id_}{mappings.CALIBRATION_PROPERTIES_IDENTIFIER}"
             )
 
             try:
                 with open(path, "r") as file:
                     calibration_dict = json.load(file)
-                    center = torch.tensor(calibration_dict[mappings.FOCAL_SPOT_KEY][mappings.HELIOS_KEY])
+                    center = torch.tensor(
+                        calibration_dict[mappings.FOCAL_SPOT_KEY][mappings.HELIOS_KEY]
+                    )
                     center_enu = convert_wgs84_coordinates_to_local_enu(
                         center, power_plant_position
                     )
@@ -108,7 +143,7 @@ class ConditionDistributionPlot:
 
     def plot_sun_positions(self) -> None:
         """Plot sun azimuth versus elevation."""
-        sns.set_context("notebook", rc={"figure.figsize": self.figsize})
+        sns.set_context("notebook", rc={"figure.figsize": self.figure_size})
 
         joint_plot = sns.jointplot(
             data=self.data, x="Azimuth", y="Elevation", kind="hex"
@@ -127,7 +162,8 @@ class ConditionDistributionPlot:
         g = sns.jointplot(
             data=self.data, x="FocalSpotCenterE", y="FocalSpotCenterU", kind="hex"
         )
-        g.set_axis_labels("Aim point in E / m", "Aim point in U / m")
+        g.ax_joint.set_xlabel("Aim point in E / m", fontweight="bold")
+        g.ax_joint.set_ylabel("Aim point in U / m", fontweight="bold")
 
         g.ax_joint.set_xlim(self.HEXBIN_XLIMS)
         g.ax_joint.set_ylim(self.HEXBIN_YLIMS)
@@ -148,31 +184,64 @@ class ConditionDistributionPlot:
         mft = mappings.MFT_ENU
 
         # Draw L and T markers
-        self._draw_L_marker(ax, stj_upper[0][0], stj_upper[0][2], "UL", self.L_MARKER_SIZE_STJ)
-        self._draw_L_marker(ax, stj_upper[2][0], stj_upper[2][2], "UR", self.L_MARKER_SIZE_STJ)
-        self._draw_T_marker(ax, stj_upper[1][0], stj_upper[1][2], "right", self.L_MARKER_SIZE_STJ)
-        self._draw_T_marker(ax, stj_upper[3][0], stj_upper[3][2], "left", self.L_MARKER_SIZE_STJ)
-        self._draw_L_marker(ax, stj_lower[1][0], stj_lower[1][2], "LL", self.L_MARKER_SIZE_STJ)
-        self._draw_L_marker(ax, stj_lower[3][0], stj_lower[3][2], "LR", self.L_MARKER_SIZE_STJ)
+        self._draw_l_marker(
+            ax, stj_upper[0][0], stj_upper[0][2], "UL", self.L_MARKER_SIZE_STJ
+        )
+        self._draw_l_marker(
+            ax, stj_upper[2][0], stj_upper[2][2], "UR", self.L_MARKER_SIZE_STJ
+        )
+        self._draw_t_marker(
+            ax, stj_upper[1][0], stj_upper[1][2], "right", self.L_MARKER_SIZE_STJ
+        )
+        self._draw_t_marker(
+            ax, stj_upper[3][0], stj_upper[3][2], "left", self.L_MARKER_SIZE_STJ
+        )
+        self._draw_l_marker(
+            ax, stj_lower[1][0], stj_lower[1][2], "LL", self.L_MARKER_SIZE_STJ
+        )
+        self._draw_l_marker(
+            ax, stj_lower[3][0], stj_lower[3][2], "LR", self.L_MARKER_SIZE_STJ
+        )
 
-        self._draw_L_marker(ax, mft[0][0], mft[0][2], "UL", self.L_MARKER_SIZE_MFT)
-        self._draw_L_marker(ax, mft[2][0], mft[2][2], "UR", self.L_MARKER_SIZE_MFT)
-        self._draw_L_marker(ax, mft[1][0], mft[1][2], "LL", self.L_MARKER_SIZE_MFT)
-        self._draw_L_marker(ax, mft[3][0], mft[3][2], "LR", self.L_MARKER_SIZE_MFT)
+        self._draw_l_marker(ax, mft[0][0], mft[0][2], "UL", self.L_MARKER_SIZE_MFT)
+        self._draw_l_marker(ax, mft[2][0], mft[2][2], "UR", self.L_MARKER_SIZE_MFT)
+        self._draw_l_marker(ax, mft[1][0], mft[1][2], "LL", self.L_MARKER_SIZE_MFT)
+        self._draw_l_marker(ax, mft[3][0], mft[3][2], "LR", self.L_MARKER_SIZE_MFT)
 
         # Draw receiver rectangle
         self._draw_rectangle(ax, self.receiver_coordinates)
 
         # Add text labels
         offset = self.LABEL_OFFSET
-        ax.text(0, stj_upper[0][2] + offset, "STJ upper", fontsize=10, ha="center", va="center")
-        ax.text(0, stj_lower[1][2] - offset, "STJ lower", fontsize=10, ha="center", va="center")
-        ax.text(0, self.receiver_coordinates[1][2] + offset, "Receiver", fontsize=10, ha="center", va="center")
+        ax.text(
+            0,
+            stj_upper[0][2] + offset,
+            "STJ upper",
+            fontsize=10,
+            ha="center",
+            va="center",
+        )
+        ax.text(
+            0,
+            stj_lower[1][2] - offset,
+            "STJ lower",
+            fontsize=10,
+            ha="center",
+            va="center",
+        )
+        ax.text(
+            0,
+            self.receiver_coordinates[1][2] + offset,
+            "Receiver",
+            fontsize=10,
+            ha="center",
+            va="center",
+        )
         x_mft = 0.5 * (mft[0][0] + mft[2][0])
         ax.text(x_mft, mft[0][2] + offset, "MFT", fontsize=10, ha="center", va="center")
 
-    def _draw_L_marker(
-        self,
+    @staticmethod
+    def _draw_l_marker(
         ax: plt.Axes,
         x: float,
         z: float,
@@ -194,8 +263,8 @@ class ConditionDistributionPlot:
             ax.plot([x, x], [z, z + size], color="k", linewidth=lw, zorder=5)
             ax.plot([x, x + size], [z, z], color="k", linewidth=lw, zorder=5)
 
-    def _draw_T_marker(
-        self,
+    @staticmethod
+    def _draw_t_marker(
         ax: plt.Axes,
         x: float,
         z: float,
@@ -206,10 +275,22 @@ class ConditionDistributionPlot:
         """Draw a T-shaped marker at a given (x, z) position with orientation."""
         if orientation == "left":
             ax.plot([x, x + size], [z, z], color="k", linewidth=lw, zorder=5)
-            ax.plot([x, x], [z - 0.5 * size, z + 0.5 * size], color="k", linewidth=lw, zorder=5)
+            ax.plot(
+                [x, x],
+                [z - 0.5 * size, z + 0.5 * size],
+                color="k",
+                linewidth=lw,
+                zorder=5,
+            )
         elif orientation == "right":
             ax.plot([x, x - size], [z, z], color="k", linewidth=lw, zorder=5)
-            ax.plot([x, x], [z - 0.5 * size, z + 0.5 * size], color="k", linewidth=lw, zorder=5)
+            ax.plot(
+                [x, x],
+                [z - 0.5 * size, z + 0.5 * size],
+                color="k",
+                linewidth=lw,
+                zorder=5,
+            )
 
     def _draw_rectangle(
         self,
@@ -235,17 +316,17 @@ if __name__ == "__main__":
     parser.add_argument(
         "--path_to_data_directory",
         type=str,
-        default="/workVERLEIHNIX/share/PAINT",
+        default="/Users/kphipps/Work/Gits/PAINT/download_for_plots",
     )
     parser.add_argument(
         "--path_to_metadata",
         type=str,
-        default="/workVERLEIHNIX/share/PAINT/metadata/calibration_metadata_all_heliostats.csv",
+        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--output_path",
         type=str,
-        default="plots/saved_plots",
+        default="plots/saved_plots_new",
     )
     args = parser.parse_args()
     config = vars(args)
