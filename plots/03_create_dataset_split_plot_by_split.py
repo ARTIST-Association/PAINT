@@ -1,8 +1,8 @@
 import argparse
-import json
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Union
 
+import matplotlib as mpl
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +12,17 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import paint.util.paint_mappings as mappings
 from paint.data.dataset_splits import DatasetSplitter
 from paint.util import set_logger_config
+
+# Global plot settings
+mpl.rcParams["font.family"] = "sans-serif"
+mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+mpl.rcParams["font.size"] = 12
+mpl.rcParams["axes.titlesize"] = 14
+mpl.rcParams["axes.labelsize"] = 12
+mpl.rcParams["axes.labelweight"] = "bold"
+mpl.rcParams["xtick.labelsize"] = 10
+mpl.rcParams["ytick.labelsize"] = 10
+mpl.rcParams["legend.fontsize"] = 10
 
 # Logger for the dataset splitter
 set_logger_config()
@@ -56,18 +67,6 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
-    plt.rcParams.update(
-        {
-            "text.usetex": True,
-            "font.family": "serif",
-            "font.size": 16,
-            "axes.titlesize": 16,
-            "axes.labelsize": 16,
-            "xtick.labelsize": 16,
-            "ytick.labelsize": 16,
-            "legend.fontsize": 14,
-        }
-    )
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     calibration_metadata_path = Path(calibration_metadata_file)
@@ -181,7 +180,7 @@ def main(
                 kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors
             )
             # Change the x-axis label as requested.
-            ax.set_xlabel("Heliostats sorted by \# measurements available")
+            ax.set_xlabel("Heliostats sorted by # measurements available")
             ax.set_ylabel("Count")
             ax.tick_params(axis="x", rotation=45)
             ticks = list(range(0, num_heliostats, 200))
@@ -232,51 +231,19 @@ def main(
 
         plt.tight_layout()
         # Save the figure as "02_<split_type>_split.pdf"
-        file_name = plot_output_path / f"02_{split_type}_split.pdf"
+        file_name = plot_output_path / f"03_{split_type}_split.pdf"
         plt.savefig(file_name, dpi=300)
         plt.close(fig)
         print(f"Saved plot for split type '{split_type}' to {file_name}")
 
 
-def load_config(json_path: Path) -> Dict[str, Any]:
-    """
-    Load a Json config.
-
-    Parameters
-    ----------
-    json_path : pathlib.Path
-        Path to the JSON config file to load.
-
-    Returns
-    -------
-    Dict[str, Any]
-        A python object containing the loaded JSON config.
-    """
-    if json_path.exists():
-        with json_path.open() as f:
-            return json.load(f)
-    return {}
-
-
 if __name__ == "__main__":
-    # Check if the config file exists and load it.
-    config_file = Path("plots/plot_paths.json")
-    config = load_config(config_file)
-
-    # Set defaults using values from the JSON if available.
-    default_calibration_file = config.get(
-        "path_to_measurements",
-        "PATH/TO/calibration_metadata_all_heliostats.csv",
-    )
-    default_plot_output = config.get("output_path", "PATH/TO/plots")
-
     parser = argparse.ArgumentParser(
         description="Plot dataset split distributions with insets for an example heliostat."
     )
     parser.add_argument(
         "--calibration_metadata_file",
         type=str,
-        default=default_calibration_file,
         help="Path to the calibration metadata CSV file.",
     )
     parser.add_argument(
@@ -319,7 +286,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--plot_output",
         type=str,
-        default=default_plot_output,
+        default="saved_plots",
         help="Directory to save the plot files (one file per split type).",
     )
     parser.add_argument(

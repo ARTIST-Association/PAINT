@@ -2,8 +2,9 @@
 import argparse
 import json
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Dict, Union
 
+import matplotlib as mpl
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,6 +13,17 @@ from matplotlib.patches import Rectangle
 from plot_utils import decimal_to_dms
 
 import paint.util.paint_mappings as mappings
+
+# Global plot settings
+mpl.rcParams["font.family"] = "sans-serif"
+mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+mpl.rcParams["font.size"] = 12
+mpl.rcParams["axes.titlesize"] = 14
+mpl.rcParams["axes.labelsize"] = 12
+mpl.rcParams["axes.labelweight"] = "bold"
+mpl.rcParams["xtick.labelsize"] = 10
+mpl.rcParams["ytick.labelsize"] = 10
+mpl.rcParams["legend.fontsize"] = 10
 
 
 class HeliostatPositionPlot:
@@ -76,18 +88,6 @@ class HeliostatPositionPlot:
         save_as_pdf : bool
             Whether to save the plot as a PDF or not (Default: True).
         """
-        plt.rcParams.update(
-            {
-                "text.usetex": True,
-                "font.family": "serif",
-                "font.size": 14,
-                "axes.titlesize": 14,
-                "axes.labelsize": 14,
-                "xtick.labelsize": 14,
-                "ytick.labelsize": 14,
-                "legend.fontsize": 11,
-            }
-        )
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(Path(path_to_positions), header=0)
@@ -180,7 +180,7 @@ class HeliostatPositionPlot:
             cmap=custom_cmap,
             alpha=0.7,
         )
-        fig.colorbar(scatter, label="\\# Measurements")
+        fig.colorbar(scatter, label="# Measurements")
         ax.grid(True)
 
         # Draw tower boundaries as rectangles.
@@ -223,55 +223,29 @@ class HeliostatPositionPlot:
         fig.savefig(self.output_path / self.file_name, dpi=300)
 
 
-def load_json_config(json_path: Path) -> Dict[str, Any]:
-    """
-    Load a Json config.
-
-    Parameters
-    ----------
-    json_path : pathlib.Path
-        Path to the JSON config file to load.
-
-    Returns
-    -------
-    Dict[str, Any]
-        A python object containing the loaded JSON config.
-    """
-    with json_path.open("r") as f:
-        return json.load(f)
-
-
 if __name__ == "__main__":
-    json_file = Path("plots/plot_paths.json")
-    if json_file.exists():
-        config = load_json_config(json_file)
-    else:
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            "--path_to_positions",
-            type=str,
-            default="PATH/TO/properties_metadata_all_heliostats.csv",
-        )
-        parser.add_argument(
-            "--path_to_measurements",
-            type=str,
-            default="PATH/TO/calibration_metadata_all_heliostats.csv",
-        )
-        parser.add_argument(
-            "--path_to_deflectometry",
-            type=str,
-            default="PATH/TO/deflectometry_metadata_all_heliostats.csv",
-        )
-        parser.add_argument(
-            "--path_to_tower_properties",
-            type=str,
-            default="PATH/TO/WRI1030197-tower-measurements.json",
-        )
-        parser.add_argument("--output_path", type=str, default="plots/saved_plots")
-        parser.add_argument("--file_name", type=str, default="01_heliostat_positions")
-        parser.add_argument("--save_as_pdf", action="store_true", default=True)
-        args = parser.parse_args()
-        config = vars(args)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--path_to_positions",
+        type=str,
+    )
+    parser.add_argument(
+        "--path_to_measurements",
+        type=str,
+    )
+    parser.add_argument(
+        "--path_to_deflectometry",
+        type=str,
+    )
+    parser.add_argument(
+        "--path_to_tower_properties",
+        type=str,
+    )
+    parser.add_argument("--output_path", type=str, default="saved_plots")
+    parser.add_argument("--file_name", type=str, default="01_heliostat_positions")
+    parser.add_argument("--save_as_pdf", action="store_true", default=True)
+    args = parser.parse_args()
+    config = vars(args)
 
     plotter = HeliostatPositionPlot(**config)
     plotter.plot_heliostat_positions()

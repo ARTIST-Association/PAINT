@@ -23,6 +23,7 @@ mpl.rcParams["axes.labelsize"] = 12
 mpl.rcParams["axes.labelweight"] = "bold"
 mpl.rcParams["xtick.labelsize"] = 10
 mpl.rcParams["ytick.labelsize"] = 10
+mpl.rcParams["legend.fontsize"] = 10
 
 # Power plant position as tensor
 power_plant_position = torch.tensor(
@@ -159,7 +160,7 @@ class ConditionDistributionPlot:
         joint_plot.ax_joint.grid(True, zorder=2)
         joint_plot.ax_joint.collections[0].set_zorder(1)
 
-        file_name = "03_sun_position_distribution"
+        file_name = "04_sun_position_distribution"
         self._save_plot(joint_plot.fig, file_name)
 
     def plot_target_offsets(self) -> None:
@@ -167,8 +168,6 @@ class ConditionDistributionPlot:
         g = sns.jointplot(
             data=self.data, x="FocalSpotCenterE", y="FocalSpotCenterU", kind="hex"
         )
-        g.ax_joint.set_xlabel("Aim point in E / m", fontweight="bold")
-        g.ax_joint.set_ylabel("Aim point in U / m", fontweight="bold")
 
         g.ax_joint.set_xlim(self.HEXBIN_XLIMS)
         g.ax_joint.set_ylim(self.HEXBIN_YLIMS)
@@ -179,7 +178,7 @@ class ConditionDistributionPlot:
         g.ax_joint.set_axisbelow(False)
         g.ax_joint.collections[0].set_zorder(1)
 
-        file_name = "03_aim_point_distribution"
+        file_name = "04_aim_point_distribution"
         self._save_plot(g.fig, file_name)
 
     def _draw_target_markers(self, ax: plt.Axes) -> None:
@@ -384,17 +383,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--path_to_data_directory",
         type=str,
-        default="/Users/kphipps/Work/Gits/PAINT/download_for_plots",
     )
     parser.add_argument(
         "--path_to_metadata",
         type=str,
-        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--output_path",
         type=str,
-        default="plots/saved_plots_new",
+        default="saved_plots",
     )
     args = parser.parse_args()
     config = vars(args)
