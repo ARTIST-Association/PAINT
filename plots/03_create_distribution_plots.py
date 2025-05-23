@@ -48,6 +48,13 @@ class ConditionDistributionPlot:
         Loaded condition data for plotting.
     receiver_coordinates : list[torch.Tensor]
         Receiver corner coordinates transformed to local ENU coordinates.
+
+    Methods
+    -------
+    plot_sun_positions()
+        Plot sun azimuth versus elevation.
+    plot_target_offsets()
+        Plot target offset aim points.
     """
 
     # Class constants for styling and layout
@@ -71,10 +78,8 @@ class ConditionDistributionPlot:
         ----------
         path_to_data_directory : Union[str,Path]
             Path to the directory containing the condition data files.
-
         path_to_metadata : Union[str,Path]
             Path to the JSON metadata file with calibration information.
-
         output_path : Union[str,Path]
             Directory where plots will be saved.
         """
@@ -178,7 +183,14 @@ class ConditionDistributionPlot:
         self._save_plot(g.fig, file_name)
 
     def _draw_target_markers(self, ax: plt.Axes) -> None:
-        """Draw L and T shaped markers for targets and the receiver based on paint mappings."""
+        """
+        Draw L and T shaped markers for targets and the receiver based on paint mappings.
+
+        Parameters
+        ----------
+        ax : plt.Axes
+            Axes object to draw markers on.
+        """
         stj_upper = mappings.STJ_UPPER_ENU
         stj_lower = mappings.STJ_LOWER_ENU
         mft = mappings.MFT_ENU
@@ -249,7 +261,24 @@ class ConditionDistributionPlot:
         size: float = 0.4,
         lw: float = 2,
     ) -> None:
-        """Draw an L-shaped marker at a given (x, z) position with orientation."""
+        """
+        Draw an L-shaped marker at a given (x, z) position with orientation.
+
+        Parameters
+        ----------
+        ax : plt.Axes
+            Axes object to draw marker on.
+        x : float
+            Position of L marker in the x coordinate.
+        z : float
+            Position of L marker in the z coordinate.
+        orientation : str
+            Orientation of the marker.
+        size : float
+            Size of the marker.
+        lw : float
+            Line width of the marker.
+        """
         if orientation == "UL":
             ax.plot([x, x], [z, z - size], color="k", linewidth=lw, zorder=5)
             ax.plot([x, x - size], [z, z], color="k", linewidth=lw, zorder=5)
@@ -272,7 +301,24 @@ class ConditionDistributionPlot:
         size: float = 0.3,
         lw: float = 2,
     ) -> None:
-        """Draw a T-shaped marker at a given (x, z) position with orientation."""
+        """
+        Draw a T-shaped marker at a given (x, z) position with orientation.
+
+        Parameters
+        ----------
+        ax : plt.Axes
+            Axes object to draw marker on.
+        x : float
+            Position of T marker in the x coordinate.
+        z : float
+            Position of T marker in the z coordinate.
+        orientation : str
+            Orientation of the marker.
+        size : float
+            Size of the marker.
+        lw : float
+            Line width of the marker.
+        """
         if orientation == "left":
             ax.plot([x, x + size], [z, z], color="k", linewidth=lw, zorder=5)
             ax.plot(
@@ -299,13 +345,35 @@ class ConditionDistributionPlot:
         color: str = "k",
         linewidth: float = 1.5,
     ) -> None:
-        """Draw a closed rectangle given its corners."""
+        """
+        Draw a closed rectangle given its corners.
+
+        Parameters
+        ----------
+        ax : plt.Axes
+            Axes object to draw rectangle on.
+        corners : List[torch.Tensor]
+            Corners of the rectangle.
+        color : str
+            Color of the rectangle.
+        linewidth : float
+            Line width of the rectangle.
+        """
         x = [corner[0] for corner in corners]
         z = [corner[2] for corner in corners]
         ax.plot(x, z, color=color, linewidth=linewidth)
 
     def _save_plot(self, fig: plt.Figure, base_name: str) -> None:
-        """Save the plot to PNG format."""
+        """
+        Save the plot to PDF format.
+
+        Parameters
+        ----------
+        fig : plt.Figure
+            Figure object to save.
+        base_name : str
+            Base name of the figure.
+        """
         fig.tight_layout()
         fig.savefig(self.output_path / f"{base_name}.pdf", dpi=300, bbox_inches="tight")
         plt.close(fig)
