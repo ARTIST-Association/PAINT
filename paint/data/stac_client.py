@@ -205,7 +205,7 @@ class StacClient:
 
     def download_file(
         self, url: str, file_name: Union[str, pathlib.Path], timeout: int = 60
-    ) -> None:
+    ) -> bool:
         """
         Download a file.
 
@@ -217,6 +217,11 @@ class StacClient:
             File name to be saved.
         timeout : int
             Timeout for downloading the file (Default: 60 seconds).
+
+        Returns
+        -------
+        bool
+            Whether the file was downloaded.
         """
         # Send an HTTP GET request to the specified url to retrieve the file.
         # Download the file in chunks (`stream=True`) instead of loading the entire file into memory.
@@ -231,10 +236,13 @@ class StacClient:
                 for data in response.iter_content(chunk_size=self.chunk_size):
                     file.write(data)
                     downloaded_length += len(data)
+            return True
         except requests.RequestException as e:
             log.error(f"Failed to download the file from {url}. Error: {e}")
+            return False
         except IOError as e:
             log.error(f"File operation failed for {file_name}. Error: {e}")
+            return False
 
     def _process_single_heliostat_item(
         self,
@@ -248,7 +256,7 @@ class StacClient:
         pbar: tqdm,
         for_dataset: bool = False,
         timeout: int = 60,
-    ) -> None:
+    ) -> bool:
         """
         Process a single heliostat item.
 
@@ -278,7 +286,14 @@ class StacClient:
             Whether to save all items in one folder for a dataset (Default: ``False``).
         timeout : int
             Timeout for downloading the heliostat item (Default: 60 seconds).
+
+        Returns
+        -------
+        bool
+            Whether the heliostat item was downloaded successfully.
         """
+        # Assume download will be successful
+        success = True
         item_time = item.properties["datetime"]
         if start_date and end_date:
             # If start and end dates are provided, filter based on them.
@@ -289,7 +304,7 @@ class StacClient:
             ):
                 log.debug(f"No data found between {start_date} and {end_date}!")
                 pbar.update(1)
-                return
+                return False
 
         if (
             filtered_calibration_keys is not None
@@ -298,24 +313,27 @@ class StacClient:
             # Only process the calibration keys if provided.
             for key, asset in item.assets.items():
                 if key in filtered_calibration_keys:
-                    self._download_heliostat_asset(
+                    if not self._download_heliostat_asset(
                         asset,
                         heliostat_catalog_id,
                         save_folder,
                         for_dataset,
                         timeout=timeout,
-                    )
+                    ):
+                        success = False
         else:
             # Process all assets in the item.
             for asset in item.assets.values():
-                self._download_heliostat_asset(
+                if not self._download_heliostat_asset(
                     asset,
                     heliostat_catalog_id,
                     save_folder,
                     for_dataset,
                     timeout=timeout,
-                )
+                ):
+                    success = False
         pbar.update(1)
+        return success
 
     def _process_heliostat_items(
         self,
@@ -330,7 +348,7 @@ class StacClient:
         timeout: int = 60,
         num_parallel_workers: int = 10,
         results_timeout: int = 300,
-    ) -> None:
+    ) -> bool:
         """
         Process and download items, either with or without date filtering and calibration key filtering.
 
@@ -362,7 +380,14 @@ class StacClient:
             Number of parallel workers for downloading heliostat data (Default: 10).
         results_timeout : int
             Timeout for collecting results from multiple threads (Default: 300 seconds).
+
+        Returns
+        -------
+        bool
+            Whether all heliostat items were downloaded successfully.
         """
+        all_successful = True
+
         with tqdm(
             total=len(items),
             desc=f"Processing Items in Heliostat {heliostat_catalog_id}",
@@ -386,13 +411,15 @@ class StacClient:
                     for item in items
                 ]
 
-            for future in as_completed(futures):
-                try:
-                    future.result(
-                        timeout=results_timeout
-                    )  # Wait for each future to complete
-                except Exception as e:
-                    log.error(f"Error processing heliostat item: {e}")
+                for future in as_completed(futures):
+                    try:
+                        item_success = future.result(timeout=results_timeout)
+                        if not item_success:
+                            all_successful = False
+                    except Exception as e:
+                        log.error(f"Error processing heliostat item: {e}")
+                        all_successful = False
+        return all_successful
 
     def _download_heliostat_asset(
         self,
@@ -401,7 +428,7 @@ class StacClient:
         save_folder: str,
         for_dataset: bool = False,
         timeout: int = 60,
-    ) -> None:
+    ) -> bool:
         """
         Download the asset from the provided URL and save it to the selected location.
 
@@ -417,6 +444,11 @@ class StacClient:
             Whether to save all items in one folder for a dataset (Default: ``False``).
         timeout : int
             Timeout for downloading assets (Default: 60 seconds).
+
+        Returns
+        -------
+        bool
+            Whether the asset was successfully downloaded.
         """
         url = asset.href
         file_end = url.split("/")[-1]
@@ -430,7 +462,7 @@ class StacClient:
                 / file_end
             )
         file_name.parent.mkdir(parents=True, exist_ok=True)
-        self.download_file(url, file_name, timeout)
+        return self.download_file(url, file_name, timeout)
 
     def _download_heliostat_data(
         self,
@@ -444,7 +476,7 @@ class StacClient:
         timeout: int = 60,
         num_parallel_workers: int = 10,
         results_timeout: int = 300,
-    ) -> None:
+    ) -> bool:
         """
         Download items from a specified collection from a heliostat and save them to a designated path.
 
@@ -474,13 +506,19 @@ class StacClient:
             Number of parallel workers for downloading heliostat data (Default: 10).
         results_timeout : int
             Timeout for collecting results from multiple threads (Default: 300 seconds).
+
+        Returns
+        -------
+        bool
+            Whether all heliostat items were downloaded successfully.
         """
         child = self.get_child(parent=heliostat_catalog, child_id=collection_id)
         if child is None:
             log.warning(
                 f"No data downloaded for {collection_id} in {heliostat_catalog.id}!"
             )
-            return
+            # In this case no data is to be found, so it should still be marked as done
+            return True
 
         items = child.get_items()
 
@@ -491,7 +529,7 @@ class StacClient:
             )
 
         # Call the helper function to process and download items.
-        self._process_heliostat_items(
+        return self._process_heliostat_items(
             list(items),
             start_date,
             end_date,
@@ -501,6 +539,8 @@ class StacClient:
             save_folder,
             for_dataset,
             timeout,
+            num_parallel_workers,
+            results_timeout,
         )
 
     @staticmethod
@@ -617,6 +657,7 @@ class StacClient:
                     }
                     for cat in heliostat_catalogs_list
                 }
+                self.save_checkpoint(checkpoint_path, checkpoint_data)
         # Resume download.
         else:
             log.info("Resuming download from checkpoint!")
@@ -674,6 +715,7 @@ class StacClient:
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
             log.info(f"Processing heliostat catalog {heliostat_catalog.id}")
+            success = False
 
             # Download calibration data.
             if get_calibration:
@@ -681,7 +723,7 @@ class StacClient:
                     mappings.CALIBRATION_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self._download_heliostat_data(
+                success &= self._download_heliostat_data(
                     heliostat_catalog,
                     calibration_id,
                     mappings.SAVE_CALIBRATION,
@@ -700,7 +742,7 @@ class StacClient:
                     mappings.DEFLECTOMETRY_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self._download_heliostat_data(
+                success &= self._download_heliostat_data(
                     heliostat_catalog,
                     deflectometry_id,
                     mappings.SAVE_DEFLECTOMETRY,
@@ -717,7 +759,7 @@ class StacClient:
                     mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID
                     % heliostat_catalog.id.split("-")[0]
                 )
-                self._download_heliostat_data(
+                success &= self._download_heliostat_data(
                     heliostat_catalog,
                     properties_id,
                     mappings.SAVE_PROPERTIES,
@@ -729,7 +771,8 @@ class StacClient:
                 )
 
             if resume_download:
-                self.mark_done(checkpoint_data, catalog_id=heliostat_catalog.id)
+                if success:
+                    self.mark_done(checkpoint_data, catalog_id=heliostat_catalog.id)
                 self.save_checkpoint(checkpoint_path, checkpoint_data)
 
         # Clean up checkpoint if all catalogs are done.
@@ -747,7 +790,7 @@ class StacClient:
         include_juelich: bool,
         include_dwd: bool,
         timeout: int = 60,
-    ) -> None:
+    ) -> bool:
         """
         Download weather assets for Jülich and/or DWD depending on flags.
 
@@ -761,6 +804,11 @@ class StacClient:
             Whether to include DWD data.
         timeout : int
             Timeout for downloading assets (Default: 60 seconds).
+
+        Returns
+        -------
+        bool
+            Whether the download was successful.
         """
         if "juelich" in weather_item.id and include_juelich:
             log.info(
@@ -771,7 +819,9 @@ class StacClient:
                 f"Processing and downloading DWD weather data item {weather_item.id}"
             )
         else:
-            return  # If item does not match filters, skip.
+            return True  # If item does not match filters, skip.
+
+        all_successful = True
 
         # Download the assets.
         for asset in weather_item.assets.values():
@@ -779,7 +829,10 @@ class StacClient:
             file_end = asset.href.split("/")[-1]
             file_name = self.output_dir / mappings.SAVE_WEATHER / file_end
             file_name.parent.mkdir(parents=True, exist_ok=True)
-            self.download_file(url=url, file_name=file_name, timeout=timeout)
+            if not self.download_file(url=url, file_name=file_name, timeout=timeout):
+                all_successful = False
+
+        return all_successful
 
     def get_weather_data(
         self,
@@ -809,6 +862,7 @@ class StacClient:
         checkpoint_path = (
             self.output_dir / mappings.SAVE_WEATHER / mappings.WEATHER_CHECKPOINT_NAME
         )
+        all_successful = True
         checkpoint_data = set()
         if checkpoint_path.exists():
             with open(checkpoint_path, "r") as f:
@@ -859,14 +913,17 @@ class StacClient:
                     and datetime.strptime(item_end_time, mappings.TIME_FORMAT)
                     <= end_date
                 ):
-                    self._download_weather_assets(
+                    success = self._download_weather_assets(
                         weather_item,
                         include_juelich,
                         include_dwd,
                         timeout=timeout,
                     )
                     if resume_download:
-                        checkpoint_data.add(item_id)
+                        if success:
+                            checkpoint_data.add(item_id)
+                        else:
+                            all_successful = False
                         with open(checkpoint_path, "w") as f:
                             json.dump(list(checkpoint_data), f, indent=2)
         # Handle error with start and end date.
@@ -883,19 +940,27 @@ class StacClient:
                             f"Skipping already downloaded item with the ID: {item_id}"
                         )
                         continue
-                self._download_weather_assets(
+                success = self._download_weather_assets(
                     weather_item,
                     include_juelich,
                     include_dwd,
                     timeout=timeout,
                 )
                 if resume_download:
-                    checkpoint_data.add(item_id)
+                    if success:
+                        checkpoint_data.add(item_id)
+                    else:
+                        all_successful = False
                     with open(checkpoint_path, "w") as f:
                         json.dump(list(checkpoint_data), f, indent=2)
         if resume_download:
-            checkpoint_path.unlink()
-            log.info("Finished downloading weather data, removing checkpoint!")
+            if all_successful:
+                checkpoint_path.unlink()
+                log.info("Finished downloading all weather data, checkpoint removed.")
+            else:
+                log.warning(
+                    "Some weather data failed to download; checkpoint retained for resume."
+                )
 
     def get_tower_measurements(self, timeout: int = 60) -> None:
         """
@@ -912,7 +977,7 @@ class StacClient:
             url = asset.href
             file_end = asset.href.split("/")[-1]
             file_name = self.output_dir / file_end
-            self.download_file(url=url, file_name=file_name, timeout=timeout)
+            _ = self.download_file(url=url, file_name=file_name, timeout=timeout)
 
     def _process_child_metadata(
         self,
@@ -1029,7 +1094,7 @@ class StacClient:
         checkpoint_lock: Lock,
         temp_dir: pathlib.Path,
         pbar: tqdm,
-    ) -> None:
+    ) -> bool:
         """
         Process metadata with checkpoint capabilities.
 
@@ -1049,13 +1114,18 @@ class StacClient:
             The path to a temporary directory used to save metadata before combining at the end.
         pbar : tqdm
             Progress bar.
+
+        Returns
+        -------
+        bool
+            Whether the metadata was successfully processed.
         """
         heliostat_id = child.id
 
         if checkpoint[heliostat_id].get(f"{collection}_done", False):
             log.info(f"Skipping {heliostat_id} (already done for {collection})")
             pbar.update(1)
-            return
+            return True
 
         try:
             data = self._process_child_metadata(
@@ -1072,9 +1142,11 @@ class StacClient:
             with checkpoint_lock:
                 self.mark_metadata_done(checkpoint, heliostat_id, collection)
                 self.save_checkpoint(checkpoint_path, checkpoint)
+                return True
 
         except Exception as e:
             log.error(f"Error processing {heliostat_id}: {e}")
+            return False
         finally:
             pbar.update(1)
 
@@ -1101,6 +1173,7 @@ class StacClient:
         # Create location for saving
         save_path = self.output_dir / "metadata"
         save_path.mkdir(parents=True, exist_ok=True)
+        all_successful = True
         # Log warning if no collection keys provided.
         if collections is None:
             log.warning(
@@ -1211,7 +1284,9 @@ class StacClient:
                         for child in all_children
                     ]
                     for f in futures:
-                        f.result()
+                        result = f.result()
+                        if not result:
+                            all_successful = False
 
             # Concatenate all temporary files into final dataframe
             log.info(f"Combining metadata for collection: {collection}")
@@ -1234,10 +1309,15 @@ class StacClient:
             shutil.rmtree(temp_dir)
 
         if resume_download and checkpoint_path.exists():
-            checkpoint_path.unlink()
-            temp_parent = save_path / "temp"
-            shutil.rmtree(temp_parent)
-            log.info("All metadata downloaded. Checkpoint file removed.")
+            if all_successful:
+                checkpoint_path.unlink()
+                temp_parent = save_path / "temp"
+                shutil.rmtree(temp_parent)
+                log.info("All metadata downloaded. Checkpoint file removed.")
+            else:
+                log.warning(
+                    "Some metadata failed to download; checkpoint retained for resume."
+                )
 
     @staticmethod
     def _check_filtered_calibration_keys(
@@ -1326,7 +1406,7 @@ class StacClient:
             if verbose:
                 log.error(
                     f"Failed to load STAC item from {href}. Error: {e}\n"
-                    "No data downloaded for item {item_id} from {heliostat_id}!"
+                    f"No data downloaded for item {item_id} from {heliostat_id}!"
                 )
             return
         except Exception as e:
@@ -1354,7 +1434,7 @@ class StacClient:
                         / file_end
                     )
                 file_name.parent.mkdir(parents=True, exist_ok=True)
-                self.download_file(url, file_name, timeout=timeout)
+                _ = self.download_file(url, file_name, timeout=timeout)
         if pbar is not None:
             pbar.update(1)
 
