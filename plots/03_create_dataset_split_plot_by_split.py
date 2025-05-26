@@ -56,16 +56,18 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
-    plt.rcParams.update({
-        "text.usetex": True,
-        "font.family": "serif",
-        "font.size": 16,
-        "axes.titlesize": 16,
-        "axes.labelsize": 16,
-        "xtick.labelsize": 16,
-        "ytick.labelsize": 16,
-        "legend.fontsize": 14,
-    })
+    plt.rcParams.update(
+        {
+            "text.usetex": True,
+            "font.family": "serif",
+            "font.size": 16,
+            "axes.titlesize": 16,
+            "axes.labelsize": 16,
+            "xtick.labelsize": 16,
+            "ytick.labelsize": 16,
+            "legend.fontsize": 14,
+        }
+    )
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     calibration_metadata_path = Path(calibration_metadata_file)

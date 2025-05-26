@@ -175,7 +175,7 @@ class BinaryExtractor:
         saved_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)
         with h5py.File(saved_deflectometry_path, "w") as file:
             for i in range(number_of_facets):
-                facet = file.create_group(name=f"{mappings.FACET_KEY}{i+1}")
+                facet = file.create_group(name=f"{mappings.FACET_KEY}{i + 1}")
                 facet.create_dataset(
                     name=f"{mappings.SURFACE_NORMAL_KEY}",
                     data=surface_normals_with_facets[i],

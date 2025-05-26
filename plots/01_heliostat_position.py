@@ -76,16 +76,18 @@ class HeliostatPositionPlot:
         save_as_pdf : bool
             Whether to save the plot as a PDF or not (Default: True).
         """
-        plt.rcParams.update({
-        "text.usetex": True,
-        "font.family": "serif",
-        "font.size": 14,
-        "axes.titlesize": 14,
-        "axes.labelsize": 14,
-        "xtick.labelsize": 14,
-        "ytick.labelsize": 14,
-        "legend.fontsize": 11,
-        })
+        plt.rcParams.update(
+            {
+                "text.usetex": True,
+                "font.family": "serif",
+                "font.size": 14,
+                "axes.titlesize": 14,
+                "axes.labelsize": 14,
+                "xtick.labelsize": 14,
+                "ytick.labelsize": 14,
+                "legend.fontsize": 11,
+            }
+        )
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(Path(path_to_positions), header=0)

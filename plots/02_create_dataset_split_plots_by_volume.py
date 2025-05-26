@@ -218,7 +218,7 @@ def main(
         axes[0].legend(handles=legend_handles, loc="upper left", fontsize=10)
 
         plt.tight_layout()
-        
+
         # Save the figure as "02_<split_type>_split.pdf"
         file_name = plot_output_path / f"02_{split_type}_split.pdf"
         plt.savefig(file_name, dpi=300)
