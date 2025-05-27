@@ -86,7 +86,7 @@ jobs:
         $i = 0
         do {
           $i++
-          Write-Host "Attempt $i: installing paint-csp-test==$env:VERSION"
+          Write-Host "Attempt $i: installing paint-csp-test==${env:VERSION}"
           pip install --index-url https://test.pypi.org/simple/ `
                       --extra-index-url https://pypi.org/simple `
                       --pre `
