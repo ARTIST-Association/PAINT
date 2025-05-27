@@ -102,6 +102,8 @@ jobs:
         if ($LASTEXITCODE -ne 0) {
           throw "Failed to install after $maxAttempts attempts"
         }
+    - name: Checkout repository (for tests)
+      uses: actions/checkout@v3
     - name: Run tests with coverage
       run: |
         python --version
