@@ -79,7 +79,7 @@ The ``PAINT`` repository is structured as shown below:
 
 ### Example usage:
 In the ``scripts`` folder there are multiple scripts highlighting how ``PAINT`` can be used. Detailed
-descriptions of these scripts are available via our [Documentation](INSERT LINK HERE).
+descriptions of these scripts are available via our [Documentation](http://paint.readthedocs.io).
 
 ## How to contribute
 Check out our [contribution guidelines](CONTRIBUTING.md) if you are interested in contributing to the `PAINT` project :fire:.
