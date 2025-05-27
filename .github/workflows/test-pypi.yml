@@ -24,7 +24,7 @@ jobs:
     - name: Bump version for TestPyPI
       run: |
         BASE_VERSION=$(grep '^version =' pyproject.toml | cut -d '"' -f2)
-        NEW_VERSION="${BASE_VERSIONN.dev${{ github.run_number }}"
+        NEW_VERSION="${BASE_VERSION}.post${{ github.run_number }}"
         echo "Patching version to $NEW_VERSION"
         sed -i "s/^version = .*/version = \"$NEW_VERSION\"/" pyproject.toml
 
@@ -52,7 +52,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install package from TestPyPI
         run: |
-          pip install --extra-index-url https://test.pypi.org/simple/ "paint-test[dev]"
+          pip install --index-url https://test.pypi.org/simple/ --pre "paint[dev]"
       - name: Test with pytest and coverage badge
         run: |
           python --version
