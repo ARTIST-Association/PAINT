@@ -64,46 +64,44 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install package from TestPyPI
-      run: |
-        echo "OS: ${{ runner.os }}"
-        if [[ "${{ runner.os }}" == "Windows" ]]; then
-          pwsh -Command @"
-          $maxAttempts = 5
-          $sleepSeconds = 10
-          $i = 0
-          do {
-            $i++
-            Write-Host "Attempt $i: trying to install paint-csp-test==$env:VERSION"
-            pip install --index-url https://test.pypi.org/simple/ `
-                        --extra-index-url https://pypi.org/simple `
-                        --pre `
-                        "paint-csp-test[dev]==$env:VERSION"
-            if ($LASTEXITCODE -eq 0) {
-              Write-Host "Install succeeded"
-              break
-            }
-            Write-Host "Not available yet, retrying in $sleepSeconds seconds..."
-            Start-Sleep -Seconds $sleepSeconds
-          } while ($i -lt $maxAttempts)
-          if ($LASTEXITCODE -ne 0) {
-            throw "Failed to install after $maxAttempts attempts"
-          }
-          "@
-        else
-          max_attempts=5
-          sleep_seconds=10
-          for i in $(seq 1 $max_attempts); do
-            echo "Attempt $i: installing paint-csp-test==$VERSION"
-            pip install --index-url https://test.pypi.org/simple/ \
-                        --extra-index-url https://pypi.org/simple \
-                        --pre \
-                        "paint-csp-test[dev]==$VERSION" && break
-            echo "Not ready yet, waiting..."
-            sleep $sleep_seconds
-          done
-        fi
+    - name: Install package from TestPyPI (Linux/macOS)
+      if: runner.os != 'Windows'
       shell: bash
+      run: |
+        max_attempts=5
+        sleep_seconds=10
+        for i in $(seq 1 $max_attempts); do
+          echo "Attempt $i: installing paint-csp-test==$VERSION"
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple --pre "paint-csp-test[dev]==$VERSION" && break
+          echo "Not ready yet, retrying in $sleep_seconds seconds..."
+          sleep $sleep_seconds
+        done
+
+    - name: Install package from TestPyPI (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $maxAttempts = 5
+        $sleepSeconds = 10
+        $i = 0
+        do {
+          $i++
+          Write-Host "Attempt $i: installing paint-csp-test==$env:VERSION"
+          pip install --index-url https://test.pypi.org/simple/ `
+                      --extra-index-url https://pypi.org/simple `
+                      --pre `
+                      "paint-csp-test[dev]==$env:VERSION"
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "Install succeeded"
+            break
+          }
+          Write-Host "Not ready yet, retrying in $sleepSeconds seconds..."
+          Start-Sleep -Seconds $sleepSeconds
+        } while ($i -lt $maxAttempts)
+
+        if ($LASTEXITCODE -ne 0) {
+          throw "Failed to install after $maxAttempts attempts"
+        }
     - name: Run tests with coverage
       run: |
         python --version
