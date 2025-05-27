@@ -271,19 +271,18 @@ def test_dataset_with_invalid_root() -> None:
 
 def test_str_method() -> None:
     """Test the string representation of the dataset."""
+    root_dir = (
+        pathlib.Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "dataset" / "test"
+    )
     dataset = PaintCalibrationDataset(
-        root_dir=pathlib.Path(PAINT_ROOT)
-        / "tests"
-        / "data"
-        / "test_data"
-        / "dataset"
-        / "test",
+        root_dir=root_dir,
         item_ids=None,
         item_type="calibration_properties",
     )
     expected = (
-        f"This is a dataset containing calibration items from the PAINT database:\n-The root directory is "
-        f"{PAINT_ROOT}/tests/data/test_data/dataset/test\n-The file identifier is -calibration-properties.json\n"
-        f"-The dataset contains 4 items\n"
+        "This is a dataset containing calibration items from the PAINT database:\n"
+        f"-The root directory is {root_dir}\n"
+        "-The file identifier is -calibration-properties.json\n"
+        "-The dataset contains 4 items\n"
     )
-    assert dataset.__str__() == expected
+    assert str(dataset) == expected
