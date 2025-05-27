@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://paint-database.org" target="_blank">
-    <img src="logo.svg" alt="logo" width="450"/>
+    <img src="https://raw.githubusercontent.com/ARTIST-Association/PAINT/main/logo.svg" alt="logo" width="450"/>
   </a>
 </p>
 
