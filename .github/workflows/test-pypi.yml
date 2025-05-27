@@ -48,10 +48,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install package from TestPyPI
         run: |
-          pip install \
-          --index-url https://test.pypi.org/simple/ \
-          --extra-index-url https://pypi.org/simple \
-          "paint-csp-test[dev]"
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "paint-csp-test[dev]"
       - name: Test with pytest and coverage badge
         run: |
           python --version
