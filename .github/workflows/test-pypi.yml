@@ -64,11 +64,18 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    - name: Install package from TestPyPI
+    - name: Install package from TestPyPI (with retry)
       run: |
         pip install --upgrade pip
-        pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple --pre "paint-csp-test[dev]==${VERSION}"
 
+        RETRIES=5
+        SLEEP=10
+        for i in $(seq 1 $RETRIES); do
+          echo "Attempt $i: trying to install paint-csp-test==${VERSION}"
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple --pre "paint-csp-test[dev]==${VERSION}" && break
+          echo "Package not available yet, waiting..."
+          sleep $SLEEP
+        done
     - name: Run tests with coverage
       run: |
         python --version
