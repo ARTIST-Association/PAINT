@@ -86,7 +86,7 @@ jobs:
         $i = 0
         do {
           $i++
-          Write-Host "Attempt $i: installing paint-csp-test==${env:VERSION}"
+          Write-Host "Attempt ${i}: installing paint-csp-test==${env:VERSION}"
           pip install --index-url https://test.pypi.org/simple/ `
                       --extra-index-url https://pypi.org/simple `
                       --pre `
@@ -95,7 +95,7 @@ jobs:
             Write-Host "Install succeeded"
             break
           }
-          Write-Host "Not ready yet, retrying in $sleepSeconds seconds..."
+          Write-Host "Not ready yet, retrying in ${sleepSeconds} seconds..."
           Start-Sleep -Seconds $sleepSeconds
         } while ($i -lt $maxAttempts)
 
