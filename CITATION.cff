@@ -96,7 +96,7 @@ keywords:
   - Deflectometry
   - Surface Reconstruction
   - Benchmark
-commit: 28f9428
+commit: e6e1a5aa058d97d2ce7e54773eea3b5fe8928106
 license: CDLA-Permissive-1.0
 version: 1.0.0
 date-released: '2025-05-28'
