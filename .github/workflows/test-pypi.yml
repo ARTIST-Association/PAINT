@@ -32,7 +32,7 @@ jobs:
 
         # Patch the version and name in pyproject.toml
         sed -i "s/^version = .*/version = \"$UNIQUE_VERSION\"/" pyproject.toml
-        sed -i 's/^name = "paint"/name = "paint-csp-test"/' pyproject.toml
+        sed -i 's/^name = "paint-csp"/name = "paint-csp-test"/' pyproject.toml
 
         # Export version for downstream jobs
         echo "version=$UNIQUE_VERSION" >> $GITHUB_OUTPUT
