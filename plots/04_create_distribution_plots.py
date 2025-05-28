@@ -372,18 +372,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--path_to_data_directory",
-        default="/Users/kphipps/Work/Gits/PAINT/download_for_plots",
         type=str,
     )
     parser.add_argument(
         "--path_to_metadata",
-        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
         type=str,
     )
     parser.add_argument(
         "--output_path",
         type=str,
-        default="saved_plots_dfdfdfdfd",
+        default="saved_plots",
     )
     args = parser.parse_args()
     config = vars(args)
