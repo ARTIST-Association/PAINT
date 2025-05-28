@@ -14,7 +14,7 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B%20%20%E2%97%8F%20%20%E2%97%8B-orange)](https://fair-software.eu)
 [![FAIR checklist badge](https://fairsoftwarechecklist.net/badge.svg)](https://fairsoftwarechecklist.net/v0.2?f=31&a=32113&i=32322&r=133)
-[![DOI](https://zenodo.org/badge/817365570.svg)](https://doi.org/10.5281/zenodo.15539436)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15540038.svg)](https://doi.org/10.5281/zenodo.15540038)
 [![Documentation Status](https://readthedocs.org/projects/paint/badge/?version=latest)](https://paint.readthedocs.io/en/latest/?badge=latest)
 [![](https://img.shields.io/badge/Contact-artist%40lists.kit.edu-blue?label=Contact)](artist@lists.kit.edu)
 
