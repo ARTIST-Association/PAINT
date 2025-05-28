@@ -4,26 +4,14 @@ import json
 from pathlib import Path
 from typing import Dict, Union
 
-import matplotlib as mpl
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib.patches import Rectangle
-from plot_utils import decimal_to_dms
+from plot_utils import decimal_to_dms, set_plot_style
 
 import paint.util.paint_mappings as mappings
-
-# Global plot settings
-mpl.rcParams["font.family"] = "sans-serif"
-mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
-mpl.rcParams["font.size"] = 12
-mpl.rcParams["axes.titlesize"] = 14
-mpl.rcParams["axes.labelsize"] = 12
-mpl.rcParams["axes.labelweight"] = "bold"
-mpl.rcParams["xtick.labelsize"] = 10
-mpl.rcParams["ytick.labelsize"] = 10
-mpl.rcParams["legend.fontsize"] = 10
 
 
 class HeliostatPositionPlot:
@@ -88,6 +76,8 @@ class HeliostatPositionPlot:
         save_as_pdf : bool
             Whether to save the plot as a PDF or not (Default: True).
         """
+        # Set plot style.
+        set_plot_style()
         # Load heliostat positions and set the index using the mapping constant.
         try:
             df_positions = pd.read_csv(Path(path_to_positions), header=0)

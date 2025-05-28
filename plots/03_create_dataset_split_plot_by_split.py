@@ -2,27 +2,16 @@ import argparse
 from pathlib import Path
 from typing import Union
 
-import matplotlib as mpl
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
+from plot_utils import set_plot_style
 
 import paint.util.paint_mappings as mappings
 from paint.data.dataset_splits import DatasetSplitter
 from paint.util import set_logger_config
-
-# Global plot settings
-mpl.rcParams["font.family"] = "sans-serif"
-mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
-mpl.rcParams["font.size"] = 12
-mpl.rcParams["axes.titlesize"] = 14
-mpl.rcParams["axes.labelsize"] = 12
-mpl.rcParams["axes.labelweight"] = "bold"
-mpl.rcParams["xtick.labelsize"] = 10
-mpl.rcParams["ytick.labelsize"] = 10
-mpl.rcParams["legend.fontsize"] = 10
 
 # Logger for the dataset splitter
 set_logger_config()
@@ -67,6 +56,8 @@ def main(
     ValueError
         If training/validation sizes are inconsistent with dataset constraints.
     """
+    # Set plot style.
+    set_plot_style()
     # Create a DatasetSplitter instance.
     # Use remove_unused_data=False to preserve extra columns (e.g. azimuth, elevation) needed for plotting.
     calibration_metadata_path = Path(calibration_metadata_file)

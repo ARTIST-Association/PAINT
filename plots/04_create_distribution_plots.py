@@ -4,26 +4,14 @@ import json
 from pathlib import Path
 from typing import List, Union
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import torch
-from plot_utils import convert_wgs84_coordinates_to_local_enu
+from plot_utils import convert_wgs84_coordinates_to_local_enu, set_plot_style
 
 import paint.util.paint_mappings as mappings
-
-# Global plot settings
-mpl.rcParams["font.family"] = "sans-serif"
-mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
-mpl.rcParams["font.size"] = 12
-mpl.rcParams["axes.titlesize"] = 14
-mpl.rcParams["axes.labelsize"] = 12
-mpl.rcParams["axes.labelweight"] = "bold"
-mpl.rcParams["xtick.labelsize"] = 10
-mpl.rcParams["ytick.labelsize"] = 10
-mpl.rcParams["legend.fontsize"] = 10
 
 # Power plant position as tensor
 power_plant_position = torch.tensor(
@@ -84,6 +72,8 @@ class ConditionDistributionPlot:
         output_path : Union[str,Path]
             Directory where plots will be saved.
         """
+        # Set plot style.
+        set_plot_style()
         self.path_to_metadata = Path(path_to_metadata)
         self.path_to_data_directory = Path(path_to_data_directory)
         self.output_path = Path(output_path)
@@ -382,16 +372,18 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--path_to_data_directory",
+        default="/Users/kphipps/Work/Gits/PAINT/download_for_plots",
         type=str,
     )
     parser.add_argument(
         "--path_to_metadata",
+        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
         type=str,
     )
     parser.add_argument(
         "--output_path",
         type=str,
-        default="saved_plots",
+        default="saved_plots_dfdfdfdfd",
     )
     args = parser.parse_args()
     config = vars(args)

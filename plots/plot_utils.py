@@ -1,6 +1,20 @@
 from typing import Union
 
+import matplotlib as mpl
 import torch
+
+
+def set_plot_style() -> None:
+    """Set global plot style for all plots."""
+    mpl.rcParams["font.family"] = "sans-serif"
+    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    mpl.rcParams["font.size"] = 12
+    mpl.rcParams["axes.titlesize"] = 14
+    mpl.rcParams["axes.labelsize"] = 12
+    mpl.rcParams["axes.labelweight"] = "bold"
+    mpl.rcParams["xtick.labelsize"] = 10
+    mpl.rcParams["ytick.labelsize"] = 10
+    mpl.rcParams["legend.fontsize"] = 10
 
 
 def decimal_to_dms(value: float, is_latitude: bool = True) -> str:
