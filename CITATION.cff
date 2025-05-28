@@ -96,7 +96,7 @@ keywords:
   - Deflectometry
   - Surface Reconstruction
   - Benchmark
-commit: 415d370e7602021066831d713b04957103766bcd
+commit: bc6c2640b5d51e5014b3e05690536afd1399c572
 license: MIT
 version: 1.0.1
 date-released: '2025-05-28'
