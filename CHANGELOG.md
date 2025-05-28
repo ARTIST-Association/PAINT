@@ -1,3 +1,11 @@
+## Version 1.0.1
+
+### What's Changed
+* Adjust package name to avoid conflicts on PyPi by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/84
+
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.0...v1.0.1
+
 ## Version 1.0.0
 
 ### :rocket: **First release** :fire:
