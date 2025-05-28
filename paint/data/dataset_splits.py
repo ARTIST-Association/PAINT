@@ -7,6 +7,7 @@ import pandas as pd
 import paint.util.paint_mappings as mappings
 
 log = logging.getLogger(__name__)  # Logger for the dataset splitter
+"""A logger for the dataset splitter."""
 
 
 class DatasetSplitter:
@@ -231,18 +232,18 @@ class DatasetSplitter:
         return heliostat_data
 
     @staticmethod
-    def _get_kmeans_splits(
+    def _get_balanced_splits(
         heliostat_data: pd.DataFrame, training_size: int, validation_size: int
     ) -> pd.DataFrame:
         """
-        Get splits using a KMeans clustering based method.
+        Get splits using the "balanced" method, based on KMeans clustering.
 
         The clustering is used for stratification. For validation, one candidate is drawn from
         each cluster. For test, we attempt to select one candidate per cluster that is different from
         the validation candidate; if a cluster has only one sample, then the missing test candidate is
         filled from the overall pool.
         All remaining data points (i.e. those not used for validation or test) are candidates for training.
-        As a result, the size of the validation and test set is identical (``validation_size``).
+        As a result, the size of the validation and test set is identical.
 
         Parameters
         ----------
@@ -342,14 +343,14 @@ class DatasetSplitter:
         return result
 
     @staticmethod
-    def _get_knn_splits(
+    def _get_high_variance_splits(
         heliostat_data: pd.DataFrame,
         validation_size: int,
         training_size: int,
         n_neighbors: int = 3,
     ) -> pd.DataFrame:
         """
-        Get splits using a k-nearest neighbors (KNN) based method.
+        Get splits using the "High-Variance" method, bust on a k-nearest neighbors (KNN) quality metric.
 
         For each data point in the given heliostat's data, the average distance to its n_neighbors
         closest points (excluding itself) is computed. Then, the splits are assigned as follows:
@@ -357,8 +358,7 @@ class DatasetSplitter:
         - **Validation:** The first `validation_size` data points from the sorted order (by descending average distance)
           are assigned to validation.
         - **Test:** The next `validation_size` data points in the sorted order are assigned to test.
-        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to
-        training.
+        - **Training:** The last `training_size` data points (with the smallest average distances) are assigned to training.
         - All other data points are discarded.
 
         This requires that the total number of data points is at least:
@@ -462,8 +462,8 @@ class DatasetSplitter:
         allowed_split_types = [
             mappings.AZIMUTH_SPLIT,
             mappings.SOLSTICE_SPLIT,
-            mappings.KMEANS_SPLIT,
-            mappings.KNN_SPLIT,
+            mappings.BALANCED_SPLIT,
+            mappings.HIGH_VARIANCE_SPLIT,
         ]
         if split_type not in allowed_split_types:
             raise ValueError(
@@ -528,36 +528,36 @@ class DatasetSplitter:
                 )
             )
             log.info("Solstice split complete!")
-        elif split_type == mappings.KMEANS_SPLIT:
+        elif split_type == mappings.BALANCED_SPLIT:
             log.info(
-                "Preparing KMeans split...\n"
+                "Preparing Balanced split...\n"
                 f"Training size: {training_size}, validation size: {validation_size}"
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
             )[heliostat_split_data.columns].apply(
-                lambda heliostat_data: self._get_kmeans_splits(
+                lambda heliostat_data: self._get_balanced_splits(
                     heliostat_data=heliostat_data,
                     training_size=training_size,
                     validation_size=validation_size,
                 )
             )
-            log.info("KMeans split complete!")
-        elif split_type == mappings.KNN_SPLIT:
+            log.info("Balanced split complete!")
+        elif split_type == mappings.HIGH_VARIANCE_SPLIT:
             log.info(
-                "Preparing KNN split...\n"
+                "Preparing High-Variance split...\n"
                 f"Training size: {training_size}, validation size: {validation_size}"
             )
             heliostat_split_data = heliostat_split_data.groupby(
                 mappings.HELIOSTAT_ID, group_keys=False
             )[heliostat_split_data.columns].apply(
-                lambda heliostat_data: self._get_knn_splits(
+                lambda heliostat_data: self._get_high_variance_splits(
                     heliostat_data=heliostat_data,
                     validation_size=validation_size,
                     training_size=training_size,
                 )
             )
-            log.info("KNN split complete!")
+            log.info("High-Variance split complete!")
 
         # Never save the extra metadata in the CSV (this extra data is only needed for plots).
         splits_to_save = heliostat_split_data

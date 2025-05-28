@@ -84,7 +84,7 @@ def test_binary_extractor(
         with h5py.File(file_path, "r") as file:
             for i in range(4):
                 assert torch.tensor(
-                    file[f"{mappings.FACET_KEY}{i+1}"][mappings.SURFACE_NORMAL_KEY],
+                    file[f"{mappings.FACET_KEY}{i + 1}"][mappings.SURFACE_NORMAL_KEY],
                     dtype=torch.float32,
                 ).shape == torch.Size([80755, 3])
                 assert torch.tensor(

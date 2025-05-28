@@ -215,12 +215,12 @@ class JuelichWeatherConverter:
                         data=monthly_weather[column].to_numpy(),
                         **self.compression_opts,
                     )
-                    file[parameter_name].attrs[
-                        juelich_mappings.DESCRIPTION
-                    ] = juelich_mappings.juelich_metadata_description[parameter_name]
-                    file[parameter_name].attrs[
-                        juelich_mappings.UNITS
-                    ] = juelich_mappings.juelich_metadata_units[parameter_name]
+                    file[parameter_name].attrs[juelich_mappings.DESCRIPTION] = (
+                        juelich_mappings.juelich_metadata_description[parameter_name]
+                    )
+                    file[parameter_name].attrs[juelich_mappings.UNITS] = (
+                        juelich_mappings.juelich_metadata_units[parameter_name]
+                    )
             print(f"HDF5 created for {group_name}!")
 
         return metadata_df
