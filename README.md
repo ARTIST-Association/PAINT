@@ -44,12 +44,16 @@ data. This code is found in the subpackage ``paint.data`` and examples of possib
 In the following, we will highlight how to use the code in more detail!
 
 ### Installation
-We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can
-install ``PAINT`` directly from the GitHub repository via:
+We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can install the
+latest stable version of PAINT directly from PyPI using:
+```bash
+  $ pip install paint
+  ```
+Alternatively, You can install the latest developmental version of ``PAINT`` directly from the GitHub repository via:
 ```bash
 pip install git+https://github.com/ARTIST-Association/PAINT
 ```
-Alternatively, you can install ``PAINT`` locally. To achieve this, there are two steps you need to follow:
+You can also install ``PAINT`` locally. To achieve this, there are two steps you need to follow:
 1. Clone the `PAINT` repository:
    ```bash
    git clone https://github.com/ARTIST-Association/PAINT.git
