@@ -19,7 +19,7 @@ By democratizing access to detailed operational data, PAINT enables the developm
 - Predictive maintenance techniques (e.g., soiling or fault detection)
 - Improved solar flux-density prediction models
 
-How Does The ``PAINT`` Software Pacakge Help?
+How Does The ``PAINT`` Software Package Help?
 ---------------------------------------------
 
 This ``PAINT`` package provides the tools to **interact with and analyze** data from the PAINT database. Found in the ``paint.data`` subpackage, this includes:
@@ -45,7 +45,7 @@ Get Started
 
 Explore the documentation to learn how to download the data, preprocess it, and build your own benchmarks and datasets. Example scripts and usage guides are included to help you quickly dive into real-world CSP research.
 
-- To find out more about to how to use ``PAINT`` check out :ref:`usage`.
+- To find out more about how to use ``PAINT`` check out :ref:`usage`.
 - |:sunny:| Visit the official database at: https://paint-database.org |:rocket:|
 
 Quick Install
