@@ -11,7 +11,7 @@ You can install the latest stable version of PAINT directly from PyPI using:
 
 .. code-block:: console
 
-    $ pip install paint
+    $ pip install paint-csp
 
 Alternatively, you can install the latest development version directly from the official GitHub repository:
 

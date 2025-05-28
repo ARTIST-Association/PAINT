@@ -6,8 +6,8 @@ build-backend = "hatchling.build"
 packages = ["paint"]
 
 [project]
-name = "paint"
-version = "1.0.0"
+name = "paint-csp"
+version = "1.0.1"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]

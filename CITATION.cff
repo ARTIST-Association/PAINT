@@ -4,9 +4,9 @@
 cff-version: 1.2.0
 title: PAINT
 message: >-
-  If you use this dataset, please cite it using the metadata
+  If you use this software, please cite it using the metadata
   from this file.
-type: dataset
+type: software
 authors:
   - given-names: Kaleb
     family-names: Phipps
@@ -96,7 +96,7 @@ keywords:
   - Deflectometry
   - Surface Reconstruction
   - Benchmark
-commit: e6e1a5aa058d97d2ce7e54773eea3b5fe8928106
-license: CDLA-Permissive-1.0
-version: 1.0.0
+commit: 415d370e7602021066831d713b04957103766bcd
+license: MIT
+version: 1.0.1
 date-released: '2025-05-28'
