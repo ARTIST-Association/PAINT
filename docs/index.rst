@@ -54,7 +54,7 @@ To install ``PAINT``, run the following in your terminal:
 
 .. code-block:: console
 
-    $ pip install paint
+    $ pip install paint-csp
 
 You can check whether your installation was successful by importing ``PAINT`` in ``Python``:
 
