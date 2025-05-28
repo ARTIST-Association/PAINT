@@ -48,7 +48,7 @@ In the following, we will highlight how to use the code in more detail!
 We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can install the
 latest stable version of PAINT directly from PyPI using:
 ```bash
-  pip install paint
+  pip install paint-csp
   ```
 Alternatively, You can install the latest developmental version of ``PAINT`` directly from the GitHub repository via:
 ```bash
