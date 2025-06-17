@@ -94,6 +94,12 @@ Please also carefully check our [code of conduct](CODE_OF_CONDUCT.md) :blue_hear
 ## Acknowledgments
 This work is supported by the [Helmholtz AI](https://www.helmholtz.ai/) platform grant.
 
+<div align="center">
+  <a href="https://www.re3data.org/badges/s/light/100014627.svg">
+    <img src="https://www.re3data.org/badges/s/light/100014627.svg" alt="re3data Badge">
+  </a>
+</div>
+
 -----------
 <div align="center">
   <a href="https://www.dlr.de/EN/Home/home_node.html"><img src="https://raw.githubusercontent.com/ARTIST-Association/ARTIST/main/logos/logo_dlr.svg" height="50px" hspace="3%" vspace="25px"></a>
