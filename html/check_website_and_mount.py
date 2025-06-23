@@ -101,6 +101,18 @@ if __name__ == "__main__":
     # Check if the website is reachable.
     if not is_website_reachable(WEBSITE_URL):
         email_body.append("❌ Website Check Failed: {WEBSITE_URL} is not reachable!")
+        # Try to restart server.
+        try:
+            subprocess.run(
+                ["/home/paint/run.sh"],
+                check=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            email_body.append("🔁 Attempted to restart PAINT using run.sh.")
+        except subprocess.CalledProcessError:
+            email_body.append("❌ Failed to execute run.sh to restart PAINT.")
+
     # Check if the VM is reachable.
     if not is_vm_reachable(VM_HOST):
         email_body.append(f"❌ VM Check Failed: Unable to ping the VM at {VM_HOST}!")
