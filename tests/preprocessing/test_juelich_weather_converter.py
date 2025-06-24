@@ -38,24 +38,22 @@ def test_juelich_weather_convertor():
         assert os.path.exists(file_path)
 
         # Check the content of the HDF5 file.
-        with (
-            h5py.File(file_path, "r") as output,
-            h5py.File(expected_hdf5_file, "r") as expected,
-        ):
-            # Check all keys are present.
-            assert all(key in expected.keys() for key in output.keys())
+        with h5py.File(file_path, "r") as output:
+            with h5py.File(expected_hdf5_file, "r") as expected:
+                # Check all keys are present.
+                assert all(key in expected.keys() for key in output.keys())
 
-            # Go through keys and check the contents are the same.
-            for key in output.keys():
-                assert np.array_equal(output[key][:], expected[key][:])
+                # Go through keys and check the contents are the same.
+                for key in output.keys():
+                    assert np.array_equal(output[key][:], expected[key][:])
 
-                # For all keys apart from time, check the attributes are correct.
-                if key != "time":
-                    assert np.array_equal(
-                        output[key].attrs[juelich_weather_mappings.DESCRIPTION],
-                        expected[key].attrs[juelich_weather_mappings.DESCRIPTION],
-                    )
-                    assert np.array_equal(
-                        output[key].attrs[juelich_weather_mappings.UNITS],
-                        expected[key].attrs[juelich_weather_mappings.UNITS],
-                    )
+                    # For all keys apart from time, check the attributes are correct.
+                    if key != "time":
+                        assert np.array_equal(
+                            output[key].attrs[juelich_weather_mappings.DESCRIPTION],
+                            expected[key].attrs[juelich_weather_mappings.DESCRIPTION],
+                        )
+                        assert np.array_equal(
+                            output[key].attrs[juelich_weather_mappings.UNITS],
+                            expected[key].attrs[juelich_weather_mappings.UNITS],
+                        )
