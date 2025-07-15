@@ -1,351 +1,667 @@
-{% extends "base.html" %}
-{% set active = "data" %}
-{% block content %}
+{% extends "base.html" %} {% set active = "data" %} {% block content %}
 <style>
-   .accordion-button {
-   background-color: #f8f9fa;
-   font-size: 1.2rem;
-   font-weight: 600;
-   border-radius: 0.5rem;
-   margin-bottom: 0.5rem;
-   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-   padding: 1rem 1.25rem;
-   padding-right: 5rem;
-   position: relative;
-   display: flex;
-   align-items: center;
-   }
-   .accordion-button::after {
-   order: -1;
-   margin-right: 1rem;
-   margin-left: 0;
-   }
-   .accordion-button .format-label {
-   font-size: 0.9rem;
-   font-weight: normal;
-   position: absolute;
-   right: 1.25rem;
-   top: 50%;
-   transform: translateY(-50%);
-   }
-   .accordion-item {
-   border: none;
-   }
-   .accordion-body {
-   padding: 1rem 1.25rem;
-   border-radius: 0.5rem;
-   background-color: #ffffff;
-   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-   }
+  .accordion-button {
+    background-color: #f8f9fa;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.25rem;
+    padding-right: 5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .accordion-button::after {
+    order: -1;
+    margin-right: 1rem;
+    margin-left: 0;
+  }
+  .accordion-button .format-label {
+    font-size: 0.9rem;
+    font-weight: normal;
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .accordion-item {
+    border: none;
+  }
+  .accordion-body {
+    padding: 1rem 1.25rem;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
 </style>
 <div class="position-relative text-white d-none d-md-block">
-   <img class="img-fluid w-100" src="static/img/quartz.png">
-   <div class="position-absolute top-50 start-5 translate-middle-y">
-      <h1 class="px-4 py-2 fs-large border-start border-2 border-white paint-large-header">Database Overview</h1>
-      <p class="my-3 dynamic-p paint-small-header">Calibration, deflectometry, kinematic, weather</p>
-   </div>
+  <img class="img-fluid w-100" src="static/img/quartz.png" />
+  <div class="position-absolute top-50 start-5 translate-middle-y">
+    <h1
+      class="px-4 py-2 fs-large border-start border-2 border-white paint-large-header"
+    >
+      Database Overview
+    </h1>
+    <p class="my-3 dynamic-p paint-small-header">
+      Calibration, deflectometry, kinematic, weather
+    </p>
+  </div>
 </div>
 <h4 class="my-4 py-2 text-primary">Data Repository</h4>
-Our web page offers an <a href="/WRI1030197">HTML-browsable version</a> of the data from the concentrating solar power plant in Jülich, Germany, with the global power plant id (GPPD) WRI1030197. A programmatic API is provided in our <a href="https://github.com/ARTIST-Association/PAINT">repository</a> as a PyTorch dataset and STAC client.
+Our web page offers an <a href="/WRI1030197">HTML-browsable version</a> of the
+data from the concentrating solar power plant in Jülich, Germany, with the
+global power plant id (GPPD) WRI1030197. A programmatic API is provided in our
+<a href="https://github.com/ARTIST-Association/PAINT">repository</a> as a
+PyTorch dataset and STAC client.
 <h4 class="my-4 py-2 text-primary">Data Included</h4>
 <p>
-   The PAINT database includes <b>Tower Properties</b>, <b>Calibration</b> data, <b>Deflectometry</b> data, <b>Heliostat Properties</b> data, and <b>Weather</b> data.
-   Below, you find an overview of all the available data.
+  The PAINT database includes <b>Tower Properties</b>, <b>Calibration</b> data,
+  <b>Deflectometry</b> data, <b>Heliostat Properties</b> data, and
+  <b>Weather</b> data. Below, you find an overview of all the available data.
 </p>
 <div class="mt-5">
-   <div class="accordion" id="dataAccordion">
-      <div class="accordion-item">
-         <h2 class="accordion-header" id="headingTower">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTower" aria-expanded="false" aria-controls="collapseTower">
-            Tower Properties <span class="format-label">JSON</span>
-            </button>
-         </h2>
-         <div id="collapseTower" class="accordion-collapse collapse" aria-labelledby="headingTower" data-bs-parent="#dataAccordion">
-            <div class="accordion-body">
-               <p>The tower properties data is stored in a single JSON file, which contains information about the coordinates of the power plant, the receiver, and all calibration targets. This file primarily focuses on the coordinates that define each calibration target and the receiver. It also includes details about the type of receiver installed at the site. These coordinates are illustrated in the image below.</p>
-               <div style="text-align: center;">
-                  <img src="static/img/tower_coordinates.svg" alt="Receiver and calibration target coordinates" style="max-width: 100%; height: auto;" />
-               </div>
-            </div>
-         </div>
+  <div class="accordion" id="dataAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingTower">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseTower"
+          aria-expanded="false"
+          aria-controls="collapseTower"
+        >
+          Tower Properties <span class="format-label">JSON</span>
+        </button>
+      </h2>
+      <div
+        id="collapseTower"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingTower"
+        data-bs-parent="#dataAccordion"
+      >
+        <div class="accordion-body">
+          <p>
+            The tower properties data is stored in a single JSON file, which
+            contains information about the coordinates of the power plant, the
+            receiver, and all calibration targets. This file primarily focuses
+            on the coordinates that define each calibration target and the
+            receiver. It also includes details about the type of receiver
+            installed at the site. These coordinates are illustrated in the
+            image below.
+          </p>
+          <div style="text-align: center">
+            <img
+              src="static/img/tower_coordinates.svg"
+              alt="Receiver and calibration target coordinates"
+              style="max-width: 80%; height: auto"
+            />
+          </div>
+        </div>
       </div>
-      <div class="accordion-item">
-         <h2 class="accordion-header" id="headingCalibration">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCalibration" aria-expanded="false" aria-controls="collapseCalibration">
-            Calibration <span class="format-label">PNG, JSON</span>
-            </button>
-         </h2>
-         <div id="collapseCalibration" class="accordion-collapse collapse collapse" aria-labelledby="headingCalibration" data-bs-parent="#dataAccordion">
-            <div class="accordion-body">
-               <h3>Calibration Images</h3>
-               <p> The calibration images are saved as PNG files and multiple formats are available.</p>
-               <ul>
-                  <li>
-                     <b>Raw Image:</b> Original calibration image showing one or more targets, unprocessed and possibly skewed. An example from Heliostat AA23 is shown below:<br />
-                     <img src="static/img/102067-raw.png" alt="Raw Calibration Image" style="max-width: 100%; height: auto; margin-top: 5px;" />
-                  </li>
-                  <li>
-                     <b>Cropped Image:</b> Grayscale image showing only the relevant calibration target. An example from Heliostat AA23 is shown below:<br />
-                     <img src="static/img/102067-cropped.png" alt="Cropped Calibration Image" style="max-width: 100%; height: auto; margin-top: 5px;" />
-                  </li>
-                  <li>
-                     <b>Flux Image:</b> UTIS-derived image showing relative flux distribution and background separation. An example from Heliostat AA23 is shown below:<br />
-                     <img src="static/img/102067-flux.png" alt="Flux Image" style="max-width: 100%; height: auto; margin-top: 5px;" />
-                  </li>
-                  <li>
-                     <b>Flux Centered Image:</b> Centered and scaled flux image aligned to focal spot centroid. An example from Heliostat AA23 is shown below:<br />
-                     <img src="static/img/102067-flux-centered.png" alt="Flux Centered Image" style="max-width: 100%; height: auto; margin-top: 5px;" />
-                  </li>
-               </ul>
-               <h3>Calibration Properties</h3>
-               <p>
-                  Each calibration image has an associated JSON file containing properties information for this image. These properties include the <b>motor positions</b>, the <b>target name</b>, <b>focal spot</b> centroids, and the <b>sun elevation</b> &amp; <b>sun azimuth</b> using the south-based azimuth system.
-               </p>
-            </div>
-         </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingCalibration">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseCalibration"
+          aria-expanded="false"
+          aria-controls="collapseCalibration"
+        >
+          Calibration <span class="format-label">PNG, JSON</span>
+        </button>
+      </h2>
+      <div
+        id="collapseCalibration"
+        class="accordion-collapse collapse collapse"
+        aria-labelledby="headingCalibration"
+        data-bs-parent="#dataAccordion"
+      >
+        <div class="accordion-body">
+          <h3>Calibration Images</h3>
+          <p>
+            The calibration images are saved as PNG files and multiple formats
+            are available. Below are examples from Heliostat AA23:
+          </p>
+
+          <table class="table table-bordered table-sm align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 25%">Image Type</th>
+                <th>Description</th>
+                <th style="width: 25%">Example</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Raw Image</b></td>
+                <td>
+                  Original calibration image showing one or more targets,
+                  unprocessed and possibly skewed.
+                </td>
+                <td>
+                  <div class="text-center">
+                    <img
+                      src="static/img/102067-raw.png"
+                      alt="Raw Image"
+                      class="img-fluid"
+                      style="width: 80%"
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Cropped Image</b></td>
+                <td>
+                  Grayscale image showing only the relevant calibration target,
+                  cropped from the raw image.
+                </td>
+                <td>
+                  <div class="text-center">
+                    <img
+                      src="static/img/102067-cropped.png"
+                      alt="Cropped Image"
+                      class="img-fluid"
+                      style="width: 50%"
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Flux Image</b></td>
+                <td>
+                  Image derived with the UTIS model, showing relative flux
+                  distribution and background separation.
+                </td>
+                <td>
+                  <div class="text-center">
+                    <img
+                      src="static/img/102067-flux.png"
+                      alt="Flux Image"
+                      class="img-fluid"
+                      style="width: 50%"
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><b>Flux Centered Image</b></td>
+                <td>
+                  Processed flux image centered around the focal spot and scaled
+                  to a uniform size.
+                </td>
+                <td>
+                  <div class="text-center">
+                    <img
+                      src="static/img/102067-flux-centered.png"
+                      alt="Flux Centered Image"
+                      class="img-fluid"
+                      style="width: 50%"
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <h3>Calibration Properties</h3>
+          <p>
+            Each calibration image has an associated JSON file containing
+            properties information for this image. These properties include the
+            <b>motor positions</b>, the <b>target name</b>,
+            <b>focal spot</b> centroids, and the <b>sun elevation</b> &amp;
+            <b>sun azimuth</b> using the south-based azimuth system.
+          </p>
+        </div>
       </div>
-      <div class="accordion-item">
-         <h2 class="accordion-header" id="headingDeflectometry">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDeflectometry" aria-expanded="false" aria-controls="collapseDeflectometry">
-            Deflectometry <span class="format-label">PDF, HDF5</span>
-            </button>
-         </h2>
-         <div id="collapseDeflectometry" class="accordion-collapse collapse" aria-labelledby="headingDeflectometry" data-bs-parent="#dataAccordion">
-            <div class="accordion-body">
-               <h3>Results Summary</h3>
-               <p>
-                  Each deflectometry measurement includes a PDF summary containing general information, graphs, and a results overview.
-                  While not critical for plant operation, it gives insight into the measurement campaign.
-               </p>
-               <div style="text-align: center;">
-                  <img src="static/img/AA23-deflectometry-result.svg" alt="Deflectometry Results Summary" style="max-width: 100%; height: auto;" />
-               </div>
-               <h3>Measured Surfaces</h3>
-               <p>
-                  The core deflectometry data is a HDF5 contains measured <b>surface points</b> and corresponding <b>surface normals</b> for each facet on the heliostat.
-                  To account for missing data during acquisition, we provide both a raw and filled HDF5, whereby in the filled HDF5 file missing points are replaced with ideal data points generated by the QDec_2014-01 system.
-               </p>
-            </div>
-         </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingDeflectometry">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseDeflectometry"
+          aria-expanded="false"
+          aria-controls="collapseDeflectometry"
+        >
+          Deflectometry <span class="format-label">PDF, HDF5</span>
+        </button>
+      </h2>
+      <div
+        id="collapseDeflectometry"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingDeflectometry"
+        data-bs-parent="#dataAccordion"
+      >
+        <div class="accordion-body">
+          <h3>Results Summary</h3>
+          <p>
+            Each deflectometry measurement includes a PDF summary containing
+            general information, graphs, and a results overview. While not
+            critical for plant operation, it gives insight into the measurement
+            campaign.
+          </p>
+          <div style="text-align: center">
+            <img
+              src="static/img/AA23-deflectometry-result.svg"
+              alt="Deflectometry Results Summary"
+              style="max-width: 45%; height: auto"
+            />
+          </div>
+          <h3>Measured Surfaces</h3>
+          <p>
+            The core deflectometry data is a HDF5 contains measured
+            <b>surface points</b> and corresponding <b>surface normals</b> for
+            each facet on the heliostat. To account for missing data during
+            acquisition, we provide both a raw and filled HDF5, whereby in the
+            filled HDF5 file missing points are replaced with ideal data points
+            generated by the QDec_2014-01 system.
+          </p>
+        </div>
       </div>
-      <div class="accordion-item">
-         <h2 class="accordion-header" id="headingKinematic">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKinematic" aria-expanded="false" aria-controls="collapseKinematic">
-            Heliostat Properties <span class="format-label">JSON</span>
-            </button>
-         </h2>
-         <div id="collapseKinematic" class="accordion-collapse collapse" aria-labelledby="headingKinematic" data-bs-parent="#dataAccordion">
-            <div class="accordion-body">
-               <!-- Empty body -->
-            </div>
-         </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingKinematic">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseKinematic"
+          aria-expanded="false"
+          aria-controls="collapseKinematic"
+        >
+          Heliostat Properties <span class="format-label">JSON</span>
+        </button>
+      </h2>
+      <div
+        id="collapseKinematic"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingKinematic"
+        data-bs-parent="#dataAccordion"
+      >
+        <div class="accordion-body">
+          <p>
+            For each heliostat a JSON file containing heliostat properties is
+            provided. This data includes the
+            <b>geographic position</b>, the <b>physical dimensions</b>,
+            information on the <b>initial orientations</b>and any past
+            <b>renovation history</b>. Furthermore, detailed information on the
+            facet and kinematic properties are provided.
+          </p>
+
+          <h3>Facet Properties</h3>
+          <p>
+            This information describes the reflective mirror configuration, by
+            describing the <b>canting type</b>, the <b>number of facets</b>.
+            Each facet has a <code>translation_vector</code> and canting
+            direction vectors (<code>canting_e</code>, <code>canting_n</code>)
+            which are shown in the image below and define its position and
+            orientation.
+          </p>
+          <div style="text-align: center">
+            <img
+              src="static/img/Facet_Properties.svg"
+              alt="Facet Properties Overview"
+              style="max-width: 25%; height: auto"
+            />
+          </div>
+
+          <h3>Kinematic Properties</h3>
+          <p>
+            All heliostats use a two-actuator kinematic structure, allowing
+            movement in two directions. These actuators introduce mechanical
+            <b>offsets</b> that are described via translation vectors for three
+            components: joint one, joint two, and the concentrator. These
+            translations vectors point in the east, north, and up directions and
+            are shown on the image below.
+          </p>
+          <div style="text-align: center">
+            <img
+              src="static/img/kinematic_translation.svg"
+              alt="Kinematic Translations Overview"
+              style="max-width: 25%; height: auto"
+            />
+          </div>
+          <p>
+            Finally, the actual actuators have multiple
+            <b>actuator parameters</b> which are defined in the table below and
+            highlighted in the final reference image.
+          </p>
+          <table class="table table-bordered table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Parameter Name</th>
+                <th>Description</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>type_axis</td>
+                <td>Type of actuator motion (e.g., linear, rotary).</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>min_increment</td>
+                <td>Minimum step the actuator can move.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>max_increment</td>
+                <td>Maximum actuator increment range.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>increment</td>
+                <td>Total number of increments per full stroke.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>offset_shift</td>
+                <td>Adjustment in the actuator’s zero position.</td>
+                <td>(4) in following reference image</td>
+              </tr>
+              <tr>
+                <td>initial_stroke_length</td>
+                <td>Initial extension length of the actuator.</td>
+                <td>(5) in following reference image</td>
+              </tr>
+              <tr>
+                <td>offset</td>
+                <td>Physical offset from the actuator axis to the pivot.</td>
+                <td>(3) in following reference image</td>
+              </tr>
+              <tr>
+                <td>pivot_radius</td>
+                <td>Radius from the pivot center to actuator anchor.</td>
+                <td>(2) in following reference image</td>
+              </tr>
+              <tr>
+                <td>radius_shift</td>
+                <td>Shift in pivot radius due to geometry.</td>
+                <td>(1) in following reference image</td>
+              </tr>
+              <tr>
+                <td>clockwise_axis_movement</td>
+                <td>
+                  Boolean indicating movement direction: 0 = counterclockwise, 1
+                  = clockwise.
+                </td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>initial_angle</td>
+                <td>Starting angular position.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>min_movement_angle</td>
+                <td>Minimum angular range allowed.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>max_movement_angle</td>
+                <td>Maximum angular range allowed.</td>
+                <td>--</td>
+              </tr>
+              <tr>
+                <td>movement_speed</td>
+                <td>Speed at which actuator moves.</td>
+                <td>--</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div style="text-align: center">
+            <img
+              src="static/img/Actuator_properties.svg"
+              alt="Actuator Properties"
+              style="max-width: 55%; height: auto"
+            />
+          </div>
+        </div>
       </div>
-      <div class="accordion-item">
-         <h2 class="accordion-header" id="headingWeather">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWeather" aria-expanded="false" aria-controls="collapseWeather">
-            Weather <span class="format-label">HDF5</span>
-            </button>
-         </h2>
-         <div id="collapseWeather" class="accordion-collapse collapse" aria-labelledby="headingWeather" data-bs-parent="#dataAccordion">
-            <div class="accordion-body">
-               <p>Meteorological weather data is provided from a weather station at the Jülich tower at a 1 s resolution and from the DWD weather station Aachen-Orsbach with the ID 1500 at a 1 min or 1 h resolution.</p>
-               <p>The weather data is saved in the HDF5 format. For the Jülich tower there is one HDF5 file per month of recorded data whilst all data from the DWD weather station is in one single HDF5 file.</p>
-               <p>An overview of the weather variables recorded and associated data is provided in the table below.</p>
-               <table class="table table-bordered table-sm">
-                  <thead class="table-light">
-                     <tr>
-                        <th>Variable Name</th>
-                        <th>Description</th>
-                        <th>Units</th>
-                        <th>Temporal Resolution</th>
-                        <th>Jülich</th>
-                        <th>DWD</th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td>atmospheric_pressure</td>
-                        <td>Atmospheric pressure.</td>
-                        <td>hPa</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>cloud_cover_1h</td>
-                        <td>Total cloud cover.</td>
-                        <td>fraction (1/8)</td>
-                        <td>1 h</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>diffuse_irradiation</td>
-                        <td>Diffuse part of the solar irradiance.</td>
-                        <td>W/m²</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>direct_irradiation</td>
-                        <td>Direct part of the solar irradiance.</td>
-                        <td>W/m²</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>global_irradiation</td>
-                        <td>Total (diffuse + direct) solar irradiance.</td>
-                        <td>W/m²</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>global_radiation_10min</td>
-                        <td>Sum of solar incoming radiation.</td>
-                        <td>J/cm²</td>
-                        <td>10 min</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>humidity_1h</td>
-                        <td>The humidity.</td>
-                        <td>%</td>
-                        <td>1 h</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>long_wave_radiation_10min</td>
-                        <td>Sum of longwave downward radiation.</td>
-                        <td>J/cm²</td>
-                        <td>10 min</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>precipitation</td>
-                        <td>Rainfall amount.</td>
-                        <td>mm/day</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>pressure_vapor_1h</td>
-                        <td>Vapor pressure.</td>
-                        <td>hPa</td>
-                        <td>1 h</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>relative_humidity</td>
-                        <td>Relative humidity.</td>
-                        <td>%</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>short_wave_radiation_10min</td>
-                        <td>Diffuse solar radiation.</td>
-                        <td>J/cm²</td>
-                        <td>10 min</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>sunshine_duration_10min</td>
-                        <td>Duration of sunshine.</td>
-                        <td>h</td>
-                        <td>10 min</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>temperature</td>
-                        <td>Ambient air temperature.</td>
-                        <td>°C</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>temperature_diffuse</td>
-                        <td>Temperature related to diffuse irradiance.</td>
-                        <td>°C</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>temperature_direct</td>
-                        <td>Temperature related to direct irradiance.</td>
-                        <td>°C</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>temperature_global</td>
-                        <td>Temperature related to global irradiance.</td>
-                        <td>°C</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>time</td>
-                        <td>Timestamps.</td>
-                        <td>-</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>visibility_range_1h</td>
-                        <td>Range of visibility.</td>
-                        <td>m</td>
-                        <td>1 h</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>weather_type_1h</td>
-                        <td>Encoded weather condition type.</td>
-                        <td>-</td>
-                        <td>1 h</td>
-                        <td></td>
-                        <td>&#10003;</td>
-                     </tr>
-                     <tr>
-                        <td>wind_direction</td>
-                        <td>Wind direction.</td>
-                        <td>Degrees (0–360)</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                     <tr>
-                        <td>wind_speed</td>
-                        <td>Wind speed.</td>
-                        <td>m/s</td>
-                        <td>1 s</td>
-                        <td>&#10003;</td>
-                        <td></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </div>
-         </div>
+    </div>
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingWeather">
+        <button
+          class="accordion-button collapsed"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseWeather"
+          aria-expanded="false"
+          aria-controls="collapseWeather"
+        >
+          Weather <span class="format-label">HDF5</span>
+        </button>
+      </h2>
+      <div
+        id="collapseWeather"
+        class="accordion-collapse collapse"
+        aria-labelledby="headingWeather"
+        data-bs-parent="#dataAccordion"
+      >
+        <div class="accordion-body">
+          <p>
+            Meteorological weather data is provided from a weather station at
+            the Jülich tower at a 1 s resolution and from the DWD weather
+            station Aachen-Orsbach with the ID 1500 at a 1 min or 1 h
+            resolution.
+          </p>
+          <p>
+            The weather data is saved in the HDF5 format. For the Jülich tower
+            there is one HDF5 file per month of recorded data whilst all data
+            from the DWD weather station is in one single HDF5 file.
+          </p>
+          <p>
+            An overview of the weather variables recorded and associated data is
+            provided in the table below.
+          </p>
+          <table class="table table-bordered table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Variable Name</th>
+                <th>Description</th>
+                <th>Units</th>
+                <th>Temporal Resolution</th>
+                <th>Jülich</th>
+                <th>DWD</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>atmospheric_pressure</td>
+                <td>Atmospheric pressure.</td>
+                <td>hPa</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>cloud_cover_1h</td>
+                <td>Total cloud cover.</td>
+                <td>fraction (1/8)</td>
+                <td>1 h</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>diffuse_irradiation</td>
+                <td>Diffuse part of the solar irradiance.</td>
+                <td>W/m²</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>direct_irradiation</td>
+                <td>Direct part of the solar irradiance.</td>
+                <td>W/m²</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>global_irradiation</td>
+                <td>Total (diffuse + direct) solar irradiance.</td>
+                <td>W/m²</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>global_radiation_10min</td>
+                <td>Sum of solar incoming radiation.</td>
+                <td>J/cm²</td>
+                <td>10 min</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>humidity_1h</td>
+                <td>The humidity.</td>
+                <td>%</td>
+                <td>1 h</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>long_wave_radiation_10min</td>
+                <td>Sum of longwave downward radiation.</td>
+                <td>J/cm²</td>
+                <td>10 min</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>precipitation</td>
+                <td>Rainfall amount.</td>
+                <td>mm/day</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>pressure_vapor_1h</td>
+                <td>Vapor pressure.</td>
+                <td>hPa</td>
+                <td>1 h</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>relative_humidity</td>
+                <td>Relative humidity.</td>
+                <td>%</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>short_wave_radiation_10min</td>
+                <td>Diffuse solar radiation.</td>
+                <td>J/cm²</td>
+                <td>10 min</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>sunshine_duration_10min</td>
+                <td>Duration of sunshine.</td>
+                <td>h</td>
+                <td>10 min</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>temperature</td>
+                <td>Ambient air temperature.</td>
+                <td>°C</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>temperature_diffuse</td>
+                <td>Temperature related to diffuse irradiance.</td>
+                <td>°C</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>temperature_direct</td>
+                <td>Temperature related to direct irradiance.</td>
+                <td>°C</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>temperature_global</td>
+                <td>Temperature related to global irradiance.</td>
+                <td>°C</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>time</td>
+                <td>Timestamps.</td>
+                <td>-</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>visibility_range_1h</td>
+                <td>Range of visibility.</td>
+                <td>m</td>
+                <td>1 h</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>weather_type_1h</td>
+                <td>Encoded weather condition type.</td>
+                <td>-</td>
+                <td>1 h</td>
+                <td></td>
+                <td>&#10003;</td>
+              </tr>
+              <tr>
+                <td>wind_direction</td>
+                <td>Wind direction.</td>
+                <td>Degrees (0–360)</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>wind_speed</td>
+                <td>Wind speed.</td>
+                <td>m/s</td>
+                <td>1 s</td>
+                <td>&#10003;</td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-   </div>
+    </div>
+  </div>
 </div>
 <h4 class="my-4 py-2 text-primary">License</h4>
-All data is licensed under the liberal <a href="https://cdla.dev/permissive-2-0/">Community Data License Agreement – Permissive – Version 2.0 (CDLA 2.0)</a> license and the corresponding <a href="https://github.com/ARTIST-Association/PAINT/">source code</a> is available under the <a href="https://opensource.org/license/mit">MIT license</a>.
-{% endblock %}
+All data is licensed under the liberal
+<a href="https://cdla.dev/permissive-2-0/"
+  >Community Data License Agreement – Permissive – Version 2.0 (CDLA 2.0)</a
+>
+license and the corresponding
+<a href="https://github.com/ARTIST-Association/PAINT/">source code</a> is
+available under the
+<a href="https://opensource.org/license/mit">MIT license</a>. {% endblock %}
