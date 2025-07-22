@@ -89,3 +89,39 @@ ul li::marker {
 .paint-small-header {
     font-size: calc(1.5vw + 0.5rem);
 }
+
+.accordion-button {
+  background-color: #f8f9fa;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem 1.25rem;
+  padding-right: 5rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.accordion-button::after {
+  order: -1;
+  margin-right: 1rem;
+  margin-left: 0;
+}
+.accordion-button .format-label {
+  font-size: 0.9rem;
+  font-weight: normal;
+  position: absolute;
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.accordion-item {
+  border: none;
+}
+.accordion-body {
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
