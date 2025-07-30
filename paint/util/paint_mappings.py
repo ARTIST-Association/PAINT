@@ -740,9 +740,9 @@ DISTANCE_SUMMER = "distance_summer"
 WINTER_SEASON = "winter"
 """Key for the winter season."""
 TRAIN_TEST_VAL_COLORS = {
-    TRAIN_INDEX: "blue",
-    TEST_INDEX: "red",
-    VALIDATION_INDEX: "green",
+    TRAIN_INDEX: "#005AA0",
+    TEST_INDEX: "#8CB423",
+    VALIDATION_INDEX: "#D23264",
 }
 """Key to apply different colours depending on the train, test and validation split."""
 

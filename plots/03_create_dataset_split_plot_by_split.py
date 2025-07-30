@@ -214,7 +214,7 @@ def main(
 
         # Create a common legend (placed in the upper left of the first subplot).
         legend_handles = [
-            mpatches.Patch(color=colors[split], label=split.capitalize())
+            mpatches.Patch(color=colors[split], label=split.capitalize(), alpha=0.5)
             for split in colors
         ]
         axes[0].legend(handles=legend_handles, loc="upper left")
@@ -236,6 +236,7 @@ if __name__ == "__main__":
         "--calibration_metadata_file",
         type=str,
         help="Path to the calibration metadata CSV file.",
+        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--split_types",
