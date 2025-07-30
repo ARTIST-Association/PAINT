@@ -236,7 +236,6 @@ if __name__ == "__main__":
         "--calibration_metadata_file",
         type=str,
         help="Path to the calibration metadata CSV file.",
-        default="/Users/kphipps/Work/Gits/PAINT/metadata/calibration_metadata_all_heliostats.csv",
     )
     parser.add_argument(
         "--split_types",
