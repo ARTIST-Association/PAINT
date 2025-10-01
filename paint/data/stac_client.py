@@ -1206,9 +1206,16 @@ class StacClient:
             if heliostats is None:
                 root = self.get_catalog(href=mappings.CATALOGUE_URL)
                 log.info("Loading all children in root catalog - please be patient!")
-                all_children = list(
-                    root.get_children()
-                )  # Convert generator to list to save time later.
+                all_children = list(root.get_children())
+                for i in range(
+                    len(all_children) - 1, -1, -1
+                ):  # Iterate backwards through the list.
+                    child = all_children[i]
+                    if (
+                        child.id == mappings.WEATHER_COLLECTION_ID
+                        or child.id == mappings.TOWER_FILE_NAME
+                    ):
+                        all_children.pop(i)
             else:
                 # Find the catalogs for each desired heliostat.
                 log.info("Loading catalogs for desired heliostats.")
