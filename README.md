@@ -6,18 +6,12 @@
 
 # PAINT
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17242094.svg)](https://doi.org/10.5281/zenodo.17242094)
-![PyPI](https://img.shields.io/pypi/v/paint-csp)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 [![FAIR checklist badge](https://fairsoftwarechecklist.net/badge.svg)](https://fairsoftwarechecklist.net/v0.2?f=31&a=32113&i=32322&r=133)
 [![](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![codecov](https://codecov.io/gh/ARTIST-Association/PAINT/graph/badge.svg?token=B2pjCVgOhc)](https://codecov.io/gh/ARTIST-Association/PAINT)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ARTIST-Association/PAINT/main.svg)](https://results.pre-commit.ci/latest/github/ARTIST-Association/PAINT/main)
-[![Documentation Status](https://readthedocs.org/projects/paint/badge/?version=latest)](https://paint.readthedocs.io/en/latest/?badge=latest)
-[![](https://img.shields.io/badge/Contact-artist%40lists.kit.edu-blue?label=Contact)](artist@lists.kit.edu)
 
 ## Welcome to ``PAINT``
 
@@ -82,28 +76,3 @@ The ``PAINT`` repository is structured as shown below:
     ├── preprocessing
     └── util
 ```
-
-### Example usage:
-In the ``scripts`` folder there are multiple scripts highlighting how ``PAINT`` can be used. Detailed
-descriptions of these scripts are available via our [Documentation](http://paint.readthedocs.io).
-
-## How to contribute
-Check out our [contribution guidelines](CONTRIBUTING.md) if you are interested in contributing to the `PAINT` project :fire:.
-Please also carefully check our [code of conduct](CODE_OF_CONDUCT.md) :blue_heart:.
-
-## Acknowledgments
-This work is supported by the [Helmholtz AI](https://www.helmholtz.ai/) platform grant.
-
-<div align="center">
-  <a href="https://www.re3data.org/badges/s/light/100014627.svg">
-    <img src="https://www.re3data.org/badges/s/light/100014627.svg" alt="re3data Badge">
-  </a>
-</div>
-
------------
-<div align="center">
-  <a href="https://www.dlr.de/EN/Home/home_node.html"><img src="https://raw.githubusercontent.com/ARTIST-Association/ARTIST/main/logos/logo_dlr.svg" height="50px" hspace="3%" vspace="25px"></a>
-  <a href="http://www.kit.edu/english/index.php"><img src="https://raw.githubusercontent.com/ARTIST-Association/ARTIST/main/logos/logo_kit.svg" height="50px" hspace="3%" vspace="25px"></a>
-  <a href="https://synhelion.com/"><img src="https://raw.githubusercontent.com/ARTIST-Association/ARTIST/main/logos/logo_synhelion.svg" height="50px" hspace="3%" vspace="25px"></a>
-  <a href="https://www.helmholtz.ai/"><img src="https://raw.githubusercontent.com/ARTIST-Association/ARTIST/main/logos/logo_hai.svg" height="25px" hspace="3%" vspace="25px"></a>
-</div>
