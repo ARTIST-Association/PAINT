@@ -218,13 +218,16 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
         mappings.MFT: mft_coordinates,
         mappings.RECEIVER: receiver_coordinates,
     }
+    power_plant_lat, power_plant_lon = convert_gk_to_lat_long(
+        mappings.GK_RIGHT_BASE, mappings.GK_HEIGHT_BASE
+    )
 
     tower_properties = {
         mappings.POWER_PLANT_KEY: {
             mappings.ID_KEY: mappings.POWER_PLANT_GPPD_ID,
             mappings.TOWER_COORDINATES_KEY: (
-                mappings.POWER_PLANT_LAT,
-                mappings.POWER_PLANT_LON,
+                power_plant_lat,
+                power_plant_lon,
                 mappings.POWER_PLANT_ALT,
             ),
         },
