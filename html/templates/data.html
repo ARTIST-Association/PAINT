@@ -108,9 +108,9 @@
       <h2 class="accordion-header" id="headingKinematic"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKinematic" aria-expanded="false" aria-controls="collapseKinematic">Heliostat Properties <span class="format-label">JSON</span></button></h2>
       <div id="collapseKinematic" class="accordion-collapse collapse" aria-labelledby="headingKinematic" data-bs-parent="#dataAccordion">
         <div class="accordion-body">
-          <p>For each heliostat a JSON file containing heliostat properties is provided. This data includes the <b>geographic position</b>, the <b>physical dimensions</b>, information on the <b>initial orientations</b>and any past<b>renovation history</b>. Furthermore, detailed information on the facet and kinematic properties are provided.</p>
+          <p>For each heliostat a JSON file containing heliostat properties is provided. This data includes the <b>geographic position</b> (WGS84 coordinates), the <b>physical dimensions</b> (meters), information on the <b>initial orientations</b> (east, north, up coordinate vector), and any past <b>renovation history</b>. Furthermore, detailed information on the facet and kinematic properties are provided.</p>
           <h3>Facet Properties</h3>
-          <p>This information describes the reflective mirror configuration, by describing the <b>canting type</b>, the <b>number of facets</b>. Each facet has a <code>translation_vector</code> and canting direction vectors (<code>canting_e</code>, <code>canting_n</code>) which are shown in the image below and define its position and orientation.</p>
+          <p>This information describes the reflective mirror configuration, by describing the <b>canting type</b>, the <b>number of facets</b>. Each facet has a <code>translation_vector</code> and canting direction vectors (<code>canting_e</code>, <code>canting_n</code>) which are shown in the image below and define its position and orientation. These translations are provided in the east, north, up coordinate system.</p>
           <div style="text-align: center">
             <img src="static/img/Facet_Properties.svg" alt="Facet Properties Overview" style="max-width: 35%; height: auto"/>
           </div>
