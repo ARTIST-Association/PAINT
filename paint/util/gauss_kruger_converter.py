@@ -1,4 +1,7 @@
 from pyproj import Transformer
+from pyproj.aoi import AreaOfInterest
+
+import paint.util.paint_mappings as mappings
 
 
 def convert_gk_to_lat_long(right: float, height: float) -> tuple[float, float]:
@@ -27,7 +30,16 @@ def convert_gk_to_lat_long(right: float, height: float) -> tuple[float, float]:
 
     # Create a Transformer object to convert between the two coordinate systems.
     transformer = Transformer.from_crs(
-        gk_zone2_configuration, wgs84_configuration, always_xy=True
+        gk_zone2_configuration,
+        wgs84_configuration,
+        always_xy=True,
+        area_of_interest=AreaOfInterest(
+            west_lon_degree=mappings.AOE_WEST_LONGITUDE,
+            south_lat_degree=mappings.AOE_SOUTH_LATITUDE,
+            east_lon_degree=mappings.AOE_EAST_LONGITUDE,
+            north_lat_degree=mappings.AOE_NORTH_LATITUDE,
+        ),
+        allow_ballpark=False,
     )
 
     # Perform the conversion
