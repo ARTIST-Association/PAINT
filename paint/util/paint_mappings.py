@@ -695,13 +695,13 @@ SECOND_JOINT_TRANSLATION_E = 0.0
 """Mapping to the second joint translation in the east direction."""
 SECOND_JOINT_TRANSLATION_N = 0.0
 """Mapping to the second joint translation in the north direction."""
-SECOND_JOINT_TRANSLATION_U = 0.3149999976158142
+SECOND_JOINT_TRANSLATION_U = 0.0
 """Mapping to the second joint translation in the up direction."""
 CONCENTRATOR_TRANSLATION_E = 0.0
 """Mapping to the concentrator translation in the east direction."""
-CONCENTRATOR_TRANSLATION_N = -0.17755000293254852
+CONCENTRATOR_TRANSLATION_N = 0.175
 """Mapping to the concentrator translation in the north direction."""
-CONCENTRATOR_TRANSLATION_U = -0.40450000762939453
+CONCENTRATOR_TRANSLATION_U = 0.0
 """Mapping to the concentrator translation in the up direction."""
 INITIAL_ORIENTATION_KEY = "initial_orientation"
 """Key for the initial orientation."""
