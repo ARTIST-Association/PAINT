@@ -2,7 +2,7 @@ import math
 
 import pytest
 
-from paint.util.gauss_kruger_converter import convert_gk_to_lat_long
+from paint.util.gauss_kruger_converter import convert_gk_to_lat_lon
 
 
 @pytest.mark.parametrize(
@@ -27,6 +27,6 @@ def test_gauss_kruger_convertor(
     expected : tuple[float, float
         The expected converted latitude and longitude coordinate.
     """
-    actual = convert_gk_to_lat_long(right, height)
+    actual = convert_gk_to_lat_lon(right, height)
     assert math.isclose(actual[0], expected[0])
     assert math.isclose(actual[1], expected[1])

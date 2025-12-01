@@ -6,7 +6,7 @@ from typing import Union
 import colorlog
 
 from . import paint_mappings as mappings
-from .gauss_kruger_converter import convert_gk_to_lat_long
+from .gauss_kruger_converter import convert_gk_to_lat_lon
 from .preprocessing import (
     load_and_format_heliostat_axis_data,
     load_and_format_heliostat_positions,
@@ -77,7 +77,7 @@ def set_logger_config(
 
 
 __all__ = [
-    "convert_gk_to_lat_long",
+    "convert_gk_to_lat_lon",
     "mappings",
     "load_and_format_heliostat_positions",
     "load_and_format_heliostat_axis_data",

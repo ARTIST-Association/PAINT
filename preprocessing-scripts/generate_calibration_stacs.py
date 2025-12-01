@@ -14,7 +14,7 @@ from paint.preprocessing.calibration_stac import (
     make_calibration_collection,
     make_calibration_item,
 )
-from paint.util import convert_gk_to_lat_long
+from paint.util import convert_gk_to_lat_lon
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
@@ -157,12 +157,12 @@ def main(arguments: argparse.Namespace) -> None:
         (
             focal_spot_lat,
             focal_spot_lon,
-        ) = convert_gk_to_lat_long(
+        ) = convert_gk_to_lat_lon(
             right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_E],
             height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.TARGET_OFFSET_N],
         )
         if processed_available:
-            utis_lat, utis_long = convert_gk_to_lat_long(
+            utis_lat, utis_long = convert_gk_to_lat_lon(
                 right=mappings.GK_RIGHT_BASE + utis_data.loc[image][mappings.UTIS_X],
                 height=mappings.GK_HEIGHT_BASE + utis_data.loc[image][mappings.UTIS_Y],
             )

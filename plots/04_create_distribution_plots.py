@@ -12,7 +12,7 @@ import torch
 from plot_utils import convert_wgs84_coordinates_to_local_enu, set_plot_style
 
 import paint.util.paint_mappings as mappings
-from paint.util import convert_gk_to_lat_long
+from paint.util import convert_gk_to_lat_lon
 
 
 class ConditionDistributionPlot:
@@ -82,7 +82,7 @@ class ConditionDistributionPlot:
         self.data = self._load_data()
 
         # Power plant position as tensor
-        power_plant_lat, power_plant_lon = convert_gk_to_lat_long(
+        power_plant_lat, power_plant_lon = convert_gk_to_lat_lon(
             mappings.GK_RIGHT_BASE, mappings.GK_HEIGHT_BASE
         )
         self.power_plant_position = torch.tensor(

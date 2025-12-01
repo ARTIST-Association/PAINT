@@ -3,7 +3,7 @@ from typing import Any
 import numpy as np
 
 import paint.util.paint_mappings as mappings
-from paint.util.gauss_kruger_converter import convert_gk_to_lat_long
+from paint.util.gauss_kruger_converter import convert_gk_to_lat_lon
 
 
 def extract_coordinate_tuples(coordinate_tuples_dict: dict[Any, Any]) -> list[tuple]:
@@ -81,23 +81,23 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
         The measurement dictionary.
     """
     # ------------------ Solar Tower Juelich (STJ) Upper Coordinates --------------------------------------------------
-    stj_upper_left = convert_gk_to_lat_long(
+    stj_upper_left = convert_gk_to_lat_lon(
         2527321.418,
         5642083.398,
     ) + (133.684,)
-    stj_upper_middle = convert_gk_to_lat_long(
+    stj_upper_middle = convert_gk_to_lat_lon(
         2527317.1,
         5642083.369,
     ) + (133.71,)
-    stj_upper_right = convert_gk_to_lat_long(
+    stj_upper_right = convert_gk_to_lat_lon(
         2527312.789,
         5642083.369,
     ) + (133.719,)
-    stj_middle_left = convert_gk_to_lat_long(
+    stj_middle_left = convert_gk_to_lat_lon(
         2527321.423,
         5642083.387,
     ) + (126.476,)
-    stj_middle_right = convert_gk_to_lat_long(
+    stj_middle_right = convert_gk_to_lat_lon(
         2527312.802,
         5642083.374,
     ) + (126.506,)
@@ -113,15 +113,15 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     # ------------------ Solar Tower Juelich (STJ) LOWER Coordinates -----------------------------------------------
-    stj_lower_left = convert_gk_to_lat_long(
+    stj_lower_left = convert_gk_to_lat_lon(
         2527321.422,
         5642083.384,
     ) + (119.268,)
-    stj_lower_middle = convert_gk_to_lat_long(
+    stj_lower_middle = convert_gk_to_lat_lon(
         2527317.097,
         5642083.391,
     ) + (119.269,)
-    stj_lower_right = convert_gk_to_lat_long(
+    stj_lower_right = convert_gk_to_lat_lon(
         2527312.784,
         5642083.394,
     ) + (119.279,)
@@ -137,19 +137,19 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     # ------------------ Multi Focus Tower (MFT) Coordinates ----------------------------------------------------
-    mft_upper_left = convert_gk_to_lat_long(
+    mft_upper_left = convert_gk_to_lat_lon(
         2527302.216,
         5642083.778,
     ) + (142.175,)
-    mft_upper_right = convert_gk_to_lat_long(
+    mft_upper_right = convert_gk_to_lat_lon(
         2527296.804,
         5642083.786,
     ) + (142.172,)
-    mft_lower_right = convert_gk_to_lat_long(
+    mft_lower_right = convert_gk_to_lat_lon(
         2527296.794,
         5642083.779,
     ) + (135.783,)
-    mft_lower_left = convert_gk_to_lat_long(
+    mft_lower_left = convert_gk_to_lat_lon(
         2527302.206,
         5642083.784,
     ) + (135.789,)
@@ -164,35 +164,35 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
     }
 
     # ------------------ Receiver Coordinates ----------------------------------------------------
-    receiver_outer_upper_left = convert_gk_to_lat_long(
+    receiver_outer_upper_left = convert_gk_to_lat_lon(
         2527319.349,
         5642087.315,
     ) + (144.805,)
-    receiver_inner_upper_left = convert_gk_to_lat_long(
+    receiver_inner_upper_left = convert_gk_to_lat_lon(
         2527319.163,
         5642087.223,
     ) + (144.592,)
-    receiver_inner_upper_right = convert_gk_to_lat_long(
+    receiver_inner_upper_right = convert_gk_to_lat_lon(
         2527315.028,
         5642087.236,
     ) + (144.593,)
-    receiver_outer_upper_right = convert_gk_to_lat_long(
+    receiver_outer_upper_right = convert_gk_to_lat_lon(
         2527314.796,
         5642087.343,
     ) + (144.82,)
-    receiver_outer_lower_left = convert_gk_to_lat_long(
+    receiver_outer_lower_left = convert_gk_to_lat_lon(
         2527319.322,
         5642084.89,
     ) + (139.596,)
-    receiver_inner_lower_left = convert_gk_to_lat_long(
+    receiver_inner_lower_left = convert_gk_to_lat_lon(
         2527319.155,
         5642085.008,
     ) + (139.86,)
-    receiver_inner_lower_right = convert_gk_to_lat_long(
+    receiver_inner_lower_right = convert_gk_to_lat_lon(
         2527315.032,
         5642084.998,
     ) + (139.862,)
-    receiver_outer_lower_right = convert_gk_to_lat_long(
+    receiver_outer_lower_right = convert_gk_to_lat_lon(
         2527314.818,
         5642084.892,
     ) + (139.592,)
@@ -218,7 +218,7 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
         mappings.MFT: mft_coordinates,
         mappings.RECEIVER: receiver_coordinates,
     }
-    power_plant_lat, power_plant_lon = convert_gk_to_lat_long(
+    power_plant_lat, power_plant_lon = convert_gk_to_lat_lon(
         mappings.GK_RIGHT_BASE, mappings.GK_HEIGHT_BASE
     )
 

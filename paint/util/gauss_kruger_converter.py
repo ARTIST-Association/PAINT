@@ -4,7 +4,7 @@ from pyproj.aoi import AreaOfInterest
 import paint.util.paint_mappings as mappings
 
 
-def convert_gk_to_lat_long(right: float, height: float) -> tuple[float, float]:
+def convert_gk_to_lat_lon(right: float, height: float) -> tuple[float, float]:
     """
     Convert a Gauss-Kruger coordinate to a latitude / longitude coordinate.
 
