@@ -648,14 +648,6 @@ CANTING_KEY = "canting"
 MAP_CANTING_TO_READABLE = {"Rec": "receiver canting", "FE": "research level canting"}
 """Mapping from short canting description to readable canting description."""
 
-# Constants for WGS84
-WGS84_A = 6378137.0  # Major axis in meters
-"""Mapping for the WGS84 major axis constant."""
-WGS84_B = 6356752.314245  # Minor axis in meters
-"""Mapping for the WGS84 minor axis constant."""
-WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
-"""Mapping for the WGS84 eccentricity squared constant."""
-
 # Keys for Area of Interest Values
 AOE_WEST_LONGITUDE = 6.35
 """Mapping for the area of interest west longitude constant."""
