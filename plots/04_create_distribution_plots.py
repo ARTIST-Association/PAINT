@@ -12,11 +12,7 @@ import torch
 from plot_utils import convert_wgs84_coordinates_to_local_enu, set_plot_style
 
 import paint.util.paint_mappings as mappings
-
-# Power plant position as tensor
-power_plant_position = torch.tensor(
-    [mappings.POWER_PLANT_LAT, mappings.POWER_PLANT_LON, mappings.POWER_PLANT_ALT]
-)
+from paint.util import convert_gk_to_lat_lon
 
 
 class ConditionDistributionPlot:
@@ -35,6 +31,8 @@ class ConditionDistributionPlot:
         Size of the figures used for plotting.
     data : pandas.DataFrame
         Loaded condition data for plotting.
+    power_plant_position : torch.Tensor
+        Power plant position in WGS84 coordinates.
     receiver_coordinates : list[torch.Tensor]
         Receiver corner coordinates transformed to local ENU coordinates.
 
@@ -83,10 +81,21 @@ class ConditionDistributionPlot:
         self.figure_size = (4, 4)
         self.data = self._load_data()
 
+        # Power plant position as tensor
+        power_plant_lat, power_plant_lon = convert_gk_to_lat_lon(
+            mappings.GK_RIGHT_BASE, mappings.GK_HEIGHT_BASE
+        )
+        self.power_plant_position = torch.tensor(
+            [
+                power_plant_lat,
+                power_plant_lon,
+                mappings.POWER_PLANT_ALT,
+            ]
+        )
         # Precompute receiver corners once
         self.receiver_coordinates = [
             convert_wgs84_coordinates_to_local_enu(
-                torch.tensor(coords), power_plant_position
+                torch.tensor(coords), self.power_plant_position
             )
             for coords in mappings.RECEIVER_COORDINATES
         ]
@@ -124,7 +133,7 @@ class ConditionDistributionPlot:
                         calibration_dict[mappings.FOCAL_SPOT_KEY][mappings.HELIOS_KEY]
                     )
                     center_enu = convert_wgs84_coordinates_to_local_enu(
-                        center, power_plant_position
+                        center, self.power_plant_position
                     )
 
                     idx = id_to_index[id_]

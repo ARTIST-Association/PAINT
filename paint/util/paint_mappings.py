@@ -114,19 +114,15 @@ KIT = {
 """Dictionary containing contact information for KIT."""
 POWER_PLANT_GPPD_ID = "WRI1030197"
 """Mapping to the power plant global ID."""
-POWER_PLANT_LAT = 50.91342112259258
-"""Mapping to the power plant latitude."""
-POWER_PLANT_LON = 6.387824755874856
-"""Mapping to the power plant longitude."""
 POWER_PLANT_ALT = 87.0
 """Mapping to the power plant altitude."""
 POWER_PLANT_KEY = "power_plant_properties"
 """Mapping to the power plant properties key."""
 ID_KEY = "ID"
 """Mapping to the power plant ID key."""
-GK_HEIGHT_BASE = 5642086.619 - 0.063
+GK_HEIGHT_BASE = 5642086.619
 """Mapping to the Gauss-Krüger reference for the height base."""
-GK_RIGHT_BASE = 2527317.095 - 1.626
+GK_RIGHT_BASE = 2527317.095
 """Mapping to the Gauss-Krüger reference for the right base."""
 
 # Target coordinates
@@ -652,13 +648,15 @@ CANTING_KEY = "canting"
 MAP_CANTING_TO_READABLE = {"Rec": "receiver canting", "FE": "research level canting"}
 """Mapping from short canting description to readable canting description."""
 
-# Constants for WGS84
-WGS84_A = 6378137.0  # Major axis in meters
-"""Mapping for the WGS84 major axis constant."""
-WGS84_B = 6356752.314245  # Minor axis in meters
-"""Mapping for the WGS84 minor axis constant."""
-WGS84_E2 = (WGS84_A**2 - WGS84_B**2) / WGS84_A**2  # Eccentricity squared
-"""Mapping for the WGS84 eccentricity squared constant."""
+# Keys for Area of Interest Values
+AOE_WEST_LONGITUDE = 6.35
+"""Mapping for the area of interest west longitude constant."""
+AOE_SOUTH_LATITUDE = 50.85
+"""Mapping for the area of interest south latitude constant."""
+AOE_EAST_LONGITUDE = 6.45
+"""Mapping for the area of interest east longitude constant."""
+AOE_NORTH_LATITUDE = 50.95
+"""Mapping for the area of interest north latitude constant."""
 
 # Extra Kinematic Properties
 FIRST_JOINT_TRANSLATION_E_KEY = "joint_translation_e_1"
@@ -689,17 +687,17 @@ SECOND_JOINT_TRANSLATION_E = 0.0
 """Mapping to the second joint translation in the east direction."""
 SECOND_JOINT_TRANSLATION_N = 0.0
 """Mapping to the second joint translation in the north direction."""
-SECOND_JOINT_TRANSLATION_U = 0.3149999976158142
+SECOND_JOINT_TRANSLATION_U = 0.0
 """Mapping to the second joint translation in the up direction."""
 CONCENTRATOR_TRANSLATION_E = 0.0
 """Mapping to the concentrator translation in the east direction."""
-CONCENTRATOR_TRANSLATION_N = -0.17755000293254852
+CONCENTRATOR_TRANSLATION_N = 0.175
 """Mapping to the concentrator translation in the north direction."""
-CONCENTRATOR_TRANSLATION_U = -0.40450000762939453
+CONCENTRATOR_TRANSLATION_U = 0.0
 """Mapping to the concentrator translation in the up direction."""
 INITIAL_ORIENTATION_KEY = "initial_orientation"
 """Key for the initial orientation."""
-INITIAL_ORIENTATION_VALUE = [0.0, 0.0, 1.0]
+INITIAL_ORIENTATION_VALUE = [0.0, -1.0, 0.0]
 """Mapping to the initial orientation value."""
 
 ACTUATOR_KEY = "actuators"

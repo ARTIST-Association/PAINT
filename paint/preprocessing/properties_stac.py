@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 
 import paint.util.paint_mappings as mappings
-from paint.util import convert_gk_to_lat_long
+from paint.util import convert_gk_to_lat_lon
 from paint.util.utils import to_utc_single
 
 
@@ -125,7 +125,7 @@ def make_properties_item(
         The STAC item data as dictionary.
     """
     resource = heliostat_key + "-heliostat-properties"
-    lat_lon = convert_gk_to_lat_long(
+    lat_lon = convert_gk_to_lat_lon(
         right=mappings.GK_RIGHT_BASE + heliostat_data[mappings.EAST_KEY],
         height=mappings.GK_HEIGHT_BASE + heliostat_data[mappings.NORTH_KEY],
     )
