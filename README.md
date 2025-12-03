@@ -6,7 +6,7 @@
 
 # PAINT
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17242094.svg)](https://doi.org/10.5281/zenodo.17242094)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17805358.svg)](https://doi.org/10.5281/zenodo.17805358)
 ![PyPI](https://img.shields.io/pypi/v/paint-csp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
