@@ -1,8 +1,24 @@
+## Version 1.0.3
+### What's Changed
+* Fix coordinate conversion by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/112
+* Improve pre-processing scripts to restart automatically by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/114
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.2...v1.0.3
+
+## Version 1.0.2
+### What's Changed
+* Switched to uv for Workflow management by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/87
+* Automatic Server Restart by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/88
+* Extended Website Data Description by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/92
+* Update STACClient to remove bugs by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/105
+* Update Version Number by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/106
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.1...v1.0.2
+
 ## Version 1.0.1
 
 ### What's Changed
 * Adjust package name to avoid conflicts on PyPi by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/84
-
 
 **Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.0...v1.0.1
 
