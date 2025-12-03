@@ -31,6 +31,9 @@ def main(arguments: argparse.Namespace) -> None:
     arguments : argparse.Namespace
         The arguments containing input and output path.
     """
+    # File path to save processed IDs to enable restart if the script is interrupted.
+    processed_tracking_path = Path(f"{PAINT_ROOT}/TEMPDATA/processed_ids_tracker.txt")
+
     # Check if saved metadata exists and load if required.
     calibration_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/calibration_items.csv")
     if calibration_items_path.exists():
@@ -86,6 +89,21 @@ def main(arguments: argparse.Namespace) -> None:
 
     # Remove duplicated IDs (the last occurrence has updated measurements removing some NaN values).
     data = data[~data.index.duplicated(keep="last")]
+
+    # Remove IDs from teh data that have already been processed.
+    if processed_tracking_path.exists():
+        with open(processed_tracking_path, "r") as f:
+            completed_ids = set(int(line.strip()) for line in f)
+
+        print(
+            f"Found {len(completed_ids)} already processed IDs. Removing them from the queue..."
+        )
+
+        # Keep only IDs that are NOT in the completed set.
+        data = data[~data.index.isin(completed_ids)]
+        log_completed = len(completed_ids)
+    else:
+        log_completed = 0
 
     # Identify IDs where processed images are not available.
     no_processed_ids = np.setdiff1d(data.index.values, processed_ids_available)
@@ -217,11 +235,14 @@ def main(arguments: argparse.Namespace) -> None:
         save_calibration_properties_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_calibration_properties_path, "w") as handle:
             json.dump(calibration_properties_data, handle)
+        calibration_items.to_csv(calibration_items_path, index=False)
         count = count + 1
         if count % 1000 == 0:
             print(
-                f"I'm alive and have created STACS for {count} of {num_images} - that is {(count / num_images) * 100:.2f}%."
+                f"I'm alive and have created STACS for {count + log_completed} of {num_images + log_completed} - that is {((count + log_completed) / (num_images + log_completed)) * 100:.2f}%."
             )
+        with open(processed_tracking_path, "a") as f:
+            f.write(f"{image}\n")
 
     # Create the STAC collections.
     for heliostat, data in calibration_items.groupby(mappings.HELIOSTAT_ID):

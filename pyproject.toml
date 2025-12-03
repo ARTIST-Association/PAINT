@@ -7,7 +7,7 @@ packages = ["paint"]
 
 [project]
 name = "paint-csp"
-version = "1.0.2"
+version = "1.0.3"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]

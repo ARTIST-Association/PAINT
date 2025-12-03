@@ -10,7 +10,7 @@ from datetime import datetime
 project = "PAINT"
 copyright = f"{datetime.now().year}, ARTIST consortium"
 author = "ARTIST Consortium"
-release = "1.0.2"
+release = "1.0.3"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
