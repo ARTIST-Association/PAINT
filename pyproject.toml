@@ -36,7 +36,6 @@ dependencies = [
     "opencv-python",
     "waitress",
     "pyproj",
-    "typing-extensions"
 ]
 
 [project.optional-dependencies]
