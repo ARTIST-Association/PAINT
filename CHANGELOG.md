@@ -1,3 +1,9 @@
+## Version 2.0.0
+## What's Changed
+* Remove support for Python 3.9, upgrading to only support Python 3.10+ by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/116
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.3...v2.0.0
+
 ## Version 1.0.3
 ### What's Changed
 * Fix coordinate conversion by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/112
