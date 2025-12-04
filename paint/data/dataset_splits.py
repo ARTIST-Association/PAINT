@@ -1,6 +1,5 @@
 import logging
 from pathlib import Path
-from typing import Union
 
 import pandas as pd
 
@@ -31,8 +30,8 @@ class DatasetSplitter:
 
     def __init__(
         self,
-        input_file: Union[Path, str],
-        output_dir: Union[Path, str],
+        input_file: Path | str,
+        output_dir: Path | str,
         remove_unused_data: bool = True,
     ):
         """
@@ -40,9 +39,9 @@ class DatasetSplitter:
 
         Parameters
         ----------
-        input_file : Union[Path, str]
+        input_file : Path | str
             Path to the input file containing the metadata required to generate the dataset splits.
-        output_dir : Union[Path, str]
+        output_dir : Path | str
             Path to the output directory where the dataset splits will be saved.
         remove_unused_data : bool
             Whether extra metadata should be removed from the resulting dataset splits (Default: `True`).

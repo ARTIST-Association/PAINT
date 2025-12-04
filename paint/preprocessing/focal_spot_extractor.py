@@ -1,6 +1,5 @@
 import json
 from pathlib import Path
-from typing import Union
 
 import cv2
 import torch
@@ -64,13 +63,13 @@ class FocalSpot:
         return instance
 
     @classmethod
-    def load(cls, file_path: Union[str, Path]) -> "FocalSpot":
+    def load(cls, file_path: str | Path) -> "FocalSpot":
         """
         Load a ``FocalSpot`` object from disk.
 
         Parameters
         ----------
-        file_path : Union[str, Path]
+        file_path : str | Path
             Base path for the focal spot files (without extensions).
 
         Returns
@@ -132,13 +131,13 @@ class FocalSpot:
             json.dump(metadata, json_file, indent=4)
 
 
-def get_marker_coordinates(target: Union[str, int]) -> tuple[torch.Tensor, ...]:
+def get_marker_coordinates(target: str | int) -> tuple[torch.Tensor, ...]:
     """
     Get the specific marker coordinates based on the target.
 
     Parameters
     ----------
-    target : Union[str, int]
+    target : str | int
         Target ID used to determine which marker coordinates should be used.
 
     Returns
@@ -163,7 +162,7 @@ def get_marker_coordinates(target: Union[str, int]) -> tuple[torch.Tensor, ...]:
 
 
 def convert_xy_to_enu(
-    aim_point_image: tuple[float, float], target: Union[str, int]
+    aim_point_image: tuple[float, float], target: str | int
 ) -> torch.Tensor:
     """
     Convert (x, y) coordinates to an aimpoint in the target image based on marker positions.
@@ -172,7 +171,7 @@ def convert_xy_to_enu(
     ----------
     aim_point_image : tuple[float, float]
         Relative aim point coordinates (x, y).
-    target : Union[str, int]
+    target : str | int
         The target object containing marker information.
 
     Returns
@@ -250,7 +249,7 @@ def compute_center_of_intensity(
 
 def detect_focal_spot(
     image: torch.Tensor,
-    target: Union[str, int],
+    target: str | int,
     utis_model: torch.nn.Module,
 ) -> FocalSpot:
     """
@@ -260,7 +259,7 @@ def detect_focal_spot(
     ----------
     image : torch.Tensor
         Cropped image containing the focal spot to be detected, with the shape (height, width).
-    target : Union[str, int]
+    target : str | int
         Target center and dimensions used for aimpoint calculation.
     utis_model : torch.nn.Module
         UTIS model checkpoint used to compute the flux.

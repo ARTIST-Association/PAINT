@@ -1,5 +1,5 @@
 import pathlib
-from typing import Any, Union
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import cv2
@@ -58,9 +58,7 @@ def mock_benchmark_data() -> dict[str, Any]:
         ["flux_centered_image", "152144-flux-centered.png"],
     ],
 )
-def test_initialize_dataset(
-    item_type: str, expected: Union[dict[str, Any], str]
-) -> None:
+def test_initialize_dataset(item_type: str, expected: dict[str, Any] | str) -> None:
     """
     Test initialize the dataset.
 
@@ -68,7 +66,7 @@ def test_initialize_dataset(
     ----------
     item_type : str
         Type of item used for dataset creation.
-    expected : Union[dict[str, Any], str]
+    expected : dict[str, Any] | str
         Expected item to be found at index 0, or name of the image to be found at index 0.
     """
     # Initialize dataset.
@@ -209,7 +207,7 @@ def test_from_benchmark(
         ["flux_centered_image", ["AA23"]],
     ],
 )
-def test_from_heliostats(item_type: str, heliostats: Union[list[str], None]) -> None:
+def test_from_heliostats(item_type: str, heliostats: list[str] | None) -> None:
     """
     Test initializing the dataset form a list of heliostats.
 
@@ -221,7 +219,7 @@ def test_from_heliostats(item_type: str, heliostats: Union[list[str], None]) -> 
     ----------
     item_type : str
         Type of item used for dataset creation.
-    heliostats : Union[list[str], None]
+    heliostats : list[str] | None
         Heliostats used to create the dataset. If no heliostats are provided, data from all heliostats is used
         (Default: ``None``).
     """

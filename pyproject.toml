@@ -7,13 +7,13 @@ packages = ["paint"]
 
 [project]
 name = "paint-csp"
-version = "1.0.3"
+version = "2.0.0"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]
 description = "A FAIR database for concentrating solar power plant data"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
