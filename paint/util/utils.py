@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -41,13 +40,13 @@ def calculate_azimuth_and_elevation(df: pd.DataFrame) -> tuple[np.ndarray, np.nd
     return azimuth_degree, elevation_degree
 
 
-def heliostat_id_to_name(heliostat_id: Union[int, str]) -> str:
+def heliostat_id_to_name(heliostat_id: int | str) -> str:
     """
     Convert a heliostat id to its name.
 
     Parameters
     ----------
-    heliostat_id : Union[int, str]
+    heliostat_id : int | str
         The heliostat ID to be converted.
 
     Returns

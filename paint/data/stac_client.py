@@ -5,7 +5,7 @@ import shutil
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from threading import Lock
-from typing import Any, Union
+from typing import Any
 
 import pandas as pd
 import pystac
@@ -53,7 +53,7 @@ class StacClient:
 
     def __init__(
         self,
-        output_dir: Union[str, pathlib.Path],
+        output_dir: str | pathlib.Path,
         chunk_size: int = 1024 * 1024,
     ) -> None:
         """
@@ -61,7 +61,7 @@ class StacClient:
 
         Parameters
         ----------
-        output_dir : Union[str, pathlib.Path]
+        output_dir : str | pathlib.Path
             Output directory for saving the downloaded data.
         chunk_size : int
             Chunk size used for download (Default: 1024 * 1024).
@@ -176,9 +176,9 @@ class StacClient:
 
     @staticmethod
     def get_child(
-        parent: Union[pystac.catalog.Catalog, pystac.collection.Collection],
+        parent: pystac.catalog.Catalog | pystac.collection.Collection,
         child_id: str,
-    ) -> Union[pystac.catalog.Catalog, pystac.collection.Collection, pystac.item.Item]:
+    ) -> pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection:
         """
         Help to get a child from a STAC catalog or collection.
 
@@ -186,14 +186,14 @@ class StacClient:
 
         Parameters
         ----------
-        parent : Union[pystac.Catalog, pystac.Collection]
+        parent : pystac.catalog.Catalog | pystac.collection.Collection
             Parent STAC catalog or collection.
         child_id : str
             ID of the child STAC catalog, collection, or item.
 
         Returns
         -------
-        Union[pystac.Catalog, pystac.Collection, pystac.Item]
+        pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection
             Child STAC catalog, collection, or item.
         """
         child = parent.get_child(child_id)
@@ -204,7 +204,7 @@ class StacClient:
         return child
 
     def download_file(
-        self, url: str, file_name: Union[str, pathlib.Path], timeout: int = 60
+        self, url: str, file_name: str | pathlib.Path, timeout: int = 60
     ) -> bool:
         """
         Download a file.
@@ -213,7 +213,7 @@ class StacClient:
         ----------
         url : str
             URL of the file to download.
-        file_name : Union[str, pathlib.Path]
+        file_name : str | pathlib.Path
             File name to be saved.
         timeout : int
             Timeout for downloading the file (Default: 60 seconds).
@@ -247,9 +247,9 @@ class StacClient:
     def _process_single_heliostat_item(
         self,
         item: pystac.item.Item,
-        start_date: Union[datetime, None],
-        end_date: Union[datetime, None],
-        filtered_calibration_keys: Union[list[str], None],
+        start_date: datetime | None,
+        end_date: datetime | None,
+        filtered_calibration_keys: list[str] | None,
         collection_id: str,
         heliostat_catalog_id: str,
         save_folder: str,
@@ -338,9 +338,9 @@ class StacClient:
     def _process_heliostat_items(
         self,
         items: list[pystac.item.Item],
-        start_date: Union[datetime, None],
-        end_date: Union[datetime, None],
-        filtered_calibration_keys: Union[list[str], None],
+        start_date: datetime | None,
+        end_date: datetime | None,
+        filtered_calibration_keys: list[str] | None,
         collection_id: str,
         heliostat_catalog_id: str,
         save_folder: str,
@@ -469,9 +469,9 @@ class StacClient:
         heliostat_catalog: pystac.catalog.Catalog,
         collection_id: str,
         save_folder: str,
-        start_date: Union[datetime, None] = None,
-        end_date: Union[datetime, None] = None,
-        filtered_calibration_keys: Union[list[str], None] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        filtered_calibration_keys: list[str] | None = None,
         for_dataset: bool = False,
         timeout: int = 60,
         num_parallel_workers: int = 10,
@@ -572,11 +572,11 @@ class StacClient:
 
     def get_heliostat_data(
         self,
-        heliostats: Union[list[str], None] = None,
-        collections: Union[list[str], None] = None,
-        start_date: Union[datetime, None] = None,
-        end_date: Union[datetime, None] = None,
-        filtered_calibration_keys: Union[list[str], None] = None,
+        heliostats: list[str] | None = None,
+        collections: list[str] | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        filtered_calibration_keys: list[str] | None = None,
         for_dataset: bool = False,
         resume_download: bool = True,
         timeout: int = 60,
@@ -836,9 +836,9 @@ class StacClient:
 
     def get_weather_data(
         self,
-        data_sources: Union[list[str], None] = None,
-        start_date: Union[datetime, None] = None,
-        end_date: Union[datetime, None] = None,
+        data_sources: list[str] | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
         timeout: int = 60,
         resume_download: bool = True,
     ) -> None:
@@ -981,9 +981,7 @@ class StacClient:
 
     def _process_child_metadata(
         self,
-        child: Union[
-            pystac.catalog.Catalog, pystac.item.Item, pystac.collection.Collection
-        ],
+        child: pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection,
         base_id: str,
     ) -> list[dict[str, Any]]:
         """
@@ -991,7 +989,7 @@ class StacClient:
 
         Parameters
         ----------
-        child : Union[pystac.catalog.Catalog, pystac.item.Item, pystac.collection.Collection]
+        child : pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection
             Child catalog to extract metadata from.
         base_id : str
             Base ID used to define the heliostat collection being accessed.
@@ -1084,9 +1082,7 @@ class StacClient:
 
     def _process_metadata_with_checkpoint(
         self,
-        child: Union[
-            pystac.item.Item, pystac.collection.Collection, pystac.catalog.Catalog
-        ],
+        child: pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection,
         collection: str,
         id_base: str,
         checkpoint: dict[str, Any],
@@ -1100,7 +1096,7 @@ class StacClient:
 
         Parameters
         ----------
-        child : Union[pystac.item.Item, pystac.collection.Collection, pystac.catalog.Catalog]
+        child : pystac.catalog.Catalog | pystac.item.Item | pystac.collection.Collection
             Child being processed.
         collection : str
             Collection being processed.
@@ -1152,8 +1148,8 @@ class StacClient:
 
     def get_heliostat_metadata(
         self,
-        heliostats: Union[list[str], None] = None,
-        collections: Union[list[str], None] = None,
+        heliostats: list[str] | None = None,
+        collections: list[str] | None = None,
         resume_download: bool = True,
     ) -> None:
         """
@@ -1328,7 +1324,7 @@ class StacClient:
 
     @staticmethod
     def _check_filtered_calibration_keys(
-        filtered_calibration_keys: Union[list[str], None] = None,
+        filtered_calibration_keys: list[str] | None = None,
     ) -> list[str]:
         """
         Check that the filtered calibration keys are acceptable.
@@ -1371,9 +1367,9 @@ class StacClient:
         self,
         heliostat_id: str,
         item_id: int,
-        filtered_calibration_keys: Union[list[str], None] = None,
-        benchmark_split: Union[str, None] = None,
-        pbar: Union[tqdm, None] = None,
+        filtered_calibration_keys: list[str] | None = None,
+        benchmark_split: str | None = None,
+        pbar: tqdm | None = None,
         verbose: bool = True,
         timeout: int = 60,
     ) -> None:
@@ -1447,8 +1443,8 @@ class StacClient:
 
     def get_multiple_calibration_items_by_id(
         self,
-        heliostat_items_dict: dict[str, Union[list[int], None]],
-        filtered_calibration_keys: Union[list[str], None] = None,
+        heliostat_items_dict: dict[str, list[int] | None],
+        filtered_calibration_keys: list[str] | None = None,
         timeout: int = 60,
         num_parallel_workers: int = 10,
         results_timeout: int = 300,
@@ -1458,7 +1454,7 @@ class StacClient:
 
         Parameters
         ----------
-        heliostat_items_dict : dict[str, Union[list[int], None]]
+        heliostat_items_dict : dict[str, list[int] | None]
             A dictionary mapping heliostat IDs to lists of item IDs to be downloaded. If the list of item IDs is ``None``,
             all items for that heliostat will be downloaded.
         filtered_calibration_keys : list[str]

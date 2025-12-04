@@ -3,7 +3,7 @@ import logging
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Union
+from typing import Any
 
 import cv2
 import pandas as pd
@@ -34,7 +34,7 @@ class PaintCalibrationDataset(Dataset):
         Mapper to convert a calibration item type to a calibration file identifier
     file_identifier : str
         Identifies what type of file to be loaded.
-    root_dir : Union[str, Path]
+    root_dir : str | Path
         Directory where the dataset will be stored.
     item_ids : list[int]
         List of item IDs that should be included in the dataset.
@@ -59,9 +59,9 @@ class PaintCalibrationDataset(Dataset):
 
     def __init__(
         self,
-        root_dir: Union[str, Path],
+        root_dir: str | Path,
         item_type: str,
-        item_ids: Union[list[int], None] = None,
+        item_ids: list[int] | None = None,
     ) -> None:
         """
         Initialize a PaintCalibrationDataset.
@@ -70,12 +70,12 @@ class PaintCalibrationDataset(Dataset):
 
         Parameters
         ----------
-        root_dir : Union[str, Path]
+        root_dir : str | Path
             Directory where the dataset will be stored.
         item_type : str
             Type of item being loaded, i.e. raw image, cropped image, flux image, flux centered image, or calibration
             properties.
-        item_ids : list[int]
+        item_ids : list[int], optional
             List of item IDs that should be included in the dataset. If no list is provided, all files in that folder
             of the specified type will be loaded.
         """
@@ -142,8 +142,8 @@ class PaintCalibrationDataset(Dataset):
     @classmethod
     def from_benchmark(
         cls,
-        benchmark_file: Union[str, Path],
-        root_dir: Union[str, Path],
+        benchmark_file: str | Path,
+        root_dir: str | Path,
         item_type: str,
         download: bool = False,
         timeout: int = 60,
@@ -157,9 +157,9 @@ class PaintCalibrationDataset(Dataset):
 
         Parameters
         ----------
-        benchmark_file : Union[str, Path]
+        benchmark_file : str | Path
             Path to the file containing the benchmark information.
-        root_dir : Union[str, Path]
+        root_dir : str | Path
             Directory where the dataset will be stored.
         item_type : str
             Type of item being loaded, i.e. raw image, cropped image, flux image, or calibration properties.
@@ -252,7 +252,7 @@ class PaintCalibrationDataset(Dataset):
     @staticmethod
     def _download_benchmark_splits(
         splits: pd.DataFrame,
-        root_dir: Union[str, Path],
+        root_dir: str | Path,
         item_type: str,
         timeout: int = 60,
         num_parallel_workers: int = 10,
@@ -268,7 +268,7 @@ class PaintCalibrationDataset(Dataset):
         ----------
         splits : pd.DataFrame
             Information on the splits to be downloaded.
-        root_dir : Union[str, Path]
+        root_dir : str | Path
             Directory where the data will be stored.
         item_type : str
             Type of item being downloaded, i.e. raw image, cropped image, flux image, or calibration properties.
@@ -323,9 +323,9 @@ class PaintCalibrationDataset(Dataset):
     @classmethod
     def from_heliostats(
         cls,
-        root_dir: Union[str, Path],
+        root_dir: str | Path,
         item_type: str,
-        heliostats: Union[list[str], None] = None,
+        heliostats: list[str] | None = None,
         download: bool = False,
     ) -> Self:
         """
@@ -335,11 +335,11 @@ class PaintCalibrationDataset(Dataset):
 
         Parameters
         ----------
-        root_dir : Union[str, Path]
+        root_dir : str | Path
             Directory where the dataset will be stored.
         item_type : str
             Type of item being loaded, i.e. raw image, cropped image, flux image, or calibration properties.
-        heliostats : Union[list[str], None]
+        heliostats : list[str] | None
             List of heliostats for which calibration data should be downloaded. If no list is provided the data for all
             heliostats will be downloaded (Default: ``None``).
         download : bool
@@ -385,9 +385,9 @@ class PaintCalibrationDataset(Dataset):
 
     @staticmethod
     def _download_heliostat_data(
-        root_dir: Union[str, Path],
+        root_dir: str | Path,
         item_type: str,
-        heliostats: Union[list[str], None] = None,
+        heliostats: list[str] | None = None,
         timeout: int = 60,
         num_parallel_workers: int = 10,
         results_timeout: int = 300,
@@ -397,11 +397,11 @@ class PaintCalibrationDataset(Dataset):
 
         Parameters
         ----------
-        root_dir : Union[str, Path]
+        root_dir : str | Path
             Directory where the data will be stored.
         item_type : str
             Type of item being downloaded, i.e. raw image, cropped image, flux image, or calibration properties.
-        heliostats : Union[list[str], None]
+        heliostats : list[str] | None
             List of heliostats for which calibration data should be downloaded. If no list is provided the data for all
             heliostats will be downloaded (Default: ``None``).
         timeout : int
@@ -434,7 +434,7 @@ class PaintCalibrationDataset(Dataset):
         """
         return len(self.item_ids)
 
-    def __getitem__(self, idx: int) -> Union[torch.Tensor, dict[str, Any]]:
+    def __getitem__(self, idx: int) -> torch.Tensor | dict[str, Any]:
         """
         Return the item at position ``idx``.
 
@@ -445,7 +445,7 @@ class PaintCalibrationDataset(Dataset):
 
         Returns
         -------
-        Union[torch.Tensor, dict[str, Any]]
+        torch.Tensor | dict[str, Any]
             Either the image as a torch.Tensor or a dict containing the calibration properties, depending on the item
             type selected.
         """

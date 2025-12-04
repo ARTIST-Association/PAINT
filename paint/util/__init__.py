@@ -1,7 +1,6 @@
 import logging
 import sys
 from pathlib import Path
-from typing import Union
 
 import colorlog
 
@@ -20,7 +19,7 @@ from .utils import (
 
 def set_logger_config(
     level: int = logging.INFO,
-    log_file: Union[str, Path, None] = None,
+    log_file: str | Path | None = None,
     log_to_stdout: bool = True,
     colors: bool = True,
 ) -> None:
@@ -31,7 +30,7 @@ def set_logger_config(
     ----------
     level : int
         The default level for logging. Default is ``logging.INFO``.
-    log_file : Union[str, Path], optional
+    log_file : str | Path, optional
         The file to save the log to.
     log_to_stdout : bool
         A flag indicating if the log should be printed on stdout (Default: True).

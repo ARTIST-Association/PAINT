@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Union
 
 import cv2
 import numpy as np
@@ -37,13 +36,13 @@ def load_and_preprocess_image(image_path: Path, resize: bool) -> np.ndarray:
     return img
 
 
-def get_marker_data(target: Union[str, int]) -> tuple[list[str], np.ndarray]:
+def get_marker_data(target: str | int) -> tuple[list[str], np.ndarray]:
     """
     Get marker names and their offsets based on the target.
 
     Parameters
     ----------
-    target : Union[str, int]
+    target : str | int
         Target ID used to determine which marker should be used.
 
     Returns
@@ -123,7 +122,7 @@ def apply_template_matching(
 
 def get_marker_positions(
     image_path: Path,
-    target: Union[int, str],
+    target: str | int,
     search_radius: int = 10,
     resize: bool = False,
 ) -> tuple[np.ndarray, float]:
@@ -134,7 +133,7 @@ def get_marker_positions(
     ----------
     image_path : Path
         Path to the image file.
-    target : Union[int, str]
+    target : str | int
         Target type for marker selection.
     search_radius : int
         Radius around detected markers to refine the position. Default is 10.
@@ -167,7 +166,7 @@ def get_marker_positions(
 
 
 def crop_image_with_template_matching(
-    image_path: Path, target: Union[int, str], n_grid: int = 512
+    image_path: Path, target: str | int, n_grid: int = 512
 ) -> np.ndarray:
     """
     Use template matching to crop the images to the targets.
@@ -176,7 +175,7 @@ def crop_image_with_template_matching(
     ----------
     image_path : Path
         Path to the image file.
-    target : Union[int, str]
+    target : str | int
         Target ID for marker detection.
     n_grid : int
         Size of the rectified grid. Default is 512.
