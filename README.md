@@ -6,13 +6,14 @@
 
 # PAINT
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17805358.svg)](https://doi.org/10.5281/zenodo.17805358)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17816865.svg)](https://doi.org/10.5281/zenodo.17816865)
 ![PyPI](https://img.shields.io/pypi/v/paint-csp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 [![FAIR checklist badge](https://fairsoftwarechecklist.net/badge.svg)](https://fairsoftwarechecklist.net/v0.2?f=31&a=32113&i=32322&r=133)
 [![](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
+![PyPI - Downloads](https://static.pepy.tech/badge/paint-csp/month)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![codecov](https://codecov.io/gh/ARTIST-Association/PAINT/graph/badge.svg?token=B2pjCVgOhc)](https://codecov.io/gh/ARTIST-Association/PAINT)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ARTIST-Association/PAINT/main.svg)](https://results.pre-commit.ci/latest/github/ARTIST-Association/PAINT/main)
