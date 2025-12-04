@@ -2,7 +2,7 @@
 
 Installation Guide
 ==================
-PAINT is a Python package that provides tools for accessing, processing, and analyzing operational data from concentrating solar power (CSP) tower plants. We recommend using a dedicated Python 3.9+ virtual environment.
+PAINT is a Python package that provides tools for accessing, processing, and analyzing operational data from concentrating solar power (CSP) tower plants. We recommend using a dedicated Python 3.10+ virtual environment.
 
 Quick Installation
 ------------------

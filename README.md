@@ -12,7 +12,7 @@
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
 [![fair-software.eu](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)
 [![FAIR checklist badge](https://fairsoftwarechecklist.net/badge.svg)](https://fairsoftwarechecklist.net/v0.2?f=31&a=32113&i=32322&r=133)
-[![](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/downloads/)
+[![](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![codecov](https://codecov.io/gh/ARTIST-Association/PAINT/graph/badge.svg?token=B2pjCVgOhc)](https://codecov.io/gh/ARTIST-Association/PAINT)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ARTIST-Association/PAINT/main.svg)](https://results.pre-commit.ci/latest/github/ARTIST-Association/PAINT/main)
@@ -46,7 +46,7 @@ data. This code is found in the subpackage ``paint.data`` and examples of possib
 In the following, we will highlight how to use the code in more detail!
 
 ### Installation
-We heavily recommend installing the `PAINT` package in a dedicated `Python3.9+` virtual environment. You can install the
+We heavily recommend installing the `PAINT` package in a dedicated `Python3.10+` virtual environment. You can install the
 latest stable version of PAINT directly from PyPI using:
 ```bash
   pip install paint-csp
