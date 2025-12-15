@@ -138,8 +138,18 @@ if __name__ == "__main__":
         # Exit without print.
         sys.exit(0)
     elif not email_body and os.path.exists(LOCK_FILE):
-        print("🚨 PAINT ALERT - The PAINT Error Detection System is Locked 🚨\n")
+        # If everything is working remove lock file and report this action.
         print(
-            "It looks like PAINT is running fine, but the lock file has not yet been deleted!\n Please delete the"
-            f"lock file located at ``{LOCK_FILE}`` so the error detection system can run as desired!"
+            "✅ PAINT ALERT - The PAINT Error Detection System is Alive - LOCK FILE DELETED ✅\n"
         )
+        print(
+            "It appears that PAINT has successfully self-repaired. All critical checks are now passing.\n"
+            f"The lock file (``{LOCK_FILE}``) has been **automatically deleted** to resume normal monitoring.\n\n"
+            "**Action Required:** Please verify the system integrity to ensure the fix is permanent."
+        )
+
+        # Delete the lock file.
+        os.remove(LOCK_FILE)
+    else:
+        # Nothing needs to be done (case should not be reached).
+        sys.exit(0)
