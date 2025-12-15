@@ -104,7 +104,7 @@ if __name__ == "__main__":
         # Try to restart server.
         try:
             subprocess.run(
-                ["/home/paint/run.sh"],
+                ["/home/paint/PAINT/html/run.sh"],
                 check=True,
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
