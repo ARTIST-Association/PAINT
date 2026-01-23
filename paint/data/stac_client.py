@@ -69,6 +69,7 @@ class StacClient:
         self.output_dir = pathlib.Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.chunk_size = chunk_size
+        log.info(f"Initializing STAC client to download data to: {output_dir}.")
 
     @staticmethod
     def load_checkpoint(path: pathlib.Path) -> dict[str, Any]:
