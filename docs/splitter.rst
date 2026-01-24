@@ -34,7 +34,7 @@ Supported Splits
   Again, the goal is to create diverse and challenging training and validation datasets.
 
 - **Balanced Split:**
-  This method uses KMeans clustering on azimuth and elevation features to ensure a stratified selection. The process includes:
+  This method uses k-means clustering on azimuth and elevation features to ensure a stratified selection. The process includes:
 
   - Clustering the data into ``validation_size`` clusters.
   - Selecting one data point per cluster for the validation split.
@@ -76,3 +76,5 @@ To generate the splits, simply call the ``get_dataset_splits()`` function:
     azimuth_splits = splitter.get_dataset_splits(
         split_type="azimuth", training_size=10, validation_size=30
     )
+
+This returns a ``pd.Dataframe`` containing information on the splits, i.e. which samples belong to which split, and also saves this information as a CSV file.

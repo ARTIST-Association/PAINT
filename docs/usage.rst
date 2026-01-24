@@ -2,7 +2,23 @@
 
 How To Use
 ==========
-Here, you can find an overview of how to use ``PAINT``.
+
+To get started with ``PAINT`` we have included a interactive notebook, which is available here: https://github.com/ARTIST-Association/PAINT/blob/main/tutorials/paint_data_tutorial.ipynb.
+
+This tutorial provides an interactive introduction to the PAINT database, demonstrating how to:
+- Initialize the STAC Client.
+- Download and inspect metadata.
+- Generate calibration data splits.
+- Load calibration data using a data loader.
+- Download and inspect other types of PAINT data.
+
+To run the tutorial make sure you install the tutorial dependencies, i.e.:
+
+.. code-block:: console
+
+    $ pip install "paint-csp[tutorial]"
+
+Most of the concepts covered in the interactive tutorial are also covered in the documentation and associated scripts listed below:
 
 .. toctree::
    :maxdepth: 1
