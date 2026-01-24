@@ -71,22 +71,26 @@ The ``PAINT`` repository is structured as shown below:
 .
 ├── html # Code for the paint-database.org website
 ├── markers # Saved markers for the WRI1030197 power plant in Jülich
-├── paint # Python package
+├── paint # Python package/
 │   ├── data
 │   ├── preprocessing
 │   └── util
 ├── plots # Scripts used to generate plots found in our paper
 ├── preprocessing-scripts # Scripts used for preprocessing and STAC generation
 ├── scripts # Scripts highlighting example usage of the data
-└── test # Tests for the python package
-    ├── data
-    ├── preprocessing
-    └── util
+├── test # Tests for the python package/
+│   ├── data
+│   ├── preprocessing
+│   └── util
+└── tutorials # Interactive notebooks showcasing how to get started with PAINT
 ```
 
 ### Example usage:
 In the ``scripts`` folder there are multiple scripts highlighting how ``PAINT`` can be used. Detailed
 descriptions of these scripts are available via our [Documentation](http://paint.readthedocs.io).
+
+Furthermore, an interactive notebook is available in the ``tutorials`` folder - this is the perfect starting point to
+dive into ``PAINT``!
 
 ## How to contribute
 Check out our [contribution guidelines](CONTRIBUTING.md) if you are interested in contributing to the `PAINT` project :fire:.
