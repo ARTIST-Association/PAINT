@@ -51,6 +51,7 @@ dev = [
     "sphinxcontrib-napoleon",
     "sphinxemoji"
 ]
+tutorial = ["jupyter"]
 
 [project.urls]
 Homepage = "https://github.com/ARTIST-Association/PAINT"
