@@ -142,7 +142,7 @@ class PaintCalibrationDataset(Dataset):
     @classmethod
     def from_benchmark(
         cls,
-        benchmark_file: str | Path,
+        benchmark_file: str | Path | pd.DataFrame,
         root_dir: str | Path,
         item_type: str,
         download: bool = False,
@@ -157,8 +157,8 @@ class PaintCalibrationDataset(Dataset):
 
         Parameters
         ----------
-        benchmark_file : str | Path
-            Path to the file containing the benchmark information.
+        benchmark_file : str | Path | pd.DataFrame
+            Path to the file containing the benchmark information, or dataframe containing this information.
         root_dir : str | Path
             Directory where the dataset will be stored.
         item_type : str
@@ -182,12 +182,29 @@ class PaintCalibrationDataset(Dataset):
             Validation dataset.
         """
         root_dir = Path(root_dir)
-        log.info(
-            f"Begining the process of generating benchmark datasets. The file used to generate the benchmarks is:\n"
-            f" {benchmark_file}!"
-        )
-        # Load the splits data.
-        splits = pd.read_csv(benchmark_file)
+        if not isinstance(benchmark_file, pd.DataFrame):
+            log.info(
+                f"Begining the process of generating benchmark datasets. The file used to generate the benchmarks is:\n"
+                f" {benchmark_file}!"
+            )
+            # Load the splits data.
+            splits = pd.read_csv(benchmark_file)
+        else:
+            log.info(
+                "Begining the process of generating benchmark datasets using provided pandas dataframe!"
+            )
+            benchmark_file.reset_index(inplace=True)
+            splits = benchmark_file
+
+        expected_cols = ["Id", "HeliostatId", "Split"]
+        try:
+            pd.testing.assert_index_equal(splits.columns, pd.Index(expected_cols))
+        except AssertionError as e:
+            raise ValueError(
+                f"The dataset split file provide has an incorrect schema. Please verify and try again.\n"
+                f"Expected: {expected_cols}\n"
+                f"Details: {e}"
+            )
 
         # Check whether to download the data or not.
         if download:  # pragma: no cover

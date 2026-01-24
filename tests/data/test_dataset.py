@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import cv2
 import deepdiff
+import pandas as pd
 import pytest
 import torch
 from torchvision import transforms
@@ -183,6 +184,25 @@ def test_from_benchmark(
         / "data"
         / "test_data"
         / "test_benchmark.csv",
+        root_dir=pathlib.Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "dataset",
+        item_type=item_type,
+        download=download,
+    )
+    assert len(train) == 3
+    assert len(test) == 4
+    assert len(val) == 3
+
+    # Test with Pandas data frame as input instead of file.
+    benchmark_df = pd.read_csv(
+        pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "data"
+        / "test_data"
+        / "test_benchmark.csv",
+        index_col=0,
+    )
+    train, test, val = PaintCalibrationDataset.from_benchmark(
+        benchmark_file=benchmark_df,
         root_dir=pathlib.Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "dataset",
         item_type=item_type,
         download=download,
