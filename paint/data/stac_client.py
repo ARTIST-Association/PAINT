@@ -716,7 +716,7 @@ class StacClient:
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
             log.info(f"Processing heliostat catalog {heliostat_catalog.id}")
-            success = False
+            success = True
 
             # Download calibration data.
             if get_calibration:
