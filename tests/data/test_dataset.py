@@ -304,3 +304,24 @@ def test_str_method() -> None:
         "-The dataset contains 4 items\n"
     )
     assert str(dataset) == expected
+
+
+def test_from_benchmark_fails_with_incorrect_dataframe(
+    tmp_path: pathlib.Path,
+) -> None:
+    """
+    Verifies that from_benchmark raises ValueError when the input DataFrame has incorrect columns.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Fixture to the temporary folder.
+    """
+    # Create invalid data frame.
+    invalid_df = pd.DataFrame(columns=["Id", "HeliostatId", "WrongCol"])
+
+    # Expect a ValueError.
+    with pytest.raises(ValueError, match="incorrect schema"):
+        PaintCalibrationDataset.from_benchmark(
+            benchmark_file=invalid_df, root_dir=tmp_path, item_type="raw_image"
+        )
