@@ -32,7 +32,7 @@ There are three ways of creating a ``PaintCalibrationDataset``:
 
 2. **From a benchmark file**
 
-   You can also create the dataset from a benchmark file (see the :information on dataset splits:`splitter` for details). In this case, the ``benchmark_file``, containing information on the train, validation, and test split must be provided:
+   You can also create the dataset from a benchmark file (see the :information on dataset splits:`splitter` for details). In this case, the ``benchmark_file`` containing information on the train, validation, and test split must be provided:
 
    .. code-block:: python
 

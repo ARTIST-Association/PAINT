@@ -461,7 +461,7 @@ class DatasetSplitter:
         Returns
         -------
         pd.DataFrame
-            Data frame containing information on the dataset splits.
+            Dataframe containing information on the dataset splits.
         """
         allowed_split_types = [
             mappings.AZIMUTH_SPLIT,

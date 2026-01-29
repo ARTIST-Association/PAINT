@@ -95,7 +95,7 @@ class ConditionDistributionPlot:
         # Load data.
         self.data = self._load_data()
 
-        # Precompute receiver corners once
+        # Precompute receiver corners once.
         self.receiver_coordinates = [
             convert_wgs84_coordinates_to_local_enu(
                 torch.tensor(coords), self.power_plant_position

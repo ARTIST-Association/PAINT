@@ -192,7 +192,7 @@ def test_from_benchmark(
     assert len(test) == 4
     assert len(val) == 3
 
-    # Test with Pandas data frame as input instead of file.
+    # Test with Pandas dataframe as input instead of file.
     benchmark_df = pd.read_csv(
         pathlib.Path(PAINT_ROOT)
         / "tests"
@@ -310,7 +310,7 @@ def test_from_benchmark_fails_with_incorrect_dataframe(
     tmp_path: pathlib.Path,
 ) -> None:
     """
-    Verifies that from_benchmark raises ValueError when the input DataFrame has incorrect columns.
+    Verify that ``from_benchmark`` raises ``ValueError`` when the input dataframe has incorrect columns.
 
     Parameters
     ----------

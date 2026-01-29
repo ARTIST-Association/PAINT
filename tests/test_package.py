@@ -10,14 +10,14 @@ import paint
 
 def test_version_fallback_when_package_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     """
-    Verifies that __version__ falls back to '0.0.0' if the package is not installed.
+    Verify that ``__version__`` falls back to '0.0.0' if the package is not installed.
 
-    This test mocks importlib.metadata.version to raise PackageNotFoundError,
+    This test mocks ``importlib.metadata.version`` to raise ``PackageNotFoundError``,
     then reloads the module to trigger the except block.
 
     Parameters
     ----------
-    monkeypatch: pytest.MonkeyPatch
+    monkeypatch : pytest.MonkeyPatch
         MonkeyPatch fixture.
     """
     # Create a mock that raises the specific error.
