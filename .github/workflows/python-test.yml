@@ -20,7 +20,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
           fetch-depth: 0
 
       - name: Install uv, set the python version, and enable cache
@@ -40,11 +39,19 @@ jobs:
           coverage report -m --format markdown > cov_report.txt
           coverage xml
 
-      - name: Post coverage report to PR
+      - name: Save PR number
         if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
-        uses: marocchino/sticky-pull-request-comment@v2
+        run: echo ${{ github.event.number }} > pr_number.txt
+
+      - name: Save coverage report and PR number
+        if: matrix.python-version == '3.11' && matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
         with:
-          path: cov_report.txt
+          name: coverage-report
+          path: |
+            cov_report.txt
+            pr_number.txt
+          retention-days: 1
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1

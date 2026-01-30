@@ -69,6 +69,7 @@ class StacClient:
         self.output_dir = pathlib.Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.chunk_size = chunk_size
+        log.info(f"Initializing STAC client to download data to: {output_dir}.")
 
     @staticmethod
     def load_checkpoint(path: pathlib.Path) -> dict[str, Any]:
@@ -715,7 +716,7 @@ class StacClient:
         # Download the data for each heliostat.
         for heliostat_catalog in heliostat_catalogs_list:
             log.info(f"Processing heliostat catalog {heliostat_catalog.id}")
-            success = False
+            success = True
 
             # Download calibration data.
             if get_calibration:

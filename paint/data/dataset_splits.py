@@ -457,6 +457,11 @@ class DatasetSplitter:
             Size of the training split.
         validation_size : int
             Size of the validation split.
+
+        Returns
+        -------
+        pd.DataFrame
+            Dataframe containing information on the dataset splits.
         """
         allowed_split_types = [
             mappings.AZIMUTH_SPLIT,

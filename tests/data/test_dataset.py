@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import cv2
 import deepdiff
+import pandas as pd
 import pytest
 import torch
 from torchvision import transforms
@@ -191,6 +192,25 @@ def test_from_benchmark(
     assert len(test) == 4
     assert len(val) == 3
 
+    # Test with Pandas dataframe as input instead of file.
+    benchmark_df = pd.read_csv(
+        pathlib.Path(PAINT_ROOT)
+        / "tests"
+        / "data"
+        / "test_data"
+        / "test_benchmark.csv",
+        index_col=0,
+    )
+    train, test, val = PaintCalibrationDataset.from_benchmark(
+        benchmark_file=benchmark_df,
+        root_dir=pathlib.Path(PAINT_ROOT) / "tests" / "data" / "test_data" / "dataset",
+        item_type=item_type,
+        download=download,
+    )
+    assert len(train) == 3
+    assert len(test) == 4
+    assert len(val) == 3
+
 
 @pytest.mark.parametrize(
     "item_type, heliostats",
@@ -284,3 +304,24 @@ def test_str_method() -> None:
         "-The dataset contains 4 items\n"
     )
     assert str(dataset) == expected
+
+
+def test_from_benchmark_fails_with_incorrect_dataframe(
+    tmp_path: pathlib.Path,
+) -> None:
+    """
+    Verify that ``from_benchmark`` raises ``ValueError`` when the input dataframe has incorrect columns.
+
+    Parameters
+    ----------
+    tmp_path : pathlib.Path
+        Fixture to the temporary folder.
+    """
+    # Create invalid data frame.
+    invalid_df = pd.DataFrame(columns=["Id", "HeliostatId", "WrongCol"])
+
+    # Expect a ValueError.
+    with pytest.raises(ValueError, match="incorrect schema"):
+        PaintCalibrationDataset.from_benchmark(
+            benchmark_file=invalid_df, root_dir=tmp_path, item_type="raw_image"
+        )

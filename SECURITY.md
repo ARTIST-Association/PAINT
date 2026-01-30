@@ -2,10 +2,15 @@
 
 ## Supported Versions
 
-We are currently supporting ``PAINT 1.0.0``
+We are currently supporting ``PAINT 2.0.1``
 
 | Version | Supported          |
-| ------- | ------------------ |
+|---------| ------------------ |
+| 2.0.1   | :white_check_mark: |
+| 2.0.0   | :white_check_mark: |
+| 1.0.3   | :white_check_mark: |
+| 1.0.2   | :white_check_mark: |
+| 1.0.1   | :white_check_mark: |
 | 1.0.0   | :white_check_mark: |
 
 ## Reporting a Vulnerability

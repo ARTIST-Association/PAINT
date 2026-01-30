@@ -79,9 +79,8 @@ class ConditionDistributionPlot:
         self.output_path.mkdir(parents=True, exist_ok=True)
 
         self.figure_size = (4, 4)
-        self.data = self._load_data()
 
-        # Power plant position as tensor
+        # Power plant position as tensor.
         power_plant_lat, power_plant_lon = convert_gk_to_lat_lon(
             mappings.GK_RIGHT_BASE, mappings.GK_HEIGHT_BASE
         )
@@ -92,7 +91,11 @@ class ConditionDistributionPlot:
                 mappings.POWER_PLANT_ALT,
             ]
         )
-        # Precompute receiver corners once
+
+        # Load data.
+        self.data = self._load_data()
+
+        # Precompute receiver corners once.
         self.receiver_coordinates = [
             convert_wgs84_coordinates_to_local_enu(
                 torch.tensor(coords), self.power_plant_position
