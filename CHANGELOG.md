@@ -1,5 +1,12 @@
+## Version 2.0.1
+### What's Changed
+* Improvements to database website stability @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/119
+* Include tutorials and fix minor bugs (e.g. ``__version__`` attribute) by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/124
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v2.0.0...v2.0.1
+
 ## Version 2.0.0
-## What's Changed
+### What's Changed
 * Remove support for Python 3.9, upgrading to only support Python 3.10+ by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/116
 
 **Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v1.0.3...v2.0.0
