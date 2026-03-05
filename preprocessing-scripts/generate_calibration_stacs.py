@@ -18,7 +18,7 @@ from paint.util import convert_gk_to_lat_lon
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
-    to_utc,
+    localize_utc,
 )
 
 
@@ -75,8 +75,8 @@ def main(arguments: argparse.Namespace) -> None:
     utis_data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Convert all timestamps to UTC.
-    data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
-    data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
+    data[mappings.CREATED_AT] = localize_utc(data[mappings.CREATED_AT])
+    data[mappings.UPDATED_AT] = localize_utc(data[mappings.UPDATED_AT])
 
     # Compute azimuth and elevation.
     azimuth, elevation = calculate_azimuth_and_elevation(data)

@@ -60,9 +60,9 @@ def heliostat_id_to_name(heliostat_id: int | str) -> str:
     )
 
 
-def to_utc(time_series: pd.Series) -> pd.Series:
+def localize_utc(time_series: pd.Series) -> pd.Series:
     """
-    Parse local datetime strings and convert to UTC.
+    Parse local datetime strings and localize it as UTC.
 
     Parameters
     ----------
@@ -74,11 +74,7 @@ def to_utc(time_series: pd.Series) -> pd.Series:
     pd.Series
         The corresponding UTC datetime objects.
     """
-    return (
-        pd.to_datetime(time_series)
-        .dt.tz_localize("Europe/Berlin", ambiguous="infer")
-        .dt.tz_convert("UTC")
-    )
+    return pd.to_datetime(time_series).dt.tz_localize("UTC", ambiguous="infer")
 
 
 def to_utc_single(

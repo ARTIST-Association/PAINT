@@ -66,12 +66,12 @@ def test_heliostat_id_to_name(heliostat_id: int, heliostat_name: str) -> None:
     assert paint.util.utils.heliostat_id_to_name(heliostat_id) == heliostat_name
 
 
-def test_to_utc() -> None:
+def test_localize_utc() -> None:
     """Test conversion of datetime strings from the Europe/Berlin timezone to UTC timestamps."""
     time_strings = pd.Series(
-        ["2022-06-01 11:08:45", "2022-10-27 03:05:55", "2022-06-23 13:07:36"]
+        ["2022-06-01 09:08:45", "2022-10-27 01:05:55", "2022-06-23 11:07:36"]
     )
-    utc_timestamps = paint.util.utils.to_utc(time_strings)
+    utc_timestamps = paint.util.utils.localize_utc(time_strings)
 
     expected = pd.Series(
         [
