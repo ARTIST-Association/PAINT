@@ -33,7 +33,7 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[st
         "keywords": [
             "csp",
             "facet",
-            "kinematic",
+            "kinematics",
             "position",
             "renovation",
             "properties",
@@ -136,7 +136,7 @@ def make_properties_item(
         "type": "Feature",
         "title": f"Heliostat properties of {heliostat_key}",
         "description": f"The heliostat properties for heliostat {heliostat_key}. These include the heliostat position,"
-        f"the kinematic applied, the facet properties, and, if applicable, the renovation date.",
+        f"the kinematics applied, the facet properties, and, if applicable, the renovation date.",
         "collection": mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID % heliostat_key,
         "geometry": {
             "type": "Point",
