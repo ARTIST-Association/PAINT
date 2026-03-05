@@ -22,9 +22,9 @@ def properties_collection_data() -> pd.DataFrame:
     # Define the data.
     data = {
         "HeliostatId": ["AY39", "AY39"],
-        "title": ["kinematic properties for AY39", "facet properties for AY39"],
+        "title": ["kinematics properties for AY39", "facet properties for AY39"],
         "url": [
-            "INSERT/SOMETHING/HERE/AY39-kinematic_properties-item-stac.json?download=1",
+            "INSERT/SOMETHING/HERE/AY39-kinematics_properties-item-stac.json?download=1",
             "INSERT/SOMETHING/HERE/AY39-facet_properties-item-stac.json?download=1",
         ],
         "CreatedAt": ["2021-12-03Z12:28:26Z", "2023-09-18Z11:39:25Z"],
@@ -61,7 +61,7 @@ def test_make_properties_collection(
             "keywords": [
                 "csp",
                 "facet",
-                "kinematic",
+                "kinematics",
                 "position",
                 "renovation",
                 "properties",
@@ -131,9 +131,9 @@ def test_make_properties_collection(
                 },
                 {
                     "rel": "item",
-                    "href": "INSERT/SOMETHING/HERE/AY39-kinematic_properties-item-stac.json?download=1",
+                    "href": "INSERT/SOMETHING/HERE/AY39-kinematics_properties-item-stac.json?download=1",
                     "type": "application/geo+json",
-                    "title": "STAC item of kinematic properties for AY39",
+                    "title": "STAC item of kinematics properties for AY39",
                 },
                 {
                     "rel": "item",
@@ -218,7 +218,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "id": "AA23-heliostat-properties",
         "type": "Feature",
         "title": "Heliostat properties of AA23",
-        "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematic applied, the facet properties, and, if applicable, the renovation date.",
+        "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematics applied, the facet properties, and, if applicable, the renovation date.",
         "collection": "AA23-heliostat-properties-collection",
         "geometry": {
             "type": "Point",

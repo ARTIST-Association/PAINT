@@ -76,8 +76,8 @@ def extract_properties_data_and_generate_stac_item(
     with open(save_properties_stac_path, mode="w") as handle:
         json.dump(properties_stac, handle)
 
-    # Convert kinematic data to dict and remove metadata.
-    kinematic_helper_data = heliostat_data.to_dict()
+    # Convert kinematics data to dict and remove metadata.
+    kinematics_helper_data = heliostat_data.to_dict()
     for key_to_remove in [
         mappings.CREATED_AT,
         mappings.EAST_KEY,
@@ -85,11 +85,13 @@ def extract_properties_data_and_generate_stac_item(
         mappings.ALTITUDE_KEY,
         mappings.FIELD_ID,
     ]:
-        kinematic_helper_data.pop(key_to_remove, None)
+        kinematics_helper_data.pop(key_to_remove, None)
 
     # Only consider data for the first actuator.
     actuator_1_data = {
-        key: value for key, value in kinematic_helper_data.items() if key.endswith("_1")
+        key: value
+        for key, value in kinematics_helper_data.items()
+        if key.endswith("_1")
     }
     # Map to appropriate names.
     actuator_1_data = {
@@ -103,7 +105,9 @@ def extract_properties_data_and_generate_stac_item(
 
     # Now consider data for the second actuator.
     actuator_2_data = {
-        key: value for key, value in kinematic_helper_data.items() if key.endswith("_2")
+        key: value
+        for key, value in kinematics_helper_data.items()
+        if key.endswith("_2")
     }
     # Also map to the appropriate names here.
     actuator_2_data = {
@@ -115,8 +119,8 @@ def extract_properties_data_and_generate_stac_item(
         in mappings.HELIOSTAT_PROPERTIES_CONVERSION_MAP  # Ensure the base key exists in the mapping
     }
 
-    # Include all kinematic data.
-    kinematic_data = {
+    # Include all kinematics data.
+    kinematics_data = {
         mappings.ACTUATOR_KEY: [actuator_1_data, actuator_2_data],
         mappings.FIRST_JOINT_TRANSLATION_E_KEY: mappings.FIRST_JOINT_TRANSLATION_E,
         mappings.FIRST_JOINT_TRANSLATION_N_KEY: mappings.FIRST_JOINT_TRANSLATION_N,
@@ -215,7 +219,7 @@ def extract_properties_data_and_generate_stac_item(
         mappings.HELIOSTAT_HEIGHT_KEY: mappings.HELIOSTAT_HEIGHT,
         mappings.HELIOSTAT_WIDTH_KEY: mappings.HELIOSTAT_WIDTH,
         mappings.INITIAL_ORIENTATION_KEY: mappings.INITIAL_ORIENTATION_VALUE,
-        mappings.KINEMATIC_PROPERTIES_KEY: kinematic_data,
+        mappings.KINEMATICS_PROPERTIES_KEY: kinematics_data,
         mappings.FACET_PROPERTIES_KEY: facets_dict,
         mappings.RENOVATION_PROPERTIES_KEY: renovation_date,
     }
@@ -236,9 +240,9 @@ def extract_properties_data_and_generate_stac_item(
 
 def main(arguments: argparse.Namespace):
     """
-    Generate kinematic properties STAC items and save raw data.
+    Generate kinematics properties STAC items and save raw data.
 
-    This function extracts the kinematic properties data for each heliostat and saves this as a json file. Additionally,
+    This function extracts the kinematics properties data for each heliostat and saves this as a json file. Additionally,
     the STAC items for each of these files are automatically generated.
 
     Parameters
@@ -275,7 +279,7 @@ def main(arguments: argparse.Namespace):
     # Load facet data.
     facet_dict = np.load(arguments.input_facets, allow_pickle=True).item()
 
-    # Extract kinematic properties data and STAC.
+    # Extract kinematics properties data and STAC.
     for key, data in df_concatenated.iterrows():
         assert isinstance(key, str)
 
