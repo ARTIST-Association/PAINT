@@ -289,3 +289,81 @@ def detect_focal_spot(
         aim_point_image=aim_point_image,
         aim_point=aimpoint_global,
     )
+
+
+def center_flux_image(
+    flux: torch.Tensor,
+    target_id: int = 7,
+    length: float = 6.0,
+    n_grid: int = 256,
+):
+    """
+    Center a 2D flux image based on its intensity center of mass.
+
+    Parameters
+    ----------
+    flux : torch.Tensor
+        2D tensor with shape [H, W] representing the flux distribution on the target surface.
+    target_id : int
+        Target identifier that determines scaling parameters.
+    length : float
+        Physical edge length of the cropped flux image.
+    n_grid : int
+        Resolution of the output centered image.
+
+    Returns
+    -------
+    flux_centered : torch.Tensor
+        Centered flux image with shape [n_grid, n_grid].
+    """
+    if flux.dim() != 2:
+        raise ValueError(f"Expected a 2D tensor, got {flux.dim()} dimensions.")
+
+    # Compute the center of intensity of the flux image.
+    x_center, y_center = compute_center_of_intensity(flux=flux)
+
+    # y is flipped so that the normalized coordinate system points upward (i.e. bottom = 0, top = 1).
+    y_center = 1.0 - y_center
+
+    # Determine image scaling based on target dimensions.
+    marker_upper_left, marker_lower_left, marker_upper_right, marker_lower_right = (
+        get_marker_coordinates(target=target_id)
+    )
+    target_length_x = 0.5 * torch.linalg.norm(
+        (marker_upper_right - marker_upper_left)
+        + (marker_lower_right - marker_lower_left)
+    )
+    target_length_y = 0.5 * torch.linalg.norm(
+        (marker_upper_right - marker_lower_right)
+        + (marker_upper_left - marker_lower_left)
+    )
+
+    scale_x = target_length_x / length
+    scale_y = target_length_y / length
+
+    # Build normalized sampling grid.
+    x_grid = torch.linspace(-1.0, 1.0, n_grid)
+    y_grid = torch.linspace(-1.0, 1.0, n_grid)
+
+    yy_grid, xx_grid = torch.meshgrid(y_grid, x_grid, indexing="ij")
+    xx_grid = xx_grid / scale_x - (0.5 - x_center) * 2.0
+    yy_grid = yy_grid / scale_y - (-0.5 + y_center) * 2.0
+
+    grid = torch.stack([xx_grid, yy_grid], dim=-1).unsqueeze(0)
+
+    # Resample flux image using grid_sample.
+    flux_input = flux.unsqueeze(0).unsqueeze(0)
+
+    flux_centered = (
+        torch.nn.functional.grid_sample(
+            flux_input,
+            grid,
+            mode="bilinear",
+            padding_mode="zeros",
+            align_corners=False,
+        )
+        .squeeze(0)
+        .squeeze(0)
+    )
+
+    return flux_centered
