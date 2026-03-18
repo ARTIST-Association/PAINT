@@ -293,10 +293,10 @@ def detect_focal_spot(
 
 def center_flux_image(
     flux: torch.Tensor,
-    target_id: int = 7,
+    target_id: str | int,
     length: float = 6.0,
     n_grid: int = 256,
-):
+) -> torch.Tensor:
     """
     Center a 2D flux image based on its intensity center of mass.
 
@@ -304,7 +304,7 @@ def center_flux_image(
     ----------
     flux : torch.Tensor
         2D tensor with shape [H, W] representing the flux distribution on the target surface.
-    target_id : int
+    target_id : str | int
         Target identifier that determines scaling parameters.
     length : float
         Physical edge length of the cropped flux image.
