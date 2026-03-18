@@ -283,7 +283,7 @@ def detect_focal_spot(
     # Convert the center of intensity to global ENU coordinates using marker data.
     aimpoint_global = convert_xy_to_enu(aim_point_image, target)
 
-    # Return a FocalSpot object containing the flux, image coordinates, and global aimpoint.
+    # Return a FocalSpot object containing the flux, image coordinates, and global aim point.
     return FocalSpot.from_flux(
         flux=flux,
         aim_point_image=aim_point_image,
@@ -313,7 +313,7 @@ def center_flux_image(
 
     Returns
     -------
-    flux_centered : torch.Tensor
+    torch.Tensor
         Centered flux image with shape [n_grid, n_grid].
     """
     if flux.dim() != 2:
@@ -345,10 +345,19 @@ def center_flux_image(
     x_grid = torch.linspace(-1.0, 1.0, n_grid)
     y_grid = torch.linspace(-1.0, 1.0, n_grid)
 
+    # Remember we are not building an image here.
+    # We are building a coordinate map that tells PyTorch where to sample from in the original image.
+    # That is fundamentally different from storing pixel intensities.
     yy_grid, xx_grid = torch.meshgrid(y_grid, x_grid, indexing="ij")
-    xx_grid = xx_grid / scale_x - (0.5 - x_center) * 2.0
-    yy_grid = yy_grid / scale_y - (-0.5 + y_center) * 2.0
+    xx_grid = (
+        xx_grid / scale_x - (0.5 - x_center) * 2.0
+    )  # Scaled x-coordinate to sample from
+    yy_grid = (
+        yy_grid / scale_y - (-0.5 + y_center) * 2.0
+    )  # Scaled y-coordinate to sample from
 
+    # Combine into final sampling grid where each pixel has a 2D coordinate vector.
+    # This tells grid_sample for every pixel in the output image where to look in the input image.
     grid = torch.stack([xx_grid, yy_grid], dim=-1).unsqueeze(0)
 
     # Resample flux image using grid_sample.
