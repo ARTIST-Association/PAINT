@@ -160,12 +160,6 @@ def make_calibration_item(
             "datetime": heliostat_data[mappings.CREATED_AT].strftime(
                 mappings.TIME_FORMAT
             ),
-            "created": heliostat_data[mappings.CREATED_AT].strftime(
-                mappings.TIME_FORMAT
-            ),
-            "updated": heliostat_data[mappings.UPDATED_AT].strftime(
-                mappings.TIME_FORMAT
-            ),
             "instruments": [heliostat_data[mappings.SYSTEM]],
             "view:sun_azimuth": heliostat_data[mappings.AZIMUTH],
             "view:sun_elevation": heliostat_data[mappings.SUN_ELEVATION],
@@ -212,6 +206,12 @@ def make_calibration_item(
                 "roles": ["data"],
                 "type": mappings.MIME_PNG,
                 "title": f"Raw calibration image with id {image}",
+                "created": heliostat_data[mappings.CREATED_AT].strftime(
+                    mappings.TIME_FORMAT
+                ),
+                "updated": heliostat_data[mappings.UPDATED_AT].strftime(
+                    mappings.TIME_FORMAT
+                ),
             },
             mappings.CALIBRATION_PROPERTIES_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_data[mappings.HELIOSTAT_ID]}/{mappings.SAVE_CALIBRATION}/"
@@ -219,6 +219,12 @@ def make_calibration_item(
                 "roles": ["metadata"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Calibration properties for the calibration image id {image}",
+                "created": heliostat_data[mappings.CREATED_AT].strftime(
+                    mappings.TIME_FORMAT
+                ),
+                "updated": heliostat_data[mappings.UPDATED_AT].strftime(
+                    mappings.TIME_FORMAT
+                ),
                 "processing:lineage": "Focal spot extraction",
                 "processing:software": f"{mappings.HELIOS_KEY}{', ' + mappings.UTIS_KEY + ' (' + mappings.UTIS_URL + ')' if processed_available else ''}",
             },

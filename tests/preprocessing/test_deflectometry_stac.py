@@ -221,7 +221,6 @@ def test_make_deflectometry_item(
         ],
         "properties": {
             "datetime": "2023-09-18Z11:39:25Z",
-            "created": "2023-09-18Z11:39:25Z",
             "instruments": "QDec_2014-101",
         },
         "links": [
@@ -256,18 +255,21 @@ def test_make_deflectometry_item(
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Raw deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
+                "created": "2023-09-18Z11:39:25Z",
             },
             "filled_measurement": {
                 "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-filled-2023-09-18Z11-39-25Z-deflectometry.h5",
                 "roles": ["data"],
                 "type": "application/x-hdf5",
                 "title": "Filled deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
+                "created": "2023-09-18Z11:39:25Z",
             },
             "results_summary": {
                 "href": "https://paint-database.org/WRI1030197/AY39/Deflectometry/AY39-2023-09-18Z11-39-25Z-deflectometry-result.pdf",
                 "roles": ["metadata"],
                 "type": "application/pdf",
                 "title": "Summary of deflectometry measurement of AY39 at 2023-09-18Z11:39:25Z",
+                "created": "2023-09-18Z11:39:25Z",
             },
         },
     }

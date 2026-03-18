@@ -4,7 +4,7 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint.util import convert_gk_to_lat_lon
-from paint.util.utils import to_utc_single
+from paint.util.utils import localize_utc_single
 
 
 def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[str, Any]:
@@ -155,8 +155,7 @@ def make_properties_item(
             heliostat_data[mappings.ALTITUDE_KEY],
         ],
         "properties": {
-            "datetime": to_utc_single(heliostat_data[mappings.CREATED_AT]),
-            "created": to_utc_single(heliostat_data[mappings.CREATED_AT]),
+            "datetime": localize_utc_single(heliostat_data[mappings.CREATED_AT]),
         },
         "links": [
             {
@@ -193,6 +192,7 @@ def make_properties_item(
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Heliostat properties for heliostat {heliostat_key}",
+                "created": localize_utc_single(heliostat_data[mappings.CREATED_AT]),
             }
         },
     }

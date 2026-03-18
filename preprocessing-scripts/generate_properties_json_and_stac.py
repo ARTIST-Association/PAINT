@@ -22,7 +22,7 @@ from paint.util.preprocessing import (
     merge_and_sort_df,
 )
 from paint.util.utils import (
-    to_utc_single,
+    localize_utc_single,
 )
 
 
@@ -296,7 +296,7 @@ def main(arguments: argparse.Namespace):
             key,
             f"heliostat properties for {key}",
             url,
-            to_utc_single(data[mappings.CREATED_AT]),
+            localize_utc_single(data[mappings.CREATED_AT]),
             lat_lon[0],
             lat_lon[1],
             data[mappings.ALTITUDE_KEY],

@@ -233,8 +233,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
             88.711,
         ],
         "properties": {
-            "datetime": "2021-07-20Z05:09:29Z",
-            "created": "2021-07-20Z05:09:29Z",
+            "datetime": "2021-07-20Z07:09:29Z",
         },
         "links": [
             {
@@ -268,6 +267,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Heliostat properties for heliostat AA23",
+                "created": "2021-07-20Z07:09:29Z",
             }
         },
     }

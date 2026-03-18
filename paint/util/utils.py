@@ -77,6 +77,44 @@ def localize_utc(time_series: pd.Series) -> pd.Series:
     return pd.to_datetime(time_series).dt.tz_localize("UTC", ambiguous="infer")
 
 
+# Assuming 'mappings' is imported elsewhere in your file
+
+
+def localize_utc_single(datetime_str: str, file_name_format: bool = False) -> str:
+    """
+    Parse a single UTC datetime string and return it in the appropriate format, without time zone conversion.
+
+    Parameters
+    ----------
+    datetime_str : str
+        UTC datetime string.
+    file_name_format : bool
+        Whether the file name format for the time should be used or not (Default: ``False``).
+
+    Returns
+    -------
+    str
+        The formatted UTC datetime string.
+    """
+    try:
+        # Try parsing with dateutil.parser for general datetime strings.
+        parsed_time = parser.parse(datetime_str)
+    except ValueError:
+        try:
+            # Fall back to manual parsing for specific format "%y%m%d%H%M%S".
+            parsed_time = datetime.strptime(datetime_str, "%y%m%d%H%M%S")
+        except ValueError as e:
+            raise ValueError(f"Unable to parse datetime string: {datetime_str}") from e
+
+    # Format the parsed UTC time into the appropriate string.
+    if file_name_format:
+        return_string = parsed_time.strftime(mappings.TIME_FILE_FORMAT)
+    else:
+        return_string = parsed_time.strftime(mappings.TIME_FORMAT)
+
+    return return_string
+
+
 def to_utc_single(
     datetime_str: str, local_tz: str = "Europe/Berlin", file_name_format: bool = False
 ) -> str:

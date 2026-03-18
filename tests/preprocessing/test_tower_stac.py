@@ -54,8 +54,6 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
             "datetime": None,
             "start_datetime": "2013-02-25",
             "end_datetime": "2020-10-07",
-            "created": "2013-02-25",
-            "updated": "2020-10-07",
         },
         "links": [
             {
@@ -83,6 +81,8 @@ def test_make_tower_item(tower_item_data: dict[str, np.ndarray]) -> None:
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Tower measurement properties",
+                "created": "2013-02-25",
+                "updated": "2020-10-07",
             }
         },
     }
