@@ -3,9 +3,12 @@ from pathlib import Path
 import cv2
 import pytest
 import torch
+from PIL import Image
+from torchvision.transforms import ToTensor
 
 from paint.preprocessing.focal_spot_extractor import (
     FocalSpot,
+    center_flux_image,
     compute_center_of_intensity,
     detect_focal_spot,
     get_marker_coordinates,
@@ -177,3 +180,38 @@ def test_detect_focal_spot(
     torch.testing.assert_close(
         focal_spot.aim_point, expected_aimpoint, atol=1e-3, rtol=1e-3
     )
+
+
+@pytest.mark.parametrize(
+    "image_path, target, length, n_grid",
+    [
+        (Path("tests/preprocessing/test_data/flux.png"), STJ_LOWER, 6.0, 256),
+    ],
+)
+def test_center_flux_image(
+    image_path: Path, target: str, length: float, n_grid: int
+) -> None:
+    """
+    Test ``center_flux_image`` end-to-end using an existing flux image.
+
+    Parameters
+    ----------
+    image_path : Path
+        Path to test image to load.
+    target : str
+        Target to consider.
+    length : float
+        Physical edge length of the cropped flux image.
+    n_grid : int
+        Resolution of the output centered image.
+    """
+    to_tensor = ToTensor()
+    flux_image = Image.open(image_path).convert("L")
+    flux = to_tensor(flux_image)
+    flux_centered = center_flux_image(
+        flux=flux.squeeze(0), target_id=target, length=length, n_grid=n_grid
+    )
+
+    center_of_intensity = compute_center_of_intensity(flux=flux_centered)
+
+    torch.testing.assert_close(center_of_intensity, (0.5, 0.5), rtol=1e-2, atol=1e-2)

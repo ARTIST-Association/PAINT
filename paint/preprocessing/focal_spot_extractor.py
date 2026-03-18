@@ -283,9 +283,96 @@ def detect_focal_spot(
     # Convert the center of intensity to global ENU coordinates using marker data.
     aimpoint_global = convert_xy_to_enu(aim_point_image, target)
 
-    # Return a FocalSpot object containing the flux, image coordinates, and global aimpoint.
+    # Return a FocalSpot object containing the flux, image coordinates, and global aim point.
     return FocalSpot.from_flux(
         flux=flux,
         aim_point_image=aim_point_image,
         aim_point=aimpoint_global,
     )
+
+
+def center_flux_image(
+    flux: torch.Tensor,
+    target_id: str | int,
+    length: float = 6.0,
+    n_grid: int = 256,
+) -> torch.Tensor:
+    """
+    Center a 2D flux image based on its intensity center of mass.
+
+    Parameters
+    ----------
+    flux : torch.Tensor
+        2D tensor with shape [H, W] representing the flux distribution on the target surface.
+    target_id : str | int
+        Target identifier that determines scaling parameters.
+    length : float
+        Physical edge length of the cropped flux image.
+    n_grid : int
+        Resolution of the output centered image.
+
+    Returns
+    -------
+    torch.Tensor
+        Centered flux image with shape [n_grid, n_grid].
+    """
+    if flux.dim() != 2:
+        raise ValueError(f"Expected a 2D tensor, got {flux.dim()} dimensions.")
+
+    # Compute the center of intensity of the flux image.
+    x_center, y_center = compute_center_of_intensity(flux=flux)
+
+    # y is flipped so that the normalized coordinate system points upward (i.e. bottom = 0, top = 1).
+    y_center = 1.0 - y_center
+
+    # Determine image scaling based on target dimensions.
+    marker_upper_left, marker_lower_left, marker_upper_right, marker_lower_right = (
+        get_marker_coordinates(target=target_id)
+    )
+    target_length_x = 0.5 * torch.linalg.norm(
+        (marker_upper_right - marker_upper_left)
+        + (marker_lower_right - marker_lower_left)
+    )
+    target_length_y = 0.5 * torch.linalg.norm(
+        (marker_upper_right - marker_lower_right)
+        + (marker_upper_left - marker_lower_left)
+    )
+
+    scale_x = target_length_x / length
+    scale_y = target_length_y / length
+
+    # Build normalized sampling grid.
+    x_grid = torch.linspace(-1.0, 1.0, n_grid)
+    y_grid = torch.linspace(-1.0, 1.0, n_grid)
+
+    # Remember we are not building an image here.
+    # We are building a coordinate map that tells PyTorch where to sample from in the original image.
+    # That is fundamentally different from storing pixel intensities.
+    yy_grid, xx_grid = torch.meshgrid(y_grid, x_grid, indexing="ij")
+    xx_grid = (
+        xx_grid / scale_x - (0.5 - x_center) * 2.0
+    )  # Scaled x-coordinate to sample from
+    yy_grid = (
+        yy_grid / scale_y - (-0.5 + y_center) * 2.0
+    )  # Scaled y-coordinate to sample from
+
+    # Combine into final sampling grid where each pixel has a 2D coordinate vector.
+    # This tells grid_sample for every pixel in the output image where to look in the input image.
+    grid = torch.stack([xx_grid, yy_grid], dim=-1).unsqueeze(0)
+
+    # Resample flux image using grid_sample.
+    flux_input = flux.unsqueeze(0).unsqueeze(0)
+
+    flux_centered = (
+        torch.nn.functional.grid_sample(
+            flux_input,
+            grid,
+            mode="bilinear",
+            padding_mode="zeros",
+            align_corners=False,
+        )
+        .squeeze(0)
+        .squeeze(0)
+    )
+
+    return flux_centered
