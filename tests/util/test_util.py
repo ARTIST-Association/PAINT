@@ -93,10 +93,10 @@ def test_localize_utc() -> None:
 @pytest.mark.parametrize(
     "original_time, file_name_format, expected_utc_time",
     [
-        ("03:23:45 01-11-2023", False, "2023-01-11Z02:23:45Z"),
-        ("20220405074517", False, "2022-04-05Z05:45:17Z"),
-        ("03:23:45 01-11-2023", True, "2023-01-11Z02-23-45Z"),
-        ("20220405074517", True, "2022-04-05Z05-45-17Z"),
+        ("03:23:45 01-11-2023", False, "2023-01-11T02:23:45Z"),
+        ("20220405074517", False, "2022-04-05T05:45:17Z"),
+        ("03:23:45 01-11-2023", True, "2023-01-11T02-23-45Z"),
+        ("20220405074517", True, "2022-04-05T05-45-17Z"),
     ],
 )
 def test_single_time_conversion(
@@ -126,10 +126,10 @@ def test_single_time_conversion(
     "original_time, file_name_format, expected_formatted_time",
     [
         # Standard format tests (file_name_format = False)
-        ("03:23:45 01-11-2023", False, "2023-01-11Z03:23:45Z"),
-        ("220405074517", False, "2022-04-05Z07:45:17Z"),
-        ("03:23:45 01-11-2023", True, "2023-01-11Z03-23-45Z"),
-        ("220405074517", True, "2022-04-05Z07-45-17Z"),
+        ("03:23:45 01-11-2023", False, "2023-01-11T03:23:45Z"),
+        ("220405074517", False, "2022-04-05T07:45:17Z"),
+        ("03:23:45 01-11-2023", True, "2023-01-11T03-23-45Z"),
+        ("220405074517", True, "2022-04-05T07-45-17Z"),
     ],
 )
 def test_single_time_formatting(
