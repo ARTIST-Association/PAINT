@@ -108,11 +108,9 @@ def localize_utc_single(datetime_str: str, file_name_format: bool = False) -> st
 
     # Format the parsed UTC time into the appropriate string.
     if file_name_format:
-        return_string = parsed_time.strftime(mappings.TIME_FILE_FORMAT)
+        return parsed_time.strftime(mappings.TIME_FILE_FORMAT)
     else:
-        return_string = parsed_time.strftime(mappings.TIME_FORMAT)
-
-    return return_string
+        return parsed_time.strftime(mappings.TIME_FORMAT)
 
 
 def to_utc_single(
