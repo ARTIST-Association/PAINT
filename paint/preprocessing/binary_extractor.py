@@ -66,7 +66,7 @@ class BinaryExtractor:
             The file path to the binary data file that will be converted.
         output_path : str | Path
             The file path to save the converted h5 deflectometry file.
-        deflectometry_created_at_file_name
+        deflectometry_created_at_file_name : str
             The time stamp in the file name format for when the deflectometry data was created.
         surface_header_name : str
             The name for the surface header in the binary file.
