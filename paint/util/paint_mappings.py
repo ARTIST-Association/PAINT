@@ -13,6 +13,8 @@ HELIOSTAT_POSITIONS = ["latitude", "longitude", "Elevation"]
 """Key for the heliostat positions in latitude, longitude, and elevation."""
 DEFLECTOMETRY_AVAILABLE = "DeflectometryAvailable"
 """Key indicating if deflectometry data is available."""
+DEFLECTOMETRY_SEARCH_PATTERN = r"Meas\.\s*Date:\s*([\d\.]+\s*-\s*[\d:]+)"
+"""Search pattern for identifying measurement time from deflectometry PDF."""
 DATE_TIME = "DateTime"
 """Key for the input date and time index."""
 CREATED_AT = "CreatedAt"
@@ -234,9 +236,9 @@ COLLECTION = "Collection"
 FEATURE = "Feature"
 """Mapping to a feature."""
 
-TIME_FORMAT = "%Y-%m-%dZ%H:%M:%SZ"
+TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 """Mapping for the time format used in PAINT."""
-TIME_FILE_FORMAT = "%Y-%m-%dZ%H-%M-%SZ"
+TIME_FILE_FORMAT = "%Y-%m-%dT%H-%M-%SZ"
 """Mapping for the time format used in file names."""
 
 MIME_PNG = "image/png"
@@ -551,6 +553,14 @@ PLANAR_KEY = "planar"
 """Key for a planar target type."""
 CONVEX_CYLINDER_KEY = "convex_cylinder"
 """Key for a convex cylinder target type."""
+RECEIVER_RADIUS_KEY = "radius"
+"""Key for the radius of the receiver."""
+RECEIVER_OPENING_ANGLE_KEY = "opening_angle"
+"""Key for the opening angle of the receiver."""
+RECEIVER_RADIUS = 4.14
+"""The radius of the receiver."""
+RECEIVER_OPENING_ANGLE = 60
+"""The opening angle of the receiver in degrees."""
 
 CALIBRATION_TARGET_TO_NAME = {
     1: STJ_LOWER,
