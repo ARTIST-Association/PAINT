@@ -25,7 +25,7 @@ from paint.util.utils import to_utc_single
 
 def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
     """
-    Extract timestamp from the ``PDF`` results file.
+    Extract timestamp from the PDF results file.
 
     Parameters
     ----------
