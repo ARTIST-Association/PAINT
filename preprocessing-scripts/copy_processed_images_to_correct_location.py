@@ -177,8 +177,6 @@ if __name__ == "__main__":
         / "updated_processed_ids.csv"
     )
 
-    name_key = "cropped"
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input_folder",
