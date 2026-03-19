@@ -30,7 +30,7 @@ def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
     Parameters
     ----------
     input_path : Path
-        Input path for the defelectometry measurement.
+        Input path for the deflectometry measurement.
 
     Returns
     -------
