@@ -91,7 +91,7 @@ def extract_data_and_generate_stacs(
     bool
         Indicating whether the file was copied or not.
     """
-    # Extract time from PDF
+    # Extract time from PDF.
     created_at_time, created_at_file_name = get_pdf_timestamp(input_path)
 
     # Extract binary data.
