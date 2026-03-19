@@ -23,7 +23,7 @@ from paint.util.preprocessing import load_and_format_heliostat_positions
 from paint.util.utils import to_utc_single
 
 
-def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
+def get_pdf_timestamp(input_path: Path) -> tuple[str | None, str | None]:
     """
     Extract timestamp from the PDF results file.
 
@@ -34,10 +34,10 @@ def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
 
     Returns
     -------
-    str
-        Extracted timestamp in UTC and standard format.
-    str
-        Extracted timestamp in UTC and format used for saving files.
+    str | None
+        Extracted timestamp in UTC and standard format if the PDF exists, otherwise ``None``.
+    str | None
+        Extracted timestamp in UTC and format used for saving files if the PDF exists, otherwise ``None``.
     """
     split_name = input_path.name.split("_")
     pdf_name = (
@@ -45,19 +45,27 @@ def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
     )
     pdf_path = input_path.parent / pdf_name
 
-    with pdfplumber.open(pdf_path) as pdf:
-        text = pdf.pages[0].extract_text()
-        match = re.search(mappings.DEFLECTOMETRY_SEARCH_PATTERN, text)
-        if match:
-            raw_time = match.group(1).strip()
+    if not pdf_path.exists():
+        print(f"PDF not found at {pdf_path}. Skipping.")
+        return None, None
+    try:
+        with pdfplumber.open(pdf_path) as pdf:
+            text = pdf.pages[0].extract_text()
+            match = re.search(mappings.DEFLECTOMETRY_SEARCH_PATTERN, text)
+            if match:
+                raw_time = match.group(1).strip()
 
-    clean_time = datetime.strptime(raw_time, "%d.%m.%Y - %H:%M:%S").strftime(
-        "%Y-%m-%d %H:%M:%S"
-    )
-    created_at_time = to_utc_single(clean_time, file_name_format=False)
-    created_at_file_name = to_utc_single(clean_time, file_name_format=True)
+        clean_time = datetime.strptime(raw_time, "%d.%m.%Y - %H:%M:%S").strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+        created_at_time = to_utc_single(clean_time, file_name_format=False)
+        created_at_file_name = to_utc_single(clean_time, file_name_format=True)
 
-    return created_at_time, created_at_file_name
+        return created_at_time, created_at_file_name
+
+    except Exception:
+        print(f"Failed to extract timestamp from PDF {pdf_path}")
+        return None, None
 
 
 def extract_data_and_generate_stacs(
@@ -93,6 +101,9 @@ def extract_data_and_generate_stacs(
     """
     # Extract time from PDF.
     created_at_time, created_at_file_name = get_pdf_timestamp(input_path)
+
+    if created_at_time is None or created_at_file_name is None:
+        return deflectometry_items, False
 
     # Extract binary data.
     converter = BinaryExtractor(
