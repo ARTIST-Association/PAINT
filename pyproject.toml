@@ -37,6 +37,7 @@ dependencies = [
     "waitress",
     "pyproj",
     "pytz",
+    "pdfplumber",
 ]
 
 [project.optional-dependencies]
