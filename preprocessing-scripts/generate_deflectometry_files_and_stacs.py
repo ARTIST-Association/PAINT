@@ -3,11 +3,14 @@
 import argparse
 import json
 import os
+import re
 import shutil
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pdfplumber
 
 import paint.util.paint_mappings as mappings
 from paint import PAINT_ROOT
@@ -17,6 +20,44 @@ from paint.preprocessing.deflectometry_stac import (
     make_deflectometry_item,
 )
 from paint.util.preprocessing import load_and_format_heliostat_positions
+from paint.util.utils import to_utc_single
+
+
+def get_pdf_timestamp(input_path: Path) -> tuple[str, str]:
+    """
+    Extract timestamp from the ``PDF`` results file.
+
+    Parameters
+    ----------
+    input_path : Path
+        Input path for the defelectometry measurement.
+
+    Returns
+    -------
+    str
+        Extracted timestamp in UTC and standard format.
+    str
+        Extracted timestamp in UTC and format used for saving files.
+    """
+    split_name = input_path.name.split("_")
+    pdf_name = (
+        "_".join(split_name[0:3]) + "_Result_" + split_name[-1].split(".")[0] + ".pdf"
+    )
+    pdf_path = input_path.parent / pdf_name
+
+    with pdfplumber.open(pdf_path) as pdf:
+        text = pdf.pages[0].extract_text()
+        match = re.search(mappings.DEFLECTOMETRY_SEARCH_PATTERN, text)
+        if match:
+            raw_time = match.group(1).strip()
+
+    clean_time = datetime.strptime(raw_time, "%d.%m.%Y - %H:%M:%S").strftime(
+        "%Y-%m-%d %H:%M:%S"
+    )
+    created_at_time = to_utc_single(clean_time, file_name_format=False)
+    created_at_file_name = to_utc_single(clean_time, file_name_format=True)
+
+    return created_at_time, created_at_file_name
 
 
 def extract_data_and_generate_stacs(
@@ -50,10 +91,14 @@ def extract_data_and_generate_stacs(
     bool
         Indicating whether the file was copied or not.
     """
+    # Extract time from PDF
+    created_at_time, created_at_file_name = get_pdf_timestamp(input_path)
+
     # Extract binary data.
     converter = BinaryExtractor(
         input_path=input_path,
         output_path=arguments.output_path,
+        deflectometry_created_at_file_name=created_at_file_name,
         surface_header_name=arguments.surface_header_name,
         facet_header_name=arguments.facet_header_name,
         points_on_facet_struct_name=arguments.points_on_facet_struct_name,
@@ -71,8 +116,8 @@ def extract_data_and_generate_stacs(
             mappings.ALTITUDE_KEY,
         ]
     ]
-    metadata[mappings.CREATED_AT] = converter.deflectometry_created_at
-    metadata[mappings.FILE_CREATED_AT] = converter.deflectometry_created_at_file_name
+    metadata[mappings.CREATED_AT] = created_at_time
+    metadata[mappings.FILE_CREATED_AT] = created_at_file_name
 
     # STAC contains all deflectometry items, therefore, only create the STAC once after the raw conversion.
     if converter.raw_data:
@@ -91,7 +136,7 @@ def extract_data_and_generate_stacs(
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_PDF_NAME
-                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
+                % (converter.heliostat_id, created_at_file_name)
             )
         )
         input_pdf_file = input_path.parent / pdf_name
@@ -113,13 +158,13 @@ def extract_data_and_generate_stacs(
         url = mappings.DEFLECTOMETRY_ITEM_URL % (
             converter.heliostat_id,
             converter.heliostat_id,
-            converter.deflectometry_created_at_file_name,
+            created_at_file_name,
         )
         deflectometry_items.loc[len(deflectometry_items)] = [
             converter.heliostat_id,
-            f"Deflectometry measurements for {converter.heliostat_id} at {converter.deflectometry_created_at}",
+            f"Deflectometry measurements for {converter.heliostat_id} at {created_at_time}",
             url,
-            converter.deflectometry_created_at,
+            created_at_time,
             lat_lon[0],
             lat_lon[1],
             metadata[mappings.ALTITUDE_KEY],
@@ -132,7 +177,7 @@ def extract_data_and_generate_stacs(
             / mappings.SAVE_DEFLECTOMETRY
             / (
                 mappings.DEFLECTOMETRY_ITEM
-                % (converter.heliostat_id, converter.deflectometry_created_at_file_name)
+                % (converter.heliostat_id, created_at_file_name)
             )
         )
         save_deflectometry_path.parent.mkdir(parents=True, exist_ok=True)
