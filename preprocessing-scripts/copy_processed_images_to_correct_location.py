@@ -97,7 +97,7 @@ def main(arguments: argparse.Namespace) -> None:
 
     failed_copy_list = []
     failed_copy_name = (
-        Path(PAINT_ROOT) / f"{arguments.name_key} failed copies" / "failed_copy.csv"
+        Path(PAINT_ROOT) / "FAILED_COPIES" / f"{arguments.name_key}_failed_copies.csv"
     )
     if failed_copy_name.exists():
         failed_copy_list = pd.read_csv(failed_copy_name, index_col=0).index.to_list()
@@ -123,7 +123,7 @@ def main(arguments: argparse.Namespace) -> None:
                 Path(arguments.output_path)
                 / heliostat
                 / mappings.SAVE_CALIBRATION
-                / (id_string + "_" + arguments.name_key + ".png")
+                / (id_string + "-" + arguments.name_key + ".png")
             )
             copy_success = find_and_copy_file(
                 source_directory=source,
@@ -144,15 +144,39 @@ def main(arguments: argparse.Namespace) -> None:
 
 if __name__ == "__main__":
     lsdf_root = str(os.environ.get("LSDFPROJECTS"))
-    input_folder = Path(lsdf_root) / "paint" / "PAINT" / "CalibrationDataCropped"
+    name_key = "cropped"
+
+    input_folder = (
+        Path(lsdf_root)
+        / "paint"
+        / "PAINT"
+        / "calibration_data_16_09_2021"
+        / "calibration_16_09_2021"
+        / name_key
+    )
     output_folder = Path(lsdf_root) / "paint" / mappings.POWER_PLANT_GPPD_ID
-    input_calibration = Path(lsdf_root) / "paint" / "PAINT" / "calib_data_full.csv"
+    input_calibration = (
+        Path(lsdf_root)
+        / "paint"
+        / "PAINT"
+        / "calibration_data_16_09_2021"
+        / "update_calibration_data.csv"
+    )
     input_available = (
-        Path(lsdf_root) / "paint" / "PAINT" / "available_calibration_ids.csv"
+        Path(lsdf_root)
+        / "paint"
+        / "PAINT"
+        / "calibration_data_16_09_2021"
+        / "update_available_ids_calibration.csv"
     )
     input_processed_available = (
-        Path(lsdf_root) / "paint" / "PAINT" / "processed_calibration_ids.csv"
+        Path(lsdf_root)
+        / "paint"
+        / "PAINT"
+        / "calibration_data_16_09_2021"
+        / "updated_processed_ids.csv"
     )
+
     name_key = "cropped"
 
     parser = argparse.ArgumentParser()
