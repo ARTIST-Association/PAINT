@@ -62,7 +62,7 @@ def heliostat_id_to_name(heliostat_id: int | str) -> str:
 
 def localize_utc(time_series: pd.Series) -> pd.Series:
     """
-    Parse local datetime strings and localize it as UTC.
+    Parse local datetime strings and localize them as UTC.
 
     Parameters
     ----------
@@ -75,9 +75,6 @@ def localize_utc(time_series: pd.Series) -> pd.Series:
         The corresponding UTC datetime objects.
     """
     return pd.to_datetime(time_series).dt.tz_localize("UTC", ambiguous="infer")
-
-
-# Assuming 'mappings' is imported elsewhere in your file
 
 
 def localize_utc_single(datetime_str: str, file_name_format: bool = False) -> str:
