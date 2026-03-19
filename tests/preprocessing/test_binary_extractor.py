@@ -51,12 +51,13 @@ def test_binary_extractor(
     """
     with tempfile.TemporaryDirectory() as temp_dir:
         output_path = temp_dir
+        file_time = "2018-09-23 20:39:25"
         file_name = (
             test_data_path.name.split("_")[1]
             + "-"
             + str(
                 to_utc_single(
-                    test_data_path.name.split("_")[-1].split(".")[0],
+                    file_time,
                     file_name_format=True,
                 )
             )
@@ -65,6 +66,9 @@ def test_binary_extractor(
         converter = BinaryExtractor(
             input_path=test_data_path,
             output_path=output_path,
+            deflectometry_created_at_file_name=to_utc_single(
+                file_time, file_name_format=True
+            ),
             surface_header_name=surface_header_name,
             facet_header_name=facet_header_name,
             points_on_facet_struct_name=points_on_facet_struct_name,
