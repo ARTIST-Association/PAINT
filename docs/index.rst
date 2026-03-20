@@ -8,7 +8,7 @@ What is PAINT?
 PAINT aims to break down the barriers to innovation in CSP technologies by offering standardized, high-quality data that supports reproducibility and fair comparisons. The dataset includes:
 
 - Heliostat calibration and deflectometry measurements
-- Heliostat kinematic and alignment data
+- Heliostat kinematics and alignment data
 - Fine-grained local weather data
 - Extensive metadata following the SpatioTemporal Asset Catalog (STAC) specification
 

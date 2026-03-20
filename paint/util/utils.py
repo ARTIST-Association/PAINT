@@ -60,9 +60,9 @@ def heliostat_id_to_name(heliostat_id: int | str) -> str:
     )
 
 
-def to_utc(time_series: pd.Series) -> pd.Series:
+def localize_utc(time_series: pd.Series) -> pd.Series:
     """
-    Parse local datetime strings and convert to UTC.
+    Parse local datetime strings and localize them as UTC.
 
     Parameters
     ----------
@@ -74,11 +74,40 @@ def to_utc(time_series: pd.Series) -> pd.Series:
     pd.Series
         The corresponding UTC datetime objects.
     """
-    return (
-        pd.to_datetime(time_series)
-        .dt.tz_localize("Europe/Berlin", ambiguous="infer")
-        .dt.tz_convert("UTC")
-    )
+    return pd.to_datetime(time_series).dt.tz_localize("UTC", ambiguous="infer")
+
+
+def localize_utc_single(datetime_str: str, file_name_format: bool = False) -> str:
+    """
+    Parse a single UTC datetime string and return it in the appropriate format, without time zone conversion.
+
+    Parameters
+    ----------
+    datetime_str : str
+        UTC datetime string.
+    file_name_format : bool
+        Whether the file name format for the time should be used or not (Default: ``False``).
+
+    Returns
+    -------
+    str
+        The formatted UTC datetime string.
+    """
+    try:
+        # Try parsing with dateutil.parser for general datetime strings.
+        parsed_time = parser.parse(datetime_str)
+    except ValueError:
+        try:
+            # Fall back to manual parsing for specific format "%y%m%d%H%M%S".
+            parsed_time = datetime.strptime(datetime_str, "%y%m%d%H%M%S")
+        except ValueError as e:
+            raise ValueError(f"Unable to parse datetime string: {datetime_str}") from e
+
+    # Format the parsed UTC time into the appropriate string.
+    if file_name_format:
+        return parsed_time.strftime(mappings.TIME_FILE_FORMAT)
+    else:
+        return parsed_time.strftime(mappings.TIME_FORMAT)
 
 
 def to_utc_single(

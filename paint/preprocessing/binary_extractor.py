@@ -5,7 +5,6 @@ import h5py
 import torch
 
 import paint.util.paint_mappings as mappings
-from paint.util.utils import to_utc_single
 
 
 class BinaryExtractor:
@@ -53,6 +52,7 @@ class BinaryExtractor:
         self,
         input_path: str | Path,
         output_path: str | Path,
+        deflectometry_created_at_file_name: str,
         surface_header_name: str,
         facet_header_name: str,
         points_on_facet_struct_name: str,
@@ -66,6 +66,8 @@ class BinaryExtractor:
             The file path to the binary data file that will be converted.
         output_path : str | Path
             The file path to save the converted h5 deflectometry file.
+        deflectometry_created_at_file_name : str
+            The time stamp in the file name format for when the deflectometry data was created.
         surface_header_name : str
             The name for the surface header in the binary file.
         facet_header_name : str
@@ -76,33 +78,22 @@ class BinaryExtractor:
         self.input_path = Path(input_path)
         self.output_path = Path(output_path)
         name_string = self.input_path.name.split("_")
-        if len(name_string) == 6:
+        self.heliostat_id = name_string[1]
+        self.raw_data = len(name_string) != 6
+        if not self.raw_data:
             file_name = (
-                name_string[1]
+                self.heliostat_id
                 + "-"
                 + name_string[4]
                 + "-"
-                + str(
-                    to_utc_single(name_string[-1].split(".")[0], file_name_format=True)
-                )
+                + str(deflectometry_created_at_file_name)
             )
-            self.raw_data = False
         else:
             file_name = (
-                name_string[1]
-                + "-"
-                + str(
-                    to_utc_single(name_string[-1].split(".")[0], file_name_format=True)
-                )
+                self.heliostat_id + "-" + str(deflectometry_created_at_file_name)
             )
-            self.raw_data = True
-        self.heliostat_id = name_string[1]
         self.file_name = file_name + mappings.DEFLECTOMETRY_SUFFIX
-        self.json_handle = name_string[1] + mappings.FACET_PROPERTIES_SUFFIX
-        self.deflectometry_created_at = to_utc_single(name_string[-1].split(".")[0])
-        self.deflectometry_created_at_file_name = to_utc_single(
-            name_string[-1].split(".")[0], file_name_format=True
-        )
+        self.json_handle = self.heliostat_id + mappings.FACET_PROPERTIES_SUFFIX
         self.surface_header_name = surface_header_name
         self.facet_header_name = facet_header_name
         self.points_on_facet_struct_name = points_on_facet_struct_name

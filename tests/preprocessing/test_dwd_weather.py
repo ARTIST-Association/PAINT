@@ -152,9 +152,9 @@ def test_dwd_weather(
             assert (
                 station["global_radiation_10min"]["time"][:].astype(str)
                 == [
-                    "2021-04-01Z00:00:00Z",
-                    "2021-04-01Z00:10:00Z",
-                    "2021-04-01Z00:20:00Z",
+                    "2021-04-01T00:00:00Z",
+                    "2021-04-01T00:10:00Z",
+                    "2021-04-01T00:20:00Z",
                 ]
             ).all()
             assert (
@@ -164,9 +164,9 @@ def test_dwd_weather(
             assert (
                 station["sunshine_duration_10min"]["time"][:].astype(str)
                 == [
-                    "2021-04-01Z00:00:00Z",
-                    "2021-04-01Z00:10:00Z",
-                    "2021-04-01Z00:20:00Z",
+                    "2021-04-01T00:00:00Z",
+                    "2021-04-01T00:10:00Z",
+                    "2021-04-01T00:20:00Z",
                 ]
             ).all()
             assert (
@@ -178,9 +178,9 @@ def test_dwd_weather(
             assert (
                 station["cloud_cover_1h"]["time"][:].astype(str)
                 == [
-                    "2021-04-01Z00:00:00Z",
-                    "2021-04-01Z01:00:00Z",
-                    "2021-04-01Z02:00:00Z",
+                    "2021-04-01T00:00:00Z",
+                    "2021-04-01T01:00:00Z",
+                    "2021-04-01T02:00:00Z",
                 ]
             ).all()
             assert (station["cloud_cover_1h"]["value"][:] == [3.0, 7.0, 1.0]).all()
@@ -188,9 +188,9 @@ def test_dwd_weather(
             assert (
                 station["weather_type_1h"]["time"][:].astype(str)
                 == [
-                    "2021-04-01Z00:00:00Z",
-                    "2021-04-01Z01:00:00Z",
-                    "2021-04-01Z02:00:00Z",
+                    "2021-04-01T00:00:00Z",
+                    "2021-04-01T01:00:00Z",
+                    "2021-04-01T02:00:00Z",
                 ]
             ).all()
             assert (

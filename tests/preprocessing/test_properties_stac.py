@@ -22,12 +22,12 @@ def properties_collection_data() -> pd.DataFrame:
     # Define the data.
     data = {
         "HeliostatId": ["AY39", "AY39"],
-        "title": ["kinematic properties for AY39", "facet properties for AY39"],
+        "title": ["kinematics properties for AY39", "facet properties for AY39"],
         "url": [
-            "INSERT/SOMETHING/HERE/AY39-kinematic_properties-item-stac.json?download=1",
+            "INSERT/SOMETHING/HERE/AY39-kinematics_properties-item-stac.json?download=1",
             "INSERT/SOMETHING/HERE/AY39-facet_properties-item-stac.json?download=1",
         ],
-        "CreatedAt": ["2021-12-03Z12:28:26Z", "2023-09-18Z11:39:25Z"],
+        "CreatedAt": ["2021-12-03T12:28:26Z", "2023-09-18T11:39:25Z"],
         "latitude": [50.914686955478864, 50.914686955478864],
         "longitude": [6.387702537483708, 6.387702537483708],
         "Elevation": [88.66962, 88.66962],
@@ -61,7 +61,7 @@ def test_make_properties_collection(
             "keywords": [
                 "csp",
                 "facet",
-                "kinematic",
+                "kinematics",
                 "position",
                 "renovation",
                 "properties",
@@ -95,13 +95,13 @@ def test_make_properties_collection(
                     ]
                 },
                 "temporal": {
-                    "interval": [["2021-12-03Z12:28:26Z", "2023-09-18Z11:39:25Z"]]
+                    "interval": [["2021-12-03T12:28:26Z", "2023-09-18T11:39:25Z"]]
                 },
             },
             "summaries": {
                 "datetime": {
-                    "minimum": "2021-12-03Z12:28:26Z",
-                    "maximum": "2023-09-18Z11:39:25Z",
+                    "minimum": "2021-12-03T12:28:26Z",
+                    "maximum": "2023-09-18T11:39:25Z",
                 }
             },
             "links": [
@@ -131,9 +131,9 @@ def test_make_properties_collection(
                 },
                 {
                     "rel": "item",
-                    "href": "INSERT/SOMETHING/HERE/AY39-kinematic_properties-item-stac.json?download=1",
+                    "href": "INSERT/SOMETHING/HERE/AY39-kinematics_properties-item-stac.json?download=1",
                     "type": "application/geo+json",
-                    "title": "STAC item of kinematic properties for AY39",
+                    "title": "STAC item of kinematics properties for AY39",
                 },
                 {
                     "rel": "item",
@@ -218,7 +218,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
         "id": "AA23-heliostat-properties",
         "type": "Feature",
         "title": "Heliostat properties of AA23",
-        "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematic applied, the facet properties, and, if applicable, the renovation date.",
+        "description": "The heliostat properties for heliostat AA23. These include the heliostat position,the kinematics applied, the facet properties, and, if applicable, the renovation date.",
         "collection": "AA23-heliostat-properties-collection",
         "geometry": {
             "type": "Point",
@@ -233,8 +233,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
             88.711,
         ],
         "properties": {
-            "datetime": "2021-07-20Z05:09:29Z",
-            "created": "2021-07-20Z05:09:29Z",
+            "datetime": "2021-07-20T07:09:29Z",
         },
         "links": [
             {
@@ -268,6 +267,7 @@ def test_make_properties_item(properties_item_data: tuple[str, pd.Series]) -> No
                 "roles": ["data"],
                 "type": "application/geo+json",
                 "title": "Heliostat properties for heliostat AA23",
+                "created": "2021-07-20T07:09:29Z",
             }
         },
     }

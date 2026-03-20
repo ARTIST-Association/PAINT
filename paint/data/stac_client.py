@@ -1101,6 +1101,8 @@ class StacClient:
             Child being processed.
         collection : str
             Collection being processed.
+        id_base : str
+            Base collection ID being processed.
         checkpoint : dict[str, Any]
             The checkpoint data.
         checkpoint_path : pathlib.Path

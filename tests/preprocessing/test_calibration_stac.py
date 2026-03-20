@@ -153,13 +153,13 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
             "extent": {
                 "spatial": {"bbox": [[50.4, 5.0, 100, 70.1, 8.1, 400]]},
                 "temporal": {
-                    "interval": [["2022-06-01Z11:08:45Z", "2022-06-02Z10:26:01Z"]]
+                    "interval": [["2022-06-01T11:08:45Z", "2022-06-02T10:26:01Z"]]
                 },
             },
             "summaries": {
                 "datetime": {
-                    "minimum": "2022-06-01Z11:08:45Z",
-                    "maximum": "2022-06-02Z10:26:01Z",
+                    "minimum": "2022-06-01T11:08:45Z",
+                    "maximum": "2022-06-02T10:26:01Z",
                 },
                 "view:sun_azimuth": {
                     "minimum": -42.06579562155874,
@@ -263,9 +263,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     126.506,
                 ],
                 "properties": {
-                    "datetime": "2022-06-01Z11:08:45Z",
-                    "created": "2022-06-01Z11:08:45Z",
-                    "updated": "2022-10-27Z07:05:55Z",
+                    "datetime": "2022-06-01T11:08:45Z",
                     "instruments": ["HeliOS.FDM"],
                     "view:sun_azimuth": -42.06579562155874,
                     "view:sun_elevation": 55.621162346471515,
@@ -302,12 +300,16 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
+                        "created": "2022-06-01T11:08:45Z",
+                        "updated": "2022-10-27T07:05:55Z",
                     },
                     "calibration_properties": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-properties.json",
                         "roles": ["metadata"],
                         "type": "application/geo+json",
                         "title": "Calibration properties for the calibration image id 115399",
+                        "created": "2022-06-01T11:08:45Z",
+                        "updated": "2022-10-27T07:05:55Z",
                         "processing:lineage": "Focal spot extraction",
                         "processing:software": "HeliOS, UTIS (https://github.com/DLR-SF/UTIS-HeliostatBeamCharacterization)",
                     },
@@ -370,9 +372,7 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                     126.506,
                 ],
                 "properties": {
-                    "datetime": "2022-06-01Z11:08:45Z",
-                    "created": "2022-06-01Z11:08:45Z",
-                    "updated": "2022-10-27Z07:05:55Z",
+                    "datetime": "2022-06-01T11:08:45Z",
                     "instruments": ["HeliOS.FDM"],
                     "view:sun_azimuth": -42.06579562155874,
                     "view:sun_elevation": 55.621162346471515,
@@ -409,12 +409,16 @@ def test_make_calibration_collection(calibration_collection_data: pd.DataFrame) 
                         "roles": ["data"],
                         "type": "image/png",
                         "title": "Raw calibration image with id 115399",
+                        "created": "2022-06-01T11:08:45Z",
+                        "updated": "2022-10-27T07:05:55Z",
                     },
                     "calibration_properties": {
                         "href": "https://paint-database.org/WRI1030197/BC52/Calibration/115399-calibration-properties.json",
                         "roles": ["metadata"],
                         "type": "application/geo+json",
                         "title": "Calibration properties for the calibration image id 115399",
+                        "created": "2022-06-01T11:08:45Z",
+                        "updated": "2022-10-27T07:05:55Z",
                         "processing:lineage": "Focal spot extraction",
                         "processing:software": "HeliOS",
                     },

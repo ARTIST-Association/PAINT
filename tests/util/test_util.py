@@ -66,12 +66,12 @@ def test_heliostat_id_to_name(heliostat_id: int, heliostat_name: str) -> None:
     assert paint.util.utils.heliostat_id_to_name(heliostat_id) == heliostat_name
 
 
-def test_to_utc() -> None:
+def test_localize_utc() -> None:
     """Test conversion of datetime strings from the Europe/Berlin timezone to UTC timestamps."""
     time_strings = pd.Series(
-        ["2022-06-01 11:08:45", "2022-10-27 03:05:55", "2022-06-23 13:07:36"]
+        ["2022-06-01 09:08:45", "2022-10-27 01:05:55", "2022-06-23 11:07:36"]
     )
-    utc_timestamps = paint.util.utils.to_utc(time_strings)
+    utc_timestamps = paint.util.utils.localize_utc(time_strings)
 
     expected = pd.Series(
         [
@@ -91,13 +91,17 @@ def test_to_utc() -> None:
 
 
 @pytest.mark.parametrize(
-    "original_time, expected_utc_time",
+    "original_time, file_name_format, expected_utc_time",
     [
-        ("03:23:45 01-11-2023", "2023-01-11Z02:23:45Z"),
-        ("20220405074517", "2022-04-05Z05:45:17Z"),
+        ("03:23:45 01-11-2023", False, "2023-01-11T02:23:45Z"),
+        ("20220405074517", False, "2022-04-05T05:45:17Z"),
+        ("03:23:45 01-11-2023", True, "2023-01-11T02-23-45Z"),
+        ("20220405074517", True, "2022-04-05T05-45-17Z"),
     ],
 )
-def test_single_time_conversion(original_time: str, expected_utc_time: str) -> None:
+def test_single_time_conversion(
+    original_time: str, file_name_format: bool, expected_utc_time: str
+) -> None:
     """
     Test conversion of single string local times to UTC times.
 
@@ -105,7 +109,53 @@ def test_single_time_conversion(original_time: str, expected_utc_time: str) -> N
     ----------
     original_time : str
         The original time string in the local time zone.
+    file_name_format : bool
+        Flag to determine if the output should use the file name save format.
     expected_utc_time : str
         The expected time string in UTC time zone.
     """
-    assert paint.util.utils.to_utc_single(original_time) == expected_utc_time
+    assert (
+        paint.util.utils.to_utc_single(
+            datetime_str=original_time, file_name_format=file_name_format
+        )
+        == expected_utc_time
+    )
+
+
+@pytest.mark.parametrize(
+    "original_time, file_name_format, expected_formatted_time",
+    [
+        # Standard format tests (file_name_format = False)
+        ("03:23:45 01-11-2023", False, "2023-01-11T03:23:45Z"),
+        ("220405074517", False, "2022-04-05T07:45:17Z"),
+        ("03:23:45 01-11-2023", True, "2023-01-11T03-23-45Z"),
+        ("220405074517", True, "2022-04-05T07-45-17Z"),
+    ],
+)
+def test_single_time_formatting(
+    original_time: str, file_name_format: bool, expected_formatted_time: str
+) -> None:
+    """
+    Test formatting of single UTC time strings.
+
+    Parameters
+    ----------
+    original_time : str
+        The original UTC time string.
+    file_name_format : bool
+        Flag to determine if the output should use the file name save format.
+    expected_formatted_time : str
+        The expected formatted UTC time string.
+    """
+    assert (
+        paint.util.utils.localize_utc_single(original_time, file_name_format)
+        == expected_formatted_time
+    )
+
+
+def test_single_time_localization_invalid_input() -> None:
+    """Test that an invalid time string correctly raises a ValueError."""
+    with pytest.raises(
+        ValueError, match="Unable to parse datetime string: completely_invalid_time"
+    ):
+        paint.util.utils.localize_utc_single("completely_invalid_time")

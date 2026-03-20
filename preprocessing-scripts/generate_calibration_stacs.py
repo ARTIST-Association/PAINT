@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import csv
 import json
 import os
 from pathlib import Path
@@ -18,7 +19,7 @@ from paint.util import convert_gk_to_lat_lon
 from paint.util.utils import (
     calculate_azimuth_and_elevation,
     heliostat_id_to_name,
-    to_utc,
+    localize_utc,
 )
 
 
@@ -31,6 +32,23 @@ def main(arguments: argparse.Namespace) -> None:
     arguments : argparse.Namespace
         The arguments containing input and output path.
     """
+    # Calibration items columns.
+    calibration_items_columns = [
+        mappings.HELIOSTAT_ID,
+        mappings.TITLE_KEY,
+        mappings.URL_KEY,
+        mappings.CREATED_AT,
+        mappings.AZIMUTH,
+        mappings.SUN_ELEVATION,
+        mappings.SYSTEM,
+        mappings.LATITUDE_MIN_KEY,
+        mappings.LONGITUDE_MIN_KEY,
+        mappings.ELEVATION_MIN,
+        mappings.LATITUDE_MAX_KEY,
+        mappings.LONGITUDE_MAX_KEY,
+        mappings.ELEVATION_MAX,
+    ]
+
     # File path to save processed IDs to enable restart if the script is interrupted.
     processed_tracking_path = Path(f"{PAINT_ROOT}/TEMPDATA/processed_ids_tracker.txt")
 
@@ -38,25 +56,15 @@ def main(arguments: argparse.Namespace) -> None:
     calibration_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/calibration_items.csv")
     if calibration_items_path.exists():
         calibration_items = pd.read_csv(calibration_items_path)
+        calibration_items[mappings.CREATED_AT] = pd.to_datetime(
+            calibration_items[mappings.CREATED_AT], utc=True
+        )
     else:
         calibration_items_path.parent.mkdir(parents=True, exist_ok=True)
-        calibration_items = pd.DataFrame(
-            columns=[
-                mappings.HELIOSTAT_ID,
-                mappings.TITLE_KEY,
-                mappings.URL_KEY,
-                mappings.CREATED_AT,
-                mappings.AZIMUTH,
-                mappings.SUN_ELEVATION,
-                mappings.SYSTEM,
-                mappings.LATITUDE_MIN_KEY,
-                mappings.LONGITUDE_MIN_KEY,
-                mappings.ELEVATION_MIN,
-                mappings.LATITUDE_MAX_KEY,
-                mappings.LONGITUDE_MAX_KEY,
-                mappings.ELEVATION_MAX,
-            ]
-        )
+        calibration_items = pd.DataFrame(columns=calibration_items_columns)
+        with open(calibration_items_path, "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(calibration_items_columns)
 
     # Read in the data from CSV.
     data = pd.read_csv(arguments.input)
@@ -75,8 +83,8 @@ def main(arguments: argparse.Namespace) -> None:
     utis_data.set_index(mappings.CALIBRATION_ID_INDEX, inplace=True)
 
     # Convert all timestamps to UTC.
-    data[mappings.CREATED_AT] = to_utc(data[mappings.CREATED_AT])
-    data[mappings.UPDATED_AT] = to_utc(data[mappings.UPDATED_AT])
+    data[mappings.CREATED_AT] = localize_utc(data[mappings.CREATED_AT])
+    data[mappings.UPDATED_AT] = localize_utc(data[mappings.UPDATED_AT])
 
     # Compute azimuth and elevation.
     azimuth, elevation = calculate_azimuth_and_elevation(data)
@@ -134,7 +142,7 @@ def main(arguments: argparse.Namespace) -> None:
                 f"raw calibration image {image} and associated calibration properties for heliostat "
                 f"{heliostat_data[mappings.HELIOSTAT_ID]}"
             )
-        calibration_items.loc[len(calibration_items)] = [
+        calibration_items_row_data = [
             heliostat_data[mappings.HELIOSTAT_ID],
             title,
             url,
@@ -161,6 +169,8 @@ def main(arguments: argparse.Namespace) -> None:
                 heliostat_data[mappings.CALIBRATION_TARGET]
             ][5],
         ]
+        calibration_items.loc[len(calibration_items)] = calibration_items_row_data
+
         calibration_item_stac_path = (
             Path(arguments.output)
             / heliostat_data[mappings.HELIOSTAT_ID]
@@ -235,12 +245,15 @@ def main(arguments: argparse.Namespace) -> None:
         save_calibration_properties_path.parent.mkdir(parents=True, exist_ok=True)
         with open(save_calibration_properties_path, "w") as handle:
             json.dump(calibration_properties_data, handle)
-        calibration_items.to_csv(calibration_items_path, index=False)
         count = count + 1
         if count % 1000 == 0:
             print(
                 f"I'm alive and have created STACS for {count + log_completed} of {num_images + log_completed} - that is {((count + log_completed) / (num_images + log_completed)) * 100:.2f}%."
             )
+        # Write to CSV for collection creation later.
+        with open(calibration_items_path, "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(calibration_items_row_data)
         with open(processed_tracking_path, "a") as f:
             f.write(f"{image}\n")
 

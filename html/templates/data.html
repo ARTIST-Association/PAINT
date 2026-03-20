@@ -6,7 +6,7 @@
   <img class="img-fluid w-100" src="static/img/quartz.png" />
   <div class="position-absolute top-50 start-5 translate-middle-y">
     <h1 class="px-4 py-2 fs-large border-start border-2 border-white paint-large-header">Database Overview</h1>
-    <p class="my-3 dynamic-p paint-small-header">Calibration, deflectometry, kinematic, weather</p>
+    <p class="my-3 dynamic-p paint-small-header">Calibration, deflectometry, kinematics, weather</p>
   </div>
 </div>
 
@@ -108,14 +108,14 @@
       <h2 class="accordion-header" id="headingKinematic"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseKinematic" aria-expanded="false" aria-controls="collapseKinematic">Heliostat Properties <span class="format-label">JSON</span></button></h2>
       <div id="collapseKinematic" class="accordion-collapse collapse" aria-labelledby="headingKinematic" data-bs-parent="#dataAccordion">
         <div class="accordion-body">
-          <p>For each heliostat a JSON file containing heliostat properties is provided. This data includes the <b>geographic position</b> (WGS84 coordinates), the <b>physical dimensions</b> (meters), information on the <b>initial orientations</b> (east, north, up coordinate vector), and any past <b>renovation history</b>. Furthermore, detailed information on the facet and kinematic properties are provided.</p>
+          <p>For each heliostat a JSON file containing heliostat properties is provided. This data includes the <b>geographic position</b> (WGS84 coordinates), the <b>physical dimensions</b> (meters), information on the <b>initial orientations</b> (east, north, up coordinate vector), and any past <b>renovation history</b>. Furthermore, detailed information on the facet and kinematics properties are provided.</p>
           <h3>Facet Properties</h3>
           <p>This information describes the reflective mirror configuration, by describing the <b>canting type</b>, the <b>number of facets</b>. Each facet has a <code>translation_vector</code> and canting direction vectors (<code>canting_e</code>, <code>canting_n</code>) which are shown in the image below and define its position and orientation. These translations are provided in the east, north, up coordinate system.</p>
           <div style="text-align: center">
             <img src="static/img/Facet_Properties.svg" alt="Facet Properties Overview" style="max-width: 35%; height: auto"/>
           </div>
           <h3>Kinematic Properties</h3>
-          <p>All heliostats use a two-actuator kinematic structure, allowing movement in two directions. These actuators introduce mechanical <b>offsets</b> that are described via translation vectors for three components: joint one, joint two, and the concentrator. These translation vectors point in the east, north, and up directions and are shown on the image below.</p>
+          <p>All heliostats use a two-actuator kinematics structure, allowing movement in two directions. These actuators introduce mechanical <b>offsets</b> that are described via translation vectors for three components: joint one, joint two, and the concentrator. These translation vectors point in the east, north, and up directions and are shown on the image below.</p>
           <div style="text-align: center">
             <img src="static/img/kinematic_translation.svg" alt="Kinematic Translations Overview" style="max-width: 35%; height: auto"/>
           </div>

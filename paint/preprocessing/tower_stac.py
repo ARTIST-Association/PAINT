@@ -62,8 +62,6 @@ def make_tower_item(
             "datetime": None,
             "start_datetime": mappings.TOWER_START_DATETIME,
             "end_datetime": mappings.TOWER_END_DATETIME,
-            "created": mappings.TOWER_START_DATETIME,
-            "updated": mappings.TOWER_END_DATETIME,
         },
         "links": [
             {
@@ -91,6 +89,8 @@ def make_tower_item(
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": "Tower measurement properties",
+                "created": mappings.TOWER_START_DATETIME,
+                "updated": mappings.TOWER_END_DATETIME,
             }
         },
     }

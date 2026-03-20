@@ -19,8 +19,8 @@ def weather_collection_data():
     data = {
         "title": ["DWD weather data"],
         "url": ["INSERT/SOMETHING/HERE/dwd-weather-item-stac?download=1"],
-        "start": ["2021-03-31Z22:00:00Z"],
-        "end": ["2024-02-29Z23:00:00Z"],
+        "start": ["2021-03-31T22:00:00Z"],
+        "end": ["2024-02-29T23:00:00Z"],
         "latitude": [50.7983],
         "longitude": [6.0244],
         "Elevation": [231.0],
@@ -68,13 +68,13 @@ def test_make_weather_collection(
         "extent": {
             "spatial": {"bbox": [[50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0]]},
             "temporal": {
-                "interval": [["2021-03-31Z22:00:00Z", "2024-02-29Z23:00:00Z"]]
+                "interval": [["2021-03-31T22:00:00Z", "2024-02-29T23:00:00Z"]]
             },
         },
         "summaries": {
             "datetime": {
-                "minimum": "2021-03-31Z22:00:00Z",
-                "maximum": "2024-02-29Z23:00:00Z",
+                "minimum": "2021-03-31T22:00:00Z",
+                "maximum": "2024-02-29T23:00:00Z",
             }
         },
         "links": [

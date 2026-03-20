@@ -69,6 +69,8 @@ class HeliostatPositionPlot:
             The path to load the heliostat measurement data.
         path_to_deflectometry : Union[str, Path]
             The path to load the deflectometry data.
+        path_to_tower_properties : Union[str, Path]
+            The path to load the tower properties data.
         output_path : Union[str, Path]
             The output path indicating where to save the plot.
         file_name : str

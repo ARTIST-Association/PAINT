@@ -20,8 +20,8 @@ def juelich_data() -> Tuple[str, pd.Series]:
         Data for the Juelich STAC item.
     """
     data = {
-        "start": "2020-12-01Z01:32:00Z",
-        "end": "2020-12-15Z22:59:59Z",
+        "start": "2020-12-01T01:32:00Z",
+        "end": "2020-12-15T22:59:59Z",
     }
     return "2020-12", pd.Series(data)
 
@@ -32,7 +32,7 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
 
     Parameters
     ----------
-    data : tuple[str, pd.Series]
+    juelich_data : tuple[str, pd.Series]
         Test fixture.
     """
     month_group, juelich_item_data = juelich_data
@@ -49,8 +49,8 @@ def test_make_juelich_item(juelich_data: tuple[str, pd.Series]) -> None:
         "bbox": [50.916518, 6.387409, 89, 50.916518, 6.387409, 89],
         "properties": {
             "datetime": None,
-            "start_datetime": "2020-12-01Z01:32:00Z",
-            "end_datetime": "2020-12-15Z22:59:59Z",
+            "start_datetime": "2020-12-01T01:32:00Z",
+            "end_datetime": "2020-12-15T22:59:59Z",
         },
         "links": [
             {

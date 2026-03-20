@@ -33,13 +33,13 @@ if __name__ == "__main__":
         "--start_date",
         type=str,
         help="Start date for filtering the data.",
-        default="2023-01-01Z00:00:00Z",
+        default="2023-01-01T00:00:00Z",
     )
     parser.add_argument(
         "--end_date",
         type=str,
         help="End date for filtering the data.",
-        default="2023-03-01Z00:00:00Z",
+        default="2023-03-01T00:00:00Z",
     )
     parser.add_argument(
         "--heliostats",

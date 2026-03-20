@@ -160,7 +160,6 @@ def make_deflectometry_item(
         ],
         "properties": {
             "datetime": heliostat_data[mappings.CREATED_AT],
-            "created": heliostat_data[mappings.CREATED_AT],
             "instruments": f"{mappings.DEFLECTOMETRY_INSTRUMENTS}",
         },
         "links": [
@@ -198,6 +197,7 @@ def make_deflectometry_item(
                 "type": mappings.MIME_HDF5,
                 "title": f"Raw deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
+                "created": heliostat_data[mappings.CREATED_AT],
             },
             mappings.DEFLECTOMETRY_FILLED_KEY: {
                 "href": f"{mappings.URL_BASE}/{heliostat_key}/{mappings.SAVE_DEFLECTOMETRY}/{heliostat_key}-filled-{heliostat_data[mappings.FILE_CREATED_AT]}-deflectometry.h5",
@@ -205,6 +205,7 @@ def make_deflectometry_item(
                 "type": mappings.MIME_HDF5,
                 "title": f"Filled deflectometry measurement of {heliostat_key} at "
                 f"{heliostat_data[mappings.CREATED_AT]}",
+                "created": heliostat_data[mappings.CREATED_AT],
             },
             **(
                 {
@@ -214,6 +215,7 @@ def make_deflectometry_item(
                         "type": mappings.MIME_PDF,
                         "title": f"Summary of deflectometry measurement of {heliostat_key} at "
                         f"{heliostat_data[mappings.CREATED_AT]}",
+                        "created": heliostat_data[mappings.CREATED_AT],
                     }
                 }
                 if results_exist

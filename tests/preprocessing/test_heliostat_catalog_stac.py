@@ -265,6 +265,8 @@ def test_make_heliostat_catalog(
         Whether to include calibration measurements.
     include_properties : bool
         Whether to include heliostat properties.
+    expected : dict[str, Any]
+        The expected STAC catalog,
     """
     catalog = make_heliostat_catalog(
         heliostat_id=heliostat_id,

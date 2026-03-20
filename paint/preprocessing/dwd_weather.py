@@ -6,6 +6,7 @@ from wetterdienst import Settings
 from wetterdienst.provider.dwd.observation import DwdObservationRequest
 
 import paint.preprocessing.dwd_mappings as dwd_mappings
+import paint.util.paint_mappings as mappings
 from paint.preprocessing.dwd_mappings import dwd_parameter_mapping
 
 
@@ -196,7 +197,7 @@ class DWDWeatherData:
                 # Create dataset for time with compression.
                 file.create_dataset(
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_10min/time",
-                    data=group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
+                    data=group.date.dt.strftime(mappings.TIME_FORMAT).to_numpy(
                         dtype=h5py.string_dtype(encoding="utf-8")
                     ),
                     **self.compression_opts,
@@ -223,7 +224,7 @@ class DWDWeatherData:
                 # Create dataset for time with compression.
                 file.create_dataset(
                     f"{station_id}/{dwd_parameter_mapping[parameter]}_1h/time",
-                    data=group.date.dt.strftime("%Y-%m-%dZ%H:%M:%SZ").to_numpy(
+                    data=group.date.dt.strftime(mappings.TIME_FORMAT).to_numpy(
                         dtype=h5py.string_dtype(encoding="utf-8")
                     ),
                     **self.compression_opts,

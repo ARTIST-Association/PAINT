@@ -21,8 +21,8 @@ def dwd_item_data() -> pd.Series:
         "longitude": 6.0244,
         "Elevation": 231.0,
         "StationName": "Aachen-Orsbach",
-        "start": "2021-03-31Z22:00:00Z",
-        "end": "2024-02-29Z23:00:00Z",
+        "start": "2021-03-31T22:00:00Z",
+        "end": "2024-02-29T23:00:00Z",
     }
     return pd.Series(data)
 
@@ -49,8 +49,8 @@ def test_make_dwd_item(dwd_item_data: pd.Series) -> None:
         "bbox": [50.7983, 6.0244, 231.0, 50.7983, 6.0244, 231.0],
         "properties": {
             "datetime": None,
-            "start_datetime": "2021-03-31Z22:00:00Z",
-            "end_datetime": "2024-02-29Z23:00:00Z",
+            "start_datetime": "2021-03-31T22:00:00Z",
+            "end_datetime": "2024-02-29T23:00:00Z",
         },
         "links": [
             {

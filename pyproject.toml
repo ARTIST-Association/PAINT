@@ -7,7 +7,7 @@ packages = ["paint"]
 
 [project]
 name = "paint-csp"
-version = "2.0.1"
+version = "3.0.0"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]
@@ -37,6 +37,7 @@ dependencies = [
     "waitress",
     "pyproj",
     "pytz",
+    "pdfplumber",
 ]
 
 [project.optional-dependencies]
@@ -99,10 +100,13 @@ target-version = "py38"
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
 # Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
 # McCabe complexity (`C901`) by default.
-select = ["N", "E4", "E7", "E9", "F", "D"]
+select = ["N", "E4", "E7", "E9", "F", "D", "I"]
 ignore = ["D100", "D104"]
 # Enable import sorting
-extend-select = ["I"]
+extend-select = [
+    "D417", # missing argument descriptions in the docstring
+    "D419", # docstring is empty
+]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

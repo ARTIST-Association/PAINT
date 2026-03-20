@@ -4,7 +4,7 @@ import pandas as pd
 
 import paint.util.paint_mappings as mappings
 from paint.util import convert_gk_to_lat_lon
-from paint.util.utils import to_utc_single
+from paint.util.utils import localize_utc_single
 
 
 def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[str, Any]:
@@ -33,7 +33,7 @@ def make_properties_collection(heliostat_id: str, data: pd.DataFrame) -> dict[st
         "keywords": [
             "csp",
             "facet",
-            "kinematic",
+            "kinematics",
             "position",
             "renovation",
             "properties",
@@ -136,7 +136,7 @@ def make_properties_item(
         "type": "Feature",
         "title": f"Heliostat properties of {heliostat_key}",
         "description": f"The heliostat properties for heliostat {heliostat_key}. These include the heliostat position,"
-        f"the kinematic applied, the facet properties, and, if applicable, the renovation date.",
+        f"the kinematics applied, the facet properties, and, if applicable, the renovation date.",
         "collection": mappings.HELIOSTAT_PROPERTIES_COLLECTION_ID % heliostat_key,
         "geometry": {
             "type": "Point",
@@ -155,8 +155,7 @@ def make_properties_item(
             heliostat_data[mappings.ALTITUDE_KEY],
         ],
         "properties": {
-            "datetime": to_utc_single(heliostat_data[mappings.CREATED_AT]),
-            "created": to_utc_single(heliostat_data[mappings.CREATED_AT]),
+            "datetime": localize_utc_single(heliostat_data[mappings.CREATED_AT]),
         },
         "links": [
             {
@@ -193,6 +192,7 @@ def make_properties_item(
                 "roles": ["data"],
                 "type": mappings.MIME_GEOJSON,
                 "title": f"Heliostat properties for heliostat {heliostat_key}",
+                "created": localize_utc_single(heliostat_data[mappings.CREATED_AT]),
             }
         },
     }

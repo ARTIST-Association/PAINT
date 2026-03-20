@@ -249,6 +249,8 @@ def get_tower_measurements() -> tuple[dict[str, np.ndarray], dict[Any, Any]]:
         mappings.RECEIVER: {
             mappings.TOWER_TYPE_KEY: mappings.CONVEX_CYLINDER_KEY,
             mappings.TOWER_NORMAL_VECTOR_KEY: mappings.RECEIVER_NORMAL_VECTOR,
+            mappings.RECEIVER_RADIUS_KEY: mappings.RECEIVER_RADIUS,
+            mappings.RECEIVER_OPENING_ANGLE_KEY: mappings.RECEIVER_OPENING_ANGLE,
             mappings.TOWER_COORDINATES_KEY: receiver_coordinates,
         },
     }
