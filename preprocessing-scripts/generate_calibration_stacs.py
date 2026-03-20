@@ -56,6 +56,9 @@ def main(arguments: argparse.Namespace) -> None:
     calibration_items_path = Path(f"{PAINT_ROOT}/TEMPDATA/calibration_items.csv")
     if calibration_items_path.exists():
         calibration_items = pd.read_csv(calibration_items_path)
+        calibration_items[mappings.CREATED_AT] = pd.to_datetime(
+            calibration_items[mappings.CREATED_AT], utc=True
+        )
     else:
         calibration_items_path.parent.mkdir(parents=True, exist_ok=True)
         calibration_items = pd.DataFrame(columns=calibration_items_columns)
