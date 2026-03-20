@@ -1,3 +1,13 @@
+## Version 3.0.0
+### What's Changed
+* Centered flux images now available at a higher resolution by @MarleneBusch in https://github.com/ARTIST-Association/PAINT/pull/130
+* Time stamp conversion from local time to UTC has been clarified by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/129
+* Time stamps are now ISO 8601 compatible by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/129
+* Deflectometry time stamps are adjusted to use measurement instead of evaluation time by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/129
+* The receiver information is expanded with radius and opening angle information by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/129
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v2.0.1...v3.0.0
+
 ## Version 2.0.1
 ### What's Changed
 * Improvements to database website stability @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/119
