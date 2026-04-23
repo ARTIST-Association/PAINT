@@ -171,7 +171,7 @@ def main(
                 kind="bar", stacked=True, ax=ax, legend=False, color=bar_colors
             )
             # Change the x-axis label as requested.
-            ax.set_xlabel("Heliostats sorted by # measurements available")
+            ax.set_xlabel("Heliostats sorted by \# measurements available")
             ax.set_ylabel("Count")
             ax.tick_params(axis="x", rotation=45)
             ticks = list(range(0, num_heliostats, 200))
