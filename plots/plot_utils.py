@@ -6,8 +6,9 @@ import torch
 
 def set_plot_style() -> None:
     """Set global plot style for all plots."""
-    mpl.rcParams["font.family"] = "sans-serif"
-    mpl.rcParams["font.sans-serif"] = ["DejaVu Sans"]
+    # Set Plot style.
+    mpl.rcParams["text.usetex"] = True
+    mpl.rcParams["text.latex.preamble"] = r"\usepackage{cmbright}"
     mpl.rcParams["font.size"] = 12
     mpl.rcParams["axes.titlesize"] = 14
     mpl.rcParams["axes.labelsize"] = 12
@@ -15,6 +16,8 @@ def set_plot_style() -> None:
     mpl.rcParams["xtick.labelsize"] = 10
     mpl.rcParams["ytick.labelsize"] = 10
     mpl.rcParams["legend.fontsize"] = 10
+    mpl.rcParams["pdf.fonttype"] = 42
+    mpl.rcParams["ps.fonttype"] = 42
 
 
 def decimal_to_dms(value: float, is_latitude: bool = True) -> str:

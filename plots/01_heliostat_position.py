@@ -172,7 +172,7 @@ class HeliostatPositionPlot:
             cmap=custom_cmap,
             alpha=0.7,
         )
-        fig.colorbar(scatter, label="# Measurements")
+        fig.colorbar(scatter, label="\# Measurements")
         ax.grid(True)
 
         # Draw tower boundaries as rectangles.
