@@ -6,6 +6,7 @@
 
 # PAINT
 
+[![Paper DOI](https://img.shields.io/badge/Nature%20Energy-10.1038%2Fs41560--026--02070--1-blue)](https://doi.org/10.1038/s41560-026-02070-1)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19131369.svg)](https://doi.org/10.5281/zenodo.19131369)
 ![PyPI](https://img.shields.io/pypi/v/paint-csp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -28,6 +29,8 @@ making them findable, accessible, interoperable, and reusable. Currently, the da
 deflectometry measurements, kinematic settings, and weather information of the concentrating solar power plant in
 Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries follows the
 spatio-temporal asset catalog (STAC) standard.
+
+:fire: To learn more, check out our publication in *Nature Energy* (2026). https://doi.org/10.1038/s41560-026-02070-1 :fire:
 
 ## What can this repository do for you?
 
@@ -91,6 +94,24 @@ descriptions of these scripts are available via our [Documentation](http://paint
 
 Furthermore, an interactive notebook is available in the ``tutorials`` folder - this is the perfect starting point to
 dive into ``PAINT``!
+
+## How to cite
+If you use the `PAINT` database in your research, please cite our paper:
+
+> Phipps, K., Kuhl, M., Weiel, M. et al. The PAINT database for operational concentrating solar power plant data following FAIR data principles. *Nature Energy* (2026). https://doi.org/10.1038/s41560-026-02070-1
+
+BibTeX:
+```bibtex
+@article{Phipps2026PAINT,
+  author  = {Phipps, Kaleb and Kuhl, Mathias and Weiel, Marie and Busch, Marlene and Lewen, Jan and Blumenr{\"o}hr, Nicolas and Maldonado Quinto, Daniel and Debus, Charlotte and G{\"o}hring, Felix and Kaufhold, Oliver and Streit, Achim and Pitz-Paal, Robert and G{\"o}tz, Markus and Pargmann, Max},
+  title   = {The PAINT database for operational concentrating solar power plant data following FAIR data principles},
+  journal = {Nature Energy},
+  year    = {2026},
+  doi     = {10.1038/s41560-026-02070-1},
+  url     = {https://doi.org/10.1038/s41560-026-02070-1},
+  issn    = {2058-7546}
+}
+```
 
 ## How to contribute
 Check out our [contribution guidelines](CONTRIBUTING.md) if you are interested in contributing to the `PAINT` project :fire:.
