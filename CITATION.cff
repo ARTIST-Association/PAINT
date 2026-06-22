@@ -100,3 +100,79 @@ commit: bc6c2640b5d51e5014b3e05690536afd1399c572
 license: MIT
 version: 1.0.1
 date-released: '2025-05-28'
+preferred-citation:
+  type: article
+  title: >-
+    The PAINT database for operational concentrating solar
+    power plant data following FAIR data principles
+  authors:
+    - given-names: Kaleb
+      family-names: Phipps
+      email: kaleb.phipps@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0000-0002-9197-1739'
+    - given-names: Mathias
+      family-names: Kuhl
+      email: mathias.kuhl@dlr.de
+      affiliation: German Aerospace Center (DLR)
+      orcid: 'https://orcid.org/0000-0003-0097-7260'
+    - given-names: Marie
+      family-names: Weiel
+      email: marie.weiel@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0000-0001-9648-4385'
+    - given-names: Marlene
+      family-names: Busch
+      email: marlene.busch@dlr.de
+      affiliation: German Aerospace Center (DLR)
+    - given-names: Jan
+      family-names: Lewen
+      email: jan.lewen@dlr.de
+      affiliation: German Aerospace Center (DLR)
+    - given-names: Nicolas
+      family-names: Blumenröhr
+      email: nicolas.blumenroehr@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0009-0007-0235-4995'
+    - given-names: Daniel
+      family-names: Maldonado Quinto
+      email: daniel.maldonadoquinto@dlr.de
+      affiliation: German Aerospace Center (DLR)
+    - given-names: Charlotte
+      family-names: Debus
+      email: charlotte.debus@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0000-0002-7156-2022'
+    - given-names: Felix
+      family-names: Göhring
+      email: felix.goehring@dlr.de
+      affiliation: German Aerospace Center (DLR)
+    - given-names: Oliver
+      family-names: Kaufhold
+      email: oliver.kaufhold@dlr.de
+      affiliation: German Aerospace Center (DLR)
+    - given-names: Achim
+      family-names: Streit
+      email: achim.streit@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0000-0002-5065-469X'
+    - given-names: Robert
+      family-names: Pitz-Paal
+      email: robert.pitz-paal@dlr.de
+      affiliation: German Aerospace Center (DLR)
+      orcid: 'https://orcid.org/0000-0002-3542-3391'
+    - given-names: Markus
+      family-names: Götz
+      email: markus.goetz@kit.edu
+      affiliation: Karlsruhe Institute of Technology (KIT)
+      orcid: 'https://orcid.org/0000-0002-2233-1041'
+    - given-names: Max
+      family-names: Pargmann
+      email: max.pargmann@dlr.de
+      affiliation: German Aerospace Center (DLR)
+      orcid: 'https://orcid.org/0000-0002-4705-6285'
+  journal: Nature Energy
+  year: 2026
+  issn: 2058-7546
+  doi: 10.1038/s41560-026-02070-1
+  url: 'https://doi.org/10.1038/s41560-026-02070-1'
