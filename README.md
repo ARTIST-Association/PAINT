@@ -30,7 +30,7 @@ deflectometry measurements, kinematic settings, and weather information of the c
 Jülich, Germany, with the global power plant id (GPPD) WRI1030197. Metadata for all database entries follows the
 spatio-temporal asset catalog (STAC) standard.
 
-:fire: To learn more, check out our publication in *Nature Energy* (2026). https://doi.org/10.1038/s41560-026-02070-1 :fire:
+:fire: To learn more, check out our publication in *Nature Energy* - https://doi.org/10.1038/s41560-026-02070-1 :fire:
 
 ## What can this repository do for you?
 
