@@ -2,7 +2,7 @@ import os
 from importlib.metadata import PackageNotFoundError, version
 
 PAINT_ROOT = f"{os.sep}".join(__file__.split(os.sep)[:-2])
-"""Reference to the root directory of ARTIST."""
+"""Reference to the root directory of PAINT."""
 try:
     __version__ = version("paint-csp")
 except PackageNotFoundError:
