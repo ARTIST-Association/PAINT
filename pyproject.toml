@@ -7,13 +7,13 @@ packages = ["paint"]
 
 [project]
 name = "paint-csp"
-version = "3.0.1"
+version = "3.1.0"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]
 description = "A FAIR database for concentrating solar power plant data"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -26,10 +26,7 @@ dependencies = [
     "torchvision",
     "matplotlib",
     "colorlog",
-    "wetterdienst==0.95.1",
-    # wetterdienst 0.95.1 does not support polars 2 or pint 0.26.2.
-    "polars<2",
-    "pint<0.26.2",
+    "wetterdienst==0.162.0",
     "h5py",
     "seaborn",
     "deepdiff",
@@ -41,6 +38,9 @@ dependencies = [
     "pyproj",
     "pytz",
     "pdfplumber",
+    "requests",
+    "scikit-learn",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
@@ -96,8 +96,8 @@ exclude = [
 line-length = 88
 indent-width = 4
 
-# Assume Python 3.8.
-target-version = "py38"
+# Assume Python 3.11.
+target-version = "py311"
 
 [tool.ruff.lint]
 # Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
