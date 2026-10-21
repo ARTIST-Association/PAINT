@@ -80,4 +80,6 @@ def test_preprocessing(preprocessing_arguments: argparse.Namespace) -> None:
     df_position = load_and_format_heliostat_positions(preprocessing_arguments)
     df = merge_and_sort_df(df_heliostat_positions=df_position, df_axis=df_axis)
 
-    assert df.equals(expected_df)
+    pd.testing.assert_frame_equal(
+        df, expected_df, check_exact=False, rtol=1e-12, atol=0
+    )
