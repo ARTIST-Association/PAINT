@@ -7,7 +7,7 @@ packages = ["paint"]
 
 [project]
 name = "paint-csp"
-version = "3.0.0"
+version = "3.0.1"
 authors = [
   { name="ARTIST Consortium", email="artist@lists.kit.edu" },
 ]
@@ -27,6 +27,9 @@ dependencies = [
     "matplotlib",
     "colorlog",
     "wetterdienst==0.95.1",
+    # wetterdienst 0.95.1 does not support polars 2 or pint 0.26.2.
+    "polars<2",
+    "pint<0.26.2",
     "h5py",
     "seaborn",
     "deepdiff",
