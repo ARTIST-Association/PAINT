@@ -41,6 +41,21 @@ DWD_1H_UNIT = {
     "weather": "-",
 }
 """Dictionary to include units for the 1h resolution weather parameters in the DWD weather HDF5 file."""
+DWD_10_MIN_WETTERDIENST = {
+    "radiation_sky_short_wave_diffuse": ("solar", "radiation_sky_short_wave_diffuse"),
+    "radiation_global": ("solar", "radiation_global"),
+    "sunshine_duration": ("solar", "sunshine_duration"),
+    "radiation_sky_long_wave": ("solar", "radiation_sky_long_wave"),
+}
+"""Dictionary to map the 10 min resolution weather parameters to their ``wetterdienst`` dataset and parameter name."""
+DWD_1H_WETTERDIENST = {
+    "cloud_cover_total": ("cloudiness", "cloud_cover_total"),
+    "humidity": ("temperature_air", "humidity_relative"),
+    "pressure_vapor": ("moisture", "pressure_vapor"),
+    "visibility_range": ("visibility", "visibility"),
+    "weather": ("weather_phenomena", "weather"),
+}
+"""Dictionary to map the 1h resolution weather parameters to their ``wetterdienst`` dataset and parameter name."""
 DESCRIPTION = "description"
 """Key to access the description attribute for the DWD weather HDF5 file."""
 UNITS = "units"

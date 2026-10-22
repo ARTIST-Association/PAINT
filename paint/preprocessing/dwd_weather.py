@@ -2,7 +2,7 @@ import pathlib
 
 import h5py
 import pandas as pd
-from wetterdienst import Settings
+from wetterdienst import Options, Settings
 from wetterdienst.provider.dwd.observation import DwdObservationRequest
 
 import paint.preprocessing.dwd_mappings as dwd_mappings
@@ -35,6 +35,8 @@ class DWDWeatherData:
         The name of the downloaded data (Default: "dwd_weather").
     settings : Settings
         The settings required for downloading data.
+    options : Options
+        The options defining the shape, naming, and units of the downloaded data.
     compression_opts : dict[str, Any]
         The compression options for compressing the HDF5 file.
 
@@ -101,8 +103,13 @@ class DWDWeatherData:
         if not self.output_path.is_dir():
             self.output_path.mkdir(parents=True, exist_ok=True)
         self.file_name = file_name
-        self.settings = Settings(
-            ts_shape=ts_shape, ts_humanize=ts_humanize, ts_si_units=ts_si_units
+        self.settings = Settings()
+        # Missing values are kept to include every timestamp between the start and end date.
+        self.options = Options(
+            shape=ts_shape,
+            humanize=ts_humanize,
+            convert_units=ts_si_units,
+            drop_nulls=False,
         )
         self.compression_opts = {
             "compression": compression_method,
@@ -128,27 +135,116 @@ class DWDWeatherData:
         pd.DataFrame
             The data for the weather variables downloaded in 1h temporal resolution.
         """
-        request_10min = DwdObservationRequest(
-            parameter=self.parameters_10min,
-            resolution="Minute_10",
-            start_date=self.start_date,
-            end_date=self.end_date,
-            settings=self.settings,
-        ).filter_by_station_id(station_id=self.station_ids)
-        request_1h = DwdObservationRequest(
-            parameter=self.parameters_1h,
+        metadata_10min, data_10min = self._download(
+            parameters=self.parameters_10min,
+            resolution="10_minutes",
+            frequency="10min",
+            wetterdienst_mapping=dwd_mappings.DWD_10_MIN_WETTERDIENST,
+        )
+        metadata_1h, data_1h = self._download(
+            parameters=self.parameters_1h,
             resolution="hourly",
-            start_date=self.start_date,
-            end_date=self.end_date,
+            frequency="1h",
+            wetterdienst_mapping=dwd_mappings.DWD_1H_WETTERDIENST,
+        )
+
+        return metadata_10min, metadata_1h, data_10min, data_1h
+
+    def _download(
+        self,
+        parameters: list[str],
+        resolution: str,
+        frequency: str,
+        wetterdienst_mapping: dict[str, tuple[str, str]],
+    ) -> tuple[pd.DataFrame, pd.DataFrame]:  # pragma: no cover
+        """
+        Download the station metadata and data for a given temporal resolution.
+
+        The updated ``wetterdienst`` package renames columns and parameters, returns one metadata row per station and
+        dataset, and leaves out timestamps that are missing in the DWD files. To keep ``paint`` compatible with the
+        changed package, this helper maps the data back to the original expected names and timesteps.
+
+        Parameters
+        ----------
+        parameters : list[str]
+            The parameters to be downloaded.
+        resolution : str
+            The ``wetterdienst`` name of the temporal resolution.
+        frequency : str
+            The frequency of the timestamps at this temporal resolution.
+        wetterdienst_mapping : dict[str, tuple[str, str]]
+            The mapping from each parameter to its ``wetterdienst`` dataset and parameter name.
+
+        Returns
+        -------
+        pd.DataFrame
+            The metadata for each weather station included in the data request.
+        pd.DataFrame
+            The data for the downloaded weather variables.
+        """
+        # Dates without a time zone are interpreted as UTC.
+        start_date, end_date = (
+            timestamp.tz_localize("UTC")
+            if timestamp.tzinfo is None
+            else timestamp.tz_convert("UTC")
+            for timestamp in map(pd.Timestamp, (self.start_date, self.end_date))
+        )
+        request = DwdObservationRequest(
+            parameters=[
+                (resolution, *wetterdienst_mapping[parameter])
+                for parameter in parameters
+            ],
+            start=start_date.to_pydatetime(),
+            end=end_date.to_pydatetime(),
             settings=self.settings,
+            options=self.options,
         ).filter_by_station_id(station_id=self.station_ids)
 
-        return (
-            request_10min.df.to_pandas(),
-            request_1h.df.to_pandas(),
-            request_10min.values.all().df.to_pandas(),
-            request_1h.values.all().df.to_pandas(),
+        metadata = (
+            request.df.to_pandas()
+            .rename(
+                columns={
+                    "start_timestamp": "start_date",
+                    "end_timestamp": "end_date",
+                    "elevation": "height",
+                    "region": "state",
+                }
+            )
+            .drop(columns=["resolution", "dataset"])
+            .drop_duplicates(subset="station_id", ignore_index=True)
         )
+
+        parameter_names = {
+            wetterdienst_mapping[parameter][1]: parameter for parameter in parameters
+        }
+        data = (
+            request.values()
+            .all()
+            .df.to_pandas()
+            .rename(columns={"timestamp": "date", "quality_flags": "quality"})
+            .drop(columns="resolution")
+            .replace({"parameter": parameter_names})
+            .drop_duplicates(subset=["station_id", "parameter", "date"])
+        )
+
+        raw_values = data.quality.astype("string").str.extract(
+            r"raw:([^,]+)", expand=False
+        )
+        restore = data.value.isna() & raw_values.notna() & raw_values.ne("-999")
+        data.loc[restore, "value"] = pd.to_numeric(raw_values[restore], errors="coerce")
+
+        complete_index = pd.MultiIndex.from_product(
+            [
+                metadata.station_id,
+                parameters,
+                pd.date_range(start_date, end_date, freq=frequency, unit="us"),
+            ],
+            names=["station_id", "parameter", "date"],
+        )
+
+        return metadata, data.set_index(complete_index.names).reindex(
+            complete_index
+        ).reset_index()
 
     def download_and_save_data(self) -> pd.DataFrame:
         """
