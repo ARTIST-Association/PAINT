@@ -7,7 +7,7 @@
 # PAINT
 
 [![Paper DOI](https://img.shields.io/badge/Nature%20Energy-10.1038%2Fs41560--026--02070--1-blue)](https://doi.org/10.1038/s41560-026-02070-1)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19131369.svg)](https://doi.org/10.5281/zenodo.19131369)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23566568.svg)](https://doi.org/10.5281/zenodo.23566568)
 ![PyPI](https://img.shields.io/pypi/v/paint-csp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10540/badge)](https://www.bestpractices.dev/projects/10540)
