@@ -1,4 +1,4 @@
-## Version 3.0.1 
+## Version 3.0.1
 ### What's Changed
 * Pinned `polars` and `pint` versions to avoid errors with `wetterdienst` by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/149
 * Adjusted test tolerance to deal with upcoming  `pandas` 3.1 release by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/151
