@@ -1,3 +1,9 @@
+## Version 3.1.0
+## What's Changed
+* Update `wetterdienst` version for compatibility with `polars` 2.0 and drop support for Python 3.10 by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/150
+
+**Full Changelog**: https://github.com/ARTIST-Association/PAINT/compare/v3.0.1...v3.1.0
+
 ## Version 3.0.1
 ### What's Changed
 * Pinned `polars` and `pint` versions to avoid errors with `wetterdienst` by @kalebphipps in https://github.com/ARTIST-Association/PAINT/pull/149
